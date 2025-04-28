@@ -1,0 +1,23 @@
+Model = 
+{
+	sdkmesh = "resource/mesh/sdkMesh/SquidRoom.sdkmesh",
+	sdkmeshMaterial = "resource/Material/sdkMesh.ma",
+	meshesCount = 0,
+	meshes =
+	{
+		[1] = 
+		{
+			mesh = "resource/Model/sdkMesh/SquidRoom.sdkmesh",
+		}
+	},
+}
+
+function getMesh(index)
+	local t = Model.meshes[index]
+	return t.mesh
+end
+
+function inputElementLayout(index)
+	local t = Model.elementItem[index]
+	return t.SemanticName, t.SemanticIndex, t.Format, t.InputSlot, t.AlignedByteOffset, t.InputSlotClass, t.InstanceDataStepRate
+end

@@ -1,0 +1,20 @@
+{
+	"Wnd":
+	{
+		"position":"0,0,0",
+		"size":"304,224",
+		"rotation":"0,0,0",
+		"texture":"resource/Texture/Gui/alpha.png",
+		"children":
+		[
+			{
+				"type":23,
+				"id":100,
+				"position":"0,0,0",
+				"size":"304,224",
+				"rotation":"0,0,0",
+				"texture":""
+			}
+		]
+	}
+}

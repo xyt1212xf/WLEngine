@@ -1,0 +1,44 @@
+<version ID="1.0">
+  <ui_wnd>
+	<item name="MenuBG" x="0" y ="0" width="13" height="26" image="Resource/Editor/Texture/MenuBG.png" />
+	<item name="test" x="0" y ="0" width="13" height="26" image="Resource/Editor/Texture/Test.png" />
+	<item name="GrayBG" x="0" y ="0" width="64" height="64" image="Resource/Editor/Texture/Gray.png" />
+	<item name="WndDefault" x="0" y ="0" width="32" height="32" image="Resource/Editor/Texture/WndDefalut.png" />
+	<item name="Blue" x="0" y ="0" width="8" height="8" image="Resource/Editor/Texture/Blue.png" />
+  </ui_wnd>
+  <ui_font>
+  	<item name="default" font="resource/Font/styleFont" />
+  </ui_font>
+  <ui_label>
+  	<item name="default" font="resource/Font/styleFont" />
+  </ui_label>
+  <ui_edit>
+  	<item name="default" font="resource/Font/styleFont" image="Resource/Editor/Texture/EditGB.png" cursor="cursor" />
+  </ui_edit>
+  <ui_image>
+  	<item name="review" x="0" y ="0" width="128" height="128" image="Resource/Editor/Texture/review.png"/>
+  	<item name="default" x="0" y ="0" width="32" height="32" image="Resource/Editor/Texture/WndDefalut.png"/>
+	<item name="cursor" x="0" y ="0" width="2" height="32" image="Resource/Editor/Texture/EditCursor.png"/>
+	<item name="actorIcon" x="0" y ="0" width="32" height="32" image="Resource/Editor/Texture/ActorIcon.png"/>
+  </ui_image>
+  <ui_button>
+  	<item name="default" x="0" y ="0" width="128" height="25" image="Resource/Editor/Texture/Button.png" />
+  </ui_button>
+  <ui_menu>
+  	<item name="menu_test" x="0" y ="0" width="13" height="26" image="Resource/Editor/Texture/MenuBG.png" />
+  </ui_menu>
+   <ui_tableWnd>
+  	<item name="default" item="default" x="0" y ="0" width="32" height="32" image="Resource/Editor/Texture/Green.png"/>
+	<item name="white" item="default" x="0" y ="0" width="64" height="64" image="Resource/Editor/Texture/White.png"/>
+  </ui_tableWnd>
+   <ui_radio>
+  	<item name="default" x="0" y ="0" width="64" height="25" image="Resource/Editor/Texture/Radio.png" />
+  </ui_radio>
+  <ui_list>
+  	<item name="default" x="0" y ="0" width="70" height="29" image="Resource/Editor/Texture/Gray.png" />
+  </ui_list>
+  <ui_checkBox>
+  	<item name="default" x="0" y ="0" width="70" height="29" image="Resource/Editor/Texture/CheckBox.png" />
+	<item name="listCheckBox" x="0" y ="0" width="70" height="29" image="Resource/Editor/Texture/List.png" />
+  </ui_checkBox>
+</version>

@@ -1,0 +1,45 @@
+{
+	"Wnd":
+	{
+		"position":"0,0,0",
+		"size":"1280,720",
+		"rotation":"0,0,0",
+		"texture":"resource/Texture/Gui/BG.png",
+		"children":
+		[
+			{
+				"type":8,
+				"id":4,
+				"position":"0,700,0",
+				"size":"500,20",
+				"rotation":"0,0,0",
+				"font":"resource/Font/styleFont"
+			},
+			
+			{
+				"type":1,
+				"id":1,
+				"position":"410,520,0",
+				"size":"108,51",
+				"rotation":"0,0,0",
+				"texture":"resource/Texture/Gui/startBtn.png"
+			},
+			{
+				"type":1,
+				"id":2,
+				"position":"580,520,0",
+				"size":"108,51",
+				"rotation":"0,0,0",
+				"texture":"resource/Texture/Gui/endBtn.png"
+			},
+			{
+				"type":1,
+				"id":3,
+				"position":"750,520,0",
+				"size":"108,51",
+				"rotation":"0,0,0",
+				"texture":"resource/Texture/Gui/selectBtn.png"
+			}
+		]
+	}
+}

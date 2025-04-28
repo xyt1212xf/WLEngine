@@ -1,0 +1,91 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+#include "lightConstBuffer.hlsl"
+/////////////
+// GLOBALS //
+/////////////
+
+Texture2D shaderTextures;
+SamplerState SampleType;
+
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+	float4 worldPos : POSITION;
+    float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 alpha : TEXCOORD1;
+    float4 lightViewPosition : TEXCOORD2;
+};
+
+cbuffer Material : register(b0)
+{
+	float4  AmbientColor;
+	float4  DiffuseColor;
+	float4  SpecularColor;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psMain(PixelInputType input) : SV_TARGET
+{
+	float bias = 0.0001f;
+	float2 projectTexCoord;
+	float depthValue;
+	float lightDepthValue;
+    
+	float4 textureColor = shaderTextures.Sample(SampleType, input.tex);
+		
+	float3 lightDir;
+	float lightIntensity;
+		
+	uint totalLights, dummy;
+	GlobalLight.GetDimensions(totalLights, dummy);
+	float fLength = 0;
+	float4 lightColor = float4(0,0,0,1); 
+	for (uint lightIndex = 0; lightIndex < totalLights; ++lightIndex)
+	{
+		// Invert the light direction for calculations.
+		lightDir = GlobalLight[lightIndex].position.xyz - input.worldPos.xyz;
+		lightIntensity = saturate(dot(input.normal, normalize(lightDir)));
+		fLength = saturate(1 - length(lightDir) / GlobalLight[lightIndex].fRange);
+		lightColor += ((GlobalLight[lightIndex].color * lightIntensity) * fLength);
+	}
+
+	float4 diffuse = textureColor * saturate(dot(input.normal, LightDirection.xyz)) * DiffuseLight;
+	float4 color = saturate(diffuse + lightColor * textureColor + AmbientColor * AmbientLight);
+	
+	// Calculate the projected texture coordinates.
+	projectTexCoord =  (input.lightViewPosition.xy / input.lightViewPosition.w) * 0.5f + 0.5f;
+	projectTexCoord.y = 1 - projectTexCoord.y;
+	float2 uv = saturate(projectTexCoord);
+	// Determine if the projected coordinates are in the 0 to 1 range.  If so then this pixel is in the view of the light.
+	if(uv.x == projectTexCoord.x && uv.y == projectTexCoord.y)
+	{
+		// Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
+		depthValue = depthTexture.Sample(depthSample, projectTexCoord).r;
+
+		// Calculate the depth of the light.
+		lightDepthValue = input.lightViewPosition.z / input.lightViewPosition.w;
+		
+		// Subtract the bias from the lightDepthValue.
+		lightDepthValue = lightDepthValue - bias;
+					
+		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
+		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
+		if(lightDepthValue > depthValue)
+		{
+			color *= float4(0.6,0.6,0.6,1);
+
+		}
+	}
+	
+	return color;
+}

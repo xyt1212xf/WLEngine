@@ -1,0 +1,11 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="-0, 2, -10" LookAt="-0, 2, -9" />
+	</Camera>
+	<Light>
+		<item Name="Sun" LightType=0 Position="0, 6, 8" LightDirection="0,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+	<Actor>
+		<item Name="solider" Mesh="Resource/Model/soldier/soldier.sdkmesh" Animation="Resource/Model/soldier/soldier.sdkmesh_anim" Visible=1 Position="0, 1, 0" Scale ="4,4,4" Rotation ="0,0,0" Material="Resource/Material/soldier.ma" Type=1 />
+	</Actor>
+</version>

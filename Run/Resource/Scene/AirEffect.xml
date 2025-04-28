@@ -1,0 +1,11 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 4, -10" LookAt="0, 4, -9" />
+	</Camera>
+	<Light>
+		<item Name="Position0" Shadow = 1 LightType=1 Position="-5, 8, -5" LightDirection="0,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+	<Actor>
+		<item Name="ground" Mesh="Resource/Mesh/ground.txt" Visible=1 Position="0, 1, 60" Scale ="100,100,100" Rotation ="0,0,0" Material="Resource/Material/ground.ma" Type=21 />
+	</Actor>
+</version>

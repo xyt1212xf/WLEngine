@@ -1,0 +1,58 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: softshadow.ps
+////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////
+// TEXTURES //
+//////////////
+Texture2D curTexture : register(t0);
+Texture2D lastTexture : register(t1);
+
+
+///////////////////
+// SAMPLE STATES //
+///////////////////
+SamplerState curSampleState : register(s0);
+SamplerState lastSampleState  : register(s1);
+
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psMain(PixelInputType input) : SV_TARGET
+{
+	float2 pixelVelocity = float2(0, -0.01);
+
+	float4 curFramePixelVelocity = curTexture.Sample(curSampleState, input.tex); 
+
+    
+    // For each sample, sum up each sample's color in "Blurred" and then divide
+    // to average the color after all the samples are added.
+    float3 Blurred = 0;    
+    for(float i = 0; i < 12; i++)
+    {   
+        // Sample texture in a new spot based on pixelVelocity vector 
+        // and average it with the other samples        
+        float2 lookup = pixelVelocity * i / 12 + input.tex;
+        
+        // Lookup the color at this new spot
+        float4 Current = curTexture.Sample(lastSampleState, lookup);
+        
+        // Add it with the other samples
+        Blurred += Current.rgb;
+    }
+    
+    // Return the average color of all the samples
+    return float4(Blurred / 12, 1.0f);
+}
+

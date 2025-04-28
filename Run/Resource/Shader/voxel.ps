@@ -1,0 +1,46 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+#include "lightConstBuffer.hlsl"
+/////////////
+// GLOBALS //
+/////////////
+
+Texture2D shaderTextures;
+SamplerState SampleType;
+
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+	float4 worldPos : POSITION;
+    float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 alpha : TEXCOORD1;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psMain(PixelInputType input) : SV_TARGET
+{
+	//float2 uv = input.tex;
+	float3 lightDir = normalize(float3(0,1,0));
+	float lightIntensity;
+	float4 color;
+	float3 ambientColor = float3(0.3,0.3,0.3);
+		
+	// Calculate the amount of light on this pixel.
+	lightIntensity = saturate(dot(input.normal, lightDir));
+	float4 tColor0 = shaderTextures.Sample(SampleType, input.tex);
+	
+	color = tColor0 * lightIntensity;
+	
+	color.xyz += ambientColor;
+	return color;
+}

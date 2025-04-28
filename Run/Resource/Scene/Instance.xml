@@ -1,0 +1,8 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="-0, 2, -12" LookAt="-0, 2, -11" />
+	</Camera>
+	<Actor>
+		<item Name="ground" Mesh="Resource/Mesh/ground.txt" Visible=1 Position="0, -6, 60" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/Instance.ma" Type=21 />
+	</Actor>
+</version>

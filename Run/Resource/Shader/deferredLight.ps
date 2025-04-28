@@ -1,0 +1,50 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: deferred.ps
+////////////////////////////////////////////////////////////////////////////////
+
+#include "lightConstBuffer.hlsl"
+
+//////////////
+// TEXTURES //
+//////////////
+Texture2D colorTexture : register(t0);
+Texture2D positionTexture : register(t1);
+Texture2D normalTexture : register(t2);
+
+SamplerState SampleType;
+
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+cbuffer Material : register(b0)
+{
+	float4  AmbientColor;
+	float4  DiffuseColor;
+	float4  SpecularColor;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psShader(PixelInputType input) : SV_TARGET
+{
+	// Sample the color from the texture and store it for output to the render target.
+	float4 textureColor = colorTexture.Sample(SampleType, input.tex);
+    if (textureColor.a == 0)
+    {
+        discard;
+    }
+
+	float3 position = positionTexture.Sample(SampleType, input.tex).xyz;
+    float3 normal = normalize(normalTexture.Sample(SampleType, input.tex).xyz);
+		
+    float4 diffuse = textureColor * saturate(dot(normal, LightDirection.xyz)) * DiffuseLight;
+    return saturate(diffuse + AmbientColor * AmbientLight);
+}

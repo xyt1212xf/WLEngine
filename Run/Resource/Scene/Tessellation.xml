@@ -1,0 +1,8 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="-0, 0, -10" LookAt="-0, 0, -9" />
+	</Camera>
+	<Actor>
+		<item Name="ground" Mesh="Resource/Mesh/Tessellation.txt" Visible=1 Position="0, 0, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/Tessellation.ma" Type=22 />
+	</Actor>
+</version>

@@ -1,0 +1,6 @@
+<version ID="1.0">
+	<Window name="Project" x="0" y="0" width="1299" height="232" style="WndDefault"/>
+	<Font name="resource/Font/styleFont" color="1,0,0,1" size="16,16" />
+	<List name="AssetContent" text="" x="0" y="0" width="300" height="232" style="default"/>
+	<List name="Assets" text="" x="301" y="0" width="998" height="232" style="default"/>
+</version>

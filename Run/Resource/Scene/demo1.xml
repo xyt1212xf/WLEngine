@@ -1,0 +1,8 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="100, 5, -10" LookAt="100, 5, 0" />
+	</Camera>
+	<Actor>
+		<item Name="skyDemo" Mesh="Resource/Model/skydome.txt" Visible=1 Position="0, 0, -10" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/skyDomeMaterial.ma" Type=13 />
+	</Actor>
+</version>

@@ -1,0 +1,58 @@
+
+Texture2D g_txDiffuse : register(t0);
+Texture2D g_txNormal : register(t1);
+
+SamplerState g_samLinear : register(s0);
+
+
+cbuffer cbUserChange : register(b1)
+{
+    float3 g_vLightPos;
+	float padding;
+    float3 g_vEyePt;
+	float pAdddOffset;
+};
+
+
+struct PSSkinnedIn
+{
+    float4 Pos	: SV_Position;		//Position
+    float3 vPos : POSWORLD;			//world space Pos
+    float3 Norm : NORMAL;			//Normal
+    float2 Tex	: TEXCOORD;		    //Texture coordinate
+    float3 Tangent : TANGENT;		//Normalized Tangent vector
+};
+
+
+//--------------------------------------------------------------------------------------
+// Pixel shader that performs bump mapping on the final vertex
+//--------------------------------------------------------------------------------------
+float4 psMain(PSSkinnedIn input) : SV_Target
+{	
+    float4 g_directional = float4(1.0,1.0,1.0,1.0);
+    float4 g_ambient = float4(0.1,0.1,0.1,0.0);
+    float4 g_objectspeccolor = float4(1.0,1.0,1.0,1.0);
+
+    float4 diffuse = g_txDiffuse.Sample( g_samLinear, input.Tex );
+    float3 Norm = g_txNormal.Sample( g_samLinear, input.Tex );
+    Norm *= 2.0;
+    Norm -= float3(1,1,1);
+    
+    // Create TBN matrix
+    float3 lightDir = normalize( g_vLightPos - input.vPos );
+    float3 viewDir = normalize( g_vEyePt - input.vPos );
+    float3 BiNorm = normalize( cross( input.Norm, input.Tangent ) );
+    float3x3 BTNMatrix = float3x3( BiNorm, input.Tangent, input.Norm );
+    Norm = normalize( mul( Norm, BTNMatrix ) ); //world space bump
+    
+    //diffuse lighting
+    float lightAmt = saturate( dot( lightDir, Norm ) );
+    float4 lightColor = lightAmt.xxxx*g_directional + g_ambient;
+
+    // Calculate specular power
+    float3 halfAngle = normalize( viewDir + lightDir );
+    float4 spec = pow( saturate(dot( halfAngle, Norm )), 64 );
+        
+    // Return combined lighting
+    return lightColor*diffuse + spec*g_objectspeccolor*diffuse.a;
+}

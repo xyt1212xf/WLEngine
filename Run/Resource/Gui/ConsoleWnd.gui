@@ -1,0 +1,19 @@
+{
+	"Wnd":
+	{
+		"position":"0,700,0",
+		"size":"1280,20",
+		"rotation":"0,0,0",
+		"texture":"resource/Texture/male.png",
+		"children":
+		[
+			{
+				"type":8,
+				"id":1,
+				"position":"0,0,0",
+				"size":"1280,20",
+				"rotation":"0,0,0",
+			}
+		]
+	}
+}

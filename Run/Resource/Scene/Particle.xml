@@ -1,0 +1,8 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="-0, 2, -90" LookAt="-0, 2, -89" />
+	</Camera>
+	<Particle>
+		<item Name="waterfall" Visible=1 Position="-5, 20, 0" Scale="1,1,1" Rotation="0,0,0" Emitter="Resource/Particle/Waterfall.emit"/>
+	</Particle>
+</version>

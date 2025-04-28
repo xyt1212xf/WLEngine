@@ -1,0 +1,4 @@
+<version ID="1.0">
+	<Window name="Inspector" x="0" y="0" width="300" height="1024" style="WndDefault"/>
+	<Font name="resource/Font/styleFont" color="1,0,0,1" size="16,16" />
+</version>

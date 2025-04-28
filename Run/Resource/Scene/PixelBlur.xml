@@ -1,0 +1,9 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 0, -10" LookAt="0, 0, -9" />
+	</Camera>
+	<Light>
+		<item Name="Position0" Shadow = 1 LightType=1 Position="-5, 8, -5" LightDirection="0,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+
+</version>

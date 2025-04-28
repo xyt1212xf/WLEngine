@@ -1,0 +1,25 @@
+{
+	"Camera":
+	{
+		"name":"MainCamera",
+		"eye":"0,1011,1310",
+		"lookAt":"0,1010,1315",
+		"up":"0,1,0",
+		"fov":0.785,
+		"aspect":"1280,720",
+		"cullPlane":"1,20000"
+	},
+	"Gui": 
+	{
+		"children":
+		[
+			{
+				"position":"10,10,0",
+				"scale":"1,1,1",
+				"rotation":"0,0,0",
+				"size":"100,100",
+				"script":"script/LoginUI.lua"
+			}
+		]
+	}
+}

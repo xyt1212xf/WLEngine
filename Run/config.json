@@ -1,0 +1,22 @@
+{
+	"Win32config":
+	{
+		"screenWidth":1280,
+		"screenHeight":720
+	},
+	"DX11":
+	{
+        "fullScreen":false,
+        "vsync":false,
+        "fps":30,
+		"backBufferFormat":28,
+		"depthBufferFormat":45,	
+        "MASS":true
+	},
+	"Plugin": 
+	{
+        "RENDERER":1,
+        "NETWORK":0,
+        "GUI":1
+	}
+}

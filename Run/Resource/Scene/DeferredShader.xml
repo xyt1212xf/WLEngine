@@ -1,0 +1,31 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 0, -20" LookAt="0, 0, -19" />
+	</Camera>
+	<Light>
+		<item Name="Position0" Shadow = 1 LightType=1 Position="5, 8, -5" LightDirection="1,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+	<Actor>
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="2, 2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-2, 2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="5, 2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-5, 2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="2, 6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-2, 6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="5, 6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-5, 6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		
+		
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="2, -2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-2, -2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="5, -2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-5, -2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="2, -6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-2, -6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="5, -6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+		<item Name="bath1" Mesh="Resource/Mesh/Default/sphere.m" Visible=1 Position="-5, -6, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bath_DF.ma" Type=1 />
+
+	</Actor>
+</version>

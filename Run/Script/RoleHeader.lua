@@ -1,0 +1,42 @@
+RoleStateEnum = 
+{
+	die1 = 1,
+	die2 = 2,
+	die3 = 3,
+	die4 = 4,
+
+	stand = 10,
+	walk = 11,
+	run = 12,
+	back = 13, 
+	away = 14,
+	backRoll = 15,
+	frontRoll = 16,
+	eat = 17,
+	
+	jump = 18,
+	down = 19,
+	crouch = 20,
+
+	rest = 30,
+	
+	attack1 = 100,
+	attack2 = 101,
+	attack3 = 102,
+	attack4 = 103,
+	attack5 = 104,
+	attack6 = 105,
+	attack7 = 106,
+	attack8 = 107,
+	attack9 = 108,
+	attack10 = 109,
+	attack11 = 110,
+	attack12 = 111,
+	attack13 = 112,
+	attack14 = 113,
+	attack15 = 114,
+	attack17 = 115,
+	attack18 = 116,
+	attack19 = 117,
+	attack20 = 118,
+}

@@ -1,0 +1,38 @@
+<version ID="1.0">
+	<Window name="Transform" x="0" y="0" width="350" height="300" style="test"/>
+	<Font name="resource/Font/styleFont" color="1,0,0,1" size="16,16" />
+
+	<CheckBox name="step" text="" x="0" y="0" width="24" height="24" style="default"/>
+	<Label name="Position" text="Transform" x="30" y="8" width="124" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	
+	<Label name="Position" text="Position" x="5" y="30" width="50" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="PositionX" text="X" x="70" y="30" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="PositionY" text="Y" x="140" y="30" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="PositionZ" text="Z" x="210" y="30" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	
+	<EditBox name="pX" text="0" x="80" y="30" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="pY" text="0" x="150" y="30" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="pZ" text="0" x="220" y="30" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+
+	<Label name="Rotation" text="Rotation" x="5" y="60" width="50" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="RotationX" text="X" x="70" y="60" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="RotationY" text="Y" x="140" y="60" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="RotationZ" text="Z" x="210" y="60" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	
+	<EditBox name="rX" text="0" x="80" y="60" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="rY" text="0" x="150" y="60" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="rZ" text="0" x="220" y="60" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+
+	<Label name="Scale" text="Scale" x="5" y="90" width="50" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="ScaleX" text="X" x="70" y="90" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="ScaleY" text="Y" x="140" y="90" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	<Label name="ScaleZ" text="Z" x="210" y="90" width="24" height="24" color="1,1,1,1" size="14,14" fontStyle="default"/>
+	
+	<EditBox name="sX" text="0" x="80" y="90" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="sY" text="0" x="150" y="90" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<EditBox name="sZ" text="0" x="220" y="90" width="55" height="24" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	
+	<Button name="play" text="Play" x="0" y="250" width="50" height="20" style="default"/>
+	<Button name="pause" text="Pause" x="0" y="150" width="70" height="20" style="default"/>
+	<Button name="step" text="Step" x="0" y="200" width="50" height="20" style="default"/>
+</version>

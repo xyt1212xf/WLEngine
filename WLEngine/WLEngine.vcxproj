@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{bda71c1f-8918-4ed7-979f-fbd878021e54}</ProjectGuid>
+    <RootNamespace>WLEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;D3D11;TIXML_USE_STL;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile />
+      <AdditionalIncludeDirectories>$(SolutionDir)Lua;$(SolutionDir)TinyXML\;$(solutiondir)ThirdLibrary\DX\Include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessToFile>false</PreprocessToFile>
+      <AdditionalOptions>/Bt+ %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Lua_D.lib;TinyXML_D.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)Run\$(TargetName)_D$(TargetExt)</OutputFile>
+      <ImportLibrary>$(ProjectDir)x64\Debug\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;TIXML_USE_STL;D3D11;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile />
+      <AdditionalIncludeDirectories>$(SolutionDir)Lua;$(SolutionDir)TinyXML;$(solutiondir)ThirdLibrary\DX\Include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Lua.lib;TinyXML.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)Run\$(TargetName)$(TargetExt)</OutputFile>
+      <ImportLibrary>$(ProjectDir)x64\Release\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AABBox.h" />
+    <ClInclude Include="AbilitySystemComponent.h" />
+    <ClInclude Include="ActorEntity.h" />
+    <ClInclude Include="AllocationHeader.h" />
+    <ClInclude Include="AllocatorLabelNames.h" />
+    <ClInclude Include="AllocatorLabels.h" />
+    <ClInclude Include="AtomicNode.h" />
+    <ClInclude Include="AtomicOps.h" />
+    <ClInclude Include="AtomicQueue.h" />
+    <ClInclude Include="AttributeSet.h" />
+    <ClInclude Include="BaseAllocator.h" />
+    <ClInclude Include="BehaviorBaseNode.h" />
+    <ClInclude Include="BehaviorNode.h" />
+    <ClInclude Include="BehaviorTree.h" />
+    <ClInclude Include="Billboard.h" />
+    <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="BucketAllocator.h" />
+    <ClInclude Include="CallBack.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="CameraEntity.h" />
+    <ClInclude Include="ClassType.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="CustomRenderer.h" />
+    <ClInclude Include="DataAsset.h" />
+    <ClInclude Include="DefaultAllocator.h" />
+    <ClInclude Include="DeferredLightRendererPass.h" />
+    <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="DeferredRendererPass.h" />
+    <ClInclude Include="DefineType.h" />
+    <ClInclude Include="DefMemory.h" />
+    <ClInclude Include="DelayedPointerDeletionManager.h" />
+    <ClInclude Include="DepthRendererPass.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DeviceBase.h" />
+    <ClInclude Include="DeviceContext.h" />
+    <ClInclude Include="DualThreadAllocator.h" />
+    <ClInclude Include="DX11Device.h" />
+    <ClInclude Include="DX11DeviceContext.h" />
+    <ClInclude Include="DX11FFT_Plan.h" />
+    <ClInclude Include="DX11GpuBuffer.h" />
+    <ClInclude Include="DX11Material.h" />
+    <ClInclude Include="DX11MaterialInstance.h" />
+    <ClInclude Include="DX11Mesh.h" />
+    <ClInclude Include="DX11OceanSimulator.h" />
+    <ClInclude Include="DX11RenderState.h" />
+    <ClInclude Include="DX11RenderStateMgr.h" />
+    <ClInclude Include="DX11Shader.h" />
+    <ClInclude Include="DX11ShaderInstance.h" />
+    <ClInclude Include="DX11SurfaceView.h" />
+    <ClInclude Include="DX11Texture.h" />
+    <ClInclude Include="DX11TextureArray.h" />
+    <ClInclude Include="DX11UnDef.h" />
+    <ClInclude Include="DynamicHeapAllocator.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="EngineBase.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityFactory.h" />
+    <ClInclude Include="EntityMgr.h" />
+    <ClInclude Include="Export.h" />
+    <ClInclude Include="FFT_Plan.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontEngine.h" />
+    <ClInclude Include="Foundation.h" />
+    <ClInclude Include="FoundationStruct.h" />
+    <ClInclude Include="FrameAniComponet.h" />
+    <ClInclude Include="FrontRenderer.h" />
+    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameController.h" />
+    <ClInclude Include="GameplayAbility.h" />
+    <ClInclude Include="GameplayAbilitySpec.h" />
+    <ClInclude Include="GameplayAbilitySpecHandle.h" />
+    <ClInclude Include="GameplayAbilityTypes.h" />
+    <ClInclude Include="GameplayHeader.h" />
+    <ClInclude Include="GameplayTagContainer.h" />
+    <ClInclude Include="GameplayTagNode.h" />
+    <ClInclude Include="GameplayTagsManager.h" />
+    <ClInclude Include="GpuBuffer.h" />
+    <ClInclude Include="GpuBufferBase.h" />
+    <ClInclude Include="GpuProfiler.h" />
+    <ClInclude Include="GraphicEngine.h" />
+    <ClInclude Include="GraphicHead.h" />
+    <ClInclude Include="GuiEngine.h" />
+    <ClInclude Include="GuiEntity.h" />
+    <ClInclude Include="GuiRenderer.h" />
+    <ClInclude Include="GuiRendererPass.h" />
+    <ClInclude Include="InputMgr.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="jsonHeader.h" />
+    <ClInclude Include="json_fwd.hpp" />
+    <ClInclude Include="LightEngine.h" />
+    <ClInclude Include="LightEntity.h" />
+    <ClInclude Include="LightMeshRendererPass.h" />
+    <ClInclude Include="LightRenderer.h" />
+    <ClInclude Include="LogAssert.h" />
+    <ClInclude Include="LowLevelDefaultAllocator.h" />
+    <ClInclude Include="LuaBind.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialBase.h" />
+    <ClInclude Include="MaterialInstance.h" />
+    <ClInclude Include="MaterialInstanceBase.h" />
+    <ClInclude Include="MathLib.h" />
+    <ClInclude Include="MathLibSSE.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MemoryCookie.h" />
+    <ClInclude Include="MemoryHelper.h" />
+    <ClInclude Include="MemoryMgr.h" />
+    <ClInclude Include="MemoryProfiler.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshBase.h" />
+    <ClInclude Include="MeshInstance.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelInstance.h" />
+    <ClInclude Include="Mutex.h" />
+    <ClInclude Include="NoLightRendererPass.h" />
+    <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="OceanEntity.h" />
+    <ClInclude Include="OceanModelInstance.h" />
+    <ClInclude Include="OceanSimulator.h" />
+    <ClInclude Include="OceanSimulatorBase.h" />
+    <ClInclude Include="ParseParam.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="PlatformMutex.h" />
+    <ClInclude Include="PlatformThread.h" />
+    <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Refcount.h" />
+    <ClInclude Include="RenderChunk.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RendererPass.h" />
+    <ClInclude Include="RenderState.h" />
+    <ClInclude Include="RenderStateHeader.h" />
+    <ClInclude Include="RenderStateMgr.h" />
+    <ClInclude Include="RenderStateMgrBase.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceFactory.h" />
+    <ClInclude Include="ResourceMgr.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneController.h" />
+    <ClInclude Include="ScriptEngine.h" />
+    <ClInclude Include="ScriptEntity.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderBase.h" />
+    <ClInclude Include="ShaderInstance.h" />
+    <ClInclude Include="ShaderInstanceBase.h" />
+    <ClInclude Include="ShadowEffect.h" />
+    <ClInclude Include="ShadowMapRendererPass.h" />
+    <ClInclude Include="SkeletonAniComponent.h" />
+    <ClInclude Include="SkyBoxEntity.h" />
+    <ClInclude Include="SkyEntity.h" />
+    <ClInclude Include="SoftShadowRendererPass.h" />
+    <ClInclude Include="SoundEngine.h" />
+    <ClInclude Include="SoundEntity.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="StackAllocator.h" />
+    <ClInclude Include="SurfaceView.h" />
+    <ClInclude Include="SurfaceViewBase.h" />
+    <ClInclude Include="TerrainEntity.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureArray.h" />
+    <ClInclude Include="TextureBase.h" />
+    <ClInclude Include="Thread.h" />
+    <ClInclude Include="ThreadHelper.h" />
+    <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="ThreadsafeLinearAllocator.h" />
+    <ClInclude Include="TimerClock.h" />
+    <ClInclude Include="TimerEngine.h" />
+    <ClInclude Include="TLSAllocator.h" />
+    <ClInclude Include="Tlsf.h" />
+    <ClInclude Include="TlsfBits.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="TransparentRendererPass.h" />
+    <ClInclude Include="TSingle.h" />
+    <ClInclude Include="TypeUtilties.h" />
+    <ClInclude Include="UIAnimation.h" />
+    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UIFactory.h" />
+    <ClInclude Include="UIHeader.h" />
+    <ClInclude Include="UIImage.h" />
+    <ClInclude Include="UILabel.h" />
+    <ClInclude Include="UIWnd.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="VoxelBrush.h" />
+    <ClInclude Include="VoxelChunk.h" />
+    <ClInclude Include="VoxelMgr.h" />
+    <ClInclude Include="VoxelTerrainBuild.h" />
+    <ClInclude Include="VoxelTerrainEditor.h" />
+    <ClInclude Include="Win.h" />
+    <ClInclude Include="WLEngine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AABBox.cpp" />
+    <ClCompile Include="AbilitySystemComponent.cpp" />
+    <ClCompile Include="ActorEntity.cpp" />
+    <ClCompile Include="AllocationHeader.cpp" />
+    <ClCompile Include="AllocatorLabels.cpp" />
+    <ClCompile Include="AtomicNode.cpp" />
+    <ClCompile Include="AtomicQueue.cpp" />
+    <ClCompile Include="AttributeSet.cpp" />
+    <ClCompile Include="BaseAllocator.cpp" />
+    <ClCompile Include="BehaviorBaseNode.cpp" />
+    <ClCompile Include="BehaviorNode.cpp" />
+    <ClCompile Include="BehaviorTree.cpp" />
+    <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="BoundingSphere.cpp" />
+    <ClCompile Include="BucketAllocator.cpp" />
+    <ClCompile Include="CallBack.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="CameraEntity.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CustomRenderer.cpp" />
+    <ClCompile Include="DataAsset.cpp" />
+    <ClCompile Include="DefaultAllocator.cpp" />
+    <ClCompile Include="DeferredLightRendererPass.cpp" />
+    <ClCompile Include="DeferredRenderer.cpp" />
+    <ClCompile Include="DeferredRendererPass.cpp" />
+    <ClCompile Include="DefMemory.cpp" />
+    <ClCompile Include="DelayedPointerDeletionManager.cpp" />
+    <ClCompile Include="DepthRendererPass.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DeviceBase.cpp" />
+    <ClCompile Include="DeviceContext.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DualThreadAllocator.cpp" />
+    <ClCompile Include="DX11Device.cpp" />
+    <ClCompile Include="DX11DeviceContext.cpp" />
+    <ClCompile Include="DX11GpuBuffer.cpp" />
+    <ClCompile Include="DX11Material.cpp" />
+    <ClCompile Include="DX11MaterialInstance.cpp" />
+    <ClCompile Include="DX11Mesh.cpp" />
+    <ClCompile Include="DX11OceanSimulator.cpp" />
+    <ClCompile Include="DX11RenderState.cpp" />
+    <ClCompile Include="DX11RenderStateMgr.cpp" />
+    <ClCompile Include="DX11Shader.cpp" />
+    <ClCompile Include="DX11ShaderInstance.cpp" />
+    <ClCompile Include="DX11SurfaceView.cpp" />
+    <ClCompile Include="DX11Texture.cpp" />
+    <ClCompile Include="DX11TextureArray.cpp" />
+    <ClCompile Include="DynamicHeapAllocator.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
+    <ClCompile Include="EntityMgr.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontEngine.cpp" />
+    <ClCompile Include="Foundation.cpp" />
+    <ClCompile Include="FrameAniComponet.cpp" />
+    <ClCompile Include="FrontRenderer.cpp" />
+    <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="GameplayAbility.cpp" />
+    <ClCompile Include="GameplayAbilitySpec.cpp" />
+    <ClCompile Include="GameplayAbilityTypes.cpp" />
+    <ClCompile Include="GameplayTagContainer.cpp" />
+    <ClCompile Include="GameplayTagNode.cpp" />
+    <ClCompile Include="GameplayTagsManager.cpp" />
+    <ClCompile Include="GpuBuffer.cpp" />
+    <ClCompile Include="GpuBufferBase.cpp" />
+    <ClCompile Include="GpuProfiler.cpp" />
+    <ClCompile Include="GraphicEngine.cpp" />
+    <ClCompile Include="GuiEngine.cpp" />
+    <ClCompile Include="GuiEntity.cpp" />
+    <ClCompile Include="GuiRenderer.cpp" />
+    <ClCompile Include="GuiRendererPass.cpp" />
+    <ClCompile Include="InputMgr.cpp" />
+    <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="LightEngine.cpp" />
+    <ClCompile Include="LightEntity.cpp" />
+    <ClCompile Include="LightMeshRendererPass.cpp" />
+    <ClCompile Include="LightRenderer.cpp" />
+    <ClCompile Include="LogAssert.cpp" />
+    <ClCompile Include="LowLevelDefaultAllocator.cpp" />
+    <ClCompile Include="LuaBind.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialBase.cpp" />
+    <ClCompile Include="MaterialInstance.cpp" />
+    <ClCompile Include="MaterialInstanceBase.cpp" />
+    <ClCompile Include="MathLib.cpp" />
+    <ClCompile Include="MathLibSSE.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="MemoryHelper.cpp" />
+    <ClCompile Include="MemoryMgr.cpp" />
+    <ClCompile Include="MemoryProfiler.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshBase.cpp" />
+    <ClCompile Include="MeshInstance.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelInstance.cpp" />
+    <ClCompile Include="Mutex.cpp" />
+    <ClCompile Include="NoLightRendererPass.cpp" />
+    <ClCompile Include="OceanEntity.cpp" />
+    <ClCompile Include="OceanModelInstance.cpp" />
+    <ClCompile Include="OceanSimulator.cpp" />
+    <ClCompile Include="OceanSimulatorBase.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PlatformMutex.cpp" />
+    <ClCompile Include="PlatformThread.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Refcount.cpp" />
+    <ClCompile Include="RenderChunk.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RendererPass.cpp" />
+    <ClCompile Include="RenderState.cpp" />
+    <ClCompile Include="RenderStateMgr.cpp" />
+    <ClCompile Include="RenderStateMgrBase.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="ResourceMgr.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneController.cpp" />
+    <ClCompile Include="ScriptEngine.cpp" />
+    <ClCompile Include="ScriptEntity.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderBase.cpp" />
+    <ClCompile Include="ShaderInstance.cpp" />
+    <ClCompile Include="ShaderInstanceBase.cpp" />
+    <ClCompile Include="ShadowEffect.cpp" />
+    <ClCompile Include="ShadowMapRendererPass.cpp" />
+    <ClCompile Include="SkeletonAniComponent.cpp" />
+    <ClCompile Include="SkyBoxEntity.cpp" />
+    <ClCompile Include="SkyEntity.cpp" />
+    <ClCompile Include="SoftShadowRendererPass.cpp" />
+    <ClCompile Include="SoundEngine.cpp" />
+    <ClCompile Include="SoundEntity.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="StackAllocator.cpp" />
+    <ClCompile Include="SurfaceView.cpp" />
+    <ClCompile Include="SurfaceViewBase.cpp" />
+    <ClCompile Include="TerrainEntity.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureArray.cpp" />
+    <ClCompile Include="TextureBase.cpp" />
+    <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="ThreadHelper.cpp" />
+    <ClCompile Include="ThreadsafeLinearAllocator.cpp" />
+    <ClCompile Include="TimerClock.cpp" />
+    <ClCompile Include="TimerEngine.cpp" />
+    <ClCompile Include="TLSAllocator.cpp" />
+    <ClCompile Include="Tlsf.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransparentRendererPass.cpp" />
+    <ClCompile Include="UIAnimation.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIFactory.cpp" />
+    <ClCompile Include="UIImage.cpp" />
+    <ClCompile Include="UILabel.cpp" />
+    <ClCompile Include="UIWnd.cpp" />
+    <ClCompile Include="VertexFormat.cpp" />
+    <ClCompile Include="VoxelBrush.cpp" />
+    <ClCompile Include="VoxelChunk.cpp" />
+    <ClCompile Include="VoxelMgr.cpp" />
+    <ClCompile Include="VoxelTerrainBuild.cpp" />
+    <ClCompile Include="VoxelTerrainEditor.cpp" />
+    <ClCompile Include="Win.cpp" />
+    <ClCompile Include="WLEngine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Run\Script\frame\GameState.lua" />
+    <None Include="..\Run\Script\frame\MainFrameInc.lua" />
+    <None Include="..\Run\Script\frame\MsgInc.lua" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

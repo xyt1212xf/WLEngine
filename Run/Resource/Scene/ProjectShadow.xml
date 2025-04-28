@@ -1,0 +1,12 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 4, -10" LookAt="0, 4, -9" />
+	</Camera>
+	<Light>
+		<item Name="Position0" Shadow = 1 LightType=1 Position="-5, 8, -5" LightDirection="0,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+	<Actor>
+		<item Name="bath" Mesh="Resource/Mesh/cube.txt" Visible=1 Position="-2, 2, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/bathNoShader.ma" Type=1 />
+		<item Name="ground" Mesh="Resource/Mesh/plane01.txt" Visible=1 Position="0, 1, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/planeMaterialNoShader.ma" Type=1 />
+	</Actor>
+</version>

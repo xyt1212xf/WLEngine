@@ -1,0 +1,35 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------------------------
+// 光照阶段 
+//--------------------------------------------------------------------------------------
+struct PointLight
+{
+    float3 posV;
+    float4 color;
+	float fRange;
+	float direction;
+};
+
+struct DirectionLight
+{
+    float4 color;
+	float fRange;
+	float direction;
+};
+
+//点光源
+StructuredBuffer<PointLight> gPointLights : register(t4);
+
+//方向光源
+StructuredBuffer<DirectionLight> gDirectionLights : register(t5);
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psMain() : SV_TARGET
+{
+	return float4(0,0,0,1);
+}

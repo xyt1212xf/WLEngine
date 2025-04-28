@@ -1,0 +1,7 @@
+<version ID="1.0">
+	<Window name="Hierarchy" x="0" y="0" width="300" height="603" style="WndDefault"/>
+	<Font name="resource/Font/styleFont" color="0,0,0,1" size="16,16" />
+	<Button name="Create" text="CreateEntity" x="0" y="0" width="100" height="20" style="default"/>
+	<EditBox name="FindEntity" text="Find" x="100" y="0" width="200" height="20" color="0,0,0,1" size="14,14" fontStyle="default" style="default" />
+	<List name="Actors" text="" x="0" y="20" width="300" height="400" style="default"/>
+</version>

@@ -1,0 +1,1216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{bf2729cf-9a21-4a72-8460-e56d3e795735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputControll">
+      <UniqueIdentifier>{b6d5eb78-0bc1-4404-adb6-d95ed7d6ca11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{325bc75f-0024-4b4b-a4a2-a93bafa712c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AirResource">
+      <UniqueIdentifier>{6a60d3a7-59f6-4576-b5ca-e53dd0de87fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AirResource\Material">
+      <UniqueIdentifier>{bb126688-d186-4129-88ee-65b2c57ff926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AirResource\Model">
+      <UniqueIdentifier>{96cb7087-a1cd-4cd2-81a1-11c49e991e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AirResource\Shader">
+      <UniqueIdentifier>{52444f81-77ae-4b4d-aaeb-8cbc3d385fe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{549c561b-b1dc-41bb-a6c6-eb75a0947b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{70a47afe-8442-4236-a459-38dde7e9afb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\BaseEngine">
+      <UniqueIdentifier>{dc0fc2cc-8d55-43c6-bc1b-c455a686b24f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Component">
+      <UniqueIdentifier>{4422dc49-8227-4af3-98b7-477d07c05089}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Light">
+      <UniqueIdentifier>{5e73443a-02f0-4fa5-a49a-344555695f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{51d046cb-f8ad-4c33-b7a3-8536432dd982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{c57bea9c-da69-4222-93c9-d12eabca9595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Thread">
+      <UniqueIdentifier>{e6c47995-2cf6-436e-a7e7-e6b98ec4ec76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Voxel">
+      <UniqueIdentifier>{52db99d8-235b-4af7-b4d5-d6cd39b3fbb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Entity\Ocean">
+      <UniqueIdentifier>{623da68a-9346-4d3c-ae66-ed7579caceea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity\Terrain">
+      <UniqueIdentifier>{2c6a7b4a-1db8-46a3-b1ed-1593d38522d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource\Instance">
+      <UniqueIdentifier>{ed91fdc0-c97c-49f5-b99a-21206d562682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frame">
+      <UniqueIdentifier>{100c9d9d-aef8-447c-a27a-48545f406abc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp">
+      <UniqueIdentifier>{0594194b-425d-41fc-bc0f-56e82bcd5bac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic">
+      <UniqueIdentifier>{6c5643bd-9363-4e1f-8eb6-169d9d8d1b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\DX11">
+      <UniqueIdentifier>{8b821648-b56b-40bb-bf89-255e1562c38e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Effect">
+      <UniqueIdentifier>{f1ae796b-b3d4-4656-b0d8-beccee10b98f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Renderer">
+      <UniqueIdentifier>{b2f0b055-0cb6-4f20-adfa-d23f41aaf5fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Renderer\RendererPass">
+      <UniqueIdentifier>{329727fd-f149-41f3-9a27-d52248b39671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Instance\DX11">
+      <UniqueIdentifier>{4e1e1b92-d36e-44e5-a4de-b6907531807e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Script">
+      <UniqueIdentifier>{a6b73211-87a1-47cd-a0f4-df58265c51e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{644cf3dd-9fdd-41e0-8990-be34d6760868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Font">
+      <UniqueIdentifier>{69a047e4-33c2-4181-9476-935cd44564d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtraLibrary">
+      <UniqueIdentifier>{16c7df53-f24f-49ca-a19c-013341a9cc4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtraLibrary\Json">
+      <UniqueIdentifier>{8ac1bd18-684a-41e7-917e-f4d9e6fc94d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame">
+      <UniqueIdentifier>{c65bf238-daaf-45a5-9574-2bde2cbce9c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Component\BehaviorTree">
+      <UniqueIdentifier>{ddfd77c6-2ecb-437e-825e-d8cbff2c3633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\GameplayTagSystem">
+      <UniqueIdentifier>{3ac984bf-0b22-496a-9274-747d7ffcb4cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\GameplayAbilitySystem">
+      <UniqueIdentifier>{4def4e50-ee41-4be3-bc5f-c09ed0d42ec7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Font.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuBufferBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFactory.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMgr.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Instance.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialInstance.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialInstanceBase.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshInstance.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelInstance.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderInstance.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderInstanceBase.h">
+      <Filter>Resource\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="WLEngine.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>InputControll</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>InputControll</Filter>
+    </ClInclude>
+    <ClInclude Include="GameController.h">
+      <Filter>InputControll</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMgr.h">
+      <Filter>InputControll</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneController.h">
+      <Filter>InputControll</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIFactory.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIHeader.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIImage.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UILabel.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIWnd.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicOps.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CallBack.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassType.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DefineType.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Foundation.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FoundationStruct.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuProfiler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="LogAssert.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="NonCopyable.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Refcount.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TSingle.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeUtilties.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBase.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityMgr.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerClock.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerEngine.h">
+      <Filter>Core\BaseEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="LightEntity.h">
+      <Filter>Core\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBox.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingSphere.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathLib.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathLibSSE.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="AllocationHeader.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="AllocatorLabelNames.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="AllocatorLabels.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="BucketAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="DefMemory.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="DelayedPointerDeletionManager.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="DualThreadAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicHeapAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="LowLevelDefaultAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryCookie.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryHelper.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryMgr.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryProfiler.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="StackAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadsafeLinearAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TLSAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Tlsf.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TlsfBits.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicNode.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicQueue.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutex.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformMutex.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformThread.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadHelper.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelBrush.h">
+      <Filter>Core\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelChunk.h">
+      <Filter>Core\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelMgr.h">
+      <Filter>Core\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelTerrainBuild.h">
+      <Filter>Core\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelTerrainEditor.h">
+      <Filter>Core\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBoxEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="OceanEntity.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11FFT_Plan.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11OceanSimulator.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT_Plan.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="OceanModelInstance.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="OceanSimulator.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="OceanSimulatorBase.h">
+      <Filter>Entity\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainEntity.h">
+      <Filter>Entity\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>GameApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceBase.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceContext.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicHead.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderState.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStateHeader.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStateMgr.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStateMgrBase.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceView.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceViewBase.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexFormat.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Device.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11DeviceContext.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11GpuBuffer.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Material.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Mesh.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11RenderState.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11RenderStateMgr.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Shader.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11SurfaceView.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11TextureArray.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>Graphic\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowEffect.h">
+      <Filter>Graphic\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomRenderer.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontRenderer.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiRenderer.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="LightRenderer.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderChunk.h">
+      <Filter>Graphic\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredLightRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="LightMeshRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="NoLightRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftShadowRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="TransparentRendererPass.h">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11ShaderInstance.h">
+      <Filter>Resource\Instance\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11MaterialInstance.h">
+      <Filter>Resource\Instance\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaBind.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="ParseParam.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptEntity.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>ExtraLibrary\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json_fwd.hpp">
+      <Filter>ExtraLibrary\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsonHeader.h">
+      <Filter>ExtraLibrary\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEntity.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiEngine.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="LightEngine.h">
+      <Filter>Core\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicEngine.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptEngine.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="FontEngine.h">
+      <Filter>Graphic\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Win.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11UnDef.h">
+      <Filter>Graphic\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletonAniComponent.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameAniComponet.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UIAnimation.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTree.h">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorNode.h">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorBaseNode.h">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayHeader.h">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayTagsManager.h">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayTagNode.h">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayTagContainer.h">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayAbility.h">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="AbilitySystemComponent.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayAbilitySpec.h">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayAbilityTypes.h">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayAbilitySpecHandle.h">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="AttributeSet.h">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="DataAsset.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Font.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuBufferBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMgr.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Instance.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialInstance.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialInstanceBase.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshInstance.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelInstance.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderInstance.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderInstanceBase.cpp">
+      <Filter>Resource\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="WLEngine.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>InputControll</Filter>
+    </ClCompile>
+    <ClCompile Include="GameController.cpp">
+      <Filter>InputControll</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMgr.cpp">
+      <Filter>InputControll</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneController.cpp">
+      <Filter>InputControll</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIFactory.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIImage.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UILabel.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWnd.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="CallBack.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Foundation.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuProfiler.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="LogAssert.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Refcount.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityMgr.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerClock.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerEngine.cpp">
+      <Filter>Core\BaseEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LightEntity.cpp">
+      <Filter>Core\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBox.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingSphere.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathLib.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathLibSSE.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Quaternion.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="AllocationHeader.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="AllocatorLabels.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="BucketAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="DefMemory.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="DelayedPointerDeletionManager.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="DualThreadAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicHeapAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="LowLevelDefaultAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryHelper.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryMgr.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryProfiler.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="StackAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadsafeLinearAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="TLSAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Tlsf.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="AtomicNode.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="AtomicQueue.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformMutex.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformThread.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadHelper.cpp">
+      <Filter>Core\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelBrush.cpp">
+      <Filter>Core\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelChunk.cpp">
+      <Filter>Core\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelMgr.cpp">
+      <Filter>Core\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelTerrainBuild.cpp">
+      <Filter>Core\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelTerrainEditor.cpp">
+      <Filter>Core\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBoxEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="OceanEntity.cpp">
+      <Filter>Entity\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11OceanSimulator.cpp">
+      <Filter>Entity\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="OceanModelInstance.cpp">
+      <Filter>Entity\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="OceanSimulator.cpp">
+      <Filter>Entity\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="OceanSimulatorBase.cpp">
+      <Filter>Entity\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainEntity.cpp">
+      <Filter>Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>GameApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceBase.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceContext.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderState.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStateMgr.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStateMgrBase.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceView.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceViewBase.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexFormat.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Device.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11DeviceContext.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11GpuBuffer.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Material.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Mesh.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11RenderState.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11RenderStateMgr.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Shader.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11SurfaceView.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11TextureArray.cpp">
+      <Filter>Graphic\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Graphic\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowEffect.cpp">
+      <Filter>Graphic\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomRenderer.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRenderer.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontRenderer.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiRenderer.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="LightRenderer.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderChunk.cpp">
+      <Filter>Graphic\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredLightRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="LightMeshRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="NoLightRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftShadowRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="TransparentRendererPass.cpp">
+      <Filter>Graphic\Renderer\RendererPass</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11ShaderInstance.cpp">
+      <Filter>Resource\Instance\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11MaterialInstance.cpp">
+      <Filter>Resource\Instance\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaBind.cpp">
+      <Filter>Script</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptEntity.cpp">
+      <Filter>Script</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEntity.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiEngine.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="LightEngine.cpp">
+      <Filter>Core\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicEngine.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptEngine.cpp">
+      <Filter>Script</Filter>
+    </ClCompile>
+    <ClCompile Include="FontEngine.cpp">
+      <Filter>Graphic\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Win.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityFactory.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletonAniComponent.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameAniComponet.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="UIAnimation.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorTree.cpp">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorNode.cpp">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorBaseNode.cpp">
+      <Filter>Core\Component\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayTagsManager.cpp">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayTagNode.cpp">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayTagContainer.cpp">
+      <Filter>Core\GameplayTagSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayAbility.cpp">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="AbilitySystemComponent.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayAbilitySpec.cpp">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayAbilityTypes.cpp">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="AttributeSet.cpp">
+      <Filter>Core\GameplayAbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="DataAsset.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Run\Script\frame\MsgInc.lua">
+      <Filter>GameFrame</Filter>
+    </None>
+    <None Include="..\Run\Script\frame\MainFrameInc.lua">
+      <Filter>GameFrame</Filter>
+    </None>
+    <None Include="..\Run\Script\frame\GameState.lua">
+      <Filter>GameFrame</Filter>
+    </None>
+  </ItemGroup>
+</Project>

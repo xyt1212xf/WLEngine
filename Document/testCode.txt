@@ -1,0 +1,17 @@
+					Matrix44 matX, matY, matZ, mat;
+					D3DXMATRIX X, Y, Z, M;
+					D3DXMatrixRotationX(&X, -0.4f);
+					D3DXMatrixRotationY(&Y, -0.5f);
+					D3DXMatrixRotationZ(&Z, -0.7f);
+					M = X * Y * Z;
+					Math::matrixIdentity(&matX);
+					Math::matrixIdentity(&matY);
+					Math::matrixIdentity(&matZ);
+					float x, y, z;
+				 	Math::matrixRotationX(&matX, 0.0f);
+					Math::matrixRotationY(&matY, -0.05f);
+					Math::matrixRotationZ(&matZ, -0.7f);
+					mat = matZ * matY * matX;
+					Math::matrixToEulerian_ZYX(&mat, x, y, z);
+					mat = matX * matY * matZ;
+					Math::matrixToEulerian_XYZ(&mat, x, y, z);

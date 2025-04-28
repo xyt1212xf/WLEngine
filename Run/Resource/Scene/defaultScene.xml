@@ -1,0 +1,10 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="100, 5, -10" LookAt="100, 5, 0" />
+	</Camera>
+	<Terrain>
+		<item Position="0, 0, 0" />
+		<item Height="Resource/Scene/defaultScene.bmp" />
+		<item Material="resource/Material/terrainMaterial.ma" />
+	</Terrain>
+</version>

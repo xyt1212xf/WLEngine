@@ -1,0 +1,45 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+#include "lightConstBuffer.hlsl"
+/////////////
+// GLOBALS //
+/////////////
+Texture2D shaderTexture;
+SamplerState SampleType;
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+	float2 velocityUV : TEXCOORD1;
+};
+
+
+struct PixelOutputType
+{
+    float4 color : SV_Target0;
+    float4 pixelVelocity : SV_Target1;
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+PixelOutputType psShader(PixelInputType input) : SV_TARGET
+{
+	PixelOutputType output;
+	
+	// Sample the color from the texture and store it for output to the render target.
+	output.color = shaderTexture.Sample(SampleType, input.tex);   
+	
+	// Store the normal for output to the render target.
+	output.pixelVelocity = float4(input.velocityUV.xy, 1, 1);
+	output.pixelVelocity = float4(1, 1, 1, 1);
+	return output;
+}

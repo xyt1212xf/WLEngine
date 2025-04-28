@@ -1,0 +1,26 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="-0, 0, -10" LookAt="-0, 0, -9" />
+	</Camera>
+	<Light>
+		<item Name="Sun" LightType=0 Position="0, 6, 8" LightDirection="0,-1,0.5" AmbientColor ="0.15,0.15,0.15,1" DiffuseColor ="1,1,1,1" SpecularColor="0,0,0,0" />
+	</Light>
+	<Actor>
+		<!--
+		<item Name="ground0" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="-2, 0, -2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground1" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="0, 0, -2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground2" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="2, 0, -2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		
+		<item Name="ground3" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="-2, 0, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground4" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="0, 0, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground5" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="2, 0, 0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		
+		<item Name="ground6" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="-2, 0, 2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground7" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="0, 0, 2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="ground8" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="2, 0, 2" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />	
+		-->
+		<item Name="ground" Mesh="Resource/Mesh/Default/cube.m" Visible=1 Position="-0, 0, -0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+		<item Name="brush" Mesh="Resource/Mesh/Default/brush.m" Visible=1 Position="0, 0, -1.0" Scale ="1,1,1" Rotation ="0,0,0" Material="Resource/Material/depthBuffer.ma" Type=1 />
+	</Actor>
+</version>
+

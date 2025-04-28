@@ -1,0 +1,10 @@
+config = 
+{
+	voxel = 0,
+	voxelModel="resource/Model/cube.md",
+	chunkSize = "100,0,100",
+	length = 1024,
+	width = 1024,
+	height = 1024,
+	position="0,0,0",
+}

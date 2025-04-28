@@ -1,0 +1,7 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 0, -10" LookAt="0, 0, -9" />
+	</Camera>
+	<Actor>
+	</Actor>
+</version>

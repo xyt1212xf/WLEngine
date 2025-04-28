@@ -1,0 +1,77 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+//#include "lightConstBuffer.hlsl"
+/////////////
+// GLOBALS //
+/////////////
+cbuffer Globla : register(b0)
+{
+    matrix lightViewMatrix;
+    matrix lightProjectionMatrix;
+};
+
+//positionTexture
+Texture2D positionTextures : register(ps, t0);
+SamplerState positionSample : register(ps, s0);
+
+//colorTexture
+Texture2D colorTexture : register(ps, t1);
+SamplerState colorSample : register(ps, s1);
+
+//depthTexture
+Texture2D depthTexture : register(ps, t2);
+SamplerState depthSample : register(ps, s2);
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 psMain(PixelInputType input) : SV_TARGET
+{
+    float4 color = colorTexture.Sample(colorSample, input.tex);
+	return color;
+	if(color.a > 0 )
+	{
+        float bias = 0.00035f;
+        float depthValue;
+        float lightDepthValue;
+		
+		float4 pos = positionTextures.Sample(positionSample, input.tex);
+		pos = mul(pos, lightViewMatrix);
+		pos = mul(pos, lightProjectionMatrix);
+			
+		// Calculate the projected texture coordinates.
+        float2 uv = (pos.xy / pos.w) * 0.5f + 0.5f;
+		uv.y = 1 - uv.y;
+		uv = saturate(uv);
+		
+		// Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
+		depthValue = depthTexture.Sample(depthSample, uv).r;
+		// Calculate the depth of the light. // Subtract the bias from the lightDepthValue.
+		lightDepthValue = pos.z / pos.w - bias;
+			
+		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
+		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
+		if(lightDepthValue > depthValue)
+		{
+			color *= float4(0.6, 0.6, 0.6, 1);
+		}
+	}
+	else
+	{
+		discard;
+	}
+	
+    return color;
+}

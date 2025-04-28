@@ -1,0 +1,29 @@
+<version ID="1.0">
+	<Camera>
+		<item Name="MainCamera" Eye="0, 1011, -1310" LookAt="0, 1010, -1315" NearPlane=1 FarPlane=20000 />
+	</Camera>
+	<Sky>
+		<item Name="Sky" Position="0, 854, -1225" Model="Resource/Model/sky.md" Visible=1 />
+	</Sky>
+
+	<Terrain>
+		<item Name="WL" Position="-0, 0, 0" Model="Resource/Terrain/WL.te" Visible=1 />
+	</Terrain>
+	
+	<Ocean>
+		<item Name="Ocean" Model="Resource/Model/ocean.md" Position="-0, 0, 0" Visible=1 />
+	</Ocean>
+
+	<Light>
+		<item Name="Point0" LightType=0 Position="0, 1000, -1225" Range="270" Direction="0,-1,0.5" Color ="1.0,0.0,0.1,1" />
+		<item Name="Point1" LightType=0 Position="20, 1000, -1225" Range="270" Direction="0,-1,0.5" Color ="0.0,1.0,0.1,1" />
+	</Light>
+	
+	<Actor>
+		<item Name="StartNode" Model="Resource/Model/csTest.md" Visible=1 Position="12, 994, -1359" Scale ="1,1,1" Rotation ="0,0,0"/>
+		<item Name="MiniWan" Model="Resource/Model/MiniWan.md" Visible=1 Position="0, 990, -1359" Scale ="1,1,1" Rotation ="0,1,0"/>	
+		<item Name="MiniWan" Model="Resource/Model/MiniWan.md" Visible=1 Position="10, 990, -1359" Scale ="1,1,1" Rotation ="0,1,0"/>	
+		<item Name="MiniWan" Model="Resource/Model/MiniWan.md" Visible=1 Position="-10, 990, -1359" Scale ="1,1,1" Rotation ="0,1,0"/>	
+	
+	</Actor>
+</version>

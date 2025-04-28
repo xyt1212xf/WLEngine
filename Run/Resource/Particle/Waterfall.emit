@@ -1,0 +1,16 @@
+
+emitter = 
+{
+	meshPath = "";
+	typeName = "waterfall",	
+	typePath = "Resource/Material/Waterfall.ma";
+	Speed = 10,
+	Frequency = 0.3,
+	LiveTime = "500,400",			--粒子产生的生命值范围
+	EmitCreateCount = "10,19",		--每次产生的数量
+	Range = "1000,1000,1000",		--粒子发射器的范围
+	InitPos = "1,10,2,20",			--粒子产生的随机位置,第0位表示是否使用信息
+	InitScale = "0,0,0,0",			--粒子产生的随机缩放,第0位表示是否使用信息
+	InitRotation = "0,0,0,0",		--粒子产生的随机旋转,第0位表示是否使用信息
+	Size = "2, 2, 0",				--粒子大小
+}

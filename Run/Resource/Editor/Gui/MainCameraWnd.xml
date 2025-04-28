@@ -1,0 +1,5 @@
+<version ID="1.0">
+	<Window name="MainCameraWnd" text="22" x="0" y="0" width="300" height="478" style="WndDefault"/>
+	<Font name="resource/Font/styleFont" color="1,0,0,1" size="24,24" />
+	<Image name="Image" x="20" y="40" width="280" height="180" style="defalut"/>
+</version>

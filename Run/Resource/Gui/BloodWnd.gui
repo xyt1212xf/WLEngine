@@ -1,0 +1,28 @@
+{
+	"Wnd":
+	{
+		"position":"0,0,0",
+		"size":"1280,20",
+		"rotation":"0,0,0",
+		"texture":"resource/Texture/Gui/BG.png",
+		"children":
+		[
+			{
+				"type":1,
+				"id":1,
+				"position":"0,0,0",
+				"size":"108,20",
+				"rotation":"0,0,0",
+				"texture":"resource/Texture/Gui/Blood.png"
+			},
+			{
+				"type":1,
+				"id":2,
+				"position":"400,0,0",
+				"size":"108,20",
+				"rotation":"0,0,0",
+				"texture":"resource/Texture/Gui/Blood.png"
+			}
+		]
+	}
+}

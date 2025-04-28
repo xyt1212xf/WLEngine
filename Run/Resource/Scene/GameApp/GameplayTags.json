@@ -1,0 +1,20 @@
+{
+	"Tags":
+	{
+		"Node":
+		[
+			{
+				"TagName":"InputUserSettings.Profiles.Default"
+			},
+			{
+				"TagName":"InputUserSettings.FailureReasons.InvalidMappingName"
+			},
+			{
+				"TagName":"InputUserSettings.Profiles.Define"
+			},
+			{
+				"TagName":"Test.Gameplay.Attack"
+			}
+		]
+	}
+}
