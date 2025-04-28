@@ -16,7 +16,6 @@ function BaWangWan:InitActor(x, y, level)
 	local xx = GameplayTag:New()
 	xx:setName("gametag")
 	xx:getName()
-	xx = nil
 	local robotName = "BaWangWan"
 	self:Init(robotName, x, y)
 	self:SetName("computerActor->BaWangWan")
