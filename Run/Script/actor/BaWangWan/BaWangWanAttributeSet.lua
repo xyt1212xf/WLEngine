@@ -1,15 +1,16 @@
 require("script/gas/GameAttributeData")
 require("script/gas/GameAttributeSet")  
+require("script/actor/BaWangWan/BaWangWanStartUpData")  
 
-BaWangWanAttributeSet = setmetatable({}, GameAttributeSet)
+BaWangWanAttributeSet = {}
 BaWangWanAttributeSet.__index = BaWangWanAttributeSet
-
+setmetatable(BaWangWanAttributeSet, GameAttributeSet) -- 
 
 function BaWangWanAttributeSet:New()
-    local newInstance = {}
-    setmetatable(newInstance, BaWangWanAttributeSet)
-    newInstance.cObject = CAttributeSet:New()
-    newInstance.cObject:doBreak()
+
+    local instance = setmetatable({}, self)
+    instance.cObject = CAttributeSet:New()
+    instance.cObject:doBreak()
     self.currentHealth = GameAttributeData:New()
 	self.maxHealth = GameAttributeData:New()
 	self.currentRage = GameAttributeData:New()
@@ -17,12 +18,11 @@ function BaWangWanAttributeSet:New()
 	self.attackPower = GameAttributeData:New()
 	self.defensePower = GameAttributeData:New()
 
-    return newInstance
+    return instance
 end
 
 function BaWangWanAttributeSet:StartUpData()
     local Data = BaWangWanStartUpData:New()
-   
     self.currentHealth.baseValue = 0
     self.currentHealth.currentValue = 0
     self.currentRage.baseValue = 0
@@ -35,7 +35,7 @@ function BaWangWanAttributeSet:StartUpData()
     self.attackPower.baseValue = Data.attackPower[1]
     self.attackPower.currentValue = Data.attackPower[1]
     self.defensePower.baseValue = Data.defensePower[1]
-    self.defensePower.currentValue = Data.defensePower[1]
+    self.defensePower.currentValue = Data.defensePower[1]    
 end
 
 

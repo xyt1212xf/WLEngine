@@ -40,6 +40,8 @@ local function InitData()
 	}
 end
 
+InitData()
+
 function BaWangWanStartUpData:New()
 	local newInstance = deepCopy(self)
 	return newInstance

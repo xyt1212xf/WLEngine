@@ -42,13 +42,15 @@ function SceneUI:Init()
 	}
 	InitialiseGameplayTags()
 	local player = self.Roles[1]
+	print(player)
 	player:Init("BaWangWan", 150, 480)
 	player:SetName("Player1")
 	player:SetState(RoleStateEnum.stand)
 
 	local computerActor = self.Robot[1]
+	print(computerActor)
 	computerActor:InitActor(750, 480, 1)
-	
+	computerActor:Test()	
 	RealPlayer = player
 	RobotPlayer = computerActor
 

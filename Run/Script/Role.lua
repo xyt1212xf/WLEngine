@@ -37,7 +37,6 @@ function Role:AddComponent(szName)
 	self.entity:addComponent(szName)
 end
 
-
 function Role:SetState(index)
     if index == self.currentStateEnum then
         return
@@ -82,6 +81,7 @@ function Role:LoadState(szName)
 end
 
 function Role:OnTick()
+
     if self.currentState then
         self.currentState:OnTick()
     end
@@ -135,6 +135,7 @@ function Role:GetPosition()
 end
 
 function Role:TurnRound()
+    
     if self.currentState then
         local actor = self.currentState:GetActor()
         if actor then
@@ -142,4 +143,6 @@ function Role:TurnRound()
         end
     end
 end
+
+
 

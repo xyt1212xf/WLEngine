@@ -16,8 +16,8 @@ function InitialiseGameplayTags()
 	Player_Event_Unequip_Weapon = GameplayTag:New()
 	Player_Event_Unequip_Weapon:setName("Player.Event.Unequip.Weapon")
 
-	Player_Event_Vertigo = GameplayTag:New()
-	Player_Event_Vertigo:setName("Player.Event.Vertigo")
+	Player_Event_Rage = GameplayTag:New()
+	Player_Event_Rage:setName("Player.Event.Rage")
 
 	Player_Event_Anger = GameplayTag:New()
 	Player_Event_Anger:setName("Player.Event.Anger")
@@ -25,10 +25,13 @@ end
 
 function UnInitialiseGameplayTags()
 	InputTag_Move = nil
-	InputTag_LightAttack_Weapon = nil
-	InputTag_HeavyAttack_Weapon = nil
+	InputTag_LightAttack = nil
+	InputTag_HeavyAttack = nil
 	Player_Event_Equip_Weapon = nil
 	Player_Event_Unequip_Weapon = nil 
-	Player_Event_Vertigo = nil 
+	Player_Event_Rage = nil 
 	Player_Event_Anger = nil
 end
+
+
+
