@@ -35,6 +35,7 @@ namespace WL
 			mpScene->_update(dTime);
 			m_SceneMutex.unlock();
 		}
+		OPTICK_EVENT();
 		CGuiEngine::_update(dTime);
 		CScriptEngine::_update(dTime);
 		CSoundEngine::_update(dTime);

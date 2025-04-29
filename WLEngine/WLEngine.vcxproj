@@ -118,7 +118,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
-      <AdditionalIncludeDirectories>$(SolutionDir)Lua;$(SolutionDir)TinyXML\;$(solutiondir)ThirdLibrary\DX\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lua;$(SolutionDir)TinyXML\;$(solutiondir)ThirdLibrary\DX\Include;$(solutiondir)ThirdLibrary\OpTick\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessToFile>false</PreprocessToFile>
       <AdditionalOptions>/Bt+ %(AdditionalOptions)</AdditionalOptions>
@@ -128,8 +128,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Lua_D.lib;TinyXML_D.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;$(SolutionDir)ThirdLibrary\Optick\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Lua_D.lib;TinyXML_D.lib;OptickCore.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)Run\$(TargetName)_D$(TargetExt)</OutputFile>
       <ImportLibrary>$(ProjectDir)x64\Debug\$(TargetName).lib</ImportLibrary>
     </Link>

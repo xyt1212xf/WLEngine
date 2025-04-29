@@ -1,5 +1,5 @@
 #pragma once
-
+#include "optick.h"
 #include "TSingle.h"
 #include "GraphicEngine.h"
 #include "InputMgr.h"

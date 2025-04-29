@@ -55,6 +55,7 @@ namespace WL
 		MSG msg = { 0 };
 		while (msg.message != WM_QUIT)
 		{
+			OPTICK_FRAME("MainThread");
 			if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
