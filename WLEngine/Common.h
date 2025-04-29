@@ -132,4 +132,16 @@ namespace WL
 		commandType nTyep = commandType::Invalid;
 		void* pData = nullptr;
 	};
+	
+	class CNoncopyable
+	{
+	protected:
+		// ensure the class cannot be constructed directly
+		CNoncopyable() {}
+		// the class should not be used polymorphically
+		~CNoncopyable() {}
+	private:
+		CNoncopyable(const CNoncopyable&);
+		CNoncopyable& operator=(const CNoncopyable&);
+	};
 }
