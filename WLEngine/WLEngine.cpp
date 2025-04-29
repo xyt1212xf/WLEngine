@@ -81,12 +81,13 @@ namespace WL
 #endif
 		CGameplayTagsManager::initializeManager();
 		CBehaviorTreeMgr::regBTreeToScrpit();
-		doFile("script/GameApp.lua", "start");
+		doFile("script/GameApp.lua", "ScriptStart");
 		return bValue;
 	}
 
 	void CEngine::unInitialize()
 	{
+		doString("ScriptEnd()");
 		CGameplayTagsManager::unInitializeManager();
 		CBehaviorTreeMgr::unRegBTreeToScrpit();
 		WL_DECREASE(mpVoxelMgr);

@@ -2,6 +2,7 @@
 require("script/RoleConfig")
 require("script/State")
 
+
 Role = {}
 Role.__index = Role
 

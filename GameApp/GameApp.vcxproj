@@ -161,6 +161,7 @@
     <None Include="..\Run\Script\GameApp.lua" />
     <None Include="..\Run\Script\GameAttributeSet.lua" />
     <None Include="..\Run\Script\GameMainUI.lua" />
+    <None Include="..\Run\Script\GameplayTags.lua" />
     <None Include="..\Run\Script\gas\GameAttributeData.lua" />
     <None Include="..\Run\Script\LoginUI.lua" />
     <None Include="..\Run\Script\main.lua" />

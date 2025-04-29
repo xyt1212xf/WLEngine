@@ -122,5 +122,8 @@
     <None Include="..\Run\Script\actor\BaWangWan\BaWangWanStartUpData.lua">
       <Filter>GameLogic\actor\BaWangWan</Filter>
     </None>
+    <None Include="..\Run\Script\GameplayTags.lua">
+      <Filter>GameLogic</Filter>
+    </None>
   </ItemGroup>
 </Project>

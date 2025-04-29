@@ -10,7 +10,8 @@ GameApp =
 gApp = GameApp
 
 local gameState = nil
-function start()
+function ScriptStart()
+	InitialiseGameplayTags()
 	initBT()
 	MainPlayerInit()
 	gApp:ChangeGameState(EGameState.eToLogin)
@@ -35,7 +36,9 @@ function GameApp:ChangeGameState(state)
 end
 
 
-
+function ScriptEnd()
+	UnInitialiseGameplayTags()
+end
 
 
 
