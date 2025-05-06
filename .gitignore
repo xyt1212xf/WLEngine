@@ -189,3 +189,5 @@ bin-release/
 /WLEngine/*.i
 *.cppcheck
 /FontSDF/x64/Release
+/Run/Resource/.vscode
+/Run/Script/.vscode

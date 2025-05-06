@@ -30,7 +30,19 @@ namespace WL
 		{
 			return mTagName.length() > 0 ? true : false;
 		}
-		
+
+		bool matchesTag(const GameplayTag& TagToCheck) const;
+
+		FORCEINLINE bool matchesTagExact(const GameplayTag& TagToCheck) const
+		{
+			if (!TagToCheck.isValid())
+			{
+				return false;
+			}
+			// Only check check explicit tag list
+			return mTagName == TagToCheck.mTagName;
+		}
+
 		FORCEINLINE bool operator==(GameplayTag const& Other) const
 		{
 			return mTagName == Other.mTagName;

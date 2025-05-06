@@ -22,6 +22,18 @@ namespace WL
 		void requestGameplayTagChildren(const std::string& TagName, std::vector<GameplayTag>& ChildTags);
 		void getAllGameplayTags(std::vector<GameplayTag>& ChildTags);
 		void loadGameplayTags(const std::string& szFile);
+		
+		FORCEINLINE std::shared_ptr<GameplayTagNode> FindTagNode(const std::string& TagName) const
+		{
+			for (const auto& [k, v] : mGameplayTagNodeMap)
+			{
+				if (k.getName() == TagName)
+				{
+					return std::shared_ptr<GameplayTagNode>(v);
+				}
+			}
+			return nullptr;
+		}
 
 	private:
 		void constructGameplayTagTree();

@@ -25,6 +25,23 @@ namespace WL
 		auto pMgr = CGameplayTagsManager::getSinglePtr();
 		return GameplayTag();
 	}
+
+	bool GameplayTag::matchesTag(const GameplayTag& TagToCheck) const
+	{
+		bool bResult = false;
+		auto pMgr = CGameplayTagsManager::getSinglePtr();
+		if (nullptr != pMgr)
+		{
+			auto pNode = pMgr->FindTagNode(mTagName);
+			if (pNode)
+			{
+
+			}
+			pNode = nullptr;
+		}
+		return bResult;
+	}
+
 	void GameplayTag::registerClass()
 	{
 		CRegisterClass<GameplayTag>::registerClass(GEngine->getLuaState());
