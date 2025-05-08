@@ -1,5 +1,6 @@
 #include "GameplayTagContainer.h"
 #include "GameplayTagsManager.h"
+#include "GameplayTagNode.h"
 #include "WLEngine.h"
 
 namespace WL
@@ -31,12 +32,19 @@ namespace WL
 		bool bResult = false;
 		if (auto pMgr = CGameplayTagsManager::getSinglePtr())
 		{
-			auto pNode = pMgr->findTagNode(mTagName);
-			if (pNode)
+			auto pNode = pMgr->findTagNode(*this);
+			while (pNode)
 			{
-
+				if (pNode->mFullTagName == TagToCheck.getTagName())
+				{
+					bResult = true;
+					break;
+				}
+				else
+				{
+					pNode = (pNode->mParentNodePtr);
+				}
 			}
-			pNode = nullptr;
 		}
 		return bResult;
 	}

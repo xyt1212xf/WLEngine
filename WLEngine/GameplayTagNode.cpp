@@ -4,6 +4,7 @@ namespace WL
     GameplayTagNode::GameplayTagNode(const std::string& InTag, const std::string& InFullTag, GameplayTagNode* ParentPtr)
     {
         mTagName = InTag;
+        mFullTagName = InFullTag;
         mParentNodePtr = ParentPtr;
         mCompleteTagWithParents.mGameplayTags.emplace_back(GameplayTag(InFullTag));
         if (nullptr != ParentPtr && ParentPtr->mTagName.length() > 1)

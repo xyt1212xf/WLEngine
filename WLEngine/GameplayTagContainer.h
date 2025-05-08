@@ -37,7 +37,7 @@ namespace WL
 
 		bool matchesTag(const GameplayTag& TagToCheck) const;
 
-		FORCEINLINE bool matchesTagExact(const GameplayTag& TagToCheck) const
+		INLINE bool matchesTagExact(const GameplayTag& TagToCheck) const
 		{
 			if (!TagToCheck.isValid())
 			{
@@ -47,19 +47,19 @@ namespace WL
 			return mTagName == TagToCheck.mTagName;
 		}
 
-		FORCEINLINE bool operator==(GameplayTag const& Other) const
+		INLINE bool operator==(GameplayTag const& Other) const
 		{
 			return mTagName == Other.mTagName;
 		}
 
-		FORCEINLINE bool operator!=(GameplayTag const& Other) const
+		INLINE bool operator!=(GameplayTag const& Other) const
 		{
 			return mTagName != Other.mTagName;
 		}
 
 		bool operator < (const GameplayTag& other) const
 		{
-			return mTagName.length() < other.mTagName.length();
+			return mTagName < other.mTagName;
 		}
 
 		std::string mTagName = "";
@@ -90,7 +90,7 @@ namespace WL
 		GameplayTagContainer& operator=(GameplayTagContainer&& Other);
 
 		/** Returns the number of explicitly added tags */
-		FORCEINLINE INT32 num() const
+		INLINE INT32 num() const
 		{
 			return static_cast<INT32>(mGameplayTags.size());
 		}
@@ -104,24 +104,24 @@ namespace WL
 		GameplayTag last() const;
 	
 		/** Returns the number of explicitly added tags */
-		FORCEINLINE size_t count() const
+		INLINE size_t count() const
 		{
 			return mGameplayTags.size();
 		}
 
 		/** Returns whether the container has any valid tags */
-		FORCEINLINE bool isValid() const
+		INLINE bool isValid() const
 		{
 			return mGameplayTags.size() > 0;
 		}
 
 		/** Returns true if container is empty */
-		FORCEINLINE bool isEmpty() const
+		INLINE bool isEmpty() const
 		{
 			return mGameplayTags.size() == 0;
 		}
 
-		FORCEINLINE bool hasTag(const GameplayTag& TagToCheck) const
+		INLINE bool hasTag(const GameplayTag& TagToCheck) const
 		{
 			if (TagToCheck.isValid())
 			{

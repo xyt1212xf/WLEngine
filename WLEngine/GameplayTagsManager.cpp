@@ -27,6 +27,11 @@ namespace WL
 
 	void CGameplayTagsManager::unInitializeManager()
 	{
+		for (auto& item : CGameplayTagsManager::getSinglePtr()->mGameplayTagNodeMap)
+		{
+			WL_DELETE(item.second, GAS);
+		}
+		CGameplayTagsManager::getSinglePtr()->mGameplayTagNodeMap.clear();
 		WL_DELETE(CGameplayTagsManager::getSinglePtr()->mGameplayRootTagPtr, GAS);
 		CGameplayTagsManager::destory();
 	}
@@ -122,6 +127,7 @@ namespace WL
 			mTagRedirect.mTags["weapon"] = GameplayTag("weapon");
 			mTagRedirect.mTags["attack"] = GameplayTag("attack");
 			mTagRedirect.mTags["defense"] = GameplayTag("defense");
+			GameplayTag("InputUserSettings.Profiles.Default").matchesTag(GameplayTag("InputUserSettings"));
 		}
 		else
 		{
