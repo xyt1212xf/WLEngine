@@ -5,41 +5,7 @@
 #include "BehaviorTree.h"
 namespace WL
 {
-	template<typename Ret>
-	class CRegisterFunT
-	{
-	public:
-		CRegisterFunT() = default;
-		~CRegisterFunT() = default;
-
-		template<typename Fun, Fun func, typename... Args>
-		static void registrFun(lua_State* pLua, const std::string& szFunName)
-		{
-			static_assert(std::is_invocable_v<Fun, Args...>, "Func must be invocable!");
-			lua_CFunction pFun = &CCallFun<Ret>::template CallFun<Fun, func, Args...>;
-			lua_register(pLua, szFunName.c_str(), pFun);
-		}
-	};
 	static float fViewMaxLength = 100000000;
-	DefineScriptClass(CScene)
-	//std::string readJsonFile(const std::string& szName)
-	//{
-	//	std::string szContent = "";
-	//	std::ifstream file(szName.c_str());
-	//	if (!file)
-	//	{
-	//		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	//		SetConsoleTextAttribute(hConsole, 4);
-	//		std::cout << szName.c_str() << " opening failed";
-	//		SetConsoleTextAttribute(hConsole, 7);
-	//		return szName;
-	//	}
-	//	std::string content(std::istreambuf_iterator<char>(file), {});
-	//	file.close();
-	//	szContent = std::move(content);
-	//	return szContent;
-	//}
-
 	int loadScene(const char* szFile, bool bLoadLight)
 	{
 		auto pScene = GEngine->createScene(szFile);
@@ -80,6 +46,7 @@ namespace WL
 		return true;
 	}
 
+	DefineScriptClass(CScene)
 	CScene::CScene()
 	{
 
@@ -102,7 +69,7 @@ namespace WL
 	void CScene::registerMember()
 	{
 		auto pLua = GEngine->getLuaState();
-		CRegisterFunT<int>::registrFun<int(*)(const char*, bool), &loadScene, const char*, bool>(pLua, "loadScene");
+		CRegisterFun<int>::registrFun<int(*)(const char*, bool), &loadScene, const char*, bool>(pLua, "loadScene");
 		CRegisterFun<bool>::registrFun<bool(*)(const char*, bool), &gotoScene, const char*, bool>(pLua, "gotoScene");
 		//CBehaviorTreeMgr::regBTreeToScrpit();
 	}
@@ -197,8 +164,7 @@ namespace WL
 			{
 				initGui(v, config);
 			}
-		}
-		GEngine->getGameplayTagsMgr()->loadGameplayTags(std::string(mSceneName + ("GameplayTags.json")));
+		}	
 		return true;
 	}
 

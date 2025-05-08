@@ -29,10 +29,9 @@ namespace WL
 	bool GameplayTag::matchesTag(const GameplayTag& TagToCheck) const
 	{
 		bool bResult = false;
-		auto pMgr = CGameplayTagsManager::getSinglePtr();
-		if (nullptr != pMgr)
+		if (auto pMgr = CGameplayTagsManager::getSinglePtr())
 		{
-			auto pNode = pMgr->FindTagNode(mTagName);
+			auto pNode = pMgr->findTagNode(mTagName);
 			if (pNode)
 			{
 

@@ -81,6 +81,7 @@ namespace WL
 #endif
 		CGameplayTagsManager::initializeManager();
 		CBehaviorTreeMgr::regBTreeToScrpit();
+
 		doFile("script/GameApp.lua", "ScriptStart");
 		return bValue;
 	}

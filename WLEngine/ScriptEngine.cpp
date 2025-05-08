@@ -5,6 +5,16 @@
 #include "Vector.h"
 namespace WL
 {	
+	bool initialiseGameplayTags(const char* szFile)
+	{
+		return GEngine->getGameplayTagsMgr()->loadGameplayTags(szFile);
+	}
+
+	void unInitialiseGameplayTags()
+	{
+
+	}
+
 	void exitGame()
 	{
 		GEngine->exitGame();
@@ -152,6 +162,9 @@ namespace WL
 									"	return res\n"
 									"end\n";
 			doString(deepCopy);
+
+			CRegisterFun<bool>::registrFun<bool(*)(const char*), &initialiseGameplayTags, const char*>(mpLuaState, "initialiseGameplayTags");
+			CRegisterFun<void>::registrFun<void(*)(), &unInitialiseGameplayTags >(mpLuaState, "unInitialiseGameplayTags");
 		}
 		return true;
 	}

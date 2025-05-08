@@ -43,7 +43,7 @@ DO_LABEL(Manager)
 DO_LABEL(GfxDevice)
 DO_LABEL(GfxThread)
 DO_LABEL(BehaviorTree)
-DO_LABEL(GameplayTag)
+DO_LABEL(GAS)
 
 DO_TEMP_LABEL(TempAlloc)
 DO_TEMP_LABEL(TempJobAlloc)

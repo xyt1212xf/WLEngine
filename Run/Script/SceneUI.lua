@@ -2,7 +2,6 @@ require("script/frame/MainFrameInc")
 require("script/frame/MsgInc")	
 require("script/frame/GameState")
 require("script/Role")
-require("script/GameplayTags")
 require("script/GameAttributeSet")
 require("script/actor/BaWangWan/BaWangWan")
 
@@ -40,7 +39,7 @@ function SceneUI:Init()
 	{
 		[1] = BaWangWan:New()
 	}
-	InitialiseGameplayTags()
+
 	local player = self.Roles[1]
 	print(player)
 	player:Init("BaWangWan", 150, 480)

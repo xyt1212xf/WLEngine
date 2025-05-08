@@ -27,7 +27,7 @@ namespace WL
 
 	void CGameplayTagsManager::unInitializeManager()
 	{
-		WL_DELETE(CGameplayTagsManager::getSinglePtr()->mGameplayRootTagPtr, GameplayTag);
+		WL_DELETE(CGameplayTagsManager::getSinglePtr()->mGameplayRootTagPtr, GAS);
 		CGameplayTagsManager::destory();
 	}
 
@@ -69,8 +69,9 @@ namespace WL
 
 	}
 
-	void CGameplayTagsManager::loadGameplayTags(const std::string& szFile)
+	bool CGameplayTagsManager::loadGameplayTags(const std::string& szFile)
 	{
+		bool bResult = true;
 		auto strContent = Foundation::readJsonFile(szFile);
 		if (strContent.length())
 		{
@@ -118,20 +119,23 @@ namespace WL
 					}
 				}
 			}
-
-
-
 			mTagRedirect.mTags["weapon"] = GameplayTag("weapon");
 			mTagRedirect.mTags["attack"] = GameplayTag("attack");
 			mTagRedirect.mTags["defense"] = GameplayTag("defense");
 		}
+		else
+		{
+			bResult = false;
+		}
+
+		return bResult;
 	}
 
 	void CGameplayTagsManager::constructGameplayTagTree()
 	{
 		if (nullptr == mGameplayRootTagPtr)
 		{
-			mGameplayRootTagPtr = WL_NEW(GameplayTagNode, GameplayTag);
+			mGameplayRootTagPtr = WL_NEW(GameplayTagNode, GAS);
 		}
 	}
 
@@ -166,11 +170,11 @@ namespace WL
 				FoundNodeIdx = WhereToInsert;
 			}
 	
-			auto TagNode = WL_NEW(GameplayTagNode, GameplayTag)(InTag, InFullTag, ParentNodePtr);
+			auto TagNode = WL_NEW(GameplayTagNode, GAS)(InTag, InFullTag, ParentNodePtr);
 			NodeArray.insert(NodeArray.begin() + WhereToInsert, TagNode);
-			GameplayTag GameplayTag = TagNode->getCompleteTag();
-			assert(GameplayTag.getTagName() == InFullTag);
-			mGameplayTagNodeMap[GameplayTag] = TagNode;
+			GameplayTag gameplayTag = TagNode->getCompleteTag();
+			assert(gameplayTag.getTagName() == InFullTag);
+			mGameplayTagNodeMap[gameplayTag] = TagNode;
 		}
 
 		return FoundNodeIdx;

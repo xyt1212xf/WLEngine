@@ -24,6 +24,10 @@ namespace WL
 		void setTagName(const std::string& szName)
 		{
 			mTagName = szName;
+			if (false)
+			{
+				matchesTag(*this);
+			}
 		}
 
 		bool isValid() const
