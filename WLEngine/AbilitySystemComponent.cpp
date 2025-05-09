@@ -2,7 +2,12 @@
 #include "GameplayAbility.h"
 namespace WL
 {
-    void CAbilitySystemComponent::setOwnerActor(CActorEntity* NewOwnerActor)
+	CAbilitySystemComponent::CAbilitySystemComponent()
+	{
+        mComponentName = "AbilitySystemComponent";
+	}
+
+	void CAbilitySystemComponent::setOwnerActor(CActorEntity* NewOwnerActor)
     {
         if (mpOwnerActor != NewOwnerActor)
         {

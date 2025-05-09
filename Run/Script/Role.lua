@@ -20,6 +20,8 @@ function Role:Init(szName, x, y)
     self.otherPlayer = nil
     self:LoadState(szName)
     self.entity:enterScene()
+
+    self.entity:test(self.entity)
 end
 
 function Role:UnInit()

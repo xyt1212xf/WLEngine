@@ -2,13 +2,10 @@
 
 namespace WL
 {
-
 	CComponent::~CComponent()
 	{
 
 	}
-
-
 
 	const std::string& CComponent::getComponentName() const
 	{

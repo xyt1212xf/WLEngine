@@ -18,8 +18,7 @@ namespace WL
 	};
 	class CScene;
 	class CEntityFactory;
-	class WLENGINE_API CEntity : public CRefcount,
-					public ComponentGrounp
+	class WLENGINE_API CEntity : public ComponentGrounp, public CRefcount
 	{
 		friend CScene;
 		friend CEntityFactory;

@@ -186,6 +186,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentFactory.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="CustomRenderer.h" />
     <ClInclude Include="DataAsset.h" />
@@ -378,6 +379,7 @@
     <ClCompile Include="CameraEntity.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentFactory.cpp" />
     <ClCompile Include="CustomRenderer.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="DefaultAllocator.cpp" />

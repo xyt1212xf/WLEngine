@@ -5,6 +5,7 @@ namespace WL
 	CBehaviorTree* CBehaviorTree::sNewBehaviorTree = nullptr;
 	CBehaviorTree::CBehaviorTree()
 	{
+		mComponentName = "BehaviorTree";
 	}
 
 	CBehaviorTree::~CBehaviorTree()

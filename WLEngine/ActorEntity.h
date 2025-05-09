@@ -9,8 +9,7 @@ namespace WL
 {
 	struct RenderUnitGrounp;
 	class CBTNode;
-	class WLENGINE_API CActorEntity : public CScriptEntity,
-						 public CTranformComponet
+	class WLENGINE_API CActorEntity : public CScriptEntity, public CTranformComponet
 	{
 	public:
 		CActorEntity();
@@ -27,6 +26,9 @@ namespace WL
 		virtual void removeModel(CModel* pModel);
 		virtual void removeModel(INT32 nPart);
 		virtual void draw(UINT32 nTime);
+		void addComponentByScript(const std::string& componentName);
+		void removeComponentByScript(const std::string& componentName);
+		bool hasComponetByScript(const std::string& componentName);
 
 		void test(CScriptEntity* p);
 		
@@ -35,7 +37,6 @@ namespace WL
 		void setTransposeViewMT(Matrix44* pMT);
 		void setProjectMT(Matrix44* pMT);
 		void setTransposeProjectMT(Matrix44* pMT);
-		void addComponentByType(const std::string& szComponent);
 		void addBehaviorTree(const std::string& szComponent);
 		const std::map<INT32, CModelInstance*>& getModels() const;
 		CModelInstance* getModelInstance(int nKey = 0) const;

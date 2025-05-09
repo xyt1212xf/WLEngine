@@ -11,6 +11,7 @@ namespace WL
 	class CAbilitySystemComponent : public CComponent
 	{
 	public:
+		CAbilitySystemComponent();
 		void setOwnerActor(CActorEntity* NewOwnerActor);
 		bool tryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate);
 		GameplayAbilitySpec* findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const;
@@ -22,8 +23,9 @@ namespace WL
 
 	protected:
 		/** Will be called from GiveAbility or from OnRep. Initializes events (triggers and inputs) with the given ability */
-			/** Will be called from RemoveAbility or from OnRep. Unbinds inputs with the given ability */
 		virtual void onGiveAbility(GameplayAbilitySpec& AbilitySpec);
+
+		/** Will be called from RemoveAbility or from OnRep. Unbinds inputs with the given ability */
 		virtual void onRemoveAbility(GameplayAbilitySpec& AbilitySpec);
 		void incrementAbilityListLock();
 		void decrementAbilityListLock();

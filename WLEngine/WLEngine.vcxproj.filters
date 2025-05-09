@@ -701,6 +701,9 @@
     <ClInclude Include="Export.h">
       <Filter>Platform</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentFactory.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1200,6 +1203,9 @@
     </ClCompile>
     <ClCompile Include="DataAsset.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentFactory.cpp">
+      <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

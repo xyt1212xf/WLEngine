@@ -12,7 +12,7 @@ namespace WL
 		const std::string& getComponentName() const;
 		void setComponentName(const std::string& szName);
 		virtual void tick([[maybe_unused]] UINT32 dt){};
-
+		
 	protected:
 		std::string mComponentName = "Component";
 	};
@@ -118,4 +118,5 @@ namespace WL
 		//Data
 		std::map<std::string, CComponent*> mComponent;
 	};
+
 }

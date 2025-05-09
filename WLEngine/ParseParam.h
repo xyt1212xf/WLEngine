@@ -316,22 +316,22 @@ namespace WL
 	};
 
 
-	static CScriptEntity* parseParam(lua_State* pState, int index)
-	{
-		CScriptEntity* pEntity = nullptr;
-		if (lua_istable(pState, index))
-		{
-			lua_pushvalue(pState, index);
+	//static CScriptEntity* parseParam(lua_State* pState, int index)
+	//{
+	//	CScriptEntity* pEntity = nullptr;
+	//	if (lua_istable(pState, index))
+	//	{
+	//		lua_pushvalue(pState, index);
 
 
-			lua_pushinteger(pState, 0);
-			lua_gettable(pState, -2);
+	//		lua_pushinteger(pState, 0);
+	//		lua_gettable(pState, -2);
 
-			auto pUseData = lua_touserdata(pState, -1);
-			pEntity = static_cast<CScriptEntity*>(pUseData);
-		}
-		return pEntity;
-	}
+	//		auto pUseData = lua_touserdata(pState, -1);
+	//		pEntity = static_cast<CScriptEntity*>(pUseData);
+	//	}
+	//	return pEntity;
+	//}
 
 	template<typename T>
 	static void parseRet(lua_State* pState, T ret)

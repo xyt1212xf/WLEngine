@@ -3,6 +3,7 @@
 #include "WLEngine.h"
 #include "FrameAniComponet.h"
 #include "BehaviorTree.h"
+#include "ComponentFactory.h"
 
 namespace WL
 {
@@ -27,20 +28,6 @@ namespace WL
 		CRegisterClass<CActorEntity>::registerClass(GEngine->getLuaState());
 	}
 
-	void CActorEntity::addComponentByType(const std::string& szComponent)
-	{
-		if ("FrameAniComponet" == szComponent)
-		{
-			addComponent<CFrameAniComponet>();
-			auto pCmp = getComponent<CFrameAniComponet>();
-			pCmp->setComponentName(szComponent);
-		}
-		else if ("BehaviorTree" == szComponent)
-		{
-			addComponent<CBehaviorTree>();
-		}
-	}
-
 
 	void CActorEntity::addBehaviorTree(const std::string& szComponent)
 	{
@@ -55,9 +42,13 @@ namespace WL
 	{
 		auto pLua = GEngine->getLuaState();
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addBehaviorTree, const std::string&>(pLua, "addBehaviorTree");
-		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addComponentByType, const std::string&>(pLua, "addComponent");
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CEntity::*)(const std::string&), &CEntity::setName, const std::string&>(pLua, "setName");
 		CRegisterFun<const std::string&>::registerClassMemberFun<CActorEntity, const std::string& (CEntity::*)()const, &CEntity::getName>(pLua, "getName");
+
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addComponentByScript, const std::string&>(pLua, "addComponent");
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::removeComponentByScript, const std::string&>(pLua, "removeComponent");
+		CRegisterFun<bool>::registerClassMemberFun<CActorEntity, bool(CActorEntity::*)(const std::string&), &CActorEntity::hasComponetByScript, const std::string&>(pLua, "hasComponet");
+
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::enterScene>(pLua, "enterScene");
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::leaveScene>(pLua, "leaveScene");
 		
@@ -166,6 +157,32 @@ namespace WL
 
 	void CActorEntity::draw(UINT32 nTime)
 	{
+	}
+
+	void CActorEntity::addComponentByScript(const std::string& componentName)
+	{
+		if (!hasComponetByScript(componentName))
+		{
+			if (auto pComponent = CComponentFactory::getSinglePtr()->CreateComponent(componentName))
+			{
+
+			}
+
+		}
+	}
+
+	void CActorEntity::removeComponentByScript(const std::string& componentName)
+	{
+		auto pComponent = getComponetByName(componentName);
+		if(nullptr != pComponent)
+		{
+			removeComponent(pComponent);
+		}
+	}
+
+	bool CActorEntity::hasComponetByScript(const std::string& componentName)
+	{
+		return getComponetByName(componentName) != nullptr ? true : false;
 	}
 
 	void CActorEntity::test(CScriptEntity* p)

@@ -4,7 +4,7 @@ namespace WL
 
 	CSkeletonAniComponent::CSkeletonAniComponent()
 	{
-
+		mComponentName = "SkeletonAniComponent";
 	}
 
 	CSkeletonAniComponent::~CSkeletonAniComponent()
