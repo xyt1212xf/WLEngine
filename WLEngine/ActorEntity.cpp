@@ -4,7 +4,6 @@
 #include "FrameAniComponet.h"
 #include "BehaviorTree.h"
 #include "ComponentFactory.h"
-
 namespace WL
 {
 	DefineScriptClass(CActorEntity)
@@ -42,8 +41,8 @@ namespace WL
 	{
 		auto pLua = GEngine->getLuaState();
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addBehaviorTree, const std::string&>(pLua, "addBehaviorTree");
-		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CEntity::*)(const std::string&), &CEntity::setName, const std::string&>(pLua, "setName");
-		CRegisterFun<const std::string&>::registerClassMemberFun<CActorEntity, const std::string& (CEntity::*)()const, &CEntity::getName>(pLua, "getName");
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CEntity::*)(const std::string&), &CEntity::setEntityName, const std::string&>(pLua, "setName");
+		CRegisterFun<const std::string&>::registerClassMemberFun<CActorEntity, const std::string& (CEntity::*)()const, &CEntity::getEntityName>(pLua, "getName");
 
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addComponentByScript, const std::string&>(pLua, "addComponent");
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::removeComponentByScript, const std::string&>(pLua, "removeComponent");

@@ -42,7 +42,7 @@ namespace WL
 	{
 		for (auto item : mNodes)
 		{
-			if (item->getName() == sName)
+			if (item->getEntityName() == sName)
 			{
 				return item;
 			}
@@ -149,7 +149,7 @@ namespace WL
 			}
 			if (nullptr != pNode)
 			{
-				pNode->setName(szNodeName);
+				pNode->setEntityName(szNodeName);
 				sNewBehaviorTree->mNodes.emplace_front(pNode);
 			}
 		}

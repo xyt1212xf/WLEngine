@@ -7,6 +7,7 @@
 
 namespace WL
 {
+
 	struct GameplayAbilitySpec;
 	class CAbilitySystemComponent : public CComponent
 	{

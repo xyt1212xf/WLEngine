@@ -719,7 +719,7 @@ namespace WL
 				{
 					for (auto gui : pGuis)
 					{
-						if (gui->getName() == "FPS")
+						if (gui->getEntityName() == "FPS")
 						{
 							pGuiEntity = gui;
 						}

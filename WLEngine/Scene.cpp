@@ -19,7 +19,7 @@ namespace WL
 					pLight->bindModel(R"(resource\Model\sphere.md)");
 					pLight->setRange(100.0f + rand() % 50);
 					pLight->setLightType(PointLight);
-					pLight->setName("");
+					pLight->setEntityName("");
 					pLight->setPosition(Vec3F(rand() % 500 + 0.0f, 1000.0f, 1625.0f + rand() % 150));
 					pLight->setOriginPosition(pLight->getPosition());
 					pLight->setColor(Vec3F(rand() % 100 / 255.0f, rand() % 100 / 255.0f, rand() % 100 / 255.0f));
@@ -378,7 +378,7 @@ namespace WL
 		{
 			if ("name" == k)
 			{
-				pCamera->setName(v.get<std::string>());
+				pCamera->setEntityName(v.get<std::string>());
 			}
 			else if ("eye" == k)
 			{
@@ -614,7 +614,7 @@ namespace WL
 					CLightEntity* pLight = GEngine->createEntity<CLightEntity>(EntityType::Light);
 					if (obj.contains("name"))
 					{
-						pLight->setName(obj["name"]);
+						pLight->setEntityName(obj["name"]);
 					}
 					if (obj.contains("lightType"))
 					{
@@ -790,7 +790,7 @@ namespace WL
 		{
 			if ("name" == k)
 			{
-				pSky->setName(v.get<std::string>());
+				pSky->setEntityName(v.get<std::string>());
 			}
 			else if ("position" == k)
 			{
@@ -1008,7 +1008,7 @@ namespace WL
 		auto pOcean = static_cast<COceanEntity*>(pEntity);
 		if (value.contains("name"))
 		{
-			pOcean->setName(value["name"]);
+			pOcean->setEntityName(value["name"]);
 		}
 		if (value.contains("model"))
 		{
@@ -1049,7 +1049,7 @@ namespace WL
 		auto pActor = static_cast<CActorEntity*>(pEntity);
 		if (value.contains("name"))
 		{
-			pActor->setName(value["name"]);
+			pActor->setEntityName(value["name"]);
 		}
 		if (value.contains("model"))
 		{

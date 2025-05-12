@@ -25,8 +25,7 @@ function Role:Init(szName, x, y)
 end
 
 function Role:UnInit()
-    self.actor:leaveScene()
-    self.actor = nil
+    self.entity:leaveScene()
     self.entity = nil
 end
 

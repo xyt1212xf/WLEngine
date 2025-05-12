@@ -1,6 +1,6 @@
 #pragma once
 #include "Refcount.h"
-#include "Component.h"
+#include "ComponentGroup.h"
 namespace WL
 {
 	enum EntityType
@@ -29,8 +29,8 @@ namespace WL
 		CEntity(CEntity&& entity)noexcept;
 		virtual ~CEntity();
 		EntityType getEntityType() const;
-		const std::string& getName() const;
-		void setName(const std::string& szName);
+		const std::string& getEntityName() const;
+		void setEntityName(const std::string& szName);
 		UINT32 getID() const;
 		void setVisible( bool bValue);
 		bool isVisible() const;

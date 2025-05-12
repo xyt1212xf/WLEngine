@@ -22,7 +22,6 @@ function BaWangWan:InitActor(x, y, level)
 	self.btTree:Init(robotName, level)
 
 	self.entity:addBehaviorTree(robotName)
-
 	self.attributeSet = BaWangWanAttributeSet:New()
 
 	self.attributeSet:StartUpData()

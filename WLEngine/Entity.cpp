@@ -31,12 +31,12 @@ namespace WL
 		return mType;
 	}
 
-	const std::string& CEntity::getName() const
+	const std::string& CEntity::getEntityName() const
 	{
 		return mszName;
 	}
 
-	void CEntity::setName(const std::string& szName)
+	void CEntity::setEntityName(const std::string& szName)
 	{
 		mszName = szName;
 	}

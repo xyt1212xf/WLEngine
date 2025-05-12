@@ -119,7 +119,7 @@ namespace WL
 				"resource/Texture/Voxel/wood.png");
 			if (nullptr != pActorEntity && nullptr != pModelInstance)
 			{
-				pActorEntity->setName("VoxelChunkMesh");
+				pActorEntity->setEntityName("VoxelChunkMesh");
 				pActorEntity->addModel(pModelInstance);
 				GEngine->getCurrentScenePtr()->addEntity(pActorEntity);
 				mpActorEntity = pActorEntity;

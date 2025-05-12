@@ -223,14 +223,14 @@ namespace WL
 					auto& pGuis = pScene->getGuis();
 					for( auto& gui : pGuis )
 					{
-						if( gui->getName() == "FPS")
+						if( gui->getEntityName() == "FPS")
 						{
 							gui->setVisible(bShow);
 							return;
 						}
 					}
 					auto fFPSWnd = WL_NEW(CGuiEntity, Entity);
-					fFPSWnd->setName("FPS");
+					fFPSWnd->setEntityName("FPS");
 					fFPSWnd->initialise((R"(resource\Gui\FPSWnd.gui)"));
 					pScene->addEntity(fFPSWnd);
 					fFPSWnd->setVisible(true);

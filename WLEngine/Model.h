@@ -6,7 +6,7 @@
 #include "Transform.h"
 #include "Material.h"
 #include "RenderChunk.h"
-
+#include "ComponentGroup.h"
 
 namespace WL
 {

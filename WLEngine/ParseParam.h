@@ -238,6 +238,7 @@ namespace WL
 			return lua_toboolean(pState, index) != 0 ? true : false;
 		}
 	};
+
 	template<>
 	class CParseParam<CScriptEntity*>
 	{

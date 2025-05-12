@@ -36,7 +36,7 @@ namespace WL
 		mpBrushEntity->addModel("Resource/Model/cubeBrush.md", 0);
 		mpBrushEntity->addComponent<CCollision>();
 		mpBrushEntity->setPosition(vPos);
-		mpBrushEntity->setName("brushEntity");
+		mpBrushEntity->setEntityName("brushEntity");
 		auto pModelInstance = mpBrushEntity->getModelInstance();
 		auto pMatInstance = pModelInstance->getMaterialInstance();
 		pMatInstance->setAmbientColor(Vec4F(1, 0, 0, 1));
