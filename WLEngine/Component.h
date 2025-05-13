@@ -4,7 +4,7 @@
 
 namespace WL
 {
-	class WLENGINE_API CComponent 
+	class WLENGINE_API CComponent : public CNonCopyable
 	{
 	public:
 		CComponent() = default;

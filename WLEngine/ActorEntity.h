@@ -11,6 +11,7 @@ namespace WL
 	class CBTNode;
 	class WLENGINE_API CActorEntity : public CScriptEntity, public CTranformComponet
 	{
+		DeclareScriptClass(CActorEntity);
 	public:
 		CActorEntity();
 		virtual ~CActorEntity();
@@ -26,8 +27,8 @@ namespace WL
 		virtual void removeModel(CModel* pModel);
 		virtual void removeModel(INT32 nPart);
 		virtual void draw(UINT32 nTime);
-		void addComponentByScript(const std::string& componentName);
-		void removeComponentByScript(const std::string& componentName);
+		void addComponentByScript(CScriptEntity* pComponent);
+		void removeComponentByScript(CScriptEntity* pComponent);
 		bool hasComponetByScript(const std::string& componentName);
 
 		void test(CScriptEntity* p);
@@ -48,6 +49,5 @@ namespace WL
 	protected:
 		std::map<INT32, CModelInstance*> mModelInstanceMap;
 		std::forward_list<CBTNode*>	mBTNodes;
-		DeclareScriptClass(CActorEntity);
 	};
 }

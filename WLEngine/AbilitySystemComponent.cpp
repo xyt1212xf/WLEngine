@@ -1,10 +1,23 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayAbility.h"
+#include "WLEngine.h"
+
 namespace WL
 {
+    DefineScriptClass(CAbilitySystemComponent)
 	CAbilitySystemComponent::CAbilitySystemComponent()
 	{
         mComponentName = "AbilitySystemComponent";
+	}
+
+	void CAbilitySystemComponent::registerClass()
+	{
+		CRegisterClass<CAbilitySystemComponent>::registerClass(GEngine->getLuaState());
+	}
+
+
+	void CAbilitySystemComponent::registerMember()
+	{
 	}
 
 	void CAbilitySystemComponent::setOwnerActor(CActorEntity* NewOwnerActor)

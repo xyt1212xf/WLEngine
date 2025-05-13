@@ -44,8 +44,8 @@ namespace WL
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CEntity::*)(const std::string&), &CEntity::setEntityName, const std::string&>(pLua, "setName");
 		CRegisterFun<const std::string&>::registerClassMemberFun<CActorEntity, const std::string& (CEntity::*)()const, &CEntity::getEntityName>(pLua, "getName");
 
-		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::addComponentByScript, const std::string&>(pLua, "addComponent");
-		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(const std::string&), &CActorEntity::removeComponentByScript, const std::string&>(pLua, "removeComponent");
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(CScriptEntity*), &CActorEntity::addComponentByScript, CScriptEntity*>(pLua, "addComponent");
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(CScriptEntity*), &CActorEntity::removeComponentByScript, CScriptEntity*>(pLua, "removeComponent");
 		CRegisterFun<bool>::registerClassMemberFun<CActorEntity, bool(CActorEntity::*)(const std::string&), &CActorEntity::hasComponetByScript, const std::string&>(pLua, "hasComponet");
 
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::enterScene>(pLua, "enterScene");
@@ -158,21 +158,18 @@ namespace WL
 	{
 	}
 
-	void CActorEntity::addComponentByScript(const std::string& componentName)
+	void CActorEntity::addComponentByScript(CScriptEntity* pScriptEntity)
 	{
-		if (!hasComponetByScript(componentName))
+		auto pComponent = reinterpret_cast<CComponent*>(pScriptEntity);
+		if (!hasComponetByScript(pComponent->getComponentName()))
 		{
-			if (auto pComponent = CComponentFactory::getSinglePtr()->CreateComponent(componentName))
-			{
-
-			}
-
+			addComponent(pComponent);
 		}
 	}
 
-	void CActorEntity::removeComponentByScript(const std::string& componentName)
+	void CActorEntity::removeComponentByScript(CScriptEntity* pScriptEntity)
 	{
-		auto pComponent = getComponetByName(componentName);
+		auto pComponent = reinterpret_cast<CComponent*>(pScriptEntity);
 		if(nullptr != pComponent)
 		{
 			removeComponent(pComponent);

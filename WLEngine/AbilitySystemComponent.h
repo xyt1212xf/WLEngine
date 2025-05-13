@@ -4,13 +4,14 @@
 #include "GameplayAbilitySpecHandle.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayAbilityTypes.h"
+#include "ScriptEntity.h"
 
 namespace WL
 {
-
 	struct GameplayAbilitySpec;
-	class CAbilitySystemComponent : public CComponent
+	class CAbilitySystemComponent : public CComponent, public CScriptEntity
 	{
+		DeclareScriptClass(CAbilitySystemComponent);
 	public:
 		CAbilitySystemComponent();
 		void setOwnerActor(CActorEntity* NewOwnerActor);
