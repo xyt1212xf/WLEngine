@@ -31,7 +31,7 @@ namespace WL
 		void removeComponentByScript(CScriptEntity* pComponent);
 		bool hasComponetByScript(const std::string& componentName);
 
-		void test(CScriptEntity* p);
+		void test(int value);
 		
 
 		void setViewMT(Matrix44* pMT);
@@ -49,5 +49,7 @@ namespace WL
 	protected:
 		std::map<INT32, CModelInstance*> mModelInstanceMap;
 		std::forward_list<CBTNode*>	mBTNodes;
+
+		int mTest = 0;
 	};
 }

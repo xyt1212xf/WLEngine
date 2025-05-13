@@ -51,7 +51,7 @@ namespace WL
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::enterScene>(pLua, "enterScene");
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::leaveScene>(pLua, "leaveScene");
 		
-		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(CScriptEntity*), &CActorEntity::test, CScriptEntity*>(pLua, "test");
+		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(int), &CActorEntity::test, int>(pLua, "test");
 	}
 
 	void CActorEntity::addModel(CModel* pModel, INT32 nSlot)
@@ -181,10 +181,9 @@ namespace WL
 		return getComponetByName(componentName) != nullptr ? true : false;
 	}
 
-	void CActorEntity::test(CScriptEntity* p)
+	void CActorEntity::test(int value)
 	{
-		auto xx = dynamic_cast<CActorEntity*>(p);
-		int a = 0;
+		mTest = value;
 	}
 
 	void CActorEntity::setPosition(const Vec3F& pos)

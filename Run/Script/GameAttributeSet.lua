@@ -2,7 +2,7 @@
 GameAttributeSet = {}
 GameAttributeSet.__index = GameAttributeSet
 
-GameAttributeSet.cObject = CAttributeSet:New()
+--GameAttributeSet.cObject = CAttributeSet:New()
 function GameAttributeSet.New()
     local newInstance = {}
     setmetatable(newInstance, GameAttributeSet)

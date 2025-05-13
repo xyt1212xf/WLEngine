@@ -49,6 +49,7 @@ function SceneUI:Init()
 	local computerActor = self.Robot[1]
 	print(computerActor)
 	computerActor:InitActor(750, 480, 1)
+	--collectgarbage("collect")
 	RealPlayer = player
 	RobotPlayer = computerActor
 

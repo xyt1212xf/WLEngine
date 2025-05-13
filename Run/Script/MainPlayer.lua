@@ -24,7 +24,7 @@ function MainPlayerInit()
 	gMainPlayer = MainPlayer
 	gMainPlayer.CObj = CActorEntity.New()
 	gMainPlayer.CObj:setName(gMainPlayer.name)
-	print(gMainPlayer.name)
+	--print(gMainPlayer.name)
 end
 
 function MainPlayer:OnTick()
