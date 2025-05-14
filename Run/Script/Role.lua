@@ -24,11 +24,14 @@ end
 
 function Role:UnInit()
     self.entity:leaveScene()
+    self.components = nil
+	self.btTree = nil
+    self.attributeSet = nil
     self.entity = nil
 end
 
 function Role:SetName(name)
-    Role.name = name
+    self.name = name
     self.entity:setName(name)
 end
 

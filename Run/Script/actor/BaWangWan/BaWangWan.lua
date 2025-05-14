@@ -8,6 +8,7 @@ setmetatable(BaWangWan, Role) -- Set Role as the parent
 
 function BaWangWan:New()
 	local instance = setmetatable({}, self)
+	instance.components = {}
     return instance
 end
 
@@ -17,10 +18,11 @@ function BaWangWan:InitActor(x, y, level)
 	self:SetName("computerActor->BaWangWan")
 	self:SetState(RoleStateEnum.stand)
 	self:TurnRound()
+	self.components.ability = CAbilitySystemComponent:New()
 
 	self.btTree = BaWangWanBTree:New()
 	self.btTree:Init(robotName, level)
-	self.entity:addComponent(CAbilitySystemComponent:New())
+	self.entity:addComponent(self.components.ability)
 
 	self.entity:addBehaviorTree(robotName)
 	self.attributeSet = BaWangWanAttributeSet:New()
