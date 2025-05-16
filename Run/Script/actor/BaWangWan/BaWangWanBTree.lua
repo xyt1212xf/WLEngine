@@ -120,7 +120,7 @@ function BaWangWanBTree:Init(robotName, level)
 		selectorNode:addNode(DefenseNode)
 		selectorNode:addNode(MoveNode)
 		selectorNode:addNode(IdleNode)
-		self.functionNodes.sequenceNode = sequenceNode
+		self.functionNodes.selectorNode = selectorNode
 		setBTreeRootNode(robotName, selectorNode)
 	end
 end
