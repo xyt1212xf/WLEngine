@@ -13,24 +13,39 @@ function BaWangWan:New()
     return instance
 end
 
+function BaWangWan:InitActorDA()
+	self.DA = require("script/actor/BaWangWan/BaWangWanDA") 
+	self.DA:OnGiveAbility()
+	self.DA:ReactiveAbility()
+end
+
+function BaWangWan:InitActorBehaviorTree(robotName, level)
+	self.btTree = BaWangWanBTree:New()
+	self.btTree:Init(robotName, level)
+	self.entity:addBehaviorTree(robotName)
+end
+
+function BaWangWan:InitActorComponents()
+	self.components.ability = CAbilitySystemComponent:New()
+	self.entity:addComponent(self.components.ability)
+end
+
+function BaWangWan:InitActorAttributes()
+	self.attributeSet = BaWangWanAttributeSet:New()
+	self.attributeSet:StartUpData()
+end
+
 function BaWangWan:InitActor(x, y, level)
 	local robotName = "BaWangWan"
 	self:Init(robotName, x, y)
 	self:SetName("computerActor->BaWangWan")
 	self:SetState(RoleStateEnum.stand)
 	self:TurnRound()
-	self.DA = require("script/actor/BaWangWan/BaWangWanDA") 
-	self.DA:OnGiveAbility()
-	self.components.ability = CAbilitySystemComponent:New()
-	
-	self.btTree = BaWangWanBTree:New()
-	self.btTree:Init(robotName, level)
-	self.entity:addComponent(self.components.ability)
 
-	self.entity:addBehaviorTree(robotName)
-	self.attributeSet = BaWangWanAttributeSet:New()
-
-	self.attributeSet:StartUpData()
+	self:InitActorDA()
+	self:InitActorBehaviorTree(robotName, level)
+	self:InitActorComponents()
+	self:InitActorAttributes()
 end
 
 

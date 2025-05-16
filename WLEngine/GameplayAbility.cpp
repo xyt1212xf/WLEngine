@@ -1,9 +1,11 @@
 #include "GameplayAbility.h"
 #include "GameplayAbilityTypes.h"
 #include "GameplayAbilitySpec.h"
+#include "WLEngine.h"
+
 namespace WL
 {
-
+	DefineScriptClass(CGameplayAbility)
 	GameplayAbilityActorInfo CGameplayAbility::GetActorInfo() const
 	{
 		if (nullptr == mCurrentActorInfo)
@@ -11,6 +13,15 @@ namespace WL
 			return GameplayAbilityActorInfo();
 		}
 		return *mCurrentActorInfo;
+	}
+
+	void CGameplayAbility::registerClass()
+	{
+		CRegisterClass<CGameplayAbility>::registerClass(GEngine->getLuaState());
+	}
+
+	void CGameplayAbility::registerMember()
+	{
 	}
 
 	void CGameplayAbility::onGiveAbility(const GameplayAbilityActorInfo* ActorInfo, const GameplayAbilitySpec& Spec)

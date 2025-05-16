@@ -1,32 +1,8 @@
 
-BaWangWanBTree = {}
-BaWangWanBTree.__index = BaWangWanBTree
-
-function BaWangWanBTree:New()
-	local newInstance = {}
-    setmetatable(newInstance, BaWangWanBTree)
-	return newInstance
-end
-
-function BaWangWanBTree:Init(robotName, level)
-	createBT(robotName)
-	if 1 == level then
-		local sequenceNode = CSequenceNode:New()
-		sequenceNode:addNode(FindNode)
-		sequenceNode:addNode(AttackNode)
-
-		local selectorNode = CSelectorNode:New()
-		selectorNode:addNode(sequenceNode)
-		selectorNode:addNode(DefenseNode)
-		selectorNode:addNode(MoveNode)
-		selectorNode:addNode(IdleNode)
-
-		setBTreeRootNode(robotName, selectorNode)
-	end
-end
 
 IdleNode = CTaskNode:New()
 IdleNode:callBack("IdleNode")
+
 
 function IdleNode:Execute()
 	if RealPlayer and RobotPlayer then
@@ -71,6 +47,7 @@ end
 DefenseNode = CTaskNode:New()
 DefenseNode:callBack("DefenseNode")
 
+
 function DefenseNode:Execute()
 	if RealPlayer and RobotPlayer then
 		local x1 = RealPlayer:GetPosition()
@@ -86,6 +63,7 @@ end
 
 AttackNode = CTaskNode:New()
 AttackNode:callBack("AttackNode")
+
 
 function AttackNode:Execute()
 	if RealPlayer and RobotPlayer then
@@ -114,4 +92,50 @@ function MoveNode:Execute()
 	end
 	return false
 end
+
+
+
+BaWangWanBTree = {}
+BaWangWanBTree.__index = BaWangWanBTree
+
+function BaWangWanBTree:New()
+	local newInstance = {}
+    setmetatable(newInstance, BaWangWanBTree)
+	return newInstance
+end
+
+function BaWangWanBTree:Init(robotName, level)
+	createBT(robotName)
+	self.functionNodes = {}
+	self.taskNodes = {}
+
+	if 1 == level then
+		local sequenceNode = CSequenceNode:New()
+		sequenceNode:addNode(FindNode)
+		sequenceNode:addNode(AttackNode)
+		self.functionNodes.sequenceNode = sequenceNode
+
+		local selectorNode = CSelectorNode:New()
+		selectorNode:addNode(sequenceNode)
+		selectorNode:addNode(DefenseNode)
+		selectorNode:addNode(MoveNode)
+		selectorNode:addNode(IdleNode)
+		self.functionNodes.sequenceNode = sequenceNode
+		setBTreeRootNode(robotName, selectorNode)
+	end
+end
+
+function BaWangWanBTree:InitTaskNodes(robotName)
+	self.taskNodes[1] = IdleNode	
+	self.taskNodes[2] = FindNode
+	self.taskNodes[3] = DefenseNode
+	self.taskNodes[4] = AttackNode
+	self.taskNodes[5] = MoveNode
+end
+
+function BaWangWanBTree:UnInit()
+	self.functionNodes = nil
+	self.taskNodes = nil
+end
+
 

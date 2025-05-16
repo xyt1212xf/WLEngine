@@ -1,13 +1,15 @@
 #pragma once
-#include "Refcount.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "GameplayAbilitySpec.h"
+#include "ScriptEntity.h"
+
 namespace WL
 {
 	struct GameplayAbilitySpec;
 	struct GameplayAbilityActorInfo;
-	class CGameplayAbility : public CRefcount
+	class CGameplayAbility : public CScriptEntity 
 	{
+		DeclareScriptClass(CGameplayAbility);
 		friend class CAbilitySystemComponent;
 	public:
 

@@ -27,16 +27,6 @@ namespace WL
 		CRegisterClass<CActorEntity>::registerClass(GEngine->getLuaState());
 	}
 
-
-	void CActorEntity::addBehaviorTree(const std::string& szComponent)
-	{
-		auto pBTree = CBehaviorTreeMgr::getBTree(szComponent);
-		if (pBTree.has_value())
-		{
-			addComponent(pBTree.value());
-		}
-	}
-
 	void CActorEntity::registerMember()
 	{
 		auto pLua = GEngine->getLuaState();
@@ -52,6 +42,15 @@ namespace WL
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CScriptEntity::*)(), &CScriptEntity::leaveScene>(pLua, "leaveScene");
 		
 		CRegisterFun<void>::registerClassMemberFun<CActorEntity, void(CActorEntity::*)(int), &CActorEntity::test, int>(pLua, "test");
+	}
+	
+	void CActorEntity::addBehaviorTree(const std::string& szComponent)
+	{
+		auto pBTree = CBehaviorTreeMgr::getBTree(szComponent);
+		if (pBTree.has_value())
+		{
+			addComponent(pBTree.value());
+		}
 	}
 
 	void CActorEntity::addModel(CModel* pModel, INT32 nSlot)
