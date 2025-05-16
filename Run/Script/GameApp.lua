@@ -1,3 +1,14 @@
+--[[
+print("Lua version:", _VERSION)
+
+local socket = dofile("E:/WLEngine/Run/Script/socket.lua")
+print("luasocket °æ±¾:", socket._VERSION)
+
+local lpd = dofile("E:/WLEngine/Run/Script/LuaPanda.lua")
+print("lpd isLoad successed:", tostring(lpd ~= nil))
+lpd.start("127.0.0.1", 8818)
+]]
+
 require("script/frame/MainFrameInc")
 require("script/LoginUI")
 require("script/SeleceRoleUI")

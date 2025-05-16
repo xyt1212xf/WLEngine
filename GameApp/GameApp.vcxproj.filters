@@ -125,5 +125,8 @@
     <None Include="..\Run\Script\GameplayTags.lua">
       <Filter>GameLogic</Filter>
     </None>
+    <None Include="..\Run\Script\actor\BaWangWan\BaWangWanDA.lua">
+      <Filter>GameLogic\actor\BaWangWan</Filter>
+    </None>
   </ItemGroup>
 </Project>

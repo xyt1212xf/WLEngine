@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lua",
+      "request": "launch",
+      "name": "LuaPanda Debug33",
+      "program": "E:/WLEngine/Run/Script/GameApp.lua",  // 替换为你的入口文件
+      "luaPath": "E:/WLEngine/Run/FontSDF_D64.exe",  // 或指定 Lua 解释器路径（如 "C:/lua/bin/lua.exe"）
+      "cwd": "E:/WLEngine/Run/Script",
+      "path": "E:/WLEngine/Run/Script/?.lua",  // Lua 模块搜索路径
+      "debugPort": 8818  // 默认调试端口
+    }
+  ]
+}

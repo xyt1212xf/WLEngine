@@ -155,6 +155,7 @@
     <None Include="..\Run\Script\actor\BaWangWan\BaWangWan.lua" />
     <None Include="..\Run\Script\actor\BaWangWan\BaWangWanAttributeSet.lua" />
     <None Include="..\Run\Script\actor\BaWangWan\BaWangWanBTree.lua" />
+    <None Include="..\Run\Script\actor\BaWangWan\BaWangWanDA.lua" />
     <None Include="..\Run\Script\actor\BaWangWan\BaWangWanStartUpData.lua" />
     <None Include="..\Run\Script\BloodUI.lua" />
     <None Include="..\Run\Script\Fight1UI.lua" />

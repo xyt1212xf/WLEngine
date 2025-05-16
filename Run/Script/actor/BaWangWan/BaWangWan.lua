@@ -1,4 +1,5 @@
 require("script/Role")
+
 require("script/actor/BaWangWan/BaWangWanBTree")
 require("script/actor/BaWangWan/BaWangWanAttributeSet")
 
@@ -18,8 +19,10 @@ function BaWangWan:InitActor(x, y, level)
 	self:SetName("computerActor->BaWangWan")
 	self:SetState(RoleStateEnum.stand)
 	self:TurnRound()
+	self.DA = require("script/actor/BaWangWan/BaWangWanDA") 
+	self.DA:OnGiveAbility()
 	self.components.ability = CAbilitySystemComponent:New()
-
+	
 	self.btTree = BaWangWanBTree:New()
 	self.btTree:Init(robotName, level)
 	self.entity:addComponent(self.components.ability)
@@ -28,7 +31,6 @@ function BaWangWan:InitActor(x, y, level)
 	self.attributeSet = BaWangWanAttributeSet:New()
 
 	self.attributeSet:StartUpData()
-
 end
 
 
