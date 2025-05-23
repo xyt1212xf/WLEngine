@@ -5,11 +5,11 @@
 
 namespace WL
 {
-	class  CCameraController : public CController
+	class  CCameraController : public SController
 	{
 	public:
 		CCameraController(CCameraEntity* pCameraEntity);
-		void setCameraOnEvent(std::function<void(event&)> function, CameraType type);
+		void setCameraOnEvent(std::function<void(SEvent&)> function, CameraType type);
 		void bindCameraEntity(CCameraEntity* pCameraEntity);
 		void strafe(float units); // вСср
 		void fly(float units);    // иооб
@@ -20,12 +20,12 @@ namespace WL
 
 
 	protected:
-		virtual bool onEvent(event& e) final;
-		void _freeOnEvent(event& e);
-		void _firstOnEvent(event& e);
-		void _thirdOnEvent(event& e);
-		void _customOnEvent(event& e);
-		std::function<void(event&)> mOnEventFunctions[CameraType::MaxCameraType];
+		virtual bool onEvent(SEvent& e) final;
+		void _freeOnEvent(SEvent& e);
+		void _firstOnEvent(SEvent& e);
+		void _thirdOnEvent(SEvent& e);
+		void _customOnEvent(SEvent& e);
+		std::function<void(SEvent&)> mOnEventFunctions[CameraType::MaxCameraType];
 
 	protected:
 		CCameraEntity* mpCameraEntity = nullptr;

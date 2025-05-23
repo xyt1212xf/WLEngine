@@ -4,12 +4,12 @@
 #include "GameplayTagContainer.h"
 namespace WL
 {
-	struct GameplayTagNode;
+	struct SGameplayTagNode;
 	
-	struct GameplayTagRedirect
+	struct SGameplayTagRedirect
 	{
-		const GameplayTag* redirectTag(const std::string& InTagName) const;
-		std::map<std::string, GameplayTag> mTags;
+		const SGameplayTag* redirectTag(const std::string& InTagName) const;
+		std::map<std::string, SGameplayTag> mTags;
 	};
 
 
@@ -18,12 +18,12 @@ namespace WL
 	public:
 		static void initializeManager();
 		static void unInitializeManager();
-		GameplayTag requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound) const;
-		void requestGameplayTagChildren(const std::string& TagName, std::vector<GameplayTag>& ChildTags);
-		void getAllGameplayTags(std::vector<GameplayTag>& ChildTags);
+		SGameplayTag requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound) const;
+		void requestGameplayTagChildren(const std::string& TagName, std::vector<SGameplayTag>& ChildTags);
+		void getAllGameplayTags(std::vector<SGameplayTag>& ChildTags);
 		bool loadGameplayTags(const std::string& szFile);
 		
-		INLINE GameplayTagNode* findTagNode(const GameplayTag& gameplayTag) const
+		INLINE SGameplayTagNode* findTagNode(const SGameplayTag& gameplayTag) const
 		{
 			auto iter = mGameplayTagNodeMap.find(gameplayTag);
 			if (iter != mGameplayTagNodeMap.end())
@@ -35,24 +35,24 @@ namespace WL
 				return nullptr;
 			}
 		}
-		INLINE GameplayTagNode* findTagNode(const std::string& TagName) const
+		INLINE SGameplayTagNode* findTagNode(const std::string& TagName) const
 		{
-			GameplayTag PossibleTag(TagName);
+			SGameplayTag PossibleTag(TagName);
 			return findTagNode(PossibleTag);
 		}
 
 	private:
 		void constructGameplayTagTree();
-		INT32 insertTagIntoNodeArray(const std::string& InTag, const std::string& InFullTag, GameplayTagNode* ParentNodePtr, std::vector<GameplayTagNode*>& NodeArray);
+		INT32 insertTagIntoNodeArray(const std::string& InTag, const std::string& InFullTag, SGameplayTagNode* ParentNodePtr, std::vector<SGameplayTagNode*>& NodeArray);
 
 	private:
-		GameplayTagRedirect	mTagRedirect;
+		SGameplayTagRedirect	mTagRedirect;
 
 		/** Roots of gameplay tag nodes */
-		GameplayTagNode* mGameplayRootTagPtr = nullptr;
+		SGameplayTagNode* mGameplayRootTagPtr = nullptr;
 
 		/** Map of Tags to Nodes - Internal use only. FGameplayTag is inside node structure, do not use FindKey! */
-		std::map<GameplayTag, GameplayTagNode*> mGameplayTagNodeMap;
+		std::map<SGameplayTag, SGameplayTagNode*> mGameplayTagNodeMap;
 
 	};
 }

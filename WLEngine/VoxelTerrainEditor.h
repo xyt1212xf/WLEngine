@@ -5,12 +5,12 @@
 
 namespace WL
 {
-	struct  Face
+	struct  SFace
 	{
 		Vec3I pos[3];
 		Vec3F normal;
-		VertexFormatVoxel vPos[3];
-		bool operator == (const Face& box)
+		SVertexFormatVoxel vPos[3];
+		bool operator == (const SFace& box)
 		{
 			if (pos[0] != box.pos[0])
 			{
@@ -26,7 +26,7 @@ namespace WL
 			}
 			return true;
 		}
-		bool operator() (const Face& left, const Face& right) const
+		bool operator() (const SFace& left, const SFace& right) const
 		{
 			if (left.pos[0] != right.pos[0])
 			{
@@ -43,23 +43,23 @@ namespace WL
 			return false;
 		}
 
-		bool operator < (const Face& e) const
+		bool operator < (const SFace& e) const
 		{
 			return pos[0].x < pos[0].x;
 		}
  	};
-	struct   GeometryInfo
+	struct   SGeometryInfo
 	{
 		//Data
-		VertexFormatVoxel vertices[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
+		SVertexFormatVoxel vertices[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
 		int indices[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
 		float vertexNormalCount[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
 		Vec3F vertexNormal[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
 		Vec2F vertexUV[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
 		Vec3F faceNormal[CVoxelChunk::nSize][CVoxelChunk::nSize][CVoxelChunk::nSize];
-		std::list<Face> faces;
+		std::list<SFace> faces;
 		//Function
-		GeometryInfo()
+		SGeometryInfo()
 		{
 			for( int x = 0; x < CVoxelChunk::nSize; ++x)
 			{
@@ -76,9 +76,9 @@ namespace WL
 
 	class CVoxelBrush;
 	class CVoxelTerrainEditor : public TSingle<CVoxelTerrainEditor>
-							  , public CController
+							  , public SController
 	{
-		struct vetexNormal
+		struct SVetexNormal
 		{
 			Vec4I	vPos;
 			Vec3F	normals;
@@ -94,13 +94,13 @@ namespace WL
 		static CAABBox gVoxelTerrainAABB;
 
 	private:
-		virtual bool onEvent(event& e) final;
-		void generateVoxelChunk(event& e);
+		virtual bool onEvent(SEvent& e) final;
+		void generateVoxelChunk(SEvent& e);
 		void _generateMesh();
 		void _generateTexture();
 		
-		void drawNormal(CVoxelChunk* pChunk, GeometryInfo& geometry);
-		void mouseBrushPlane(event& e);
+		void drawNormal(CVoxelChunk* pChunk, SGeometryInfo& geometry);
+		void mouseBrushPlane(SEvent& e);
 		void modifyBrushPlaneDir();
 
 	private:
@@ -113,7 +113,7 @@ namespace WL
 		CVoxelBrush* mpBrush = nullptr;
 		CActorEntity* mpBrushPlane = nullptr;
 		std::vector<Vec3F>	mGroundPlaneVertice;
-		std::map<INT64, GeometryInfo> mChunkGeometryInfo;
+		std::map<INT64, SGeometryInfo> mChunkGeometryInfo;
 	};
 
 

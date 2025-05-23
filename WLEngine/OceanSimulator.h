@@ -19,8 +19,8 @@ namespace WL
 		virtual bool initialise();
 		void setOceanModelInstance(COceanModelInstance* pModelInstance);
 		void initNodes();
-		int buildNodeList(QuadNode& quad_node);
-		QuadRenderParam& selectMeshPattern(const QuadNode& quad_node);
+		int buildNodeList(SQuadNode& quad_node);
+		SQuadRenderParam& selectMeshPattern(const SQuadNode& quad_node);
 
 	private:
 		bool		mbInitNode = false;

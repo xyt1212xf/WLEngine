@@ -7,7 +7,7 @@
 
 namespace WL 
 {
-	const GameplayTag* GameplayTagRedirect::redirectTag(const std::string& InTagName) const
+	const SGameplayTag* SGameplayTagRedirect::redirectTag(const std::string& InTagName) const
 	{
 		auto iter = mTags.find(InTagName);
 		return iter != mTags.end() ? &(iter->second) : nullptr;
@@ -36,7 +36,7 @@ namespace WL
 		CGameplayTagsManager::destory();
 	}
 
-	GameplayTag CGameplayTagsManager::requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound) const
+	SGameplayTag CGameplayTagsManager::requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound) const
 	{
 		if (nullptr != mGameplayRootTagPtr)
 		{
@@ -53,15 +53,15 @@ namespace WL
 			}
 		}
 
-		const GameplayTag Possible(TagName);
+		const SGameplayTag Possible(TagName);
 		if (auto iter = mGameplayTagNodeMap.find(Possible); iter != mGameplayTagNodeMap.end())
 		{
 			return Possible;
 		}
-		return GameplayTag();
+		return SGameplayTag();
 	}
 	
-	void CGameplayTagsManager::requestGameplayTagChildren(const std::string& TagName, std::vector<GameplayTag>& ChildTags)
+	void CGameplayTagsManager::requestGameplayTagChildren(const std::string& TagName, std::vector<SGameplayTag>& ChildTags)
 	{
 		if (nullptr != mGameplayRootTagPtr)
 		{
@@ -69,7 +69,7 @@ namespace WL
 		}
 	}
 
-	void CGameplayTagsManager::getAllGameplayTags(std::vector<GameplayTag>& ChildTags)
+	void CGameplayTagsManager::getAllGameplayTags(std::vector<SGameplayTag>& ChildTags)
 	{
 
 	}
@@ -96,7 +96,7 @@ namespace WL
 							{
 								if (obj.contains("TagName"))
 								{
-									GameplayTagNode* curNodePtr = mGameplayRootTagPtr;
+									SGameplayTagNode* curNodePtr = mGameplayRootTagPtr;
 									std::string szContentName = obj["TagName"];							
 
 									auto arrayName = Foundation::splitString<std::string>(szContentName, ".");
@@ -124,10 +124,10 @@ namespace WL
 					}
 				}
 			}
-			mTagRedirect.mTags["weapon"] = GameplayTag("weapon");
-			mTagRedirect.mTags["attack"] = GameplayTag("attack");
-			mTagRedirect.mTags["defense"] = GameplayTag("defense");
-			GameplayTag("InputUserSettings.Profiles.Default").matchesTag(GameplayTag("InputUserSettings"));
+			mTagRedirect.mTags["weapon"] = SGameplayTag("weapon");
+			mTagRedirect.mTags["attack"] = SGameplayTag("attack");
+			mTagRedirect.mTags["defense"] = SGameplayTag("defense");
+			SGameplayTag("InputUserSettings.Profiles.Default").matchesTag(SGameplayTag("InputUserSettings"));
 		}
 		else
 		{
@@ -141,11 +141,11 @@ namespace WL
 	{
 		if (nullptr == mGameplayRootTagPtr)
 		{
-			mGameplayRootTagPtr = WL_NEW(GameplayTagNode, GAS);
+			mGameplayRootTagPtr = WL_NEW(SGameplayTagNode, GAS);
 		}
 	}
 
-	INT32 CGameplayTagsManager::insertTagIntoNodeArray(const std::string& InTag, const std::string& InFullTag, GameplayTagNode* ParentNodePtr, std::vector<GameplayTagNode*>& NodeArray)
+	INT32 CGameplayTagsManager::insertTagIntoNodeArray(const std::string& InTag, const std::string& InFullTag, SGameplayTagNode* ParentNodePtr, std::vector<SGameplayTagNode*>& NodeArray)
 	{
 		INT32 FoundNodeIdx = -1;
 		INT32 WhereToInsert = -1;
@@ -161,7 +161,7 @@ namespace WL
 		}
 		if (LowerBoundIndex < NodeArray.size())
 		{
-			GameplayTagNode* CurrNode = NodeArray[LowerBoundIndex];
+			SGameplayTagNode* CurrNode = NodeArray[LowerBoundIndex];
 			if (CurrNode->getSimpleTagName() == InTag)
 			{
 
@@ -176,9 +176,9 @@ namespace WL
 				FoundNodeIdx = WhereToInsert;
 			}
 	
-			auto TagNode = WL_NEW(GameplayTagNode, GAS)(InTag, InFullTag, ParentNodePtr);
+			auto TagNode = WL_NEW(SGameplayTagNode, GAS)(InTag, InFullTag, ParentNodePtr);
 			NodeArray.insert(NodeArray.begin() + WhereToInsert, TagNode);
-			GameplayTag gameplayTag = TagNode->getCompleteTag();
+			SGameplayTag gameplayTag = TagNode->getCompleteTag();
 			assert(gameplayTag.getTagName() == InFullTag);
 			mGameplayTagNodeMap[gameplayTag] = TagNode;
 		}

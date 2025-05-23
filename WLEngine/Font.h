@@ -5,7 +5,7 @@ namespace WL
 	class CFont : public CResource
 	{
 		friend class CFontEngine;
-		struct FontCell
+		struct SFontCell
 		{
 			float left, right;
 			int size;
@@ -14,11 +14,11 @@ namespace WL
 		CFont();
 		virtual ~CFont();
 		virtual bool initialise() final; 
-		const FontCell& getCell(char c) const;
+		const SFontCell& getCell(char c) const;
 		const CTexture* getTexture() const;
 
 	private:
-		std::vector<FontCell>	mFontCells;
+		std::vector<SFontCell>	mFontCells;
 		CTexture*	mpTexture = nullptr;
 	};
 }

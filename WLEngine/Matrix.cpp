@@ -2,17 +2,17 @@
 namespace WL
 {
 
-	Matrix44::Matrix44(const float* fStream)
+	SMatrix44::SMatrix44(const float* fStream)
 	{
-		memcpy(&_11, fStream, sizeof(Matrix44));
+		memcpy(&_11, fStream, sizeof(SMatrix44));
 	}
 
-	Matrix44::Matrix44(const Matrix44& mat)
+	SMatrix44::SMatrix44(const SMatrix44& mat)
 	{
-		memcpy(&_11, &mat, sizeof(Matrix44));
+		memcpy(&_11, &mat, sizeof(SMatrix44));
 	}
 
-	Matrix44::Matrix44(float f11, float f12, float f13, float f14,
+	SMatrix44::SMatrix44(float f11, float f12, float f13, float f14,
 					   float f21, float f22, float f23, float f24,
 					   float f31, float f32, float f33, float f34,
 					   float f41, float f42, float f43, float f44)
@@ -24,12 +24,12 @@ namespace WL
 	}
 
 
-	Matrix44::Matrix44(Matrix44&& mat)
+	SMatrix44::SMatrix44(SMatrix44&& mat)
 	{
-		memcpy(&_11, &mat, sizeof(Matrix44));
+		memcpy(&_11, &mat, sizeof(SMatrix44));
 	}
 
-	void Matrix44::operator*=(const Matrix44& mat)
+	void SMatrix44::operator*=(const SMatrix44& mat)
 	{
 #ifdef WIN64
 		m[0][0] = m[0][0] * mat.m[0][0] + m[0][1] * mat.m[1][0] + m[0][2] * mat.m[2][0] + m[0][3] * mat.m[3][0];
@@ -96,7 +96,7 @@ namespace WL
 #endif
 	}
 
-	void Matrix44::operator+=(const Matrix44& mat) 
+	void SMatrix44::operator+=(const SMatrix44& mat) 
 	{
 #ifdef WIN64
 		_11 += mat._11, _12 += mat._12, _13 += mat._13, _14 += mat._14,
@@ -134,7 +134,7 @@ namespace WL
 #endif
 	}
 
-	void Matrix44::operator-=(const Matrix44& mat) 
+	void SMatrix44::operator-=(const SMatrix44& mat) 
 	{
 #ifdef WIN64
 		_11 -= mat._11, _12 -= mat._12, _13 -= mat._13, _14 -= mat._14,
@@ -170,7 +170,7 @@ namespace WL
 #endif
 	}
 
-	void Matrix44::operator/=(float f) 
+	void SMatrix44::operator/=(float f) 
 	{
 #ifdef WIN64
 		float fInv = 1.0f / f;
@@ -206,7 +206,7 @@ namespace WL
 #endif
 	}
 
-	void Matrix44::operator*=(float f) 
+	void SMatrix44::operator*=(float f) 
 	{
 #ifdef WIN64
 		_11 *= f; _12 *= f; _13 *= f; _14 *= f;
@@ -239,12 +239,12 @@ namespace WL
 #endif
 	}
 
-	void Matrix44::zero()
+	void SMatrix44::zero()
 	{
-		memset(&m, 0, sizeof(Matrix44));
+		memset(&m, 0, sizeof(SMatrix44));
 	}
 
-	void Matrix44::transpose()
+	void SMatrix44::transpose()
 	{
 		m[0][1] = m[1][0];
 		m[0][2] = m[2][0];
@@ -263,22 +263,22 @@ namespace WL
 		m[3][2] = m[2][3];
 	}
 
-	void* Matrix44::data()
+	void* SMatrix44::data()
 	{
 		return m;
 	}
 
-	void Matrix44::operator=(Matrix44&& mat)
+	void SMatrix44::operator=(SMatrix44&& mat)
 	{
-		memcpy(&m, &mat, sizeof(Matrix44));
+		memcpy(&m, &mat, sizeof(SMatrix44));
 	}
 
-	void Matrix44::operator=(const Matrix44& mat)
+	void SMatrix44::operator=(const SMatrix44& mat)
 	{
-		memcpy(&m, &mat, sizeof(Matrix44));
+		memcpy(&m, &mat, sizeof(SMatrix44));
 	}
 
-	bool Matrix44::operator==(const Matrix44& mat) const
+	bool SMatrix44::operator==(const SMatrix44& mat) const
 	{
 		for( int i = 0; i < 4; ++i )
 		{
@@ -314,18 +314,18 @@ namespace WL
 		return true;
 	}
 	
-	bool Matrix44::operator!=(const Matrix44& mat) const
+	bool SMatrix44::operator!=(const SMatrix44& mat) const
 	{
 		return !(*this == mat);
 	}
 
-	Matrix44 Matrix44::operator/(float f ) const
+	SMatrix44 SMatrix44::operator/(float f ) const
 	{
 
 #ifdef WIN64
 		//--------------------------
 		float fInv = 1.0f / f;
-		return Matrix44(_11 * fInv, _12 * fInv, _13 * fInv, _14 * fInv,
+		return SMatrix44(_11 * fInv, _12 * fInv, _13 * fInv, _14 * fInv,
 			_21 * fInv, _22 * fInv, _23 * fInv, _24 * fInv,
 			_31 * fInv, _32 * fInv, _33 * fInv, _34 * fInv,
 			_41 * fInv, _42 * fInv, _43 * fInv, _44 * fInv);
@@ -355,15 +355,15 @@ namespace WL
 			movups[fValue + 32], xmm3;
 			movups[fValue + 48], xmm4;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 #endif
 	}
 
-	Matrix44 Matrix44::operator*(float f ) const
+	SMatrix44 SMatrix44::operator*(float f ) const
 	{
 #ifdef WIN64
 		//--------------------------
-		return Matrix44(_11 * f, _12 * f, _13 * f, _14 * f,
+		return SMatrix44(_11 * f, _12 * f, _13 * f, _14 * f,
 			_21 * f, _22 * f, _23 * f, _24 * f,
 			_31 * f, _32 * f, _33 * f, _34 * f,
 			_41 * f, _42 * f, _43 * f, _44 * f);
@@ -392,14 +392,14 @@ namespace WL
 			movups[fValue + 32], xmm3;
 			movups[fValue + 48], xmm4;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 #endif
 	}
 
-	Matrix44 Matrix44::operator-(const Matrix44& mat) const
+	SMatrix44 SMatrix44::operator-(const SMatrix44& mat) const
 	{
 #ifdef WIN64
-		return Matrix44(_11 - mat._11, _12 - mat._12, _13 - mat._13, _14 - mat._14,
+		return SMatrix44(_11 - mat._11, _12 - mat._12, _13 - mat._13, _14 - mat._14,
 			_21 - mat._21, _22 - mat._22, _23 - mat._23, _24 - mat._24,
 			_31 - mat._31, _32 - mat._32, _33 - mat._33, _34 - mat._34,
 			_41 - mat._41, _42 - mat._42, _43 - mat._43, _44 - mat._44);
@@ -434,14 +434,14 @@ namespace WL
 			subps  xmm0, xmm1;
 			movups[fValue + 48], xmm0;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 #endif
 	}
 
-	Matrix44 Matrix44::operator+(const Matrix44& mat) const
+	SMatrix44 SMatrix44::operator+(const SMatrix44& mat) const
 	{
 #ifdef WIN64
-		return Matrix44(_11 + mat._11, _12 + mat._12, _13 + mat._13, _14 + mat._14,
+		return SMatrix44(_11 + mat._11, _12 + mat._12, _13 + mat._13, _14 + mat._14,
 			_21 + mat._21, _22 + mat._22, _23 + mat._23, _24 + mat._24,
 			_31 + mat._31, _32 + mat._32, _33 + mat._33, _34 + mat._34,
 			_41 + mat._41, _42 + mat._42, _43 + mat._43, _44 + mat._44);
@@ -476,16 +476,16 @@ namespace WL
 			addps  xmm0, xmm1;
 			movups[fValue + 48], xmm0;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 
 #endif
 	}
 
-	Matrix44 Matrix44::operator*(const Matrix44& mat) const
+	SMatrix44 SMatrix44::operator*(const SMatrix44& mat) const
 	{
 #ifdef WIN64
 		//--------------------------
-		return Matrix44(
+		return SMatrix44(
 			m[0][0] * mat.m[0][0] + m[0][1] * mat.m[1][0] + m[0][2] * mat.m[2][0] + m[0][3] * mat.m[3][0],
 			m[0][0] * mat.m[0][1] + m[0][1] * mat.m[1][1] + m[0][2] * mat.m[2][1] + m[0][3] * mat.m[3][1],
 			m[0][0] * mat.m[0][2] + m[0][1] * mat.m[1][2] + m[0][2] * mat.m[2][2] + m[0][3] * mat.m[3][2],
@@ -549,15 +549,15 @@ namespace WL
 			add eax, 16;
 		loop LOOPIT;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 #endif
 	}
 
-	Matrix44 operator * (float f, const Matrix44& mat)
+	SMatrix44 operator * (float f, const SMatrix44& mat)
 	{
 #ifdef WIN64
 		//--------------------------
-		return Matrix44(f * mat._11, f * mat._12, f * mat._13, f * mat._14,
+		return SMatrix44(f * mat._11, f * mat._12, f * mat._13, f * mat._14,
 			f * mat._21, f * mat._22, f * mat._23, f * mat._24,
 			f * mat._31, f * mat._32, f * mat._33, f * mat._34,
 			f * mat._41, f * mat._42, f * mat._43, f * mat._44);
@@ -587,7 +587,7 @@ namespace WL
 			movups[eax + 32], xmm3;
 			movups[eax + 48], xmm4;
 		}
-		return Matrix44(fValue);
+		return SMatrix44(fValue);
 #endif
 	}	
 }

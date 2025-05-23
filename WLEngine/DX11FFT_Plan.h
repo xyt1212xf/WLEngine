@@ -4,7 +4,7 @@
 
 namespace WL
 {
-	struct 	DX11_FFT_Plan
+	struct 	SDX11_FFT_Plan
 	{
 		// D3D11 objects
 		ID3D11DeviceContext* pContext = nullptr;
@@ -18,7 +18,7 @@ namespace WL
 		// Temporary buffers
 		CSurfaceView* pTmpUAV;
 
-		~DX11_FFT_Plan()
+		~SDX11_FFT_Plan()
 		{
 			pContext = nullptr;
 			WL_DELETE(pTmpUAV, SurfaceView);

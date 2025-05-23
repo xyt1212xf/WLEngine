@@ -54,7 +54,7 @@ namespace WL
 		mpDepthStencilView = Dev->getDepthStencilView();
 		mOutputBufferSize = 1;
 		mViewPort.resize(1);
-		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(ViewPort));
+		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(SViewPort));
 	}
 
 	bool CRendererPass::drawBegin(DeviceContext* pDeviceContext, bool bCleanState)
@@ -68,12 +68,12 @@ namespace WL
 		return true;
 	}
 
-	void CRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				auto& meshsInfo = (item.second)->getAllMeshInfo();
@@ -87,7 +87,7 @@ namespace WL
 						pRenderUnit->pMaterialInstance = mpMaterialIns;
 						UINT16 nOrder = mpMaterialIns->getRenderOrder();
 
-						Geometry geometry;
+						SGeometry geometry;
 						geometry.pMaterialInstance = mpMaterialIns;
 						geometry.pTextures = child.pMaterialInstance->getTexturesPtr();
 						geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
@@ -111,7 +111,7 @@ namespace WL
 		}
 	}
 
-	void CRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		auto& renderUnits = pRenderGroup->mpRenderUnits;
 		size_t nRenderChunks = renderUnits.size();
@@ -205,7 +205,7 @@ namespace WL
 		}
 	}
 
-	void CRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		//for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		//{
@@ -230,7 +230,7 @@ namespace WL
 		return false;
 	}
 
-	void CRendererPass::drawGeometry(RenderUnit* pItem, DeviceContext* pDeviceContext)
+	void CRendererPass::drawGeometry(SRenderUnit* pItem, DeviceContext* pDeviceContext)
 	{
 		for (auto& [key, value] : pItem->geometry)
 		{

@@ -2,7 +2,7 @@
 #include "Refcount.h"
 namespace WL
 {
-	struct GameplayAbilityActorInfo : public CRefcount
+	struct SGameplayAbilityActorInfo : public CRefcount
 	{
 
 	};

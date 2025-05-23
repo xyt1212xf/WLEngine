@@ -65,7 +65,7 @@ namespace WL
 		mViewPort.resize(mOutputBufferSize);
 		for (size_t i = 0; i < mViewPort.size(); i++)
 		{
-			memcpy(&mViewPort[i], &Dev->getViewPort(), sizeof(ViewPort));
+			memcpy(&mViewPort[i], &Dev->getViewPort(), sizeof(SViewPort));
 		}
 
 	}
@@ -82,12 +82,12 @@ namespace WL
 		return Parent::drawBegin(pDeviceContext, bCleanState);
 	}
 
-	void CDeferredRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CDeferredRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				auto& meshsInfo = (item.second)->getAllMeshInfo();
@@ -101,7 +101,7 @@ namespace WL
 						pRenderUnit->pMaterialInstance = mpMaterialIns;
 						UINT16 nOrder = mpMaterialIns->getRenderOrder();
 
-						Geometry geometry;
+						SGeometry geometry;
 						geometry.pMaterialInstance = mpMaterialIns;
 						geometry.pTextures = child.pMaterialInstance->getTexturesPtr();
 						geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
@@ -124,7 +124,7 @@ namespace WL
 	}
 
 
-	void CDeferredRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CDeferredRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -158,7 +158,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CDeferredRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CDeferredRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{

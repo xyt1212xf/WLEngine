@@ -23,7 +23,7 @@ namespace WL
 					 TEXT_CONST_BUF | TEXT_BUF_FLAG | TYPE_CONST_BUF | STRUCT_CONST_BUF
 	};
 
-	struct shaderBuffer 
+	struct SShaderBuffer 
 	{
 		BYTE* pData = nullptr;
 		void* pGpuBuffer = nullptr;
@@ -61,24 +61,24 @@ namespace WL
 		void setTextureParamByName(const std::string& szName, void* pData);
 		void setTypeBufferParamByName(const std::string& name, void* pData);
 
-		void setVSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setPSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setHSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setDSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setGSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setCSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setStructParamByHandle(const shaderParam& nHandle, void* pData, int nSize);
-		void setTextureConstBufferParamByHandle(const shaderParam& nHandle, void* pData);
-		void setTextureParamByHandle(const shaderParam& nHandle, void* pData);
-		void setTypeBufferParamByHandle(const shaderParam& nHandle, void* pData);
+		void setVSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setPSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setHSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setDSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setGSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setCSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setStructParamByHandle(const SShaderParam& nHandle, void* pData, int nSize);
+		void setTextureConstBufferParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setTextureParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setTypeBufferParamByHandle(const SShaderParam& nHandle, void* pData);
 
-		shaderParam getVSParamByName(const std::string& szName)const;
-		shaderParam getPSParamByName(const std::string& szName)const;
-		shaderParam getHSParamByName(const std::string& szName)const;
-		shaderParam getDSParamByName(const std::string& szName)const;
-		shaderParam getGSParamByName(const std::string& szName)const;
-		shaderParam getCSParamByName(const std::string& szName)const;
-		shaderParam getStructParamByName(const std::string& szName)const;
+		SShaderParam getVSParamByName(const std::string& szName)const;
+		SShaderParam getPSParamByName(const std::string& szName)const;
+		SShaderParam getHSParamByName(const std::string& szName)const;
+		SShaderParam getDSParamByName(const std::string& szName)const;
+		SShaderParam getGSParamByName(const std::string& szName)const;
+		SShaderParam getCSParamByName(const std::string& szName)const;
+		SShaderParam getStructParamByName(const std::string& szName)const;
 
 		void setEnableLight(bool bvalue);
 		bool isEnableLight();
@@ -115,17 +115,17 @@ namespace WL
 		CTextureArray	mTextureArray;
 		CShader* mpShader = nullptr;
 
-		std::map<UINT32, shaderBuffer>	mTextureConstBufferMaps;
-		std::map<UINT32, shaderBuffer>	mTextureBufferMaps;
-		std::map<UINT32, shaderBuffer>	mTypeBufferMaps;
-		std::map<UINT32, shaderBuffer>	mStructBufferMaps;
+		std::map<UINT32, SShaderBuffer>	mTextureConstBufferMaps;
+		std::map<UINT32, SShaderBuffer>	mTextureBufferMaps;
+		std::map<UINT32, SShaderBuffer>	mTypeBufferMaps;
+		std::map<UINT32, SShaderBuffer>	mStructBufferMaps;
 
-		std::map<UINT32, shaderBuffer>	mVSDataMaps;
-		std::map<UINT32, shaderBuffer>	mHSDataMaps;
-		std::map<UINT32, shaderBuffer>	mDSDataMaps;
-		std::map<UINT32, shaderBuffer>	mPSDataMaps;
-		std::map<UINT32, shaderBuffer>	mGSDataMaps;
-		std::map<UINT32, shaderBuffer>	mCSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mVSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mHSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mDSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mPSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mGSDataMaps;
+		std::map<UINT32, SShaderBuffer>	mCSDataMaps;
 
 		UINT32   mTopology = PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		INT		mDepthWrite = 1;		//?????????

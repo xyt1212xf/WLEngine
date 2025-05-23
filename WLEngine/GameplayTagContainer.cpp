@@ -5,29 +5,29 @@
 
 namespace WL
 {
-	DefineScriptClass(GameplayTag)
-	const  GameplayTag GameplayTag::EmptyTag;
-	GameplayTag::GameplayTag()
+	DefineScriptClass(SGameplayTag)
+	const  SGameplayTag SGameplayTag::EmptyTag;
+	SGameplayTag::SGameplayTag()
 	{
 	}
 
-	GameplayTag::GameplayTag(const std::string& szName)
+	SGameplayTag::SGameplayTag(const std::string& szName)
 	: mTagName(szName)
 	{
 	}
 
-	GameplayTag::~GameplayTag()
+	SGameplayTag::~SGameplayTag()
 	{
 
 	}
 
-	GameplayTag GameplayTag::requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound)
+	SGameplayTag SGameplayTag::requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound)
 	{
 		auto pMgr = CGameplayTagsManager::getSinglePtr();
-		return GameplayTag();
+		return SGameplayTag();
 	}
 
-	bool GameplayTag::matchesTag(const GameplayTag& TagToCheck) const
+	bool SGameplayTag::matchesTag(const SGameplayTag& TagToCheck) const
 	{
 		bool bResult = false;
 		if (auto pMgr = CGameplayTagsManager::getSinglePtr())
@@ -49,22 +49,22 @@ namespace WL
 		return bResult;
 	}
 
-	void GameplayTag::registerClass()
+	void SGameplayTag::registerClass()
 	{
-		CRegisterClass<GameplayTag>::registerClass(GEngine->getLuaState());
+		CRegisterClass<SGameplayTag>::registerClass(GEngine->getLuaState());
 	}
 
-	void GameplayTag::registerMember()
+	void SGameplayTag::registerMember()
 	{
 		auto pLua = GEngine->getLuaState();
-		CRegisterFun<std::string>::registerClassMemberFun<GameplayTag, std::string(GameplayTag::*)()const, &GameplayTag::getTagName>(pLua, "getName");
-		CRegisterFun<void>::registerClassMemberFun<GameplayTag, void(GameplayTag::*)(const std::string&), &GameplayTag::setTagName, const std::string&>(pLua, "setName");
+		CRegisterFun<std::string>::registerClassMemberFun<SGameplayTag, std::string(SGameplayTag::*)()const, &SGameplayTag::getTagName>(pLua, "getName");
+		CRegisterFun<void>::registerClassMemberFun<SGameplayTag, void(SGameplayTag::*)(const std::string&), &SGameplayTag::setTagName, const std::string&>(pLua, "setName");
 	}
 
 	/// <summary>
 	/// GameplayTagContainer  
 	/// </summary>
-	GameplayTagContainer& GameplayTagContainer::operator=(const GameplayTagContainer& Other)
+	SGameplayTagContainer& SGameplayTagContainer::operator=(const SGameplayTagContainer& Other)
 	{
 		// Guard against self-assignment
 		if (this == &Other)
@@ -76,14 +76,14 @@ namespace WL
 		return *this;
 	}
 
-	GameplayTagContainer& GameplayTagContainer::operator=(GameplayTagContainer&& Other)
+	SGameplayTagContainer& SGameplayTagContainer::operator=(SGameplayTagContainer&& Other)
 	{
 		mGameplayTags = std::move(Other.mGameplayTags);
 		mParentTags = std::move(Other.mParentTags);
 		return *this;
 	}
 
-	void GameplayTagContainer::addTag(const GameplayTag& TagToAdd)
+	void SGameplayTagContainer::addTag(const SGameplayTag& TagToAdd)
 	{
 		if (auto iter = std::find(mGameplayTags.begin(), mGameplayTags.end(), TagToAdd); iter == mGameplayTags.end())
 		{
@@ -91,7 +91,7 @@ namespace WL
 		}
 	}
 
-	void GameplayTagContainer::removeTag(const GameplayTag& TagToRemove)
+	void SGameplayTagContainer::removeTag(const SGameplayTag& TagToRemove)
 	{
 		if (auto iter = std::find(mGameplayTags.begin(), mGameplayTags.end(), TagToRemove); iter != mGameplayTags.end())
 		{			
@@ -100,14 +100,14 @@ namespace WL
 	}
 
 
-	GameplayTag GameplayTagContainer::first() const
+	SGameplayTag SGameplayTagContainer::first() const
 	{
-		return mGameplayTags.size() > 0 ? mGameplayTags.front() : GameplayTag();
+		return mGameplayTags.size() > 0 ? mGameplayTags.front() : SGameplayTag();
 	}
 
-	GameplayTag GameplayTagContainer::last() const
+	SGameplayTag SGameplayTagContainer::last() const
 	{
-		return mGameplayTags.size() > 0 ? mGameplayTags.back() : GameplayTag();
+		return mGameplayTags.size() > 0 ? mGameplayTags.back() : SGameplayTag();
 	}
 
 }

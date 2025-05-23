@@ -2,7 +2,7 @@
 namespace WL
 {
 
-	void RenderUnit::reset()
+	void SRenderUnit::reset()
 	{
 		//pWorldMT = nullptr;
 		//pViewMT = nullptr;

@@ -37,11 +37,11 @@ namespace WL
 				ZeroMemory(&vertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
 				ZeroMemory(&vertexData, sizeof(D3D11_SUBRESOURCE_DATA));
 				vertexBufferDesc.Usage = static_cast<D3D11_USAGE>(USAGE_DYNAMIC);
-				vertexBufferDesc.ByteWidth = sizeof(VertexVTC) * nMaxCount;
+				vertexBufferDesc.ByteWidth = sizeof(SVertexVTC) * nMaxCount;
 				vertexBufferDesc.BindFlags = BIND_VERTEX_BUFFER;
 				vertexBufferDesc.CPUAccessFlags = CPU_ACCESS_WRITE;
 				mVertics.resize(nMaxCount);
-				mDataLength = sizeof(VertexVTC) * mVertics.size();
+				mDataLength = sizeof(SVertexVTC) * mVertics.size();
 				vertexData.pSysMem = mVertics.data();
 				vertexData.SysMemPitch = 0;
 				vertexData.SysMemSlicePitch = 0;
@@ -102,10 +102,10 @@ namespace WL
 		}
 		initDefaultOutputRT();
 	
-		Matrix44 mt;
+		SMatrix44 mt;
 	
-		mWorldTransposeMT = Matrix44::identity();
-		mViewTransposeMT = Matrix44::identity();
+		mWorldTransposeMT = SMatrix44::identity();
+		mViewTransposeMT = SMatrix44::identity();
 		Math::buildOrthographicMatrixLH(&mt, (float)mViewPort[0].Width, (float)mViewPort[0].Height, 1.0f, 1000.0f);
 		Math::matrixTranspose(&mOrthogTransposeMT, &mt);
 
@@ -135,10 +135,10 @@ namespace WL
 		return bValue;
 	}
 
-	void CGuiRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CGuiRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		size_t nIndex = 0;
-		RenderUnit* pRenderUnit = pRenderGroup->getRenderUnit();
+		SRenderUnit* pRenderUnit = pRenderGroup->getRenderUnit();
 		pRenderUnit->pMaterialInstance = mpMaterialIns;
 		UINT16 nOrder = mpMaterialIns->getRenderOrder();
 		int indexStep = 0;
@@ -147,7 +147,7 @@ namespace WL
 		{
 			if (item->mpUIWnd)
 			{
-				Geometry geometry;
+				SGeometry geometry;
 				geometry.pMaterialInstance = mpMaterialIns;
 				geometry.pMatrix[WORLD_MT_0] = mWorldTransposeMT;
 				geometry.pMatrix[VIEW_MT] = mViewTransposeMT;
@@ -171,7 +171,7 @@ namespace WL
 				memcpy(&mVertics[nIndex], item->mpUIWnd->mData.mArea, sizeof(item->mpUIWnd->mData.mArea));
 				nIndex += 4;
 				std::map<TextureUseType, CTexture*> tempTextureMap;
-				Geometry* pGeometry = nullptr;
+				SGeometry* pGeometry = nullptr;
 				for (auto child : item->mpUIWnd->mChildren)
 				{					
 					if (child->getWndType() != WndType::ui_label)
@@ -217,7 +217,7 @@ namespace WL
 							geometry.pMaterialInstance = mpFontMaterialIns;
 
 							geometry.indexCount = nLenth * 6;
-							memcpy(&mVertics[nIndex], pLable->mDrawData.data(), sizeof(VertexVTC) * nSize);
+							memcpy(&mVertics[nIndex], pLable->mDrawData.data(), sizeof(SVertexVTC) * nSize);
 							nIndex += nSize;
 							indexStep += nLenth;
 						}
@@ -228,12 +228,12 @@ namespace WL
 		}
 		if (nIndex > 0)
 		{
-			mpVBBuffer->updateBuffer(pDeviceContext, mVertics.data(), sizeof(VertexVTC) * nIndex);
+			mpVBBuffer->updateBuffer(pDeviceContext, mVertics.data(), sizeof(SVertexVTC) * nIndex);
 		}		
 	}
 
 
-	void CGuiRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CGuiRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{
@@ -289,7 +289,7 @@ namespace WL
 
 	constexpr int CGuiRendererPass::getVertexSize() const
 	{
-		return sizeof(VertexVTC);
+		return sizeof(SVertexVTC);
 	}
 
 }

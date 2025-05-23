@@ -60,25 +60,25 @@ namespace WL
 			}
 			if (nullptr != pData)
 			{
-				if (typeSize == sizeof(VertexFormatVTNTB))
+				if (typeSize == sizeof(SVertexFormatVTNTB))
 				{
 					mVertices.resize(mVertexCount[nLod]);
 					memcpy(&mVertices[0], pData, length);
 					mpDataStream = (byte*)&mVertices[0];
 				}
-				else if (typeSize == sizeof(VertexVT))
+				else if (typeSize == sizeof(SVertexVT))
 				{
 					mVerticesPT.resize(mVertexCount[nLod]);
 					memcpy(&mVerticesPT[0], pData, length);
 					mpDataStream = (byte*)&mVerticesPT[0];
 				}
-				else if (typeSize == sizeof(VertexFormatVTNT))
+				else if (typeSize == sizeof(SVertexFormatVTNT))
 				{
 					mVerticesT.resize(mVertexCount[nLod]);
 					memcpy(&mVerticesT[0], pData, length);
 					mpDataStream = (byte*)&mVerticesT[0];
 				}
-				else if (typeSize == sizeof(VertexFormatVTN))
+				else if (typeSize == sizeof(SVertexFormatVTN))
 				{
 					mVerticesVTN.resize(mVertexCount[nLod]);
 					memcpy(&mVerticesVTN[0], pData, length);

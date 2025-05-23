@@ -30,9 +30,9 @@ namespace WL
 			mPickScreenPos.y = -((2.0f * nMouseY / viewSize.y) - 1.0f) / projectMatrix._22;
 			mPickScreenPos.z = 1.0f;
 
-			const Matrix44& matView = *mpCameraEntity->getViewMatrixPtr();
+			const SMatrix44& matView = *mpCameraEntity->getViewMatrixPtr();
 			// Get the inverse view matrix
-			Matrix44 m;
+			SMatrix44 m;
 			Math::matrixInverse(&m, &matView);
 
 			mDirection.x = mPickScreenPos.x * m._11 + mPickScreenPos.y * m._21 + mPickScreenPos.z * m._31;
@@ -196,10 +196,10 @@ namespace WL
 			auto pComponet = pActorEntity->getComponent<CCollision>();
 			if (nullptr != pComponet)
 			{
-				const Matrix44& matView = *mpCameraEntity->getViewMatrixPtr();
+				const SMatrix44& matView = *mpCameraEntity->getViewMatrixPtr();
 
 				// Get the inverse view matrix
-				Matrix44 m;
+				SMatrix44 m;
 				Math::matrixInverse(&m, &matView);
 
 				auto vDirection = mDirection;
@@ -226,9 +226,9 @@ namespace WL
 									auto& meshAABB = child.pMeshInstance->getBoundBox();
 									if (intersectAABB(meshAABB))
 									{
-										const Matrix44& matWorld = child.pMeshInstance->getMT();
-										Matrix44 mWorldView = matWorld * matView;
-										Matrix44 meshMT;
+										const SMatrix44& matWorld = child.pMeshInstance->getMT();
+										SMatrix44 mWorldView = matWorld * matView;
+										SMatrix44 meshMT;
 										Math::matrixInverse(&meshMT, &mWorldView);
 
 										mDirection.x = mPickScreenPos.x * meshMT._11 + mPickScreenPos.y * meshMT._21 + mPickScreenPos.z * meshMT._31;

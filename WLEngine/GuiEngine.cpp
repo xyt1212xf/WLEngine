@@ -75,7 +75,7 @@ namespace WL
 		}
 	}
 
-	bool CGuiEngine::processMsg(event& e)
+	bool CGuiEngine::processMsg(SEvent& e)
 	{
 		switch (e.message)
 		{

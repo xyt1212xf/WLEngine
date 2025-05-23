@@ -43,7 +43,7 @@ namespace WL
 			pOut->z = pV1->x * pV2->y - pV1->y * pV2->x;
 		}
 
-		void buildMatrixLookAtLH(InOut Matrix44* pOut, const Vec3F* Eye, const Vec3F* LookAt, const Vec3F* Up)
+		void buildMatrixLookAtLH(InOut SMatrix44* pOut, const Vec3F* Eye, const Vec3F* LookAt, const Vec3F* Up)
 		{
 #ifdef _DEBUG
 			if (nullptr == pOut || nullptr == Eye || nullptr == LookAt || nullptr == Up)
@@ -80,7 +80,7 @@ namespace WL
 			pOut->_44 = 1.0f;
 		}
 
-		void buildMatrixPerspectiveFovLH(InOut Matrix44* pOut, float fovy, float Aspect, float fNear, float fFar)
+		void buildMatrixPerspectiveFovLH(InOut SMatrix44* pOut, float fovy, float Aspect, float fNear, float fFar)
 		{
 #ifdef _DEBUG
 			if (nullptr == pOut)
@@ -115,7 +115,7 @@ namespace WL
 			pOut->m[3][3] = 0;
 		}
 
-		void buildOrthographicMatrixLH(InOut Matrix44* pOut, float fWidth, float fHeight, float fNear, float fFar)
+		void buildOrthographicMatrixLH(InOut SMatrix44* pOut, float fWidth, float fHeight, float fNear, float fFar)
 		{
 #ifdef _DEBUG
 			if (nullptr == pOut)
@@ -227,7 +227,7 @@ namespace WL
 			}
 		}
 
-		void matrixTranspose(Out Matrix44* pOut, In const Matrix44* pIn)
+		void matrixTranspose(Out SMatrix44* pOut, In const SMatrix44* pIn)
 		{
 			pOut->m[0][0] = pIn->m[0][0];
 			pOut->m[0][1] = pIn->m[1][0];
@@ -250,21 +250,21 @@ namespace WL
 			pOut->m[3][3] = pIn->m[3][3];
 		}
 
-		void matrixTranslation(InOut Matrix44* pInOut, float x, float y, float z)
+		void matrixTranslation(InOut SMatrix44* pInOut, float x, float y, float z)
 		{
 			pInOut->m[3][0] = x;
 			pInOut->m[3][1] = y;
 			pInOut->m[3][2] = z;
 		}
 
-		void matrixScale(InOut Matrix44* pInOut, float x, float y, float z)
+		void matrixScale(InOut SMatrix44* pInOut, float x, float y, float z)
 		{
 			pInOut->m[0][0] *= x;
 			pInOut->m[1][1] *= y;
 			pInOut->m[2][2] *= z;
 		}
 
-		void matrixRotationX(InOut Matrix44* pOut, float radian)
+		void matrixRotationX(InOut SMatrix44* pOut, float radian)
 		{
 			float cs = (float)cos(radian);
 			float ss = (float)sin(radian);
@@ -291,7 +291,7 @@ namespace WL
 
 		}
 
-		void matrixRotationY(InOut Matrix44* pOut, float radian)
+		void matrixRotationY(InOut SMatrix44* pOut, float radian)
 		{
 			float cs = (float)cos(radian);
 			float ss = (float)sin(radian);
@@ -317,7 +317,7 @@ namespace WL
 			pOut->m[3][3] = 1.0f;
 		}
 
-		void matrixRotationZ(InOut Matrix44* pOut, float radian)
+		void matrixRotationZ(InOut SMatrix44* pOut, float radian)
 		{
 			float cs = (float)cos(radian);
 			float ss = (float)sin(radian);
@@ -380,9 +380,9 @@ namespace WL
 			pVec3->y = y;
 		}
 
-		void matrixRotationEulerian(InOut Matrix44* pOut, const Vec3F& radian)
+		void matrixRotationEulerian(InOut SMatrix44* pOut, const Vec3F& radian)
 		{
-			Matrix44 x, y, z;
+			SMatrix44 x, y, z;
 			Math::matrixIdentity(&x);
 			Math::matrixIdentity(&y);
 			Math::matrixIdentity(&z);
@@ -392,7 +392,7 @@ namespace WL
 			*pOut = x * y * z;
 		}
 
-		void vec3Transform(InOut Vec3F* pInOut, In const Matrix44* pMatrix)
+		void vec3Transform(InOut Vec3F* pInOut, In const SMatrix44* pMatrix)
 		{
 			float x = pMatrix->m[0][0] * pInOut->x + pMatrix->m[1][0] * pInOut->y + pMatrix->m[2][0] * pInOut->z + pMatrix->m[3][0];
 			float y = pMatrix->m[0][1] * pInOut->x + pMatrix->m[1][1] * pInOut->y + pMatrix->m[2][1] * pInOut->z + pMatrix->m[3][1];
@@ -403,7 +403,7 @@ namespace WL
 			pInOut->z = z;
 		}
 
-		void vec4Transform(InOut Vec4F* pInOut, In const Matrix44* pMatrix)
+		void vec4Transform(InOut Vec4F* pInOut, In const SMatrix44* pMatrix)
 		{
 			float x = pMatrix->m[0][0] * pInOut->x + pMatrix->m[1][0] * pInOut->y + pMatrix->m[2][0] * pInOut->z + pMatrix->m[3][0];
 			float y = pMatrix->m[0][1] * pInOut->x + pMatrix->m[1][1] * pInOut->y + pMatrix->m[2][1] * pInOut->z + pMatrix->m[3][1];
@@ -416,14 +416,14 @@ namespace WL
 			pInOut->w = w;
 		}
 
-		void matrixScaling(InOut Matrix44* pOut, float x, float y, float z)
+		void matrixScaling(InOut SMatrix44* pOut, float x, float y, float z)
 		{
 			pOut->m[0][0] = x;
 			pOut->m[1][1] = y;
 			pOut->m[2][2] = z;
 		}
 
-		void matrixIdentity(InOut Matrix44* pOut)
+		void matrixIdentity(InOut SMatrix44* pOut)
 		{
 			pOut->m[0][0] = 1.0f;
 			pOut->m[0][1] = 0;
@@ -445,12 +445,12 @@ namespace WL
 			pOut->m[3][2] = 0;
 			pOut->m[3][3] = 1.0f;
 		}
-		float determinant(const Matrix44* pMatrix)
+		float determinant(const SMatrix44* pMatrix)
 		{
 			return 0;
 		}
 
-		bool matrixInverse(InOut Matrix44* pOut, IN const Matrix44* pMatrix)
+		bool matrixInverse(InOut SMatrix44* pOut, IN const SMatrix44* pMatrix)
 		{
 			float det = (pMatrix->m[0][0] * pMatrix->m[1][1] - pMatrix->m[0][1] * pMatrix->m[1][0]) * (pMatrix->m[2][2] * pMatrix->m[3][3] - pMatrix->m[2][3] * pMatrix->m[3][2]) -
 				(pMatrix->m[0][0] * pMatrix->m[1][2] - pMatrix->m[0][2] * pMatrix->m[1][0]) * (pMatrix->m[2][1] * pMatrix->m[3][3] - pMatrix->m[2][3] * pMatrix->m[3][1]) +
@@ -463,8 +463,8 @@ namespace WL
 				return false;
 			}
 			det = 1 / det;
-			Matrix44 m44;
-			Matrix44* pResult = pOut;
+			SMatrix44 m44;
+			SMatrix44* pResult = pOut;
 			bool bCopyMT = false;
 			if( pResult != pMatrix)
 			{
@@ -540,19 +540,19 @@ namespace WL
 				pMatrix->m[0][2] * (pMatrix->m[1][0] * pMatrix->m[2][1] - pMatrix->m[1][1] * pMatrix->m[2][0]));
 			if (bCopyMT)
 			{
-				memcpy(pOut, &m44, sizeof(Matrix44));
+				memcpy(pOut, &m44, sizeof(SMatrix44));
 			}
 			return true;
 		}
 
-		void matrixToEulerian_XYZ(In Matrix44* pIn, Out float& x, Out float& y, Out float& z)
+		void matrixToEulerian_XYZ(In SMatrix44* pIn, Out float& x, Out float& y, Out float& z)
 		{
 			y = -asinf(pIn->m[0][2]);
 			z = atan2f(pIn->m[0][1], pIn->m[0][0]);
 			x = atan2f(pIn->m[1][2], pIn->m[2][2]);
 		}
 
-		void matrixToEulerian_ZYX(In Matrix44* pIn, Out float& x, Out float& y, Out float& z)
+		void matrixToEulerian_ZYX(In SMatrix44* pIn, Out float& x, Out float& y, Out float& z)
 		{
 			y = -asinf(pIn->m[2][0]);
 			x = atan2f(pIn->m[2][1], pIn->m[2][2]);
@@ -560,7 +560,7 @@ namespace WL
 		}
 
 
-		Vec4F matrixMulVec4(In const Matrix44& matrix, In const Vec4F& v)
+		Vec4F matrixMulVec4(In const SMatrix44& matrix, In const Vec4F& v)
 		{
 			Vec4F res;
 			res.x = matrix.m[0][0] * v.x + matrix.m[1][0] * v.y + matrix.m[2][0] * v.z + matrix.m[3][0] * v.w;
@@ -571,7 +571,7 @@ namespace WL
 		}
 
 
-		Vec3F matrixMulVec3(In const Matrix44& matrix, In const Vec3F& v)
+		Vec3F matrixMulVec3(In const SMatrix44& matrix, In const Vec3F& v)
 		{
 			Vec3F res;
 			res.x = matrix.m[0][0] * v.x + matrix.m[1][0] * v.y + matrix.m[2][0] * v.z + matrix.m[3][0];
@@ -583,12 +583,12 @@ namespace WL
 		//--------------------------
 		// Plane
 		//--------------------------
-		float planeDotCoord(In Plane& plane, In const Vec3F& v)
+		float planeDotCoord(In SPlane& plane, In const Vec3F& v)
 		{
 			return plane.n.x * v.x + plane.n.y * v.y + plane.n.z * v.z + plane.d;
 		}
 
-		void PlaneFromPoints(InOut Plane& plane, const Vec3F& p0, const Vec3F& p1, const Vec3F& p2)
+		void PlaneFromPoints(InOut SPlane& plane, const Vec3F& p0, const Vec3F& p1, const Vec3F& p2)
 		{
 			auto&& vDir0 = p1 - p0;
 			auto&& vDir1 = p2 - p0;
@@ -598,7 +598,7 @@ namespace WL
 			plane.d = -vec3Dot(&plane.n, &p0);
 		}
 
-		void PlaneFromPointNormal(InOut Plane& plane, const Vec3F& p, const Vec3F& normal)
+		void PlaneFromPointNormal(InOut SPlane& plane, const Vec3F& p, const Vec3F& normal)
 		{
 			plane.n = normal;
 			plane.d = -vec3Dot(&plane.n, &p);

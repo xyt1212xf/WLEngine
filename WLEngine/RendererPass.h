@@ -44,7 +44,7 @@ namespace WL
 	class CRendererPass : public CRefcount
 	{
 	public:
-		struct RendererPassCompare
+		struct SRendererPassCompare
 		{
 			bool operator()(CRendererPass* a, CRendererPass* b)
 			{
@@ -53,7 +53,7 @@ namespace WL
 		};
 		friend class CGraphicEngine;
 		friend class CRenderer;
-		friend struct RendererPassCompare;
+		friend struct SRendererPassCompare;
 
 	public:
 		CRendererPass(CRenderer* pRenderer);
@@ -71,17 +71,17 @@ namespace WL
 
 	protected:
 		virtual bool drawBegin(DeviceContext* pDeviceContext, bool bCleanState);
-		virtual void drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount);
-		virtual void drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext);
+		virtual void drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount);
+		virtual void drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext);
 
 		virtual std::vector<CActorEntity*>& checkEntities(std::vector<CActorEntity*>& pDrawEntitiesArray);
-		virtual void commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup);
+		virtual void commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup);
 		virtual bool initlaliseMaterial();
 		virtual void initlaliseOutputRT();
 		virtual void drawFinal();
 
 		void initDefaultOutputRT();
-		void drawGeometry(RenderUnit* pItem, DeviceContext* pDeviceContext);
+		void drawGeometry(SRenderUnit* pItem, DeviceContext* pDeviceContext);
 			
 	protected:
 		int mOutputBufferSize = 0;
@@ -97,7 +97,7 @@ namespace WL
 		std::vector<CActorEntity*>	mDrawEntities;
 		CMaterialInstance* mpMaterialIns = nullptr;
 		eRendererPass mOrder = eRendererPass::InvalidPass;
-		std::vector<ViewPort> mViewPort;
+		std::vector<SViewPort> mViewPort;
 		CMutex mMutex;
 	};
 

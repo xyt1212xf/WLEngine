@@ -12,7 +12,7 @@ namespace WL
 
 	}
 
-	RenderState* CRenderStateMgrBase::createRenderState(RenderStateDesc& renderStateDesc)
+	SRenderState* CRenderStateMgrBase::createRenderState(SRenderStateDesc& renderStateDesc)
 	{
 		return nullptr;
 	}

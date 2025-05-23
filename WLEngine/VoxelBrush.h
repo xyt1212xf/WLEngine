@@ -3,7 +3,7 @@
 
 namespace WL
 {
-	struct Voxel;
+	struct SVoxel;
 	class CVoxelChunk;
 	class CActorEntity;
 	class CVoxelBrush
@@ -16,7 +16,7 @@ namespace WL
 		const Vec3F& getPosition() const;
 		CAABBox getBoundBox()const;
 		void setVisible(bool bValue);
-		virtual std::pair<bool,Vec3F> getIsoSurfaceVec3(CVoxelChunk* pChunk, Voxel* pVoxel);
+		virtual std::pair<bool,Vec3F> getIsoSurfaceVec3(CVoxelChunk* pChunk, SVoxel* pVoxel);
 		const std::string& getTexture(int nIndex);
 
 	protected:
@@ -31,7 +31,7 @@ namespace WL
 		CSqhereBrush();
 		virtual ~CSqhereBrush();
 		virtual void init();
-		virtual std::pair<bool, Vec3F> getIsoSurfaceVec3(CVoxelChunk* pChunk, Voxel* pVoxel) final;
+		virtual std::pair<bool, Vec3F> getIsoSurfaceVec3(CVoxelChunk* pChunk, SVoxel* pVoxel) final;
 		Vec3F mPosition;
 	};
 }

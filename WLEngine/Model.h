@@ -10,13 +10,13 @@
 
 namespace WL
 {
-	struct MeshNode
+	struct SMeshNode
 	{
-		MeshNode()
+		SMeshNode()
 		{
 			textures.resize(8);
 		}
-		MeshNode(const MeshNode& meshNode) noexcept
+		SMeshNode(const SMeshNode& meshNode) noexcept
 		{
 			szName = meshNode.szName;
 			pMesh = meshNode.pMesh;
@@ -34,7 +34,7 @@ namespace WL
 			textureArray = meshNode.textureArray;
 		}
 
-		MeshNode(MeshNode&& meshNode) noexcept
+		SMeshNode(SMeshNode&& meshNode) noexcept
 		{
 			szName = meshNode.szName;
 			pMesh = meshNode.pMesh;
@@ -45,7 +45,7 @@ namespace WL
 			meshNode.textures.clear();
 			textureArray = meshNode.textureArray;
 		}
-		MeshNode& operator = (MeshNode&& meshNode) noexcept
+		SMeshNode& operator = (SMeshNode&& meshNode) noexcept
 		{ 
 			// move assign
 			szName = meshNode.szName;
@@ -59,7 +59,7 @@ namespace WL
 			return *this;
 		}
 
-		MeshNode& operator=(const MeshNode& meshNode)
+		SMeshNode& operator=(const SMeshNode& meshNode)
 		{ // copy assign
 			szName = meshNode.szName;
 			pMesh = meshNode.pMesh;
@@ -78,7 +78,7 @@ namespace WL
 			return *this;
 		}
 
-		~MeshNode()
+		~SMeshNode()
 		{
 			for (auto item : textures)
 			{
@@ -96,15 +96,15 @@ namespace WL
 
 	class CModel : public CResource,
 				   public CTranformComponet,
-				   public ComponentGrounp
+				   public SComponentGrounp
 	{
 		friend class CModelInstance;
 	public:
 		CModel();
 		virtual ~CModel();
 		void addMesh(CMesh* pMesh, CMaterial* pMaterial);
-		void addMesh(MeshNode* pMeshInfo);
-		void addMesh(const MeshNode& meshInfo);
+		void addMesh(SMeshNode* pMeshInfo);
+		void addMesh(const SMeshNode& meshInfo);
 		void addMesh(CMesh* pMesh);
 		void addMesh(CMaterial* pMaterial, void* pVertices, int nVerticesCount, int VertexSize, void* pIndices, int nIndicesCount, int IndexSize,
 			int nLod = 0,
@@ -116,14 +116,14 @@ namespace WL
 		void addTexture(const std::string& szFlag, const std::string& szTexture);
 		void setTextureArray(const CTextureArray* pTextureArray);
 
-		std::vector<MeshNode>& getAllMeshInfo();
-		MeshNode* getMeshInfo(const std::string& szName);
+		std::vector<SMeshNode>& getAllMeshInfo();
+		SMeshNode* getMeshInfo(const std::string& szName);
 		void setMaterial(const std::string& szMaterial);
 		void setMaterial(CMaterial* pMaterial);
 		CMaterial* getMaterial() const;
 
 	private:
-		std::vector<MeshNode>	mMeshsInfo;
+		std::vector<SMeshNode>	mMeshsInfo;
 		CMaterial* mpMaterial = nullptr;
 	};
 

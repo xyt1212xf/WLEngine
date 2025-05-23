@@ -4,13 +4,13 @@
 
 namespace WL
 {
-	class CSceneController : public CController
+	class CSceneController : public SController
 	{
 	public:
 		CSceneController(CScene* pScene);
 
 	protected:
-		virtual bool onEvent(event& e) final;
+		virtual bool onEvent(SEvent& e) final;
 
 	protected:
 		CScene* mpScene = nullptr;

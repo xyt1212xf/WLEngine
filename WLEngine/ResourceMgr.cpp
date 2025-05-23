@@ -6,14 +6,14 @@
 
 namespace WL
 {
-	struct ResourceFileHeader
+	struct SResourceFileHeader
 	{
 		unsigned int magic_number;
 		int version;
 		int nobjects;
 	};
 
-	struct FaceType
+	struct SFaceType
 	{
 		int vIndex1, vIndex2, vIndex3;
 		int tIndex1, tIndex2, tIndex3;
@@ -373,7 +373,7 @@ namespace WL
 			bool bCreteSmaplerDesc = false;
 			for (INT32 i = 0; i < (INT32)textureSampler.size(); ++i)
 			{
-				SamplerDesc samplerDesc;
+				SSamplerDesc samplerDesc;
 				stream.str("");
 				stream << i;
 				textureName = "textureSampler" + stream.str();
@@ -752,7 +752,7 @@ namespace WL
 			{
 				return false;
 			}
-			ResourceFileHeader header;
+			SResourceFileHeader header;
 			fin.read((char*)&header, sizeof(header));
 
 			auto buffer = fReadDataType(fin);
@@ -907,7 +907,7 @@ namespace WL
 							if (nullptr != pMaterial)
 							{
 								pModel->setMaterial(pMaterial);
-								MeshNode info;
+								SMeshNode info;
 								for (int n = 0; n < CountArray(szTextureFlag); ++n)
 								{
 									auto strTexture = std::move(passInfo(i + 1, szTextureFlag[n].c_str()));
@@ -1154,7 +1154,7 @@ namespace WL
 	CModel* CResourceMgr::createBillBoardModel(const std::string& szName, int nWidth, int nHeight, float zDepth /*= 1.0f*/)
 	{
 		int nVecticeCount = 6;
-		VertexVT* pVB = WL_NEW_ARRAY(VertexVT, nVecticeCount);
+		SVertexVT* pVB = WL_NEW_ARRAY(SVertexVT, nVecticeCount);
 		if (nullptr == pVB)
 		{
 			return nullptr;
@@ -1208,7 +1208,7 @@ namespace WL
 		auto pEntity = GEngine->createEntity<CActorEntity>(EntityType::Actor);
 
 		CModel* pModel = dynamic_cast<CModel*>(GEngine->createResource(Model));
-		pModel->addMesh(szName, pVB, sizeof(VertexVT) * 6, sizeof(VertexVT), pIB, sizeof(UINT32) * 6, sizeof(UINT32));
+		pModel->addMesh(szName, pVB, sizeof(SVertexVT) * 6, sizeof(SVertexVT), pIB, sizeof(UINT32) * 6, sizeof(UINT32));
 		WL_DELETE_ARRAY(pVB);
 		WL_DELETE_ARRAY(pIB);
 		return pModel;
@@ -1217,7 +1217,7 @@ namespace WL
 	CMesh* CResourceMgr::createBillBoardMesh(int nWidth, int nHeight, float zDepth /*= 1.0f*/)
 	{
 		int nVecticeCount = 6;
-		VertexVT* pVB = WL_NEW_ARRAY(VertexVT, nVecticeCount);
+		SVertexVT* pVB = WL_NEW_ARRAY(SVertexVT, nVecticeCount);
 		if (nullptr == pVB)
 		{
 			return nullptr;
@@ -1268,7 +1268,7 @@ namespace WL
 		{
 			pIB[i] = i;
 		}
-		return createMesh(pVB, sizeof(VertexVT) * 6, sizeof(VertexVT), pIB, sizeof(UINT32) * 6, sizeof(UINT32));
+		return createMesh(pVB, sizeof(SVertexVT) * 6, sizeof(SVertexVT), pIB, sizeof(UINT32) * 6, sizeof(UINT32));
 
 	}
 
@@ -2024,7 +2024,7 @@ namespace WL
 					lua_gettable(pLua, -2);
 					if (!lua_isnil(pLua, -1))
 					{
-						ImgFileInfo fileInfo;
+						SImgFileInfo fileInfo;
 						lua_pushstring(pLua, "registerIndex");
 						lua_gettable(pLua, -2);
 						INT32 registerIndex = static_cast<INT32>(lua_tonumber(pLua, -1));
@@ -2450,7 +2450,7 @@ namespace WL
 			return false;
 		}
 
-		std::vector<VertexFormatVTN> vertices;
+		std::vector<SVertexFormatVTN> vertices;
 		std::vector<UINT16> indices;
 
 		// Read up to the value of vertex count.
@@ -2461,7 +2461,7 @@ namespace WL
 		std::vector<Vec3F>	position;
 		std::vector<Vec2F>	uv;
 		std::vector<Vec3F>	normal;
-		std::vector<FaceType> faces;
+		std::vector<SFaceType> faces;
 		while (!fin.eof())
 		{
 			if (input == 'v')
@@ -2509,7 +2509,7 @@ namespace WL
 				fin.get(input);
 				if (input == ' ')
 				{
-					FaceType face;
+					SFaceType face;
 					char input2;
 					fin >> face.vIndex3 >> input2 >> face.tIndex3 >> input2 >> face.nIndex3
 						>> face.vIndex2 >> input2 >> face.tIndex2 >> input2 >> face.nIndex2
@@ -2535,7 +2535,7 @@ namespace WL
 		int indicesCount = -1;
 		for (int i = 0; i < (int)faces.size(); i++)
 		{
-			VertexFormatVTN v;
+			SVertexFormatVTN v;
 			vIndex = faces[i].vIndex1 - 1;
 			tIndex = faces[i].tIndex1 - 1;
 			nIndex = faces[i].nIndex1 - 1;
@@ -2569,7 +2569,7 @@ namespace WL
 			vertices.emplace_back(v);
 			indices.push_back(++indicesCount);
 		}
-		pMesh->fillVertexBuffer(&vertices[0], sizeof(VertexFormatVTN) * vertices.size(), sizeof(VertexFormatVTN));
+		pMesh->fillVertexBuffer(&vertices[0], sizeof(SVertexFormatVTN) * vertices.size(), sizeof(SVertexFormatVTN));
 		pMesh->fillIndexBuffer(&indices[0], sizeof(UINT16) * indices.size(), sizeof(UINT16));
 		return true;
 	}
@@ -2577,7 +2577,7 @@ namespace WL
 	std::vector<CMesh*> CResourceMgr::_loadMesh_omod(CResource* pResource, const std::string& strFile)
 	{
 		std::vector<UINT16> indices;
-		std::vector<VertexFormatOMOD> vertices;
+		std::vector<SVertexFormatOMOD> vertices;
 		std::vector<CMesh*> meshes;
 		Vec3F minPos, maxPos;
 		bool bCreateMesh = false;
@@ -2599,7 +2599,7 @@ namespace WL
 		};
 		auto fReadPatches = [&](std::ifstream& fin)
 		{
-			struct skinPatch
+			struct SSkinPatch
 			{
 				char data[96];
 			};
@@ -2808,7 +2808,7 @@ namespace WL
 					//transformed position
 					VES_POSITIONT = 10,
 				};
-				struct VertexElement
+				struct SVertexElement
 				{
 					UINT32 m_StreamSource : 4;
 					UINT32 m_Offset : 8;
@@ -2850,7 +2850,7 @@ namespace WL
 						return getTypeSize(m_Type);
 					}
 				};
-				std::vector<VertexElement> element;
+				std::vector<SVertexElement> element;
 				element.resize(vertfmtElement);
 				if (vertfmtElement != 5)
 				{
@@ -2861,7 +2861,7 @@ namespace WL
 					bCreateMesh = true;
 				}
 				pData = element.data();
-				fin.read((char*)pData, sizeof(VertexElement) * vertfmtElement);
+				fin.read((char*)pData, sizeof(SVertexElement) * vertfmtElement);
 
 				fin.read((char*)&minPos, sizeof(minPos));
 				fin.read((char*)&maxPos, sizeof(maxPos));
@@ -2936,7 +2936,7 @@ namespace WL
 				{
 					CMesh* pMesh = dynamic_cast<CMesh*>(createResource(Mesh));
 					pMesh->setName("omod");
-					pMesh->fillVertexBuffer(&vertices[0], sizeof(VertexFormatOMOD) * vertices.size(), sizeof(VertexFormatOMOD));
+					pMesh->fillVertexBuffer(&vertices[0], sizeof(SVertexFormatOMOD) * vertices.size(), sizeof(SVertexFormatOMOD));
 					pMesh->fillIndexBuffer(&indices[0], sizeof(UINT16) * indices.size(), sizeof(UINT16));
 					meshes.push_back(pMesh);
 				}
@@ -2964,7 +2964,7 @@ namespace WL
 		{
 			return meshes;
 		}
-		ResourceFileHeader header;
+		SResourceFileHeader header;
 		fin.read((char*)&header, sizeof(header));
 
 		auto buffer = fReadDataType(fin);
@@ -3021,7 +3021,7 @@ namespace WL
 		INT32 vertexCount = 0;
 		fin >> vertexCount;
 
-		VertexFormat vertexFormat;
+		SVertexFormat vertexFormat;
 		vertexFormat.addElement(V_POSITION);
 		vertexFormat.addElement(V_TEXTURE);
 		vertexFormat.addElement(V_NORMAL);

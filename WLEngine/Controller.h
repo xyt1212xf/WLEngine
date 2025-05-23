@@ -3,8 +3,8 @@
 
 namespace WL
 {
-	struct CController
+	struct SController
 	{
-		virtual bool onEvent(event& ) { return false; }
+		virtual bool onEvent(SEvent& ) { return false; }
 	};
 }

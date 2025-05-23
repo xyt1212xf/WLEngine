@@ -20,7 +20,7 @@ namespace WL
 		bool bValue = initlaliseMaterial();
 		if (bValue)
 		{
-			RenderStateDesc renderStateDesc;
+			SRenderStateDesc renderStateDesc;
 			renderStateDesc.rasterizerDesc.CullMode = CULL_NONE;
 
 			renderStateDesc.depthStencilDesc.DepthEnable = TRUE;
@@ -55,12 +55,12 @@ namespace WL
 		return Parent::drawBegin(pDeviceContext, bCleanState);
 	}
 
-	void CLightMeshRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CLightMeshRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				auto& meshsInfo = (item.second)->getAllMeshInfo();
@@ -74,7 +74,7 @@ namespace WL
 						pRenderUnit->pMaterialInstance = mpMaterialIns;
 						UINT16 nOrder = mpMaterialIns->getRenderOrder();
 
-						Geometry geometry;
+						SGeometry geometry;
 						geometry.pMaterialInstance = mpMaterialIns;
 						geometry.pTextures = child.pMaterialInstance->getTexturesPtr();
 						geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
@@ -96,7 +96,7 @@ namespace WL
 		}
 	}
 
-	void CLightMeshRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CLightMeshRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -114,7 +114,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CLightMeshRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CLightMeshRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{

@@ -22,7 +22,7 @@ namespace WL
 
 	}
 
-	void COceanModelInstance::addMeshInstance(const MeshInstanceInfo& meshInstance)
+	void COceanModelInstance::addMeshInstance(const SMeshInstanceInfo& meshInstance)
 	{
 		mMeshInstances.emplace_back(meshInstance);
 	}

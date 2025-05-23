@@ -71,7 +71,7 @@ namespace WL
 	}
 
 
-	std::pair<bool, Vec3F> CVoxelBrush::getIsoSurfaceVec3(CVoxelChunk* pChunk, Voxel* pVoxel)
+	std::pair<bool, Vec3F> CVoxelBrush::getIsoSurfaceVec3(CVoxelChunk* pChunk, SVoxel* pVoxel)
 	{
 		auto& AABB = mpBrushEntity->getBoundBox();
 		int nFlag[8] = { 1,1,1,1,1,1,1,1 };
@@ -143,7 +143,7 @@ namespace WL
 	}
 
 
-	std::pair<bool, Vec3F> CSqhereBrush::getIsoSurfaceVec3(CVoxelChunk* pChunk, Voxel* pVoxel)
+	std::pair<bool, Vec3F> CSqhereBrush::getIsoSurfaceVec3(CVoxelChunk* pChunk, SVoxel* pVoxel)
 	{	
 		std::pair<bool, Vec3F> r;
 		r.first = false;

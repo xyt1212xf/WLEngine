@@ -51,7 +51,7 @@ namespace WL
 		}
 
 
-		Vec4F matrixMulVec4SSE(In const Matrix44& matrix, In const Vec4F& v)
+		Vec4F matrixMulVec4SSE(In const SMatrix44& matrix, In const Vec4F& v)
 		{
 			float pArray[4];
 			__asm
@@ -90,7 +90,7 @@ namespace WL
 		}
 
 
-		Vec3F matrixMulVec3SSE(In const Matrix44& matrix, In const Vec3F& v)
+		Vec3F matrixMulVec3SSE(In const SMatrix44& matrix, In const Vec3F& v)
 		{
 			float pArray[4];
 			__asm
@@ -125,7 +125,7 @@ namespace WL
 			return Vec3F(pArray);
 		}
 
-		bool matrixInverseSSE(InOut Matrix44* pOut, IN const Matrix44* pM)
+		bool matrixInverseSSE(InOut SMatrix44* pOut, IN const SMatrix44* pM)
 		{
 			/*
 			float det = A * B

@@ -27,84 +27,84 @@ namespace WL
 	INT32						CGraphicEngine::sRenderThreadFlag = 0;
 
 	CGraphicEngine* GGraphicPtr = nullptr;
-	void CGraphicEngine::setWorldMatrix(Matrix44* pMT)
+	void CGraphicEngine::setWorldMatrix(SMatrix44* pMT)
 	{
 		mWorldMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setViewMatrxi(Matrix44* pMT)
+	void CGraphicEngine::setViewMatrxi(SMatrix44* pMT)
 	{
 		mViewMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setProjectMatrix(Matrix44* pMT)
+	void CGraphicEngine::setProjectMatrix(SMatrix44* pMT)
 	{
 		mProjectMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setOrthoMatrix(Matrix44* pMT)
+	void CGraphicEngine::setOrthoMatrix(SMatrix44* pMT)
 	{
 		mOrthoMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setViewProjectMatrix(Matrix44* pViewProjectMT)
+	void CGraphicEngine::setViewProjectMatrix(SMatrix44* pViewProjectMT)
 	{
 		mViewProjectMatrix = *pViewProjectMT;
 	}
 
-	Matrix44* CGraphicEngine::getViewMatrix() 
+	SMatrix44* CGraphicEngine::getViewMatrix() 
 	{
 		return &mViewMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getProjectMatrix() 
+	SMatrix44* CGraphicEngine::getProjectMatrix() 
 	{
 		return &mProjectMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getOrthoMatrix()
+	SMatrix44* CGraphicEngine::getOrthoMatrix()
 	{
 		return &mOrthoMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getWorldMatrix()
+	SMatrix44* CGraphicEngine::getWorldMatrix()
 	{
 		return &mWorldMatrix;
 	}
 
 	
-	Matrix44* CGraphicEngine::getViweProjectMatrix()
+	SMatrix44* CGraphicEngine::getViweProjectMatrix()
 	{
 		return &mViewProjectMatrix;
 	}
 
-	void CGraphicEngine::setFillCullMode(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setFillCullMode(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setFillCullMode(pContext, pRS);
 	}
 
-	void CGraphicEngine::setAlpha(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setAlpha(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setAlpha(pContext, pRS);
 	}
 
-	void CGraphicEngine::setDepthStencil(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setDepthStencil(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setDepthStencil(pContext, pRS);
 	}
 
-	void CGraphicEngine::setDepth(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setDepth(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setDepth(pContext, pRS);
 	}
 
-	void CGraphicEngine::setDepthCompare(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setDepthCompare(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setDepthCompare(pContext, pRS);
 	}
 
 
-	void CGraphicEngine::setRenderState(DeviceContext* pContext, RenderStateDesc* pRS)
+	void CGraphicEngine::setRenderState(DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		setFillCullMode(pContext, pRS);
 		setAlpha(pContext, pRS);
@@ -113,47 +113,47 @@ namespace WL
 		setDepthCompare(pContext, pRS);
 	}
 
-	void CGraphicEngine::setDepthStencilState(DeviceContext* pContext, RenderState* pRS, int nStencilRef/*= 1*/)
+	void CGraphicEngine::setDepthStencilState(DeviceContext* pContext, SRenderState* pRS, int nStencilRef/*= 1*/)
 	{
 		mpDevice->mpRenderStateMgr->setDepthStencilState(pContext, pRS, nStencilRef);
 	}
 
-	void CGraphicEngine::setBlendState(DeviceContext* pContext, RenderState* pRS)
+	void CGraphicEngine::setBlendState(DeviceContext* pContext, SRenderState* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setBlendState(pContext, pRS);
 	}
 
-	void CGraphicEngine::setRasterizerState(DeviceContext* pContext, RenderState* pRS)
+	void CGraphicEngine::setRasterizerState(DeviceContext* pContext, SRenderState* pRS)
 	{
 		mpDevice->mpRenderStateMgr->setRasterizerState(pContext, pRS);
 	}
 
-	void CGraphicEngine::setTransposeWorldMatrix(Matrix44* pMT)
+	void CGraphicEngine::setTransposeWorldMatrix(SMatrix44* pMT)
 	{
 		mTransposeWorldMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setTransposeViewMatrxi(Matrix44* pMT)
+	void CGraphicEngine::setTransposeViewMatrxi(SMatrix44* pMT)
 	{
 		mTransposeViewMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setTransposeProjectMatrix(Matrix44* pMT)
+	void CGraphicEngine::setTransposeProjectMatrix(SMatrix44* pMT)
 	{
 		mTransposeProjectMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setTransposeOrthoMatrix(Matrix44* pMT)
+	void CGraphicEngine::setTransposeOrthoMatrix(SMatrix44* pMT)
 	{
 		mTransposeOrthoMatrix = *pMT;
 	}
 
-	void CGraphicEngine::setTransposeViewProjectMatrix(Matrix44* pViewProjectMT)
+	void CGraphicEngine::setTransposeViewProjectMatrix(SMatrix44* pViewProjectMT)
 	{
 		mTransposeViewProjectMatrix = *pViewProjectMT;
 	}
 
-	const std::list<WL::shaderParam>& CGraphicEngine::getGlobalShaderParam(ShaderBufferType type)
+	const std::list<WL::SShaderParam>& CGraphicEngine::getGlobalShaderParam(ShaderBufferType type)
 	{
 		auto iter = mConstBufferParamMap.find(type);
 		if (iter != mConstBufferParamMap.end())
@@ -162,36 +162,36 @@ namespace WL
 		}
 		else
 		{
-			return *(std::list<WL::shaderParam>*)(0);
+			return *(std::list<WL::SShaderParam>*)(0);
 		}
 	}
 
-	void CGraphicEngine::addGlobalShaderParam(ShaderBufferType type, const shaderParam& param)
+	void CGraphicEngine::addGlobalShaderParam(ShaderBufferType type, const SShaderParam& param)
 	{
 		mConstBufferParamMap[type].emplace_back(param);
 	}
 
-	Matrix44* CGraphicEngine::getTransposeWorldMatrix()
+	SMatrix44* CGraphicEngine::getTransposeWorldMatrix()
 	{
 		return &mTransposeWorldMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getTransposeViewMatrix()
+	SMatrix44* CGraphicEngine::getTransposeViewMatrix()
 	{
 		return &mTransposeViewMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getTransposeProjectMatrix()
+	SMatrix44* CGraphicEngine::getTransposeProjectMatrix()
 	{
 		return &mTransposeProjectMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getTransposeOrthoMatrix()
+	SMatrix44* CGraphicEngine::getTransposeOrthoMatrix()
 	{
 		return &mTransposeOrthoMatrix;
 	}
 
-	Matrix44* CGraphicEngine::getTransposeViweProjectMatrix()
+	SMatrix44* CGraphicEngine::getTransposeViweProjectMatrix()
 	{
 		return &mTransposeViewProjectMatrix;
 	}

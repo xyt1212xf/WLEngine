@@ -3,7 +3,7 @@
 namespace WL
 {
 #pragma pack( push , 1 )
-	struct CMemoryCookie
+	struct SMemoryCookie
 	{
 		size_t				m_stSize;
 		union

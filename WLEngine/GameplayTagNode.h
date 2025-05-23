@@ -5,20 +5,20 @@
 
 namespace WL
 {
-	struct GameplayTagNode : public CRefcount
+	struct SGameplayTagNode : public CRefcount
 	{
-		GameplayTagNode() = default;
-		GameplayTagNode(const std::string& InTag, const std::string& InFullTag, GameplayTagNode* pParent);
+		SGameplayTagNode() = default;
+		SGameplayTagNode(const std::string& InTag, const std::string& InFullTag, SGameplayTagNode* pParent);
 
 		/** Returns a correctly constructed container with only this tag, useful for doing container queries */
-		INLINE const GameplayTagContainer& getSingleTagContainer() const
+		INLINE const SGameplayTagContainer& getSingleTagContainer() const
 		{
 			return mCompleteTagWithParents; 
 		}
 		
-		INLINE const GameplayTag& getCompleteTag() const
+		INLINE const SGameplayTag& getCompleteTag() const
 		{
-			return mCompleteTagWithParents.num() > 0 ? mCompleteTagWithParents.mGameplayTags[0] : GameplayTag::EmptyTag; 
+			return mCompleteTagWithParents.num() > 0 ? mCompleteTagWithParents.mGameplayTags[0] : SGameplayTag::EmptyTag; 
 		}
 		INLINE const std::string& getSimpleTagName() const
 		{
@@ -27,9 +27,9 @@ namespace WL
 	
 		std::string mTagName = "";
 		std::string mFullTagName = "";
-		GameplayTagContainer mCompleteTagWithParents;
-		std::vector<GameplayTagNode*>	mChildTags;
-		GameplayTagNode* mParentNodePtr = nullptr;
+		SGameplayTagContainer mCompleteTagWithParents;
+		std::vector<SGameplayTagNode*>	mChildTags;
+		SGameplayTagNode* mParentNodePtr = nullptr;
 		UINT16 mNetIndex = 0xFFFF;
 	};
 }

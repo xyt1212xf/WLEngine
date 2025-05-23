@@ -61,12 +61,12 @@ namespace WL
 		return mRotation;
 	}
 
-	Matrix44& CTranformComponet::getMT() 
+	SMatrix44& CTranformComponet::getMT() 
 	{
 		return mRT;
 	}
 
-	Matrix44& CTranformComponet::getTransposeMT()
+	SMatrix44& CTranformComponet::getTransposeMT()
 	{
 		return mTransposeRT;
 	}

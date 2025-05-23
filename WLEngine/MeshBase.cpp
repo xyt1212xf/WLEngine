@@ -227,7 +227,7 @@ namespace WL
 		}
 	}
 
-	const VertexFormat* CMeshBase::getVertexFormat() const
+	const SVertexFormat* CMeshBase::getVertexFormat() const
 	{
 		return &mVertexFormat;
 	}

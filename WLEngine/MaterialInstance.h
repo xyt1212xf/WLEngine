@@ -38,25 +38,25 @@ namespace WL
 		void setTypeBufferParamByName(const std::string& name, void* pData);
 
 
-		void setShaderParamByHandle(const shaderParam& nHandle, void* pData);
-		void setVSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setPSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setHSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setDSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setGSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setCSParamByHandle(const shaderParam& nHandle, void* pData);
-		void setStructParamByHandle(const shaderParam& nHandle, void* pData, int nSize);
-		void setTextureConstBufferParamByHandle(const shaderParam& name, void* pData);
-		void setTextureParamByHandle(const shaderParam& name, void* pData);
-		void setTypeBufferParamByHandle(const shaderParam& name, void* pData);
+		void setShaderParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setVSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setPSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setHSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setDSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setGSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setCSParamByHandle(const SShaderParam& nHandle, void* pData);
+		void setStructParamByHandle(const SShaderParam& nHandle, void* pData, int nSize);
+		void setTextureConstBufferParamByHandle(const SShaderParam& name, void* pData);
+		void setTextureParamByHandle(const SShaderParam& name, void* pData);
+		void setTypeBufferParamByHandle(const SShaderParam& name, void* pData);
 
-		shaderParam getVSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getPSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getHSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getDSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getGSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getCSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
-		shaderParam getStructParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getVSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getPSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getHSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getDSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getGSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getCSParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
+		SShaderParam getStructParamByHandle(const std::string& szName, size_t nShaderIndex = 0);
 		std::map<TextureUseType, CTexture*>* getTexturesPtr();
 
 	private:

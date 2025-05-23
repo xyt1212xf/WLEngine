@@ -19,7 +19,7 @@ namespace WL
 		DEV_RELEASE(mpDepthStencilView);
 		DEV_RELEASE(mpBackBuffer);
 
-		WL_DELETE(mpRenderStateMgr, RenderState);
+		WL_DELETE(mpRenderStateMgr, SRenderState);
 
 		for (auto item : mMultipleWindowSwapChain)
 		{
@@ -243,7 +243,7 @@ namespace WL
 						continue;
 					}
 					//m_CurrentSwapChain->Release();
-					mpRenderStateMgr = WL_NEW(CRenderStateMgr, RenderState)(dynamic_cast<CDevice*>(this));   
+					mpRenderStateMgr = WL_NEW(CRenderStateMgr, SRenderState)(dynamic_cast<CDevice*>(this));   
 
 					mMultipleWindowSwapChain[hWnd] = m_CurrentSwapChain;
 
@@ -293,7 +293,7 @@ namespace WL
 						return false;
 					}	
 					mImmediateContext->OMSetRenderTargets(1, &mpRenderTargetView, mpDepthStencilView);
-					RenderStateDesc RS;
+					SRenderStateDesc RS;
 					RS.stencil = true;
 					mpRenderStateMgr->setDepthStencil(mImmediateContext, &RS);
 
@@ -401,9 +401,9 @@ namespace WL
 		return true;
 	}
 
-	RenderState* CDX11Device::createRenderState(RenderStateDesc& renderStateDesc)
+	SRenderState* CDX11Device::createRenderState(SRenderStateDesc& renderStateDesc)
 	{
-		RenderState* pRenderState = nullptr;
+		SRenderState* pRenderState = nullptr;
 		if (nullptr != mpRenderStateMgr)
 		{
 			pRenderState = mpRenderStateMgr->createRenderState(renderStateDesc);

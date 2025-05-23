@@ -46,7 +46,7 @@ namespace WL
 			addRendererPass(pNoLightPass);
 			addRendererPass(pGuiPass);
 
-			mListRenderPass.sort(CRendererPass::RendererPassCompare());
+			mListRenderPass.sort(CRendererPass::SRendererPassCompare());
 
 			pDeferredLightPass->setInputRT(pDeferredPass->getArrayOutputRT());
 			pShadowPass->addInputRT(pDeferredPass->getOutputRT(1));
@@ -64,7 +64,7 @@ namespace WL
 
 	}
 
-	void CDeferredRenderer::drawEntity(RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CDeferredRenderer::drawEntity(SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 #if 0
 		for (int i = nBegin; i < nBegin + nCount; ++i)

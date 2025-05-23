@@ -7,17 +7,17 @@ namespace WL
 {
 	DefineScriptClass(CGuiEntity)
 	
-	struct CWndCallBack : public CCallBack
+	struct SWndCallBack : public CCallBack
 	{
-		CWndCallBack()
+		SWndCallBack()
 		{
 
 		}
-		CWndCallBack(void* pParameters)
+		SWndCallBack(void* pParameters)
 		: CCallBack(pParameters)
 		{
 		}
-		virtual ~CWndCallBack()
+		virtual ~SWndCallBack()
 		{
 			mpWnd = nullptr;
 		}
@@ -99,7 +99,7 @@ namespace WL
 			WL_DECREASE(mpUIWnd)
 			mpUIWnd = pWnd;
 
-			CWndCallBack* pCallBack = new CWndCallBack(nullptr);
+			SWndCallBack* pCallBack = new SWndCallBack(nullptr);
 			pCallBack->mpWnd = this->mpUIWnd;
 			pCallBack->mTimerID = 0;
 			pCallBack->mAlternationTime = 5000;
@@ -134,7 +134,7 @@ namespace WL
 			auto pWnd = dynamic_cast<CUIWnd*>(pResource);
 			mpUIWnd = pWnd;
 
-			CWndCallBack* pCallBack = new CWndCallBack(nullptr);
+			SWndCallBack* pCallBack = new SWndCallBack(nullptr);
 			pCallBack->mpWnd = this->mpUIWnd;
 			pCallBack->mTimerID = 0;
 			pCallBack->mAlternationTime = 5000;

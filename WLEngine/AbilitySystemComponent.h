@@ -15,8 +15,8 @@ namespace WL
 	public:
 		CAbilitySystemComponent();
 		void setOwnerActor(CActorEntity* NewOwnerActor);
-		bool tryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate);
-		SGameplayAbilitySpec* findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const;
+		bool tryActivateAbility(SGameplayAbilitySpecHandle AbilityToActivate);
+		SGameplayAbilitySpec* findAbilitySpecFromHandle(SGameplayAbilitySpecHandle Handle) const;
 
 		CActorEntity* getOwnerActor() const 
 		{
@@ -34,16 +34,16 @@ namespace WL
 
 	private:
 		/** Attempts to activate the given ability, will only work if called from the correct client/server context */
-		bool internalTryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate);
-		void clearAbility(const GameplayAbilitySpecHandle& Handle);
+		bool internalTryActivateAbility(SGameplayAbilitySpecHandle AbilityToActivate);
+		void clearAbility(const SGameplayAbilitySpecHandle& Handle);
 		void clearAllAbilities();
 
 	public:
-		GameplayAbilityActorInfo*	mpAbilityActorInfo = nullptr;
+		SGameplayAbilityActorInfo*	mpAbilityActorInfo = nullptr;
 
 	protected:
 		SGameplayAbilitySpecContainer mActivatableAbilities;
-		std::vector<GameplayAbilitySpecHandle> mAbilityPendingRemoves;
+		std::vector<SGameplayAbilitySpecHandle> mAbilityPendingRemoves;
 		std::vector<SGameplayAbilitySpec> mAbilityPendingAdds;
 
 	private:

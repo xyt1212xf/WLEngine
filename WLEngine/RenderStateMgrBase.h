@@ -9,7 +9,7 @@ namespace WL
 	public:
 		CRenderStateMgrBase(CDevice* pDevice);
 		virtual ~CRenderStateMgrBase();
-		virtual RenderState* createRenderState(RenderStateDesc& renderStateDesc);
+		virtual SRenderState* createRenderState(SRenderStateDesc& renderStateDesc);
 	protected:
 		CDevice* mpDevice = nullptr;
 	};

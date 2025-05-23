@@ -222,7 +222,7 @@ namespace WL
 	}
 
 
-	void CActorEntity::setViewMT(Matrix44* pMT)
+	void CActorEntity::setViewMT(SMatrix44* pMT)
 	{
 		for (auto item : mModelInstanceMap)
 		{
@@ -233,7 +233,7 @@ namespace WL
 		}
 	}
 
-	void CActorEntity::setTransposeViewMT(Matrix44* pMT)
+	void CActorEntity::setTransposeViewMT(SMatrix44* pMT)
 	{
 		for (auto item : mModelInstanceMap)
 		{
@@ -244,7 +244,7 @@ namespace WL
 		}
 	}
 
-	void CActorEntity::setProjectMT(Matrix44* pMT)
+	void CActorEntity::setProjectMT(SMatrix44* pMT)
 	{
 		for (auto item : mModelInstanceMap)
 		{
@@ -255,7 +255,7 @@ namespace WL
 		}
 	}
 
-	void CActorEntity::setTransposeProjectMT(Matrix44* pMT)
+	void CActorEntity::setTransposeProjectMT(SMatrix44* pMT)
 	{
 		for (auto item : mModelInstanceMap)
 		{

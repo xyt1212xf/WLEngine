@@ -38,10 +38,10 @@ namespace WL
 		virtual bool addVSConstBuffer(const std::string& name, INT32 size, INT32 nRegister) final;
 		virtual bool addGSConstBuffer(const std::string& name, INT32 size, INT32 nRegister) final;
 		virtual bool addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister, 
-			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData = nullptr) final;
+			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData = nullptr) final;
 		virtual bool addStructedParam(const std::string& name, INT32 structSize, INT32 size, INT32 nRegister) final;
 		virtual bool addTextureConstBufferParam(const std::string& name, INT32 size, INT32 nRegister) final;
-		virtual bool addTextureParam(const std::string& name, INT32 nRegister, ImgFileInfo fileInfo, 
+		virtual bool addTextureParam(const std::string& name, INT32 nRegister, SImgFileInfo fileInfo, 
 			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags ) final;
 		virtual bool addTypeBufferParam(const std::string& name, INT32 size, INT32 nRegister) final;
 		

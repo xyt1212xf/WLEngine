@@ -33,7 +33,7 @@ namespace WL
 		UINT32* getColorUINT(int nIndex);
 
 
-		const VertexFormat* getVertexFormat() const;
+		const SVertexFormat* getVertexFormat() const;
 		inline const Vec3F& getVertex(int nIndex)const
 		{
 			INT32 nOffset = nIndex * mVertexTypeSize[mLodLevel];
@@ -51,12 +51,12 @@ namespace WL
 		const std::vector<UINT32>& getIndices() const;
 
 	protected:
-		VertexFormat						mVertexFormat;
-		std::vector<VertexVT>				mVerticesPT;
-		std::vector<VertexFormatVTNTB>		mVertices;
-		std::vector<VertexFormatVTNT>		mVerticesT;
-		std::vector<VertexFormatVTN>		mVerticesVTN;
-		std::vector<VertexFormatVTNTBSkin>	mVerticesSkin;
+		SVertexFormat						mVertexFormat;
+		std::vector<SVertexVT>				mVerticesPT;
+		std::vector<SVertexFormatVTNTB>		mVertices;
+		std::vector<SVertexFormatVTNT>		mVerticesT;
+		std::vector<SVertexFormatVTN>		mVerticesVTN;
+		std::vector<SVertexFormatVTNTBSkin>	mVerticesSkin;
 		bool mbFreeDataStream = false;
 		byte* mpDataStream = nullptr;
 		INT32 mpDataLength = 0;

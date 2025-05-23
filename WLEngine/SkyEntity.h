@@ -18,9 +18,9 @@ namespace WL
 		Vec4F			mEyePosition = {0, 0, 0, 1};
 		Vec3F			mSunDirection = {0, 1, 0};
 		float			mSkyHeight = 2000.0f;
-		shaderParam	mEyePositionHandle;
-		shaderParam	mSunDirectionHandle;
-		shaderParam	mSkyHeightHandle;
+		SShaderParam	mEyePositionHandle;
+		SShaderParam	mSunDirectionHandle;
+		SShaderParam	mSkyHeightHandle;
 	};
 }
 

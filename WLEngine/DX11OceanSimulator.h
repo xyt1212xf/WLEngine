@@ -9,7 +9,7 @@
 
 namespace WL
 {
-	class CD3D11OceanSimulator : public OceanSimulatorBase
+	class CD3D11OceanSimulator : public SOceanSimulatorBase
 	{
 		friend class COceanEntity;
 	public:
@@ -23,7 +23,7 @@ namespace WL
 		void cleanupRenderResource();
 		void createSurfaceMesh();
 		void createFresnelMap();
-		MeshInstanceInfo* getMeshInstance();
+		SMeshInstanceInfo* getMeshInstance();
 		void setMaterial(CMaterial* pMaterial);
 		void updateNodes(UINT32 nElapsedTime);
 	
@@ -53,8 +53,8 @@ namespace WL
 			
 	protected:
 		COceanModelInstance* mpModelInstance = nullptr;
-		std::list<MeshInstanceInfo*>	mMeshInstances;
-		std::list<MeshInstanceInfo*>	mMeshInstancesPool;
+		std::list<SMeshInstanceInfo*>	mMeshInstances;
+		std::list<SMeshInstanceInfo*>	mMeshInstancesPool;
 		CMaterial* mpMaterial = nullptr;
 		CMesh*		  mpMesh = nullptr;
 		CShaderInstance*	mpOceanSimulatorShader = nullptr;
@@ -76,7 +76,7 @@ namespace WL
 		ID3D11BlendState* mpBStateTransparent = nullptr;
 
 
-		RenderState* mpOceanRS  = nullptr;
+		SRenderState* mpOceanRS  = nullptr;
 		//RenderState* mpBStateTransparent = nullptr;
 
 		// Samplers
@@ -86,17 +86,17 @@ namespace WL
 		//CTexture mGradientMap;
 
 		CTexture mFresnel;
-		FFT_Plan m_fft_plan;
+		SFFT_Plan m_fft_plan;
 
 		ID3D11Buffer* mpQuadVB = nullptr;
 
 		// Quad-tree LOD, 0 to 9 (1x1 ~ 512x512) 
 		int mLods = 0;
 		// Pattern lookup array. Filled at init time.
-		QuadRenderParam mMeshPatterns[9][3][3][3][3];
+		SQuadRenderParam mMeshPatterns[9][3][3][3][3];
 
 		// Rendering list
-		std::vector<QuadNode> mRenderNodes;
+		std::vector<SQuadNode> mRenderNodes;
 #ifdef CS_DEBUG_BUFFER
 		ID3D11Buffer* mpDebugBuffer = nullptr;
 #endif

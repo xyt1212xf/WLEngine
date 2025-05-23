@@ -23,7 +23,7 @@ namespace WL
 		CActorEntity* intersectActorEntities(CActorEntity* pActorEntity, int nCount);
 
 	public:
-		Intersection mResult;
+		SIntersection mResult;
 		Vec3F  mOriginPosition = { 0, 0, 0 };
 		Vec3F  mDirection = { 0, 0, 0 };
 

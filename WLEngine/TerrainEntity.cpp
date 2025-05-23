@@ -8,6 +8,9 @@ namespace WL
 	{
 		mType = Terrain;
 		mCameraEntityPtr = GEngine->getMainCameraEntity();
+		mCameraChunkPos = mCameraEntityPtr->getEye();
+		//减掉任何数字，让第一次摄像机和chunkPos的位置不一样。否者不会动态载入地形
+		mCameraChunkPos.x -= 10;
 		WL_INCREASE(mCameraEntityPtr);
 	}
 
@@ -15,9 +18,6 @@ namespace WL
 	{
 		WL_DECREASE(mCameraEntityPtr);
 		mCameraEntityPtr = nullptr;
-		mCameraChunkPos = mCameraEntityPtr->getEye();
-		//减掉任何数字，让第一次摄像机和chunkPos的位置不一样。否者不会动态载入地形
-		mCameraChunkPos.x -= 10;
 	}
 
 	void CTerrainEntity::_tick(UINT32 dt)

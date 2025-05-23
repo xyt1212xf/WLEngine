@@ -18,7 +18,7 @@ namespace WL
 	}
 	class CMemoryMgr
 	{
-		struct LabelInfo
+		struct SLabelInfo
 		{
 			CBaseAllocator* pAlloc = nullptr;
 #ifdef WL_64
@@ -31,7 +31,7 @@ namespace WL
 			ALIGN_TYPE(4) volatile int    numAllocs;
 #endif // UNITY_64
 		};
-		LabelInfo        m_AllocatorMap[kMemLabelCount];
+		SLabelInfo        m_AllocatorMap[kMemLabelCount];
 	public:
 		CMemoryMgr();
 		virtual ~CMemoryMgr();

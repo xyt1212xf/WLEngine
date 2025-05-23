@@ -28,10 +28,10 @@ namespace WL
 				Math::matrixTranspose(&mFullScreenTransposeMT, &mFullScreenMT);
 
 				mpFullScreenActor->setPosition(Vec3F(0, 0, 0));
-				mpFullScreenActor->setViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
+				mpFullScreenActor->setViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
 				mpFullScreenActor->setProjectMT(&mFullScreenMT);
 
-				mpFullScreenActor->setTransposeViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
+				mpFullScreenActor->setTransposeViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
 				mpFullScreenActor->setTransposeProjectMT(&mFullScreenTransposeMT);
 
 				mDrawEntities.emplace_back(mpFullScreenActor);
@@ -75,9 +75,9 @@ namespace WL
 		return true;
 	}
 
-	void CShadowMapRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CShadowMapRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
-		RenderUnit* pRenderUnit = nullptr;
+		SRenderUnit* pRenderUnit = nullptr;
 		auto item = mpFullScreenActor->getModels().begin();
 		auto& meshsInfo = (item->second)->getAllMeshInfo().front();
 		if (nullptr != meshsInfo.pMeshInstance)
@@ -88,7 +88,7 @@ namespace WL
 			pRenderUnit->pMaterialInstance = mpMaterialIns;
 			UINT16 nOrder = mpMaterialIns->getRenderOrder();
 
-			Geometry geometry;
+			SGeometry geometry;
 			geometry.pMaterialInstance = mpMaterialIns;
 			geometry.pTextures = mpMaterialIns->getTexturesPtr();
 			geometry.vertexSize = meshsInfo.pMeshInstance->getVertexTypeSize();
@@ -106,7 +106,7 @@ namespace WL
 		}
 	}
 
-	void CShadowMapRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CShadowMapRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -116,7 +116,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CShadowMapRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CShadowMapRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{

@@ -58,8 +58,8 @@ namespace WL
 		UINT16 getRenderOrder();
 		void setVertexColor(const Vec4F& color);
 		const Vec4F& getVertexColor()const;
-		void bindRenderState(RenderState* pRenderState);
-		RenderState* getRenderState()const;
+		void bindRenderState(SRenderState* pRenderState);
+		SRenderState* getRenderState()const;
 		CShaderInstance* getShaderInstance(UINT32 nIndex);
 		CShaderInstance* getShaderInstance(const std::string& szName);
 
@@ -71,7 +71,7 @@ namespace WL
 		Vec4F	mVertexColor = { 0,0,0,1 };
 		CMaterial* mpMaterial = nullptr;
 		std::list<CShaderInstance*>		mArrayShaderIns;
-		RenderStateDesc					mRenderStateDesc;
-		RenderState*				mpRenderState = nullptr;
+		SRenderStateDesc					mRenderStateDesc;
+		SRenderState*				mpRenderState = nullptr;
 	};
 }

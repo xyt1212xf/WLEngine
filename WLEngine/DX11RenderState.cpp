@@ -2,7 +2,7 @@
 namespace WL
 {
 
-	DX11RenderState::~DX11RenderState()
+	SDX11RenderState::~SDX11RenderState()
 	{
 
 		pDepthStencilState = nullptr;

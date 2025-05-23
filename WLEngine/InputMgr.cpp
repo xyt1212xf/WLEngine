@@ -14,7 +14,7 @@ namespace WL
 
 	}
 
-	bool CInputMgr::reviceMsg(event& e)
+	bool CInputMgr::reviceMsg(SEvent& e)
 	{
 		mMouseX = e.mouseX;
 		mMouseY = e.mouseY;
@@ -43,7 +43,7 @@ namespace WL
 		auto iterEnd = mControllerMap.end();
 		while (iter != iterEnd)
 		{
-			CController* p = (iter->second).get();
+			SController* p = (iter->second).get();
 			WL_DELETE(p, Controller);
 			(iter->second).release();
 			++iter;
@@ -51,7 +51,7 @@ namespace WL
 		mControllerMap.clear();
 	}
 
-	void CInputMgr::registerController(CController* pController, INT32 nOrder)
+	void CInputMgr::registerController(SController* pController, INT32 nOrder)
 	{
 		if( -1 == nOrder)
 		{
@@ -68,7 +68,7 @@ namespace WL
 		}
 	}
 
-	void CInputMgr::unRegisterController(CController* pController)
+	void CInputMgr::unRegisterController(SController* pController)
 	{
 		auto iter = mControllerMap.begin();
 		auto iterEnd = mControllerMap.end();

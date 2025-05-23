@@ -17,7 +17,7 @@ namespace WL
 	//	destoryEngine();
 	}
 
-	bool CGameApp::entry(WindowConfig& config)
+	bool CGameApp::entry(SWindowConfig& config)
 	{
 		do
 		{

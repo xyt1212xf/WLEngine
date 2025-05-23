@@ -16,7 +16,7 @@
 namespace WL
 {
 #ifdef D3D11
-	struct FFT_Plan : public DX11_FFT_Plan
+	struct SFFT_Plan : public SDX11_FFT_Plan
 #endif
 	{
 		// More than one array can be transformed at same time

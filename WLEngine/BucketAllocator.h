@@ -9,7 +9,7 @@ namespace WL
 #define ATOMIC_HAS_QUEUE	2
 #define USE_BUCKET_ALLOCATOR ATOMIC_HAS_QUEUE 
 
-	struct Buckets;
+	struct SBuckets;
 	class CBucketAllocator : public CBaseAllocator
 	{
 	public:
@@ -28,9 +28,9 @@ namespace WL
 			return size <= m_MaxBucketSize && align <= kMaxAlignment; 
 		}
 		bool  addLargeBlock();
-		bool  addMoreBuckets(Buckets* buckets);
+		bool  addMoreBuckets(SBuckets* buckets);
 		static int  getRealBucketSize(int size);
-		INLINE Buckets* getBucketsForSize(size_t size) const
+		INLINE SBuckets* getBucketsForSize(size_t size) const
 		{
 			return m_Buckets[size > 0 ? ((size - 1) >> m_BucketGranularityBits) : 0]; 
 		}
@@ -50,13 +50,13 @@ namespace WL
 			char* firstBlockPtr = nullptr;
 		};
 
-		void	addBlockToBuckets(Buckets* buckets, void* ptr, int size);
+		void	addBlockToBuckets(SBuckets* buckets, void* ptr, int size);
 		INLINE SBlock* getBlockFromPtr(const void* ptr) const
 		{
 			return reinterpret_cast<SBlock*>(((size_t)ptr) & ~(kBlockSize - 1)); 
 		}
 	private:
-		std::vector<Buckets*>    m_Buckets;                        ///< Buckets of various size.
+		std::vector<SBuckets*>    m_Buckets;                        ///< Buckets of various size.
 		static const int           kMaxAlignment = 16;
 		static const int           kBlockSize = 16 * 1024;
 		const int                  m_BucketGranularity;
@@ -70,9 +70,9 @@ namespace WL
 		CMutex                     m_NewLargeBlockMutex;
 	};
 
-	struct Buckets : public CNonCopyable
+	struct SBuckets : public CNonCopyable
 	{
-		Buckets(int size, int realSize);
+		SBuckets(int size, int realSize);
 		INLINE void* popBucket()
 		{
 			return availableBuckets.pop(); 

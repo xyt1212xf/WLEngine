@@ -10,7 +10,7 @@ namespace WL
 	CLightEngine::CLightEngine()
 	{
 		mLightData.resize(MaxLightNumber);
-		ZeroMemory(mLightData.data(), sizeof(LightData) * MaxLightNumber);
+		ZeroMemory(mLightData.data(), sizeof(SLightData) * MaxLightNumber);
 		Math::matrixIdentity(&mLightView);
 		Math::matrixIdentity(&mLightProjection);
 	}
@@ -85,7 +85,7 @@ namespace WL
 						lua_gettable(pLua, -2);
 						if (!lua_isnil(pLua, -1))
 						{
-							shaderParam param;
+							SShaderParam param;
 							lua_pushstring(pLua, "name");
 							lua_gettable(pLua, -2);
 							param.szName = lua_tostring(pLua, -1);
@@ -232,7 +232,7 @@ namespace WL
 		return mDiffuseDirection;
 	}
 
-	Matrix44& CLightEngine::getLightViewMT()
+	SMatrix44& CLightEngine::getLightViewMT()
 	{
 		Vec3F lightPos = { mDiffuseDirection.x * 100, mDiffuseDirection.y * 100, mDiffuseDirection.z * 100 };
 		static Vec3F lookAt = { 0,0,0 };
@@ -244,12 +244,12 @@ namespace WL
 		return mLightView;
 	}
 
-	Matrix44& CLightEngine::getLightTransposeViewMT()
+	SMatrix44& CLightEngine::getLightTransposeViewMT()
 	{
 		return mLightTransposeView;
 	}
 
-	Matrix44& CLightEngine::getLightProjectionMT()
+	SMatrix44& CLightEngine::getLightProjectionMT()
 	{
 		getLightViewMT();
 		// Setup field of view and screen aspect for a square light source.
@@ -261,7 +261,7 @@ namespace WL
 		return mLightProjection;
 	}
 
-	Matrix44& CLightEngine::getLightOriginMT()
+	SMatrix44& CLightEngine::getLightOriginMT()
 	{
 		getLightViewMT();
 		Math::buildOrthographicMatrixLH(&mLightOrigin, 1024, 1024, 1, 1000);
@@ -269,12 +269,12 @@ namespace WL
 		return mLightOrigin;
 	}
 
-	Matrix44& CLightEngine::getLightTransposeProjectionMT()
+	SMatrix44& CLightEngine::getLightTransposeProjectionMT()
 	{
 		return mLightTransposeOriginOrProjection;
 	}
 
-	Matrix44& CLightEngine::getLightTransposeVPMT()
+	SMatrix44& CLightEngine::getLightTransposeVPMT()
 	{
 		return mLightTransposeVPMT;
 	}
@@ -319,6 +319,6 @@ namespace WL
 
 	void CLightEngine::setDynamicLight(CMaterialInstance* pMaterialInstance)
 	{
-		pMaterialInstance->setStructParamByName("GlobalLight", mLightData.data(), (int)mLightData.size() * sizeof(LightData));
+		pMaterialInstance->setStructParamByName("GlobalLight", mLightData.data(), (int)mLightData.size() * sizeof(SLightData));
 	}
 }

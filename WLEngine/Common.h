@@ -99,7 +99,7 @@ namespace WL
 		Z
 	};
 
-	struct WindowConfig
+	struct SWindowConfig
 	{
 		HINSTANCE hInstance = nullptr;
 		std::string	szTitle = "";
@@ -122,9 +122,9 @@ namespace WL
 		RecoverDraw = 3,
 	};
 
-	struct command
+	struct SCommand
 	{
-		command(commandType nTyep, void* pData)
+		SCommand(commandType nTyep, void* pData)
 		{
 			this->nTyep = nTyep;
 			this->pData = pData;

@@ -13,7 +13,7 @@ extern "C"
 	{
 		try
 		{
-			WL::WindowConfig config;
+			WL::SWindowConfig config;
 			config.hInstance = hInstance;
 			config.szTitle = "GameApp";
 			auto szContent = WL::Foundation::readJsonFile("config.json");
@@ -102,7 +102,7 @@ namespace WL
 			{WM_CHAR, MSG_CHAR},
 		};
 
-		static event msg;
+		static SEvent msg;
 		msg.bProcess = false;
 		msg.message = msgMap[message];
 		msg.mouseX = GET_X_LPARAM(lParam);
@@ -154,7 +154,7 @@ namespace WL
 
 	}
 
-	bool CWinPlatform::initMainWindow(WindowConfig& config)
+	bool CWinPlatform::initMainWindow(SWindowConfig& config)
 	{
 		WNDCLASS wc;
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -209,7 +209,7 @@ namespace WL
 		return mhMainWnd;
 	}
 
-	WindowConfig* CWinPlatform::getWindowConfigPtr()
+	SWindowConfig* CWinPlatform::getWindowConfigPtr()
 	{
 		return &mConfig;
 	}

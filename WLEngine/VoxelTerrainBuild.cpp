@@ -25,9 +25,9 @@ namespace WL
 			}
 		}
 		mMin = pos;
-		mMax.x = (float)nSizeX * Voxel::nSize * CVoxelChunk::nSize;
-		mMax.y = (float)nSizeY * Voxel::nSize * CVoxelChunk::nSize;
-		mMax.z = (float)nSizeZ * Voxel::nSize * CVoxelChunk::nSize;
+		mMax.x = (float)nSizeX * SVoxel::nSize * CVoxelChunk::nSize;
+		mMax.y = (float)nSizeY * SVoxel::nSize * CVoxelChunk::nSize;
+		mMax.z = (float)nSizeZ * SVoxel::nSize * CVoxelChunk::nSize;
 		mSizeX = nSizeX;
 		mSizeY = nSizeY;
 		mSizeZ = nSizeZ;

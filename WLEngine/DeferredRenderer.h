@@ -11,7 +11,7 @@ namespace WL
 		virtual ~CDeferredRenderer();
 	
 	private:
-		virtual void drawEntity(RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)final;
+		virtual void drawEntity(SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)final;
 		virtual std::vector<CActorEntity*>& checkEntities(std::vector<CActorEntity*>& pDrawEntitiesArray) final;
 		virtual bool drawBegin(DeviceContext* pDeviceContext, bool bCleanState) final;
 		virtual void drawEnd(DeviceContext* pDeviceContext, CommandList*& pCommandList, int nContext)final;

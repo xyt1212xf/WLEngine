@@ -17,7 +17,7 @@ namespace WL
 		V_MAX_COUNT,
 	};
 
-	struct VertexElement
+	struct SVertexElement
 	{
 		VertexFormatKey key;
 		std::string szName;
@@ -26,14 +26,14 @@ namespace WL
 		INT16 nOffset;
 	};
 
-	struct VertexFormat
+	struct SVertexFormat
 	{
 		//////////////////////////////////////////////////////////////////////////
-		VertexFormat();
-		VertexFormat(VertexFormatKey key, int nStream);
+		SVertexFormat();
+		SVertexFormat(VertexFormatKey key, int nStream);
 		void addElement(VertexFormatKey key, INT32 nSteam = 0);
 		INT32 getVertexSize();
-		const VertexElement& getVertexElement(int nIndex); 
+		const SVertexElement& getVertexElement(int nIndex); 
 		int getVerticesOffset();
 		int getNormalsOffset();
 		int getBinormalsOffset();
@@ -45,7 +45,7 @@ namespace WL
 		int getColorUINTOffset();
 		int getVertexMemberOffset(VertexFormatKey nKey);
 		//////////////////////////////////////////////////////////////////////////
-		std::vector<VertexElement> elementArray;
+		std::vector<SVertexElement> elementArray;
 		INT32 vertexSize = 0;
 		std::array<INT32, VertexFormatKey::V_MAX_COUNT> mFlag;
 	};

@@ -6,17 +6,17 @@
 
 namespace WL
 {
-	bool isLeaf(const QuadNode& quad_node)
+	bool isLeaf(const SQuadNode& quad_node)
 	{
 		return (quad_node.sub_node[0] == -1 && quad_node.sub_node[1] == -1 && quad_node.sub_node[2] == -1 && quad_node.sub_node[3] == -1);
 	}
 	
-	int searchLeaf(const std::vector<QuadNode>& node_list, const Vec2F& point)
+	int searchLeaf(const std::vector<SQuadNode>& node_list, const Vec2F& point)
 	{
 		int index = -1;
 
 		int size = (int)node_list.size();
-		QuadNode node = node_list[size - 1];
+		SQuadNode node = node_list[size - 1];
 
 		while (!isLeaf(node))
 		{
@@ -29,7 +29,7 @@ namespace WL
 				{
 					continue;
 				}
-				QuadNode sub_node = node_list[index];
+				SQuadNode sub_node = node_list[index];
 				if (point.x >= sub_node.bottom_left.x && point.x <= sub_node.bottom_left.x + sub_node.length &&
 					point.y >= sub_node.bottom_left.y && point.y <= sub_node.bottom_left.y + sub_node.length)
 				{
@@ -82,7 +82,7 @@ namespace WL
 		return phillips * expf(-Ksqr * w * w);
 	}
 
-	void OceanSimulatorBase::initParam()
+	void SOceanSimulatorBase::initParam()
 	{
 		// The size of displacement map. In this sample, it's fixed to 512.
 		mParam.dmap_dim = 512;
@@ -105,7 +105,7 @@ namespace WL
 		mParam.choppy_scale = 1.3f;
 	}
 
-	void OceanSimulatorBase::initHeightMap(Vec2F* pOutH0, float* pOutOmega)
+	void SOceanSimulatorBase::initHeightMap(Vec2F* pOutH0, float* pOutOmega)
 	{
 		Vec2F K;
 
@@ -146,7 +146,7 @@ namespace WL
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	QuadNode::~QuadNode()
+	SQuadNode::~SQuadNode()
 	{
 		for (auto item : pMeshInstanceInfo)
 		{

@@ -29,11 +29,11 @@ namespace WL
 
 		void buildOrthoMT(float fNear, float fFar);
 		void buildProjectMT(float fNear, float fFar, float fFov = (float)PI / 4.0f);
-		const Matrix44& getOrthoMT()const;
-		const Matrix44& getProjectMT()const;
+		const SMatrix44& getOrthoMT()const;
+		const SMatrix44& getProjectMT()const;
 
-		const Matrix44& getTransposeOrthoMT()const;
-		const Matrix44& getTransposeProjectMT()const;
+		const SMatrix44& getTransposeOrthoMT()const;
+		const SMatrix44& getTransposeProjectMT()const;
 		
 		void setSampler(SamplerState* pSampler);
 		void applyTexture(DeviceContext* pContext, int nSlot);
@@ -44,10 +44,10 @@ namespace WL
 		INT32 mHeight = 0;
 		float mFar = 1.0f;
 		float mNear = 1.0f;
-		Matrix44 mProjectMatrix;
-		Matrix44 mOrthoMatrix;
+		SMatrix44 mProjectMatrix;
+		SMatrix44 mOrthoMatrix;
 
-		Matrix44 mTransposeProjectMatrix;
-		Matrix44 mTransposeOrthoMatrix;
+		SMatrix44 mTransposeProjectMatrix;
+		SMatrix44 mTransposeOrthoMatrix;
 	};
 }

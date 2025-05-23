@@ -58,7 +58,7 @@ namespace WL
 		virtual void setText(const std::string& szContent);
 
 	private:
-		int _pick(event& e);
+		int _pick(SEvent& e);
 		void _updateArea();
 	protected:
 		WndType	mWndType = ui_wnd;
@@ -67,12 +67,12 @@ namespace WL
 		{
 			struct
 			{
-				VertexVTC	mTop;
-				VertexVTC	mLeft;
-				VertexVTC	mRight;
-				VertexVTC	mBottom;
+				SVertexVTC	mTop;
+				SVertexVTC	mLeft;
+				SVertexVTC	mRight;
+				SVertexVTC	mBottom;
 			}vertices;
-			VertexVTC	mArea[4];
+			SVertexVTC	mArea[4];
 			Data()
 			{
 				new(&vertices) decltype(vertices);

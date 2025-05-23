@@ -6,7 +6,7 @@
 namespace WL
 {
 #ifdef D3D11 
-	struct RenderState : public DX11RenderState
+	struct SRenderState : public SDX11RenderState
 #endif
 	{
 		UINT32 mId = 0;

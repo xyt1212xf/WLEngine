@@ -14,16 +14,16 @@ namespace WL
 	{
 		for( auto item : mpChunks)
 		{
-			WL_DELETE(item, Voxel);
+			WL_DELETE(item, SVoxel);
 		}
 	}
 
 
 	void CVoxelMgr::createVoxelTerrain(int nSizeX, int nSizeY, int nSizeZ)
 	{
-		float fSizeX = CVoxelChunk::nSize * Voxel::nSize;
-		float fSizeY = CVoxelChunk::nSize * Voxel::nSize;
-		float fSizeZ = CVoxelChunk::nSize * Voxel::nSize;
+		float fSizeX = CVoxelChunk::nSize * SVoxel::nSize;
+		float fSizeY = CVoxelChunk::nSize * SVoxel::nSize;
+		float fSizeZ = CVoxelChunk::nSize * SVoxel::nSize;
 
 		Vec3F minPos = { FLT_MAX, FLT_MAX, FLT_MAX };
 		Vec3F maxPos = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
@@ -68,10 +68,10 @@ namespace WL
 				for (int z = 0; z < nSizeZ; ++z)
 				{
 					position.z = mPosition.z + z * fSizeZ;
-					CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, Voxel);
-					pVoxelChunk->createVoxel(Vec3F(position.x - x * Voxel::nSize,
-												   position.y - y * Voxel::nSize,
-												   position.z - z * Voxel::nSize));
+					CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, SVoxel);
+					pVoxelChunk->createVoxel(Vec3F(position.x - x * SVoxel::nSize,
+												   position.y - y * SVoxel::nSize,
+												   position.z - z * SVoxel::nSize));
 
 					mpChunks.push_back(pVoxelChunk);
 					mTerrainBuild.setVoxelChunk(x, y, z, pVoxelChunk);
@@ -153,7 +153,7 @@ namespace WL
 
 	void CVoxelMgr::createChunk(const Vec3F& pos, const std::list<Vec3F>& voxels)
 	{
-		CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, Voxel);
+		CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, SVoxel);
 		mpChunks.push_back(pVoxelChunk);
 		pVoxelChunk->createChunk(pos, voxels);
 		pVoxelChunk->buildChunkEntity();

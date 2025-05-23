@@ -156,7 +156,7 @@ namespace WL
 				auto meshs = mpModel->getAllMeshInfo();
 				for (auto& item : meshs)
 				{
-					MeshInstanceInfo info;
+					SMeshInstanceInfo info;
 					info.name = item.szName;
 					info.pMeshInstance = WL_NEW(CMeshInstance, Instance)(item.pMesh);
 					info.pMaterialInstance = WL_NEW(CMaterialInstance, Instance)(item.pMaterial);
@@ -177,7 +177,7 @@ namespace WL
 		bindModel(pModel);
 	}
 
-	std::vector<MeshInstanceInfo>& CModelInstance::getAllMeshInfo()
+	std::vector<SMeshInstanceInfo>& CModelInstance::getAllMeshInfo()
 	{
 		return mMeshInstances;
 	}

@@ -13,7 +13,7 @@ namespace WL
 		void commitCommand(commandType nType, void* pData = nullptr)
 		{
 			lockCommandBuf();
-			mCommandBuf.emplace_back(command(nType, pData));
+			mCommandBuf.emplace_back(SCommand(nType, pData));
 			unLockCommandBuf();
 		}
 		void lockCommandBuf()
@@ -27,7 +27,7 @@ namespace WL
 	protected:
 		std::atomic<UINT32> mCommandBufIndex;
 		std::mutex	mCommandBufMutex;
-		std::list<command>	mCommandBuf;	
+		std::list<SCommand>	mCommandBuf;	
 	};
 
 

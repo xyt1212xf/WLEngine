@@ -21,7 +21,7 @@ namespace WL
 	{
 		if (nullptr != pMesh)
 		{
-			MeshNode meshNode;
+			SMeshNode meshNode;
 			meshNode.pMaterial = mpMaterial;
 			meshNode.pMesh = pMesh;
 			mpMaterial->addRef();
@@ -30,14 +30,14 @@ namespace WL
 		}
 	}
 
-	void CModel::addMesh(const MeshNode& meshInfo)
+	void CModel::addMesh(const SMeshNode& meshInfo)
 	{
 		mMeshsInfo.emplace_back(meshInfo);
 		mAABB.unionBoundBox(meshInfo.pMesh->getBoundBox());
 
 	}
 
-	void CModel::addMesh(MeshNode* pMeshInfo)
+	void CModel::addMesh(SMeshNode* pMeshInfo)
 	{
 		addMesh(*pMeshInfo);
 	}
@@ -51,7 +51,7 @@ namespace WL
 		auto pMesh = dynamic_cast<CMesh*>(GEngine->createResource(Mesh));
 		if (nullptr != pMesh)
 		{
-			MeshNode meshNode;
+			SMeshNode meshNode;
 			GEngine->commitCommand(commandType::StopDraw);
 			pMesh->fillVertexBuffer(pVertices, nVerticesCount, VertexSize, nLod, vbMemoryType);
 			pMesh->fillIndexBuffer(pIndices, nIndicesCount, IndexSize, nLod, ibmemoryType);
@@ -75,7 +75,7 @@ namespace WL
 	{
 		if (nullptr != pMesh)
 		{
-			MeshNode meshNode;
+			SMeshNode meshNode;
 			meshNode.pMaterial = pMaterial;
 			meshNode.pMesh = pMesh;
 			pMaterial->addRef();
@@ -188,14 +188,14 @@ namespace WL
 		}
 	}
 
-	std::vector<MeshNode>& CModel::getAllMeshInfo()
+	std::vector<SMeshNode>& CModel::getAllMeshInfo()
 	{
 		return mMeshsInfo;
 	}
 
-	MeshNode* CModel::getMeshInfo(const std::string& szName)
+	SMeshNode* CModel::getMeshInfo(const std::string& szName)
 	{
-		MeshNode* pInfo = nullptr;
+		SMeshNode* pInfo = nullptr;
 		auto iter = mMeshsInfo.begin();
 		auto iterEnd = mMeshsInfo.end();
 		while (iter != iterEnd)

@@ -17,9 +17,9 @@ namespace WL
 		CGameplayAbility* mpAbility = nullptr;
 
 
-		GameplayAbilitySpecHandle mHandle;
+		SGameplayAbilitySpecHandle mHandle;
 		SGameplayAbilityActivationInfo	mActivationInfo;	
-		GameplayTagContainer mDynamicAbilityTags;
+		SGameplayTagContainer mDynamicAbilityTags;
 		INT32 mLevel;
 
 		UINT8 mPendingRemove : 1;

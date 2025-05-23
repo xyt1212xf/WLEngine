@@ -50,7 +50,7 @@ namespace WL
 		const D3D11_VIEWPORT& getViewPort()const;
 		ID3D11DepthStencilView* getDepthStencilView()const;
 		ID3D11RenderTargetView* getRenderTargetView()const;
-		virtual RenderState* createRenderState(RenderStateDesc& renderStateDesc) final;
+		virtual SRenderState* createRenderState(SRenderStateDesc& renderStateDesc) final;
 		bool concurrentCreates();
 		bool createBuffer(D3D11_BUFFER_DESC* pVbDesc, D3D11_SUBRESOURCE_DATA* pData, ID3D11Buffer** pBuffer);
 

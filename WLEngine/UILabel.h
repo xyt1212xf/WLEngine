@@ -8,7 +8,7 @@ namespace WL
 	{
 		friend class CGuiRendererPass;
 	public:
-		struct iterator
+		struct SIterator
 		{
 			std::string::iterator it;
 			//using difference_type = std::ptrdiff_t;
@@ -16,7 +16,7 @@ namespace WL
 			using pointer = char*;
 			using reference = char&;
 
-			iterator(std::string::iterator it) : it(it) {}
+			SIterator(std::string::iterator it) : it(it) {}
 
 			reference operator*() const
 			{
@@ -28,19 +28,19 @@ namespace WL
 				return &(*it); 
 			}
 
-			iterator& operator++() 
+			SIterator& operator++() 
 			{
 				++it;
 				return *this;
 			}
 
-			bool operator!=(const iterator& other) const 
+			bool operator!=(const SIterator& other) const 
 			{
 				return it != other.it;
 			}
 		};
 
-		struct const_iterator
+		struct SConst_iterator
 		{
 			std::string::const_iterator cit;
 			//using difference_type = std::ptrdiff_t;
@@ -48,7 +48,7 @@ namespace WL
 			using pointer = const char*;
 			using reference = const char&;
 
-			const_iterator(std::string::const_iterator cit) : cit(cit) {}
+			SConst_iterator(std::string::const_iterator cit) : cit(cit) {}
 
 			reference operator*() const 
 			{
@@ -60,13 +60,13 @@ namespace WL
 				return &(*cit); 
 			}
 
-			const_iterator& operator++() 
+			SConst_iterator& operator++() 
 			{
 				++cit;
 				return *this;
 			}
 
-			bool operator!= (const const_iterator& other) const 
+			bool operator!= (const SConst_iterator& other) const 
 			{
 				return cit != other.cit;
 			}
@@ -75,24 +75,24 @@ namespace WL
 		CUILabel();
 		virtual ~CUILabel();
 
-		iterator begin() 
+		SIterator begin() 
 		{
-			return iterator(mszContent.begin());
+			return SIterator(mszContent.begin());
 		}
 
-		iterator end() 
+		SIterator end() 
 		{
-			return iterator(mszContent.end());
+			return SIterator(mszContent.end());
 		}
 
-		const_iterator cbegin() const 
+		SConst_iterator cbegin() const 
 		{
-			return const_iterator(mszContent.cbegin());
+			return SConst_iterator(mszContent.cbegin());
 		}
 
-		const_iterator cend() const 
+		SConst_iterator cend() const 
 		{
-			return const_iterator(mszContent.cend());
+			return SConst_iterator(mszContent.cend());
 		}
 		const std::string& getText();
 		void append(const std::string& szContent);
@@ -114,7 +114,7 @@ namespace WL
 #endif
 		std::string mszContent = "";
 		CFont* mpFont = nullptr;
-		std::vector<VertexVTC>	mDrawData;
+		std::vector<SVertexVTC>	mDrawData;
 	};
 
 }

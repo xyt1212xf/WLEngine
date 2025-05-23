@@ -3,7 +3,7 @@
 
 namespace WL
 {
-	ComponentGrounp::~ComponentGrounp()
+	SComponentGrounp::~SComponentGrounp()
 	{
 		for (auto item : mComponent)
 		{
@@ -12,7 +12,7 @@ namespace WL
 		mComponent.clear();
 	}
 
-	void ComponentGrounp::addComponent(CComponent* pComponent)
+	void SComponentGrounp::addComponent(CComponent* pComponent)
 	{
 		if (nullptr != pComponent)
 		{
@@ -26,7 +26,7 @@ namespace WL
 		}
 	}
 
-	CComponent* ComponentGrounp::getComponetByName(const std::string& szName)
+	CComponent* SComponentGrounp::getComponetByName(const std::string& szName)
 	{
 		CComponent* pComponet = nullptr;
 		auto iter = mComponent.find(szName);
@@ -38,7 +38,7 @@ namespace WL
 
 	}
 
-	void ComponentGrounp::removeComponent(CComponent* pComponent)
+	void SComponentGrounp::removeComponent(CComponent* pComponent)
 	{
 		auto iter = mComponent.begin();
 		auto iterEnd = mComponent.end();

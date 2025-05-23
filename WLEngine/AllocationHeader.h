@@ -75,23 +75,23 @@ namespace WL
 	private:
 		typedef struct { char m; } yes;
 		typedef struct { char m[2]; } no;
-		struct BaseMixin
+		struct SBaseMixin
 		{
 			size_t getAllocationSize() const { return 0; };
 		};
-		struct Base : public T, public BaseMixin {};
+		struct SBase : public T, public SBaseMixin {};
 		template <typename U, U> class CHelper {};
-		template <typename U> static no deduce(U*, CHelper<size_t(BaseMixin::*)()const, &U::getAllocationSize>* = 0);
+		template <typename U> static no deduce(U*, CHelper<size_t(SBaseMixin::*)()const, &U::getAllocationSize>* = 0);
 		static yes deduce(...);
 
 	public:
-		static const bool result = (sizeof(yes) == sizeof(deduce((Base*)(0))));
+		static const bool result = (sizeof(yes) == sizeof(deduce((SBase*)(0))));
 	};
 
 	template<class T>
 	class TAllocationHeaderBase :
 		public CMemoryDebuggingHeader,
-		public std::conditional<THasAllocationSize<CMemoryDebuggingHeader>::result, NullType, T>::type
+		public std::conditional<THasAllocationSize<CMemoryDebuggingHeader>::result, SNullType, T>::type
 	{
 	public:
 		///< Init header data

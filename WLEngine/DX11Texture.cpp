@@ -353,7 +353,7 @@ namespace WL
 	
 	}
 
-	bool CDX11Texture::initialise(const ImgFileInfo& fileInfo)
+	bool CDX11Texture::initialise(const SImgFileInfo& fileInfo)
 	{
 		mFileInfo = fileInfo;
 		mResourceName = mFileInfo.szPath;

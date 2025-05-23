@@ -169,22 +169,22 @@ namespace WL
 		CTranformComponet::updateMatrix();
 	}
 
-	void CMeshInstance::setViewMT(Matrix44* pMT)
+	void CMeshInstance::setViewMT(SMatrix44* pMT)
 	{
 		mpViewMT = pMT;
 	}
 
-	void CMeshInstance::setTransposeViewMT(Matrix44* pMT)
+	void CMeshInstance::setTransposeViewMT(SMatrix44* pMT)
 	{
 		mpTransposeViewMT = pMT;
 	}
 
-	void CMeshInstance::setProjectMT(Matrix44* pMT)
+	void CMeshInstance::setProjectMT(SMatrix44* pMT)
 	{
 		mpProjectMT = pMT;
 	}
 
-	void CMeshInstance::setTransposeProjectMT(Matrix44* pMT)
+	void CMeshInstance::setTransposeProjectMT(SMatrix44* pMT)
 	{
 		mpTransposeProjectMT = pMT;
 		if (nullptr != mpTransposeViewMT && nullptr != mpTransposeProjectMT)
@@ -193,27 +193,27 @@ namespace WL
 		}
 	}
 
-	Matrix44& CMeshInstance::getViewMT() const
+	SMatrix44& CMeshInstance::getViewMT() const
 	{
 		return *mpViewMT;
 	}
 
-	Matrix44& CMeshInstance::getTransposeViewMT()const
+	SMatrix44& CMeshInstance::getTransposeViewMT()const
 	{
 		return *mpTransposeViewMT;
 	}
 
-	Matrix44& CMeshInstance::getProjectMT()const
+	SMatrix44& CMeshInstance::getProjectMT()const
 	{
 		return *mpProjectMT;
 	}
 
-	Matrix44& CMeshInstance::getTransposeProjectMT()const
+	SMatrix44& CMeshInstance::getTransposeProjectMT()const
 	{
 		return *mpTransposeProjectMT;
 	}
 
-	Matrix44& CMeshInstance::getTransposeViweProjectMatrix() const
+	SMatrix44& CMeshInstance::getTransposeViweProjectMatrix() const
 	{
 		return mTransposeViewProjectMT;
 	}
@@ -248,7 +248,7 @@ namespace WL
 	}
 
 	//////////////////////////////////////////////////////////////////////////	
-	void MeshInstanceInfo::operator=(const MeshInstanceInfo& instance)
+	void SMeshInstanceInfo::operator=(const SMeshInstanceInfo& instance)
 	{
 		name = instance.name;
 		pMeshInstance = WL_NEW(CMeshInstance, Instance)(instance.pMeshInstance->getMesh());

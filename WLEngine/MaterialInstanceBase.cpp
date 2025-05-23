@@ -297,12 +297,12 @@ namespace WL
 		return mVertexColor;
 	}
 
-	void CMaterialInstanceBase::bindRenderState(RenderState* pRenderState)
+	void CMaterialInstanceBase::bindRenderState(SRenderState* pRenderState)
 	{
 		mpRenderState = pRenderState;
 	}
 
-	RenderState* CMaterialInstanceBase::getRenderState() const
+	SRenderState* CMaterialInstanceBase::getRenderState() const
 	{
 		return mpRenderState;
 	}

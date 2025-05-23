@@ -6,12 +6,12 @@
 #include "voxelBrush.h"
 namespace WL
 {
-	struct Voxel
+	struct SVoxel
 	{
 		//data
 		const static int nSize = 1;
-		VertexFormatVoxel	baseVertices[24];
-		std::vector<VertexFormatVoxel> drawVertices;
+		SVertexFormatVoxel	baseVertices[24];
+		std::vector<SVertexFormatVoxel> drawVertices;
 		std::vector<INT32> drawIndices;
 		CAABBox	aabb;
 		Vec3F vec = { 0, 0, 0 };
@@ -44,7 +44,7 @@ namespace WL
 		UINT64 getUUID() const;
 		bool checkBrushCollide(CVoxelBrush* pBrush);
 		const CAABBox& getAABB()const;
-		std::vector<Voxel*>& getVoxels();
+		std::vector<SVoxel*>& getVoxels();
 
 	private:
 		void setUUID(const Vec3I& pos);
@@ -75,12 +75,12 @@ namespace WL
 		}; 
 		std::bitset<32> mMaskVoxel[3]; //记录chunk里面每个位置是否有voxels;
 		Vec3I		mPosition = {0,0,0};
-		std::vector<VertexFormatVoxel*> mVertices;
-		std::vector<VertexFormatVoxel> mDrawVertices;
+		std::vector<SVertexFormatVoxel*> mVertices;
+		std::vector<SVertexFormatVoxel> mDrawVertices;
 		std::vector<UINT32> mDrawIndices;
 		CAABBox	mAABB;		
-		std::vector< std::vector< std::vector<Voxel*>>> mVoxelArray;
-		std::vector<Voxel*> mVoxels;
+		std::vector< std::vector< std::vector<SVoxel*>>> mVoxelArray;
+		std::vector<SVoxel*> mVoxels;
 		CActorEntity* mpActorEntity = nullptr;
 		std::string mszName;
 

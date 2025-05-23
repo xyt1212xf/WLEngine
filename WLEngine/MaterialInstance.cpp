@@ -250,7 +250,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setShaderParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setShaderParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		//setVSParamByHandle(nHandle, pData);
 		//setPSParamByHandle(nHandle, pData);
@@ -260,7 +260,7 @@ namespace WL
 		//setStructParamByHandle(nHandle, pData);
 	}
 
-	void CMaterialInstance::setVSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setVSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -269,7 +269,7 @@ namespace WL
 	}
 
 
-	void CMaterialInstance::setPSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setPSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -278,7 +278,7 @@ namespace WL
 	}
 
 
-	void CMaterialInstance::setHSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setHSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -287,7 +287,7 @@ namespace WL
 	}
 
 
-	void CMaterialInstance::setDSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setDSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -296,7 +296,7 @@ namespace WL
 	}
 
 
-	void CMaterialInstance::setGSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setGSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -304,7 +304,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setCSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setCSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -312,7 +312,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setStructParamByHandle(const shaderParam& nHandle, void* pData, int nSize)
+	void CMaterialInstance::setStructParamByHandle(const SShaderParam& nHandle, void* pData, int nSize)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -320,7 +320,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setTextureConstBufferParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setTextureConstBufferParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -328,7 +328,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setTextureParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setTextureParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -336,7 +336,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialInstance::setTypeBufferParamByHandle(const shaderParam& nHandle, void* pData)
+	void CMaterialInstance::setTypeBufferParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		for (auto item : mArrayShaderIns)
 		{
@@ -344,9 +344,9 @@ namespace WL
 		}
 	}
 
-	shaderParam CMaterialInstance::getVSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getVSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if ( nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -357,9 +357,9 @@ namespace WL
 	}
 
 
-	shaderParam CMaterialInstance::getPSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getPSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -370,9 +370,9 @@ namespace WL
 	}
 
 
-	shaderParam CMaterialInstance::getHSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getHSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -383,9 +383,9 @@ namespace WL
 	}
 
 
-	shaderParam CMaterialInstance::getDSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getDSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -396,9 +396,9 @@ namespace WL
 	}
 
 
-	shaderParam CMaterialInstance::getGSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getGSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -408,9 +408,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CMaterialInstance::getCSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getCSParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();
@@ -420,9 +420,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CMaterialInstance::getStructParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
+	SShaderParam CMaterialInstance::getStructParamByHandle(const std::string& szName, size_t nShaderIndex /*= 0*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		if (nShaderIndex < mArrayShaderIns.size())
 		{
 			auto iter = mArrayShaderIns.begin();

@@ -30,15 +30,15 @@ namespace WL
 				Math::matrixTranspose(&mFullScreenTransposeMT, &mFullScreenMT);
 
 				mpFullScreenActor->setPosition(Vec3F(0, 0, 0));
-				mpFullScreenActor->setViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
+				mpFullScreenActor->setViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
 				mpFullScreenActor->setProjectMT(&mFullScreenMT);
 
-				mpFullScreenActor->setTransposeViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
+				mpFullScreenActor->setTransposeViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
 				mpFullScreenActor->setTransposeProjectMT(&mFullScreenTransposeMT);
 
 				mDrawEntities.emplace_back(mpFullScreenActor);
 
-				RenderStateDesc renderStateDesc;
+				SRenderStateDesc renderStateDesc;
 				renderStateDesc.rasterizerDesc.CullMode = CULL_NONE;
 
 				renderStateDesc.depthStencilDesc.DepthEnable = FALSE;
@@ -90,7 +90,7 @@ namespace WL
 		mpDepthStencilView = Dev->getDepthStencilView();
 		mOutputBufferSize = (int)mArrayOutputRTT.size();
 		mViewPort.resize(1);
-		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(ViewPort));
+		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(SViewPort));
 	}
 
 	bool CDeferredLightRendererPass::drawBegin(DeviceContext* pDeviceContext, bool bCleanState)
@@ -113,9 +113,9 @@ namespace WL
 		//return true;
 	}
 
-	void CDeferredLightRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CDeferredLightRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
-		RenderUnit* pRenderUnit = nullptr;
+		SRenderUnit* pRenderUnit = nullptr;
 		auto item = mpFullScreenActor->getModels().begin();
 		auto& meshsInfo = (item->second)->getAllMeshInfo().front();
 		if (nullptr != meshsInfo.pMeshInstance)
@@ -128,7 +128,7 @@ namespace WL
 				pRenderUnit->pMaterialInstance = pMaterialInstance;
 				UINT16 nOrder = pMaterialInstance->getRenderOrder();
 
-				Geometry geometry;
+				SGeometry geometry;
 				geometry.pMaterialInstance = pMaterialInstance;
 				geometry.pTextures = pMaterialInstance->getTexturesPtr();
 				geometry.vertexSize = meshsInfo.pMeshInstance->getVertexTypeSize();
@@ -151,7 +151,7 @@ namespace WL
 	}
 
 
-	void CDeferredLightRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CDeferredLightRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -161,7 +161,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CDeferredLightRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CDeferredLightRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		//if(pRenderUnitGroup->mpRenderUnits.size() > 0 )
 		//{		

@@ -3,7 +3,7 @@
 #include "Refcount.h"
 namespace WL
 {
-	struct GameplayAbilitySpecHandle : public CRefcount
+	struct SGameplayAbilitySpecHandle : public CRefcount
 	{
 		/** True if GenerateNewHandle was called on this handle */
 		bool isValid() const
@@ -11,12 +11,12 @@ namespace WL
 			return mHandle != INDEX_NONE;
 		}
 
-		bool operator==(const GameplayAbilitySpecHandle& Other) const
+		bool operator==(const SGameplayAbilitySpecHandle& Other) const
 		{
 			return mHandle == Other.mHandle;
 		}
 
-		bool operator!=(const GameplayAbilitySpecHandle& Other) const
+		bool operator!=(const SGameplayAbilitySpecHandle& Other) const
 		{
 			return mHandle != Other.mHandle;
 		}

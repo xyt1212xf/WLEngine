@@ -4,12 +4,12 @@
 
 namespace WL
 {
-	struct Plane
+	struct SPlane
 	{
-		Plane();
-		explicit Plane(const float* pf);
-		Plane(float a, float b, float c, float d);
-		Plane(const Vec3F& n, float d);
+		SPlane();
+		explicit SPlane(const float* pf);
+		SPlane(float a, float b, float c, float d);
+		SPlane(const Vec3F& n, float d);
 		bool isFrontFacing(const Vec3F& v) const;
 		bool isBackFacing(const Vec3F& v) const;
 		bool isInPlane(const Vec3F& v) const;

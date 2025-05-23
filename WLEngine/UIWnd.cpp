@@ -199,7 +199,7 @@ namespace WL
 
 	}
 
-	int CUIWnd::_pick(event& e)
+	int CUIWnd::_pick(SEvent& e)
 	{
 		int pickId = -1;
 		if ((e.mouseX >= mPosition.x && e.mouseX <= mPosition.x + mSize.x) &&

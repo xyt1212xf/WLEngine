@@ -22,7 +22,7 @@ namespace WL
 				{
 					for (int z = 0; z < nSize; ++z)
 					{
-						WL_DELETE(mVoxelArray[x][y][z], Voxel);
+						WL_DELETE(mVoxelArray[x][y][z], SVoxel);
 					}
 				}
 			}
@@ -111,7 +111,7 @@ namespace WL
 			auto pActorEntity = GEngine->createEntity<CActorEntity>(Actor);
 			auto pModelInstance = Foundation::generateModel((void*)mDrawVertices.data(),
 				mDrawVertices.size(),
-				sizeof(VertexFormatVoxel),
+				sizeof(SVertexFormatVoxel),
 				(void*)mDrawIndices.data(),
 				mDrawIndices.size(),
 				sizeof(UINT32),
@@ -132,9 +132,9 @@ namespace WL
 
 	void CVoxelChunk::createVoxel(const Vec3F& position)
 	{
-		mAABB.setBoundBoxRange(position, Vec3F(position.x + nSize * (float)Voxel::nSize,
-										       position.y + nSize * (float)Voxel::nSize,
-											   position.z + nSize * (float)Voxel::nSize) );
+		mAABB.setBoundBoxRange(position, Vec3F(position.x + nSize * (float)SVoxel::nSize,
+										       position.y + nSize * (float)SVoxel::nSize,
+											   position.z + nSize * (float)SVoxel::nSize) );
 		setPosition(Vec3I((int)position.x, (int)position.y, (int)position.z));
 		Vec3F fMin;
 		Vec3F fMax;
@@ -147,19 +147,19 @@ namespace WL
 				mVoxelArray[x][y].resize(nSize);
 				for (int z = 0; z < nSize; ++z)
 				{
-					Voxel* pVoxel = WL_NEW(Voxel, Voxel);
+					SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
 
 					pVoxel->nX = (int)x;
 					pVoxel->nY = (int)y;
 					pVoxel->nZ = (int)z;
 
-					fMin.x = mPosition.x + x * (float)Voxel::nSize;
-					fMin.y = mPosition.y + y * (float)Voxel::nSize;
-					fMin.z = mPosition.z + z * (float)Voxel::nSize;
+					fMin.x = mPosition.x + x * (float)SVoxel::nSize;
+					fMin.y = mPosition.y + y * (float)SVoxel::nSize;
+					fMin.z = mPosition.z + z * (float)SVoxel::nSize;
 
-					fMax.x = fMin.x + Voxel::nSize;
-					fMax.y = fMin.y + Voxel::nSize;
-					fMax.z = fMin.z + Voxel::nSize;
+					fMax.x = fMin.x + SVoxel::nSize;
+					fMax.y = fMin.y + SVoxel::nSize;
+					fMax.z = fMin.z + SVoxel::nSize;
 
 					pVoxel->setVoxelSize(fMin, fMax);
 					
@@ -174,28 +174,28 @@ namespace WL
 
 	void CVoxelChunk::createChunk(const Vec3F& position, const std::list<Vec3F>& voxels)
 	{
-		mAABB.setBoundBoxRange(position, Vec3F(	position.x + CVoxelChunk::nSize * (float)Voxel::nSize,
-												position.y + CVoxelChunk::nSize * (float)Voxel::nSize,
-												position.z + CVoxelChunk::nSize * (float)Voxel::nSize));
+		mAABB.setBoundBoxRange(position, Vec3F(	position.x + CVoxelChunk::nSize * (float)SVoxel::nSize,
+												position.y + CVoxelChunk::nSize * (float)SVoxel::nSize,
+												position.z + CVoxelChunk::nSize * (float)SVoxel::nSize));
 		setPosition(Vec3I((int)position.x, (int)position.y, (int)position.z));
 		Vec3F fMin;
 		Vec3F fMax;
 		
 		for( auto item : voxels )
 		{
-			Voxel* pVoxel = WL_NEW(Voxel, Voxel);
+			SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
 			pVoxel->drawVertices.resize(1);
 			pVoxel->nX = (int)item.x;
 			pVoxel->nY = (int)item.y;
 			pVoxel->nZ = (int)item.z;
 		
-			fMin.x = mPosition.x + item.x * (float)Voxel::nSize;
-			fMin.y = mPosition.y + item.y * (float)Voxel::nSize;
-			fMin.z = mPosition.z + item.z * (float)Voxel::nSize;
+			fMin.x = mPosition.x + item.x * (float)SVoxel::nSize;
+			fMin.y = mPosition.y + item.y * (float)SVoxel::nSize;
+			fMin.z = mPosition.z + item.z * (float)SVoxel::nSize;
 
-			fMax.x = fMin.x + Voxel::nSize;
-			fMax.y = fMin.y + Voxel::nSize;
-			fMax.z = fMin.z + Voxel::nSize;
+			fMax.x = fMin.x + SVoxel::nSize;
+			fMax.y = fMin.y + SVoxel::nSize;
+			fMax.z = fMin.z + SVoxel::nSize;
 
 			pVoxel->setVoxelSize(fMin, fMax);
 			mVoxels.push_back(pVoxel);
@@ -205,28 +205,28 @@ namespace WL
 	void CVoxelChunk::createChunk(const Vec3F& position, int layer, Axis nFlag)
 	{
 		assert(layer < CVoxelChunk::nSize);
-		mAABB.setBoundBoxRange(position, Vec3F(position.x + CVoxelChunk::nSize * (float)Voxel::nSize,
-			position.y + CVoxelChunk::nSize * (float)Voxel::nSize,
-			position.z + CVoxelChunk::nSize * (float)Voxel::nSize));
+		mAABB.setBoundBoxRange(position, Vec3F(position.x + CVoxelChunk::nSize * (float)SVoxel::nSize,
+			position.y + CVoxelChunk::nSize * (float)SVoxel::nSize,
+			position.z + CVoxelChunk::nSize * (float)SVoxel::nSize));
 		setPosition(Vec3I((int)position.x, (int)position.y, (int)position.z));
 
 		auto creatVoxle = [&](int x, int y, int z)
 			{
 				Vec3F fMin;
 				Vec3F fMax;
-				Voxel* pVoxel = WL_NEW(Voxel, Voxel);
+				SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
 				pVoxel->drawVertices.resize(1);
 				pVoxel->nX = x;
 				pVoxel->nY = y;
 				pVoxel->nZ = z;
 
-				fMin.x = mPosition.x + x * (float)Voxel::nSize;
-				fMin.y = mPosition.y + y * (float)Voxel::nSize;
-				fMin.z = mPosition.z + z * (float)Voxel::nSize;
+				fMin.x = mPosition.x + x * (float)SVoxel::nSize;
+				fMin.y = mPosition.y + y * (float)SVoxel::nSize;
+				fMin.z = mPosition.z + z * (float)SVoxel::nSize;
 
-				fMax.x = fMin.x + Voxel::nSize;
-				fMax.y = fMin.y + Voxel::nSize;
-				fMax.z = fMin.z + Voxel::nSize;
+				fMax.x = fMin.x + SVoxel::nSize;
+				fMax.y = fMin.y + SVoxel::nSize;
+				fMax.z = fMin.z + SVoxel::nSize;
 
 				pVoxel->setVoxelSize(fMin, fMax);
 				mVoxels.push_back(pVoxel);
@@ -285,14 +285,14 @@ namespace WL
 		return AABB.checkBoundBox(mAABB);
 	}
 
-	std::vector<Voxel*>& CVoxelChunk::getVoxels()
+	std::vector<SVoxel*>& CVoxelChunk::getVoxels()
 	{
 		return mVoxels;
 	}
 
 	void CVoxelChunk::setUUID(const Vec3I& pos)
 	{
-		int nChunkSize = nSize * Voxel::nSize;
+		int nChunkSize = nSize * SVoxel::nSize;
 		mSectionX = pos.x / nChunkSize;
 		mSectionY = pos.y / nChunkSize;
 		mSectionZ = pos.z / nChunkSize;
@@ -349,7 +349,7 @@ namespace WL
 		return mAABB;
 	}
 	//前 右 后 左 上 下    0(top, left)  1(top, right) 2(down, right) 3(down, left)
-	void Voxel::setVoxelSize(const Vec3F& fMin, const Vec3F& fMax)
+	void SVoxel::setVoxelSize(const Vec3F& fMin, const Vec3F& fMax)
 	{
 		aabb.setBoundBoxRange(fMin, fMax);
 		//前	

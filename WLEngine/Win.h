@@ -11,15 +11,15 @@ namespace WL
 		virtual ~CWinPlatform();
 		bool initialize();
 		void unInitialize();
-		bool initMainWindow(WindowConfig& config);
+		bool initMainWindow(SWindowConfig& config);
 		HWND getMainWnd();
-		WindowConfig* getWindowConfigPtr();
+		SWindowConfig* getWindowConfigPtr();
 		int getMainWndWidth();
 		int getMainWndHeight();
 		Vec2I getMainWndSize();
 		
 	protected:
 		HWND mhMainWnd;
-		WindowConfig	mConfig;
+		SWindowConfig	mConfig;
 	};
 }

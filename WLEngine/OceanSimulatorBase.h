@@ -8,16 +8,16 @@
 namespace WL
 {
 	// Constant buffer
-	struct Const_Per_Call
+	struct SConst_Per_Call
 	{
-		Matrix44	g_matLocal;
-		Matrix44	g_matWorldViewProj;
+		SMatrix44	g_matLocal;
+		SMatrix44	g_matWorldViewProj;
 		Vec2F		g_UVBase;
 		Vec2F		g_PerlinMovement;
 		Vec3F		g_LocalEye;
 	};
 
-	struct Const_Shading
+	struct SConst_Shading
 	{
 		// Water-reflected sky color
 		Vec3F		g_SkyColor;
@@ -49,7 +49,7 @@ namespace WL
 		float		g_UVOffset;
 	};
 
-	struct OceanParameter
+	struct SOceanParameter
 	{
 		// Must be power of 2.
 		int dmap_dim;
@@ -71,18 +71,18 @@ namespace WL
 		float choppy_scale;
 	};
 
-	struct OceanSimulatorBase
+	struct SOceanSimulatorBase
 	{
-		OceanParameter	mParam;
-		Const_Shading   shadingData;
-		Const_Per_Call  callConsts;
+		SOceanParameter	mParam;
+		SConst_Shading   shadingData;
+		SConst_Per_Call  callConsts;
 		void initParam();
 		void initHeightMap(Vec2F* pOutH0, float* pOutOmega);
 	};
 
-	struct MeshInstanceInfo;
+	struct SMeshInstanceInfo;
 	// Quadtree structures & routines
-	struct QuadNode
+	struct SQuadNode
 	{
 		Vec2F bottom_left;
 		float length;
@@ -90,12 +90,12 @@ namespace WL
 
 		int sub_node[4];
 
-		std::array<MeshInstanceInfo*, 2> pMeshInstanceInfo;
-		~QuadNode();
+		std::array<SMeshInstanceInfo*, 2> pMeshInstanceInfo;
+		~SQuadNode();
 
 	};
 
-	struct QuadRenderParam
+	struct SQuadRenderParam
 	{
 		UINT num_inner_verts;
 		UINT num_inner_faces;
@@ -106,6 +106,6 @@ namespace WL
 		UINT boundary_start_index;
 	};
 
-	extern bool isLeaf(const QuadNode& quad_node);
-	extern int searchLeaf(const std::vector<QuadNode>& node_list, const Vec2F& point);
+	extern bool isLeaf(const SQuadNode& quad_node);
+	extern int searchLeaf(const std::vector<SQuadNode>& node_list, const Vec2F& point);
 }

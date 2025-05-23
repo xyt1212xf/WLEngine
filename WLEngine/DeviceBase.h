@@ -7,8 +7,8 @@
 
 namespace WL
 {
-	struct RenderState;
-	struct ViewPort
+	struct SRenderState;
+	struct SViewPort
 	{
 		float TopLeftX;
 		float TopLeftY;
@@ -24,10 +24,10 @@ namespace WL
 	public:
 		CDeviceBase();
 		virtual ~CDeviceBase();
-		virtual RenderState* createRenderState(RenderStateDesc& renderStateDesc);
+		virtual SRenderState* createRenderState(SRenderStateDesc& renderStateDesc);
 
 	protected:
-		WindowConfig* mpConfig = nullptr;
+		SWindowConfig* mpConfig = nullptr;
 		CRenderStateMgr* mpRenderStateMgr = nullptr;
 		RectI	mRT = {0,0,0,0};
 	};

@@ -8,6 +8,6 @@ namespace WL
 	public:
 		CDX11Material();
 		virtual ~CDX11Material();
-		bool initialiseSampler(SamplerDesc* pSampler);
+		bool initialiseSampler(SSamplerDesc* pSampler);
 	};
 }

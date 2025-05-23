@@ -33,7 +33,7 @@ namespace WL
 		const Vec3F& getLocalRotation() const;
 
 
-		std::vector<MeshInstanceInfo>& getAllMeshInfo();
+		std::vector<SMeshInstanceInfo>& getAllMeshInfo();
 		CModel* getModel() const;
 		CMaterialInstance* getMaterialInstance(int nSubMesh = 0)const;
 
@@ -45,7 +45,7 @@ namespace WL
 		Vec3F	mLocalScale = { 1, 1, 1 };
 		Vec3F	mLocalRotation = { 0, 0, 0 };
 		CModel* mpModel = nullptr;
-		std::vector<MeshInstanceInfo>	mMeshInstances;
+		std::vector<SMeshInstanceInfo>	mMeshInstances;
 		bool    mbVisual = true;
 	};
 }

@@ -32,7 +32,7 @@ namespace WL
 		bindCameraEntity(pCameraEntity);
 	}
 
-	void CCameraController::setCameraOnEvent(std::function<void(event&)> function, CameraType type)
+	void CCameraController::setCameraOnEvent(std::function<void(SEvent&)> function, CameraType type)
 	{
 		mOnEventFunctions[type] = function;
 	}
@@ -86,7 +86,7 @@ namespace WL
 
 	}
 
-	bool CCameraController::onEvent(event& e)
+	bool CCameraController::onEvent(SEvent& e)
 	{
 		if (nullptr != mpCameraEntity)
 		{
@@ -130,7 +130,7 @@ namespace WL
 		return true;
 	}
 
-	void CCameraController::_freeOnEvent(event& e)
+	void CCameraController::_freeOnEvent(SEvent& e)
 	{
 		switch (e.message)
 		{
@@ -216,7 +216,7 @@ namespace WL
 				mMouseX = e.mouseX;
 				mMouseY = e.mouseY;
 				auto dir = mpCameraEntity->mLookAt - mpCameraEntity->mEye;
-				Matrix44 xMatrix, yMatrix;
+				SMatrix44 xMatrix, yMatrix;
 				Math::matrixRotationY(&yMatrix, x * mpCameraEntity->mMoveSpeed);
 				dir = Math::matrixMulVec3(xMatrix, dir);
 
@@ -261,7 +261,7 @@ namespace WL
 		}
 	}
 
-	void CCameraController::_firstOnEvent(event& e)
+	void CCameraController::_firstOnEvent(SEvent& e)
 	{
 		switch (e.message)
 		{
@@ -382,7 +382,7 @@ namespace WL
 		}
 	}
 
-	void CCameraController::_thirdOnEvent(event& e)
+	void CCameraController::_thirdOnEvent(SEvent& e)
 	{
 		switch (e.message)
 		{
@@ -486,7 +486,7 @@ namespace WL
 		}
 	}
 
-	void CCameraController::_customOnEvent(event& e)
+	void CCameraController::_customOnEvent(SEvent& e)
 	{
 
 	}

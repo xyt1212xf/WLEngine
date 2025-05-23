@@ -100,7 +100,7 @@ namespace WL
 			}
 			mpTextures[nIndex] = pTexture;
 			pTexture->addRef();
-			shaderBuffer param;
+			SShaderBuffer param;
 			param.nShaderFlags = (ShaderBufferType)nFlag;
 			param.bDirty = false;
 			param.pGpuBuffer = pTexture;
@@ -159,7 +159,7 @@ namespace WL
 				if (item != mpShader->mVertexConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mVSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mVSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -194,7 +194,7 @@ namespace WL
 				if (item != mpShader->mTextureConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mTextureConstBufferMaps[nRegistIndex];
+					SShaderBuffer& param = mTextureConstBufferMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -232,7 +232,7 @@ namespace WL
 				if (item != mpShader->mTextureBufferValueMap.end() &&
 					_item != mpShader->mTextureBufferMap.end())
 				{
-					shaderBuffer& param = mTextureBufferMaps[nRegistIndex];
+					SShaderBuffer& param = mTextureBufferMaps[nRegistIndex];
 					auto& pair = _item->second;
 
 					for (const auto& child : item->second)
@@ -273,7 +273,7 @@ namespace WL
 				if (item != mpShader->mTypeBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mTypeBufferMaps[nRegistIndex];
+					SShaderBuffer& param = mTypeBufferMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -308,7 +308,7 @@ namespace WL
 				if (item != mpShader->mHullConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mHSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mHSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -344,7 +344,7 @@ namespace WL
 				if (item != mpShader->mStructBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mStructBufferMaps[nRegistIndex];
+					SShaderBuffer& param = mStructBufferMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -379,7 +379,7 @@ namespace WL
 				if (item != mpShader->mDomainConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mDSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mDSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -414,7 +414,7 @@ namespace WL
 				if (item != mpShader->mGeometryConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mGSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mGSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -449,7 +449,7 @@ namespace WL
 				if (item != mpShader->mComputeConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mCSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mCSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -484,7 +484,7 @@ namespace WL
 				if (item != mpShader->mPixelConstBufferMap.end())
 				{
 					auto& pair = item->second;
-					shaderBuffer& param = mPSDataMaps[nRegistIndex];
+					SShaderBuffer& param = mPSDataMaps[nRegistIndex];
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -523,7 +523,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 					
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -563,7 +563,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -603,7 +603,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -642,7 +642,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -681,7 +681,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -721,7 +721,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -764,7 +764,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -806,7 +806,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -848,7 +848,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);
@@ -888,7 +888,7 @@ namespace WL
 				{
 					int nRegistIndex = item.first;
 
-					shaderBuffer param;
+					SShaderBuffer param;
 					param.nRegister = nRegistIndex;
 					param.szName = std::get<1>(pair);
 					param.nSize = std::get<0>(pair);

@@ -5,7 +5,7 @@
 namespace WL
 {
 
-	CFrustum::CFrustum(Matrix44* pViewMatrix, Matrix44* pProjectMatrix)
+	CFrustum::CFrustum(SMatrix44* pViewMatrix, SMatrix44* pProjectMatrix)
 	{
 		mpViewMatrix = pViewMatrix;
 		mpProjectMatrix = pProjectMatrix;
@@ -283,42 +283,42 @@ namespace WL
 		_makeViewProjectMatrix();
 	}
 
-	Matrix44* CCameraEntity::getViewMatrixPtr() const
+	SMatrix44* CCameraEntity::getViewMatrixPtr() const
 	{
 		return &mViewMatrix;
 	}
 
-	Matrix44* CCameraEntity::getProjectMatrixPtr() const
+	SMatrix44* CCameraEntity::getProjectMatrixPtr() const
 	{
 		return &mProjectMatrix;
 	}
 
-	Matrix44* CCameraEntity::getViewMatrixTransposePtr() const
+	SMatrix44* CCameraEntity::getViewMatrixTransposePtr() const
 	{
 		return &mTransposeViewMatrix;
 	}
 
-	Matrix44* CCameraEntity::getProjectMatrixTransposePtr() const
+	SMatrix44* CCameraEntity::getProjectMatrixTransposePtr() const
 	{
 		return &mTransposeProjectMatrix;
 	}
 
-	Matrix44 CCameraEntity::getViewMatrix() const
+	SMatrix44 CCameraEntity::getViewMatrix() const
 	{
 		return mViewMatrix;
 	}
 
-	Matrix44 CCameraEntity::getProjectMatrix() const
+	SMatrix44 CCameraEntity::getProjectMatrix() const
 	{
 		return mProjectMatrix;
 	}
 
-	Matrix44 CCameraEntity::getViewMatrixTranspose() const
+	SMatrix44 CCameraEntity::getViewMatrixTranspose() const
 	{
 		return mTransposeViewMatrix;
 	}
 
-	Matrix44 CCameraEntity::getProjectMatrixTranspose() const
+	SMatrix44 CCameraEntity::getProjectMatrixTranspose() const
 	{
 		return mTransposeProjectMatrix;
 	}

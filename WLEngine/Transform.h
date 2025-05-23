@@ -25,9 +25,9 @@ namespace WL
 		void setRotation(const Vec3F& vec);
 		const Vec3F& getRotation()const;
 
-		Matrix44& getMT();
+		SMatrix44& getMT();
 
-		Matrix44& getTransposeMT();
+		SMatrix44& getTransposeMT();
 
 		const CAABBox& getBoundBox() const;
 		
@@ -43,11 +43,11 @@ namespace WL
 		Vec3F	mPosition = { 0, 0, 0 };
 		Vec3F	mScale = { 1, 1, 1 };
 		Vec3F	mRotation = { 0, 0, 0 };
-		Matrix44 mRT;
-		Matrix44 mTransposeRT;
-		Matrix44 mPositonRT;
-		Matrix44 mScaleRT;
-		Matrix44 mRotationRT;
+		SMatrix44 mRT;
+		SMatrix44 mTransposeRT;
+		SMatrix44 mPositonRT;
+		SMatrix44 mScaleRT;
+		SMatrix44 mRotationRT;
 
 		bool	mbUpdate = false;
 	};

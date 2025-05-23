@@ -48,7 +48,7 @@ namespace WL
 		mArrayOutputRTTView.emplace_back(pSurface->getRenderTargetViewPtr());
 		mOutputBufferSize = (int)mArrayOutputRTT.size();
 		mViewPort.resize(1);
-		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(ViewPort));
+		memcpy(&mViewPort[0], &Dev->getViewPort(), sizeof(SViewPort));
 		mViewPort[0].Height = static_cast<float>(pConfig->nWidth);
 	}
 
@@ -64,12 +64,12 @@ namespace WL
 		//return true;
 	}
 
-	void CDepthRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CDepthRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				auto& meshsInfo = (item.second)->getAllMeshInfo();
@@ -83,7 +83,7 @@ namespace WL
 						pRenderUnit->pMaterialInstance = mpMaterialIns;
 						UINT16 nOrder = mpMaterialIns->getRenderOrder();
 
-						Geometry geometry;
+						SGeometry geometry;
 						geometry.pMaterialInstance = mpMaterialIns;
 						geometry.pTextures = child.pMaterialInstance->getTexturesPtr();
 						geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
@@ -106,7 +106,7 @@ namespace WL
 		}
 	}
 
-	void CDepthRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CDepthRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -143,7 +143,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CDepthRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CDepthRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{

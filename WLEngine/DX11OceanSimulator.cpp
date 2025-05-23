@@ -271,7 +271,7 @@ namespace WL
 		WL_DELETE(m_pUAV_Dxyz, SurfaceView);
 		WL_DELETE(mpDisplacement, SurfaceView);
 		WL_DELETE(mpGradientMap, SurfaceView);
-		WL_DELETE(mpOceanRS, RenderState);
+		WL_DELETE(mpOceanRS, SRenderState);
 		//SAFE_RELEASE(mpImmutableCB);
 		//SAFE_RELEASE(mpPerFrameCB);
 
@@ -507,7 +507,7 @@ namespace WL
 		UINT dtx_offset = actual_dim * actual_dim;
 		UINT dty_offset = actual_dim * actual_dim * 2;
 		UINT immutable_consts[] = { actual_dim, input_width, output_width, output_height, dtx_offset, dty_offset };
-		SUBRESOURCE_DATA init_cb0 = { &immutable_consts[0], 0, 0 };
+		SSUBRESOURCE_DATA init_cb0 = { &immutable_consts[0], 0, 0 };
 		
 		CShader* pShader = dynamic_cast<CShader*>(GEngine->createResource(Shader));
 		if (nullptr != pShader)
@@ -633,7 +633,7 @@ namespace WL
 		auto pSampler = mpMaterial->getSampler(3);
 		mFresnel.setSampleState(pSampler);
 
-		RenderStateDesc renderStateDesc;
+		SRenderStateDesc renderStateDesc;
 		//memset(&renderStateDesc, 0, sizeof(RenderStateDesc));
 		renderStateDesc.bCreateBlend = false;
 		//renderStateDesc.bCreateDepthStencil = true;
@@ -716,7 +716,7 @@ namespace WL
 
 						for (int top_type = 0; top_type < 3; top_type++)
 						{
-							QuadRenderParam* pattern = &mMeshPatterns[level][left_type][right_type][bottom_type][top_type];
+							SQuadRenderParam* pattern = &mMeshPatterns[level][left_type][right_type][bottom_type][top_type];
 
 							// Inner mesh (triangle strip)
 							RECT inner_rect;
@@ -781,9 +781,9 @@ namespace WL
 		WL_DELETE_ARRAY(buffer);
 	}
 
-	MeshInstanceInfo* CD3D11OceanSimulator::getMeshInstance()
+	SMeshInstanceInfo* CD3D11OceanSimulator::getMeshInstance()
 	{
-		MeshInstanceInfo* pMeshInstance = nullptr;
+		SMeshInstanceInfo* pMeshInstance = nullptr;
 		if (mMeshInstancesPool.size() > 0 )
 		{
 			pMeshInstance = mMeshInstancesPool.front();
@@ -791,7 +791,7 @@ namespace WL
 		}
 		else
 		{
-			pMeshInstance = WL_NEW(MeshInstanceInfo, Default); 
+			pMeshInstance = WL_NEW(SMeshInstanceInfo, Default); 
 			pMeshInstance->name = "OceanTile";
 			pMeshInstance->pMeshInstance = WL_NEW(CMeshInstance, Instance)(mpMesh); 
 			auto pMaterialInstance = WL_NEW(CMaterialInstance, Instance)(mpMaterial); 
@@ -821,13 +821,13 @@ namespace WL
 
 		updateDisplacementMap(dt);
 		// Matrices
-		Matrix44 matView = Matrix44(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1) * GEngine->getMainCameraEntity()->getViewMatrix();
-		Matrix44 matProj = GEngine->getMainCameraEntity()->getProjectMatrix();
+		SMatrix44 matView = SMatrix44(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1) * GEngine->getMainCameraEntity()->getViewMatrix();
+		SMatrix44 matProj = GEngine->getMainCameraEntity()->getProjectMatrix();
 	
 
 		// Constant g_PerlinSpeed need to be adjusted mannually
 		Vec2F perlin_move = -mParam.wind_dir * dt * g_PerlinSpeed;
-		Matrix44 matVP = matView * matProj;
+		SMatrix44 matVP = matView * matProj;
 		for (auto& node : mRenderNodes)
 		{
 			if (!isLeaf(node))
@@ -840,19 +840,19 @@ namespace WL
 				level_size >>= 1;
 			}
 			// Matrices and constants
-			Const_Per_Call call_consts;
+			SConst_Per_Call call_consts;
 
 			// Expand of the local coordinate to world space patch size
-			Matrix44 matScale;
+			SMatrix44 matScale;
 			Math::matrixIdentity(&matScale);
 			Math::matrixScale(&matScale, node.length / level_size, node.length / level_size, 0);
 			Math::matrixTranspose(&call_consts.g_matLocal, &matScale);
 
 			// WVP matrix
-			Matrix44 matWorld;
+			SMatrix44 matWorld;
 			Math::matrixIdentity(&matWorld);
 			Math::matrixTranslation(&matWorld, node.bottom_left.x, node.bottom_left.y, 0);
-			Matrix44 matWVP = matWorld * matVP;
+			SMatrix44 matWVP = matWorld * matVP;
 			Math::matrixTranspose(&call_consts.g_matWorldViewProj, &matWVP);
 
 			// Texcoord for perlin noise
@@ -863,7 +863,7 @@ namespace WL
 			call_consts.g_PerlinMovement = perlin_move;
 
 			// Eye point
-			Matrix44 matInvWV = matWorld * matView;
+			SMatrix44 matInvWV = matWorld * matView;
 			Math::matrixInverse(&matInvWV, &matInvWV);
 			Vec3F vLocalEye(0, 0, 0);
 			vLocalEye =	Math::matrixMulVec3(matInvWV, vLocalEye);
@@ -995,7 +995,7 @@ namespace WL
 
 	void CD3D11OceanSimulator::create_cbuffers_512x512()
 	{
-		struct CB_Structure
+		struct SCB_Structure
 		{
 			UINT thread_count;
 			UINT ostride;
@@ -1011,7 +1011,7 @@ namespace WL
 		double phase_base = -TWO_PI / (512.0 * 512.0);
 
 
-		CB_Structure cb_data_buf0 = { thread_count, ostride, istride, 512, (float)phase_base };
+		SCB_Structure cb_data_buf0 = { thread_count, ostride, istride, 512, (float)phase_base };
 		//cb_data.pSysMem = &cb_data_buf0;
 		m_fft_plan.mRadix008A_CB[0].createBuffer(&cb_data_buf0, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 	
@@ -1019,7 +1019,7 @@ namespace WL
 		istride /= 8;
 		phase_base *= 8.0;
 
-		CB_Structure cb_data_buf1 = { thread_count, ostride, istride, 512, (float)phase_base };
+		SCB_Structure cb_data_buf1 = { thread_count, ostride, istride, 512, (float)phase_base };
 		//cb_data.pSysMem = &cb_data_buf1;
 		m_fft_plan.mRadix008A_CB[1].createBuffer(&cb_data_buf1, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 
@@ -1027,7 +1027,7 @@ namespace WL
 		istride /= 8;
 		phase_base *= 8.0;
 
-		CB_Structure cb_data_buf2 = { thread_count, ostride, istride, 512, (float)phase_base };
+		SCB_Structure cb_data_buf2 = { thread_count, ostride, istride, 512, (float)phase_base };
 		m_fft_plan.mRadix008A_CB[2].createBuffer(&cb_data_buf2, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 
 		// Buffer 3
@@ -1035,21 +1035,21 @@ namespace WL
 		phase_base *= 8.0;
 		ostride /= 512;
 
-		CB_Structure cb_data_buf3 = { thread_count, ostride, istride, 1, (float)phase_base };
+		SCB_Structure cb_data_buf3 = { thread_count, ostride, istride, 1, (float)phase_base };
 		m_fft_plan.mRadix008A_CB[3].createBuffer(&cb_data_buf3, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 
 		// Buffer 4
 		istride /= 8;
 		phase_base *= 8.0;
 
-		CB_Structure cb_data_buf4 = { thread_count, ostride, istride, 1, (float)phase_base };
+		SCB_Structure cb_data_buf4 = { thread_count, ostride, istride, 1, (float)phase_base };
 		m_fft_plan.mRadix008A_CB[4].createBuffer(&cb_data_buf4, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 
 		// Buffer 5
 		istride /= 8;
 		phase_base *= 8.0;
 
-		CB_Structure cb_data_buf5 = { thread_count, ostride, istride, 1, (float)phase_base };
+		SCB_Structure cb_data_buf5 = { thread_count, ostride, istride, 1, (float)phase_base };
 		m_fft_plan.mRadix008A_CB[5].createBuffer(&cb_data_buf5, 32, 0, USAGE_DEFAULT, 0, BIND_CONSTANT_BUFFER, 0);
 	}
 

@@ -20,7 +20,7 @@ namespace WL
 		{
 			size_t bucketSize = (1 + i) * m_BucketGranularity;
 			size_t realBucketSize = getRealBucketSize(bucketSize);
-			m_Buckets[i] = WL_NEW_ALIGNED(Buckets(bucketSize, realBucketSize), MemLabelRef(kMemDefaultId), 16);
+			m_Buckets[i] = WL_NEW_ALIGNED(SBuckets(bucketSize, realBucketSize), MemLabelRef(kMemDefaultId), 16);
 		}
 		// Add some initial buckets
 		m_LargeBlocks = reinterpret_cast<SLargeBlock*>(WL_MALLOC(MemLabelRef(kMemDefaultId), sizeof(SLargeBlock) * maxLargeBlocksCount));
@@ -45,7 +45,7 @@ namespace WL
 			return nullptr;
 		}
 		void* newRealPtr = nullptr;
-		Buckets* buckets = getBucketsForSize(size);
+		SBuckets* buckets = getBucketsForSize(size);
 		while (true)
 		{
 			newRealPtr = buckets->popBucket();
@@ -113,7 +113,7 @@ namespace WL
 		return true;
 	}
 
-	bool CBucketAllocator::addMoreBuckets(Buckets* buckets)
+	bool CBucketAllocator::addMoreBuckets(SBuckets* buckets)
 	{
 		// Add new block from preallocated memory
 		int newUsedSize = atomicAdd(&m_CurrentLargeBlockUsedSize, kBlockSize);
@@ -149,7 +149,7 @@ namespace WL
 		return alignSize(size, kMaxAlignment);
 	}
 
-	void CBucketAllocator::addBlockToBuckets(Buckets* buckets, void* ptr, int size)
+	void CBucketAllocator::addBlockToBuckets(SBuckets* buckets, void* ptr, int size)
 	{
 		Assert(ptr == getBlockFromPtr(ptr));
 
@@ -169,7 +169,7 @@ namespace WL
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Buckets::Buckets(int size, int realSize)
+	SBuckets::SBuckets(int size, int realSize)
 	: usedBucketsCount(0)
 	, usedBlocksCount(0)
 	, maxUsedBucketsCount(0)

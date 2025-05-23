@@ -3,12 +3,12 @@
 #include "Controller.h"
 namespace WL
 {
-	class CGameController : public CController
+	class CGameController : public SController
 	{
 	public:
 		CGameController();
 		
 	protected:
-		virtual bool onEvent(event& e) final;
+		virtual bool onEvent(SEvent& e) final;
 	};
 }

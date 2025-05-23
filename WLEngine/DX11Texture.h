@@ -18,7 +18,7 @@ namespace WL
 		bool initialiseTexture1D(INT32 width, UINT32 nFormat, UINT32 nBindFlag, UINT32 cpuAccessFlag, int usagFlag, void* pData);
 		bool initialiseUnorderedTexture(INT32 width, INT32 height, UINT32 nFormat, UINT32 nFlag, UINT32 nBindFlag, UINT32 cpuAccessFlag, int usagFlag, UINT mipSlice = 0, UINT32 firstArraySlice = 0, UINT32 arraySize  = -1);
 		virtual bool initialise() final;
-		virtual bool initialise(const ImgFileInfo& fileInfo) final;
+		virtual bool initialise(const SImgFileInfo& fileInfo) final;
 		ID3D11RenderTargetView* getRenderTargetViewPtr() const;
 		ID3D11Resource* getResourcePtr();
 

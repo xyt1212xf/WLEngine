@@ -199,7 +199,7 @@ namespace WL
 	}
 
 
-	bool CDX11RenderStateMgr::setAlpha(ID3D11DeviceContext* pContext, RenderStateDesc* pRS)
+	bool CDX11RenderStateMgr::setAlpha(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
 		static float blendFactor[4] = { 0, 0, 0, 0 };
@@ -263,7 +263,7 @@ namespace WL
 		return true;
 	}
 
-	bool CDX11RenderStateMgr::setDepthStencil(ID3D11DeviceContext* pContext, RenderStateDesc* pRS)
+	bool CDX11RenderStateMgr::setDepthStencil(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
 		if (pRS->stencil)
@@ -344,7 +344,7 @@ namespace WL
 		return true;
 	}
 
-	bool CDX11RenderStateMgr::setDepth(ID3D11DeviceContext* pContext, RenderStateDesc* pRS)
+	bool CDX11RenderStateMgr::setDepth(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
 		if (pRS->depth)
@@ -507,12 +507,12 @@ namespace WL
 		return true;
 	}
 
-	bool CDX11RenderStateMgr::setDepthCompare(ID3D11DeviceContext* pContext, RenderStateDesc* pRS)
+	bool CDX11RenderStateMgr::setDepthCompare(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		return true;
 	}
 
-	bool CDX11RenderStateMgr::setFillCullMode(ID3D11DeviceContext* pContext, RenderStateDesc* pRS)
+	bool CDX11RenderStateMgr::setFillCullMode(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
 		if (FILL_SOLID == pRS->fillMode)
@@ -682,33 +682,33 @@ namespace WL
 
 
 
-	void CDX11RenderStateMgr::setDepthStencilState(ID3D11DeviceContext* pContext, RenderState* pRS, int nStencilRef/*= 1*/)
+	void CDX11RenderStateMgr::setDepthStencilState(ID3D11DeviceContext* pContext, SRenderState* pRS, int nStencilRef/*= 1*/)
 	{
 		mpCurrentDepthStencilState = pRS->pDepthStencilState;
 		pContext->OMSetDepthStencilState(mpCurrentDepthStencilState, nStencilRef);
 	}
 
-	void CDX11RenderStateMgr::setBlendState(ID3D11DeviceContext* pContext, RenderState* pRS, Vec4F blendFactor/*= {0, 0, 0, 0}*/, UINT SampleMas/*= 0xffffffff*/)
+	void CDX11RenderStateMgr::setBlendState(ID3D11DeviceContext* pContext, SRenderState* pRS, Vec4F blendFactor/*= {0, 0, 0, 0}*/, UINT SampleMas/*= 0xffffffff*/)
 	{
 		mpCurrentBlendingState = pRS->pBlendState;
 		pContext->OMSetBlendState(mpCurrentBlendingState, blendFactor.data(), SampleMas);
 	}
 
-	void CDX11RenderStateMgr::setRasterizerState(ID3D11DeviceContext* pContext, RenderState* pRS)
+	void CDX11RenderStateMgr::setRasterizerState(ID3D11DeviceContext* pContext, SRenderState* pRS)
 	{
 		mpCurrentRasterState = pRS->pRasterizerState;
 		pContext->RSSetState(pRS->pRasterizerState);
 	}
 
-	RenderState* CDX11RenderStateMgr::createRenderState(RenderStateDesc& renderStateDesc)
+	SRenderState* CDX11RenderStateMgr::createRenderState(SRenderStateDesc& renderStateDesc)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
-		RenderState* pRenderState = WL_NEW(RenderState, RenderState);
+		SRenderState* pRenderState = WL_NEW(SRenderState, SRenderState);
 		HRESULT result = S_OK;
 		if (renderStateDesc.bCreateDepthStencil)
 		{
 			D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-			memcpy(&depthStencilDesc, &renderStateDesc.depthStencilDesc, sizeof(DepthStencilDesc));
+			memcpy(&depthStencilDesc, &renderStateDesc.depthStencilDesc, sizeof(SDepthStencilDesc));
 			// Create the depth stencil state.
 			ID3D11DepthStencilState* pDepthStencilState = nullptr;
 			result = pDevice->CreateDepthStencilState(&depthStencilDesc, &pDepthStencilState);
@@ -723,7 +723,7 @@ namespace WL
 		if (renderStateDesc.bCreateBlend)
 		{
 			D3D11_BLEND_DESC blendStateDescription;
-			memcpy(&blendStateDescription, &renderStateDesc.blendDesc, sizeof(BlendDesc));
+			memcpy(&blendStateDescription, &renderStateDesc.blendDesc, sizeof(SBlendDesc));
 			ID3D11BlendState* pBlendState = nullptr;
 			// Create the blend state using the description.
 			result = pDevice->CreateBlendState(&blendStateDescription, &pBlendState);

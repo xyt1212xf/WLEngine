@@ -8,7 +8,7 @@ namespace WL
 		mpScene = pScene;
 	}
 
-	bool CSceneController::onEvent(event& e)
+	bool CSceneController::onEvent(SEvent& e)
 	{
 		return false;
 	}

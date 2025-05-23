@@ -124,7 +124,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mVSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mVSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -142,7 +142,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mPSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mPSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -160,7 +160,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mHSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mHSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -178,7 +178,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mDSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mDSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -196,7 +196,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mGSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mGSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -214,7 +214,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mCSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mCSDataMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -232,7 +232,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mStructBufferMaps[nRegister];
+					SShaderBuffer* pParm = &mStructBufferMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, nSize);
 					pParm->bDirty = true;
 					return;
@@ -255,7 +255,7 @@ namespace WL
 				if (shaderItem.szName == szName)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mTextureBufferMaps[nRegister];
+					SShaderBuffer* pParm = &mTextureBufferMaps[nRegister];
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					pParm->bDirty = true;
 					return;
@@ -269,7 +269,7 @@ namespace WL
 
 	}
 
-	void CShaderInstanceBase::setVSParamByHandle(const shaderParam& handle, void* pData)
+	void CShaderInstanceBase::setVSParamByHandle(const SShaderParam& handle, void* pData)
 	{
 		auto iter = mpShader->mVSValueMap.find(handle.nRegister);
 		if (iter != mpShader->mVSValueMap.end())
@@ -279,7 +279,7 @@ namespace WL
 				if (shaderItem.uId == handle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mVSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mVSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -288,7 +288,7 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setPSParamByHandle(const shaderParam& handle, void* pData)
+	void CShaderInstanceBase::setPSParamByHandle(const SShaderParam& handle, void* pData)
 	{
 		auto iter = mpShader->mPSValueMap.find(handle.nRegister);
 		if (iter != mpShader->mPSValueMap.end())
@@ -298,7 +298,7 @@ namespace WL
 				if (shaderItem.uId == handle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mPSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mPSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -307,7 +307,7 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setHSParamByHandle(const shaderParam& handle, void* pData)
+	void CShaderInstanceBase::setHSParamByHandle(const SShaderParam& handle, void* pData)
 	{
 		auto iter = mpShader->mHSValueMap.find(handle.nRegister);
 		if (iter != mpShader->mHSValueMap.end())
@@ -317,7 +317,7 @@ namespace WL
 				if (shaderItem.uId == handle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mHSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mHSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -326,7 +326,7 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setDSParamByHandle(const shaderParam& handle, void* pData)
+	void CShaderInstanceBase::setDSParamByHandle(const SShaderParam& handle, void* pData)
 	{
 		auto iter = mpShader->mDSValueMap.find(handle.nRegister);
 		if (iter != mpShader->mDSValueMap.end())
@@ -336,7 +336,7 @@ namespace WL
 				if (shaderItem.uId == handle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mDSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mDSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -345,7 +345,7 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setGSParamByHandle(const shaderParam& handle, void* pData)
+	void CShaderInstanceBase::setGSParamByHandle(const SShaderParam& handle, void* pData)
 	{
 		auto iter = mpShader->mGSValueMap.find(handle.nRegister);
 		if (iter != mpShader->mGSValueMap.end())
@@ -355,7 +355,7 @@ namespace WL
 				if (shaderItem.uId == handle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mGSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mGSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -364,7 +364,7 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setCSParamByHandle(const shaderParam& nHandle, void* pData)
+	void CShaderInstanceBase::setCSParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 		auto iter = mpShader->mCSValueMap.find(nHandle.nRegister);
 		if (iter != mpShader->mCSValueMap.end())
@@ -374,7 +374,7 @@ namespace WL
 				if (shaderItem.uId == nHandle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mCSDataMaps[nRegister];
+					SShaderBuffer* pParm = &mCSDataMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, shaderItem.nSize);
 					break;
@@ -384,7 +384,7 @@ namespace WL
 
 	}
 
-	void CShaderInstanceBase::setStructParamByHandle(const shaderParam& nHandle, void* pData, int nSize)
+	void CShaderInstanceBase::setStructParamByHandle(const SShaderParam& nHandle, void* pData, int nSize)
 	{
 		auto iter = mpShader->mStructValueMap.find(nHandle.nRegister);
 		if (iter != mpShader->mStructValueMap.end())
@@ -394,7 +394,7 @@ namespace WL
 				if (shaderItem.uId == nHandle.uId)
 				{
 					UINT32 nRegister = shaderItem.nRegister;
-					shaderBuffer* pParm = &mStructBufferMaps[nRegister];
+					SShaderBuffer* pParm = &mStructBufferMaps[nRegister];
 					pParm->bDirty = true;
 					memcpy(pParm->pData + shaderItem.packOffset, pData, nSize);
 					break;
@@ -403,24 +403,24 @@ namespace WL
 		}
 	}
 
-	void CShaderInstanceBase::setTextureConstBufferParamByHandle(const shaderParam& nHandle, void* pData)
+	void CShaderInstanceBase::setTextureConstBufferParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 
 	}
 
-	void CShaderInstanceBase::setTextureParamByHandle(const shaderParam& nHandle, void* pData)
+	void CShaderInstanceBase::setTextureParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 
 	}
 
-	void CShaderInstanceBase::setTypeBufferParamByHandle(const shaderParam& nHandle, void* pData)
+	void CShaderInstanceBase::setTypeBufferParamByHandle(const SShaderParam& nHandle, void* pData)
 	{
 
 	}
 
-	shaderParam CShaderInstanceBase::getVSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getVSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mVSValueMap)
 		{
 			for (auto& child : item.second)
@@ -434,9 +434,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CShaderInstanceBase::getPSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getPSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mPSValueMap)
 		{
 			for (auto& child : item.second)
@@ -450,9 +450,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CShaderInstanceBase::getHSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getHSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mHSValueMap)
 		{
 			for (auto& child : item.second)
@@ -466,9 +466,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CShaderInstanceBase::getDSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getDSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mDSValueMap)
 		{
 			for (auto& child : item.second)
@@ -482,9 +482,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CShaderInstanceBase::getGSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getGSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mGSValueMap)
 		{
 			for (auto& child : item.second)
@@ -498,9 +498,9 @@ namespace WL
 		return handle;
 	}
 
-	shaderParam CShaderInstanceBase::getCSParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getCSParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mCSValueMap)
 		{
 			for (auto& child : item.second)
@@ -515,9 +515,9 @@ namespace WL
 
 	}
 
-	shaderParam CShaderInstanceBase::getStructParamByName(const std::string& szName) const
+	SShaderParam CShaderInstanceBase::getStructParamByName(const std::string& szName) const
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		for (auto item : mpShader->mStructValueMap)
 		{
 			for (auto& child : item.second)

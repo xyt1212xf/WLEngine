@@ -15,7 +15,7 @@ namespace WL
 		SafeDelete(mpRenderStateMgr);
 	}
 
-	RenderState* CDeviceBase::createRenderState(RenderStateDesc& renderStateDesc)
+	SRenderState* CDeviceBase::createRenderState(SRenderStateDesc& renderStateDesc)
 	{
 		return nullptr;
 	}

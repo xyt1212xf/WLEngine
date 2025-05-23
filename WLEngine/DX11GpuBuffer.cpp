@@ -36,7 +36,7 @@ namespace WL
 			}
 
 			// Get a pointer to the data in the vertex buffer.
-			VertexVTC* verticesPtr = (VertexVTC*)mappedResource.pData;
+			SVertexVTC* verticesPtr = (SVertexVTC*)mappedResource.pData;
 
 			// Copy the data into the vertex buffer.
 			memcpy(verticesPtr, pData, length);

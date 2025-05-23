@@ -149,7 +149,7 @@ namespace WL
 		COLOR_WRITE_ENABLE_ALL = (((COLOR_WRITE_ENABLE_RED | COLOR_WRITE_ENABLE_GREEN) | COLOR_WRITE_ENABLE_BLUE) | COLOR_WRITE_ENABLE_ALPHA),
 	};
 
-	struct RenderTargetBlendDesc
+	struct SRenderTargetBlendDesc
 	{
 		BOOL BlendEnable = FALSE;
 		BLEND SrcBlend = BLEND_ONE;
@@ -161,7 +161,7 @@ namespace WL
 		UINT8 RenderTargetWriteMask = COLOR_WRITE_ENABLE_ALL;
 	};
 
-	struct SamplerDesc
+	struct SSamplerDesc
 	{
 		FILTER Filter = FILTER_MIN_MAG_MIP_LINEAR;
 		TEXTURE_ADDRESS_MODE AddressU = TEXTURE_ADDRESS_CLAMP;
@@ -175,7 +175,7 @@ namespace WL
 		float MaxLOD = FLT_MAX;
 	};
 
-	struct DepthStencilOpDesc
+	struct SDepthStencilOpDesc
 	{
 		STENCIL_OP StencilFailOp = STENCIL_OP_KEEP;
 		STENCIL_OP StencilDepthFailOp = STENCIL_OP_KEEP;
@@ -183,7 +183,7 @@ namespace WL
 		COMPARISON_FUNC StencilFunc = COMPARISON_ALWAYS;
 	};
 	
-	struct DepthStencilDesc
+	struct SDepthStencilDesc
 	{
 		BOOL DepthEnable = TRUE;
 		DEPTH_WRITE_MASK DepthWriteMask = DEPTH_WRITE_MASK_ALL;
@@ -191,18 +191,18 @@ namespace WL
 		BOOL StencilEnable = FALSE;
 		UINT8 StencilReadMask = DEFAULT_STENCIL_WRITE_MASK;
 		UINT8 StencilWriteMask = DEFAULT_STENCIL_WRITE_MASK;
-		DepthStencilOpDesc FrontFace;
-		DepthStencilOpDesc BackFace;
+		SDepthStencilOpDesc FrontFace;
+		SDepthStencilOpDesc BackFace;
 	};
 	
-	struct BlendDesc
+	struct SBlendDesc
 	{
 		BOOL AlphaToCoverageEnable = FALSE;
 		BOOL IndependentBlendEnable = FALSE;
-		RenderTargetBlendDesc RenderTarget[8];
+		SRenderTargetBlendDesc RenderTarget[8];
 	};
 
-	struct RasterizerDesc
+	struct SRasterizerDesc
 	{
 		FILL_MODE FillMode = FILL_SOLID;
 		CULL_MODE CullMode = CULL_BACK;
@@ -216,7 +216,7 @@ namespace WL
 		BOOL AntialiasedLineEnable = FALSE;
 	};
 
-	struct RenderStateDesc
+	struct SRenderStateDesc
 	{
 		//data
 		int fillMode = 3;
@@ -232,9 +232,9 @@ namespace WL
 		bool bCreateDepthStencil = true;
 		bool bCreateRasterizer = true;
 		bool bCreateBlend = true;
-		DepthStencilDesc depthStencilDesc;
-		RasterizerDesc   rasterizerDesc;
-		BlendDesc		 blendDesc;
+		SDepthStencilDesc depthStencilDesc;
+		SRasterizerDesc   rasterizerDesc;
+		SBlendDesc		 blendDesc;
 		//function
 		void reset()
 		{
@@ -247,9 +247,9 @@ namespace WL
 			shadow = false;
 			enableLight = false;
 			
-			memset(&depthStencilDesc, 0, sizeof(DepthStencilDesc)); 
-			memset(&rasterizerDesc, 0, sizeof(RasterizerDesc));
-			memset(&blendDesc, 0, sizeof(BlendDesc));
+			memset(&depthStencilDesc, 0, sizeof(SDepthStencilDesc)); 
+			memset(&rasterizerDesc, 0, sizeof(SRasterizerDesc));
+			memset(&blendDesc, 0, sizeof(SBlendDesc));
 		}
 	};
 }

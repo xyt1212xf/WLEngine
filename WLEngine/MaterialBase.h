@@ -24,9 +24,9 @@ namespace WL
 		void addStructValue(const std::string& name, INT32 size, INT32 nStructSize, INT32 nRegister, INT32 nOffset);
 
 		void addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset, 
-			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubDdata = nullptr);
+			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubDdata = nullptr);
 
-		void addTextureBufferValue(const std::string& name, int nRegister, const ImgFileInfo& fileInfo, INT32 nShaderFlags,
+		void addTextureBufferValue(const std::string& name, int nRegister, const SImgFileInfo& fileInfo, INT32 nShaderFlags,
 			int Usage = USAGE_DYNAMIC,
 			UINT32 BindFlags = BIND_SHADER_RESOURCE,
 			UINT32 CPUAccessFlags = CPU_ACCESS_WRITE);

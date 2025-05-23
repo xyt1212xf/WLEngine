@@ -6,7 +6,7 @@ namespace WL
 
 	}
 
-	bool CGameController::onEvent(event& e)
+	bool CGameController::onEvent(SEvent& e)
 	{
 		switch (e.message)
 		{

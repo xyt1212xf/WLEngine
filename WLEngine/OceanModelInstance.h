@@ -9,7 +9,7 @@ namespace WL
 		virtual ~COceanModelInstance();
 		virtual void bindModel(CModel* pModel) final;
 		virtual void rebindModel(CModel* pModel)final;
-		void addMeshInstance(const MeshInstanceInfo& meshInstance);
+		void addMeshInstance(const SMeshInstanceInfo& meshInstance);
 		void clearMeshs();
 	};
 }

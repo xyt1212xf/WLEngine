@@ -14,15 +14,15 @@ namespace WL
 {
 #pragma warning ( push, 3 )  // Temporarily setting warning level 3
 	template<typename T>
-	struct Rect
+	struct SRect
 	{
-		Rect(Rect&& vec)
+		SRect(SRect&& vec)
 		{
 			x = vec.x;
 			y = vec.y;
 			z = vec.z;
 		}
-		Rect(T x, T y, T z, T w)
+		SRect(T x, T y, T z, T w)
 		{
 			this->x = x;
 			this->y = y;
@@ -47,13 +47,13 @@ namespace WL
 			};
 		};
 	};
-	typedef Rect<float> RectF;
-	typedef Rect<int> RectI;
+	typedef SRect<float> RectF;
+	typedef SRect<int> RectI;
 
 #pragma warning (pop) 
 
 
-	struct VertexFormatVTC
+	struct SVertexFormatVTC
 	{
 #ifdef _WINDOWS
 		Vec3F position;
@@ -79,7 +79,7 @@ namespace WL
 #endif
 	};
 
-	struct VertexFormatVC
+	struct SVertexFormatVC
 	{
 #ifdef _WINDOWS
 		Vec3F position;
@@ -103,14 +103,14 @@ namespace WL
 		};
 #endif
 	};
-	struct VertexVT
+	struct SVertexVT
 	{
 		Vec3F position;
 		Vec2F uv;
 	};
 
 
-	struct VertexFormatVTN
+	struct SVertexFormatVTN
 	{
 		Vec3F	position;
 		Vec2F	uv;
@@ -118,7 +118,7 @@ namespace WL
 	};
 
 	//只针对omod模型
-	struct VertexFormatOMOD
+	struct SVertexFormatOMOD
 	{
 		Vec3F	position;	
 		Vec3F	omodNormal;
@@ -128,7 +128,7 @@ namespace WL
 	};
 
 	//voxel的结构
-	struct VertexFormatVoxel
+	struct SVertexFormatVoxel
 	{
 		Vec3F	position = { 0, 0, 0 };
 		Vec3F	normal = { 0, 0, 0 };
@@ -137,35 +137,35 @@ namespace WL
 		Vec3F   weight = { 0, 0, 0 };
 	};
 
-	struct VertexVTC : public VertexVT
+	struct SVertexVTC : public SVertexVT
 	{
 		Vec4F color;
 	};
 
-	struct VertexFormatVTNT : public VertexFormatVTN
+	struct SVertexFormatVTNT : public SVertexFormatVTN
 	{
 		Vec3F	tangent;
 	};
 
-	struct VertexFormatVTNSkin : public VertexFormatVTN
+	struct SVertexFormatVTNSkin : public SVertexFormatVTN
 	{
 		Vec4I	BoneIndex;
 		Vec3F	skinWeight;
 	};
 
-	struct VertexFormatVTNTB : public VertexFormatVTN
+	struct SVertexFormatVTNTB : public SVertexFormatVTN
 	{
 		Vec3F	tangent;
 		Vec3F	binormal;
 	};
 
-	struct VertexFormatVTNTBSkin : public VertexFormatVTNTB
+	struct SVertexFormatVTNTBSkin : public SVertexFormatVTNTB
 	{
 		INT32 	boneIndex[4];
 		Vec4F 	bonWeight;
 	};
 
-	struct Intersection
+	struct SIntersection
 	{
 		UINT32 dwFace;                 // mesh face that was intersected
 		float fBary1, fBary2;         // barycentric coords of intersection

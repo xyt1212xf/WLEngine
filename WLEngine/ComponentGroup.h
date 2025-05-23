@@ -4,13 +4,13 @@
 
 namespace WL
 {
-	struct CComponent;
-	struct WLENGINE_API ComponentGrounp
+	class CComponent;
+	struct WLENGINE_API SComponentGrounp
 	{
 		//////////////////////////////////////////////////////////////////////////
 		//Function
-		ComponentGrounp() = default;
-		virtual ~ComponentGrounp();
+		SComponentGrounp() = default;
+		virtual ~SComponentGrounp();
 
 		void addComponent(CComponent* pComponent);
 

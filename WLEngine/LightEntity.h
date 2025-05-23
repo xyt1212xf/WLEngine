@@ -19,7 +19,7 @@ namespace WL
 		SPotLight,
 	};
 	
-	struct LightData
+	struct SLightData
 	{
 		Vec3F color;
 		float type;
@@ -64,9 +64,9 @@ namespace WL
 		CActorEntity* mpModelInstance = nullptr;
 		CMaterialInstance* mpMaterialInstance = nullptr;
 		LightType	mLightType = PointLight;
-		Matrix44 mViewMatrix;
-		Matrix44 mProjectMatrix;
-		LightData mData;
+		SMatrix44 mViewMatrix;
+		SMatrix44 mProjectMatrix;
+		SLightData mData;
 #ifdef _DEBUG
 		float mfValue = 0;
 		float mfSpeed = 0;

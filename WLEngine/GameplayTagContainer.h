@@ -4,17 +4,17 @@
 
 namespace WL
 {
-	struct GameplayTag : public CScriptEntity
+	struct SGameplayTag : public CScriptEntity
 	{
 		/** An empty Gameplay Tag */
-		static const GameplayTag EmptyTag;
+		static const SGameplayTag EmptyTag;
 
-		GameplayTag();
-		virtual ~GameplayTag();
+		SGameplayTag();
+		virtual ~SGameplayTag();
 
-		explicit GameplayTag(const std::string& szName);
+		explicit SGameplayTag(const std::string& szName);
 
-		static GameplayTag requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound = true);
+		static SGameplayTag requestGameplayTag(const std::string& TagName, bool ErrorIfNotFound = true);
 
 		std::string getTagName() const
 		{
@@ -35,9 +35,9 @@ namespace WL
 			return mTagName.length() > 0 ? true : false;
 		}
 
-		bool matchesTag(const GameplayTag& TagToCheck) const;
+		bool matchesTag(const SGameplayTag& TagToCheck) const;
 
-		INLINE bool matchesTagExact(const GameplayTag& TagToCheck) const
+		INLINE bool matchesTagExact(const SGameplayTag& TagToCheck) const
 		{
 			if (!TagToCheck.isValid())
 			{
@@ -47,47 +47,47 @@ namespace WL
 			return mTagName == TagToCheck.mTagName;
 		}
 
-		INLINE bool operator==(GameplayTag const& Other) const
+		INLINE bool operator==(SGameplayTag const& Other) const
 		{
 			return mTagName == Other.mTagName;
 		}
 
-		INLINE bool operator!=(GameplayTag const& Other) const
+		INLINE bool operator!=(SGameplayTag const& Other) const
 		{
 			return mTagName != Other.mTagName;
 		}
 
-		bool operator < (const GameplayTag& other) const
+		bool operator < (const SGameplayTag& other) const
 		{
 			return mTagName < other.mTagName;
 		}
 
 		std::string mTagName = "";
 
-		DeclareScriptClass(GameplayTag);
+		DeclareScriptClass(SGameplayTag);
 	};
 
-	struct GameplayTagContainer
+	struct SGameplayTagContainer
 	{
-		GameplayTagContainer() = default;
+		SGameplayTagContainer() = default;
 
-		GameplayTagContainer(GameplayTagContainer&& Other) noexcept
+		SGameplayTagContainer(SGameplayTagContainer&& Other) noexcept
 		{
 			mGameplayTags = std::move(Other.mGameplayTags);
 			mParentTags = std::move(Other.mParentTags);
 		}
 
-		GameplayTagContainer(const GameplayTagContainer& Other)
+		SGameplayTagContainer(const SGameplayTagContainer& Other)
 		{
 			*this = Other;
 		}
 
-		explicit GameplayTagContainer(const GameplayTag& Tag) 
+		explicit SGameplayTagContainer(const SGameplayTag& Tag) 
 		{
 
 		}
-		GameplayTagContainer& operator=(const GameplayTagContainer& Other);
-		GameplayTagContainer& operator=(GameplayTagContainer&& Other);
+		SGameplayTagContainer& operator=(const SGameplayTagContainer& Other);
+		SGameplayTagContainer& operator=(SGameplayTagContainer&& Other);
 
 		/** Returns the number of explicitly added tags */
 		INLINE INT32 num() const
@@ -95,13 +95,13 @@ namespace WL
 			return static_cast<INT32>(mGameplayTags.size());
 		}
 
-		void addTag(const GameplayTag& TagToAdd);
+		void addTag(const SGameplayTag& TagToAdd);
 		
-		void removeTag(const GameplayTag& TagToRemove);
+		void removeTag(const SGameplayTag& TagToRemove);
 
-		GameplayTag first() const;
+		SGameplayTag first() const;
 	
-		GameplayTag last() const;
+		SGameplayTag last() const;
 	
 		/** Returns the number of explicitly added tags */
 		INLINE size_t count() const
@@ -121,7 +121,7 @@ namespace WL
 			return mGameplayTags.size() == 0;
 		}
 
-		INLINE bool hasTag(const GameplayTag& TagToCheck) const
+		INLINE bool hasTag(const SGameplayTag& TagToCheck) const
 		{
 			if (TagToCheck.isValid())
 			{
@@ -133,7 +133,7 @@ namespace WL
 			}
 			return false;
 		}
-		std::vector<GameplayTag> mGameplayTags;
-		std::vector<GameplayTag> mParentTags;
+		std::vector<SGameplayTag> mGameplayTags;
+		std::vector<SGameplayTag> mParentTags;
 	};
 }

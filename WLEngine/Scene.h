@@ -38,15 +38,15 @@ namespace WL
 	private:
 		void draw(UINT32 dTime);
 		void _update(UINT32 dTime);
-		void initCamera(const json::reference& value, WindowConfig* config);
-		void initEntities(const json& value, WindowConfig* config);
-		void initChunks(const json& value, WindowConfig* config);
-		void initLight(const json::reference& value, WindowConfig* config);
-		void initSky(const json::reference& value, WindowConfig* config);
-		void initSkyBox(const json::reference& value, WindowConfig* config);
-		void initBornIn(const json::reference& value, WindowConfig* config);
-		void initTerrain(const json::reference& value, WindowConfig* config);
-		void initGui(const json::reference& value, WindowConfig* config);
+		void initCamera(const json::reference& value, SWindowConfig* config);
+		void initEntities(const json& value, SWindowConfig* config);
+		void initChunks(const json& value, SWindowConfig* config);
+		void initLight(const json::reference& value, SWindowConfig* config);
+		void initSky(const json::reference& value, SWindowConfig* config);
+		void initSkyBox(const json::reference& value, SWindowConfig* config);
+		void initBornIn(const json::reference& value, SWindowConfig* config);
+		void initTerrain(const json::reference& value, SWindowConfig* config);
+		void initGui(const json::reference& value, SWindowConfig* config);
 		void initOcean(const json& value, CEntity* pEntity);
 		void initActor(const json& value, CEntity* pEntity);
 		void checkVoxleChunk();
@@ -61,7 +61,7 @@ namespace WL
 		std::list<CCameraEntity*>	mCameras;
 		std::list<CGuiEntity*>		mGuis;
 		std::list<CActorEntity*>	mPickActors;
-		std::map<Vec3F, ChunkInfo>	mChunks;
+		std::map<Vec3F, SChunkInfo>	mChunks;
 		Vec3F	mBornPos;
 		CCameraEntity* mpMainCamera = nullptr;
 		CSkyEntity* mpSkyEntity = nullptr;

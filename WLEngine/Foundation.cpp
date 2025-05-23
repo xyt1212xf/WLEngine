@@ -31,10 +31,10 @@ namespace WL
 										  const std::string& szMaterial,
 										  const std::string& szTexture)
 		{
-			std::vector<VertexFormatVTN> drawVertices;
+			std::vector<SVertexFormatVTN> drawVertices;
 			std::vector<UINT16> drawIndices;
 
-			VertexFormatVTN v0, v1, v2;
+			SVertexFormatVTN v0, v1, v2;
 			v0.position = vOrigin;
 			v1.position = fBeginPos;
 			v2.position = fEndPos;
@@ -70,7 +70,7 @@ namespace WL
 			}
 			auto pModelInstance = generateModel(drawVertices.data(),
 								   drawVertices.size(),
-								   sizeof(VertexFormatVTN),
+								   sizeof(SVertexFormatVTN),
 								   drawIndices.data(),
 								   drawIndices.size(),
 								   sizeof(UINT16), 

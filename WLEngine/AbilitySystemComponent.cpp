@@ -31,9 +31,9 @@ namespace WL
         }
     }
 
-    bool CAbilitySystemComponent::tryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate)
+    bool CAbilitySystemComponent::tryActivateAbility(SGameplayAbilitySpecHandle AbilityToActivate)
     {
-        GameplayTagContainer FailureTags;
+        SGameplayTagContainer FailureTags;
         SGameplayAbilitySpec* Spec = findAbilitySpecFromHandle(AbilityToActivate);
         if (!Spec)
         {
@@ -46,7 +46,7 @@ namespace WL
         {
             return false;
         }
-        const GameplayAbilityActorInfo* ActorInfo = mpAbilityActorInfo;
+        const SGameplayAbilityActorInfo* ActorInfo = mpAbilityActorInfo;
         if (nullptr == ActorInfo)
         {
             return false;
@@ -55,7 +55,7 @@ namespace WL
         return internalTryActivateAbility(AbilityToActivate);;
     }
 
-    SGameplayAbilitySpec* CAbilitySystemComponent::findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const
+    SGameplayAbilitySpec* CAbilitySystemComponent::findAbilitySpecFromHandle(SGameplayAbilitySpecHandle Handle) const
     {
         return nullptr;
     }
@@ -115,7 +115,7 @@ namespace WL
         }
 	}
 
-	bool CAbilitySystemComponent::internalTryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate)
+	bool CAbilitySystemComponent::internalTryActivateAbility(SGameplayAbilitySpecHandle AbilityToActivate)
     {
         if (AbilityToActivate.isValid() == false)
         {
@@ -124,7 +124,7 @@ namespace WL
         return true;
     }
 
-	void CAbilitySystemComponent::clearAbility(const GameplayAbilitySpecHandle& Handle)
+	void CAbilitySystemComponent::clearAbility(const SGameplayAbilitySpecHandle& Handle)
 	{
         auto iter = mActivatableAbilities.mItems.begin();
         while (iter != mActivatableAbilities.mItems.end())

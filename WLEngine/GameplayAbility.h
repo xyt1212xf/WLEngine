@@ -6,27 +6,27 @@
 namespace WL
 {
 	struct SGameplayAbilitySpec;
-	struct GameplayAbilityActorInfo;
+	struct SGameplayAbilityActorInfo;
 	class CGameplayAbility : public CScriptEntity 
 	{
 		DeclareScriptClass(CGameplayAbility);
 		friend class CAbilitySystemComponent;
 	public:
 
-		GameplayAbilityActorInfo GetActorInfo() const;
+		SGameplayAbilityActorInfo GetActorInfo() const;
 
-		virtual void onGiveAbility(const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilitySpec& Spec);
+		virtual void onGiveAbility(const SGameplayAbilityActorInfo* ActorInfo, const SGameplayAbilitySpec& Spec);
 		/** Native function, called if an ability ends normally or abnormally. If bReplicate is set to true, try to replicate the ending to the client/server */
-		virtual void endAbility(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+		virtual void endAbility(const SGameplayAbilitySpecHandle Handle, const SGameplayAbilityActorInfo* ActorInfo, const SGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 		/** Modifies actor info, only safe on instanced abilities */
-		virtual void setCurrentActorInfo(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo) const;
+		virtual void setCurrentActorInfo(const SGameplayAbilitySpecHandle Handle, const SGameplayAbilityActorInfo* ActorInfo) const;
 
 
 	public:
-		mutable const GameplayAbilityActorInfo* mCurrentActorInfo = nullptr;
+		mutable const SGameplayAbilityActorInfo* mCurrentActorInfo = nullptr;
 
 		/** For instanced abilities */
-		mutable GameplayAbilitySpecHandle mCurrentSpecHandle;
+		mutable SGameplayAbilitySpecHandle mCurrentSpecHandle;
 	};
 }

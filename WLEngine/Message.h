@@ -30,7 +30,7 @@
 namespace WL
 {
 	//消息的响应事件
-	struct event
+	struct SEvent
 	{
 		bool bProcess = false;
 		int message = 0;

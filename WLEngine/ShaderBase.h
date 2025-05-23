@@ -15,7 +15,7 @@ namespace WL
 		UNKNOW = 1 << 7,
 	};
 	
-	struct shaderParam
+	struct SShaderParam
 	{
 		UINT32 uId = 0;
 		UINT32 nRegister = 0xFFFFFFFF;
@@ -74,9 +74,9 @@ namespace WL
 		bool addVSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset);
 		bool addGSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset);
 		bool addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset,
-			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData = nullptr);
+			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData = nullptr);
 		bool addStructValue(const std::string& name, INT32 size, INT32 nStructSize, INT32 nRegister, INT32 nOffset);
-		bool addTextureBufferValue(const std::string& name, int nRegister, const ImgFileInfo& fileInfo, INT32 nShaderFlags,
+		bool addTextureBufferValue(const std::string& name, int nRegister, const SImgFileInfo& fileInfo, INT32 nShaderFlags,
 			int Usage = USAGE_DYNAMIC,
 			UINT32 BindFlags = BIND_SHADER_RESOURCE,
 			UINT32 CPUAccessFlags = CPU_ACCESS_WRITE);
@@ -88,10 +88,10 @@ namespace WL
 		virtual bool addVSConstBuffer(const std::string& name, INT32 size, INT32 nRegister);
 		virtual bool addGSConstBuffer(const std::string& name, INT32 size, INT32 nRegister);
 		virtual bool addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister,
-			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData = nullptr);
+			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData = nullptr);
 		virtual bool addTextureConstBufferParam(const std::string& name, INT32 size, INT32 nRegister);
 		virtual bool addStructedParam(const std::string& name, INT32 structSize, INT32 size, INT32 nRegister);
-		virtual bool addTextureParam(const std::string& name, INT32 nRegister, ImgFileInfo fileInfo,
+		virtual bool addTextureParam(const std::string& name, INT32 nRegister, SImgFileInfo fileInfo,
 			int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags);
 		virtual bool addTypeBufferParam(const std::string& name, INT32 size, INT32 nRegister);
 
@@ -105,14 +105,14 @@ namespace WL
 		INT		mTransparent = 0;
 		INT		mShadow = 0;
 		INT		mEnableLight = 0;
-		std::map<UINT32, std::list<shaderParam>> mPSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mDSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mHSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mVSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mGSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mCSValueMap;
-		std::map<UINT32, std::list<shaderParam>> mStructValueMap;
-		std::map<UINT32, std::list<shaderParam>> mTextureBufferValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mPSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mDSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mHSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mVSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mGSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mCSValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mStructValueMap;
+		std::map<UINT32, std::list<SShaderParam>> mTextureBufferValueMap;
 		//std::map<UINT32, std::list<shaderParam>> mStructValueMap;
 		//std::map<UINT32, std::list<shaderParam>> mStructValueMap;
 

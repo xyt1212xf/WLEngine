@@ -17,11 +17,11 @@ namespace WL
 			mpRenderSurface->addRef();
 			mpScreen = GEngine->createBillBoardEntity(R"(resource\Material\drawScreen.ma)", pConfig->nWidth, pConfig->nHeight);
 			mpScreen->setPosition(Vec3F(0, 0, 0));
-			mpScreen->setViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
-			mpScreen->setProjectMT(const_cast<Matrix44*>(&mpRenderSurface->getOrthoMT()));
+			mpScreen->setViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
+			mpScreen->setProjectMT(const_cast<SMatrix44*>(&mpRenderSurface->getOrthoMT()));
 
-			mpScreen->setTransposeViewMT(const_cast<Matrix44*>(&Matrix44::identity()));
-			mpScreen->setTransposeProjectMT(const_cast<Matrix44*>(&mpRenderSurface->getTransposeOrthoMT()));
+			mpScreen->setTransposeViewMT(const_cast<SMatrix44*>(&SMatrix44::identity()));
+			mpScreen->setTransposeProjectMT(const_cast<SMatrix44*>(&mpRenderSurface->getTransposeOrthoMT()));
 
 		}
 	}

@@ -38,9 +38,9 @@ namespace WL
 		CRenderer();
 		CRenderer(int nOrder );
 		virtual ~CRenderer();
-		RenderUnitGrounp* getRenderUnitGrounp(INT32 nIndex);
+		SRenderUnitGrounp* getRenderUnitGrounp(INT32 nIndex);
 		int getOrder();
-		virtual void drawEntity(RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount);
+		virtual void drawEntity(SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount);
 		virtual bool drawBegin(DeviceContext* pDeviceContext, bool bCleanState);
 		virtual void drawEnd(DeviceContext* pDeviceContext, CommandList*& pCommandList, int nContext);
 		virtual void begin();
@@ -70,7 +70,7 @@ namespace WL
 		void setClearColor(const Vec4F& color);
 #endif
 	protected:
-		void commitToGpu(DeviceContext* pDeviceContext, std::list<RenderUnit*>& renderChunk);
+		void commitToGpu(DeviceContext* pDeviceContext, std::list<SRenderUnit*>& renderChunk);
 		virtual std::vector<CActorEntity*>& checkEntities(std::vector<CActorEntity*>& pDrawEntitiesArray);
 
 	protected:
@@ -78,7 +78,7 @@ namespace WL
 		int mOrder = Renderer;
 		DrawQualityLevel mDrawQualityLevel = Middle;
 		const static int sMaxRenderChunk = 32;
-		RenderUnitGrounp mRenderChunkGroup[sMaxRenderChunk];
+		SRenderUnitGrounp mRenderChunkGroup[sMaxRenderChunk];
 		std::vector<CActorEntity*>	mDrawEntities;
 		std::map<int, std::list<CRendererPass*>>	mArrayRendererPass;
 		Vec4F mBackColor = { 0, 0, 0, 1 };

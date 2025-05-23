@@ -4,9 +4,9 @@
 
 namespace WL
 {
-	RenderUnit* RenderUnitGrounp::getRenderUnit()
+	SRenderUnit* SRenderUnitGrounp::getRenderUnit()
 	{
-		RenderUnit* pRenderUnit = nullptr;
+		SRenderUnit* pRenderUnit = nullptr;
 		if (mFreeRenderUnits.size() > 0)
 		{
 			pRenderUnit = mFreeRenderUnits.front();
@@ -14,13 +14,13 @@ namespace WL
 		}
 		else
 		{
-			pRenderUnit = WL_NEW(RenderUnit, RenderUnit);
+			pRenderUnit = WL_NEW(SRenderUnit, SRenderUnit);
 		}
 		mpRenderUnits.emplace_back(pRenderUnit);
 		return pRenderUnit;
 	}
 
-	void RenderUnitGrounp::clearRenderUnit()
+	void SRenderUnitGrounp::clearRenderUnit()
 	{
 		for (auto item : mpRenderUnits)
 		{
@@ -30,16 +30,16 @@ namespace WL
 		mpRenderUnits.clear();
 	}
 
-	RenderUnitGrounp::~RenderUnitGrounp()
+	SRenderUnitGrounp::~SRenderUnitGrounp()
 	{	
 		for (auto item : mpRenderUnits)
 		{
-			WL_DELETE(item, RenderUnit);
+			WL_DELETE(item, SRenderUnit);
 		}
 		mpRenderUnits.clear();
 		for (auto item : mFreeRenderUnits)
 		{
-			WL_DELETE(item, RenderUnit);
+			WL_DELETE(item, SRenderUnit);
 		}
 		mFreeRenderUnits.clear();
 
@@ -69,7 +69,7 @@ namespace WL
 	}
 
 
-	RenderUnitGrounp* CRenderer::getRenderUnitGrounp(INT32 nIndex)
+	SRenderUnitGrounp* CRenderer::getRenderUnitGrounp(INT32 nIndex)
 	{
 #ifdef _DEBUG
 		if (nIndex < sMaxRenderChunk)
@@ -95,12 +95,12 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CRenderer::drawEntity(RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CRenderer::drawEntity(SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				if ((item.second)->isVisual())
@@ -116,7 +116,7 @@ namespace WL
 							pRenderUnit->pMaterialInstance = child.pMaterialInstance;
 							UINT16 nOrder = child.pMaterialInstance->getRenderOrder();
 
-							Geometry geometry;
+							SGeometry geometry;
 							geometry.pMaterialInstance = child.pMaterialInstance;
 							geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
 							geometry.vertexOffset = child.pMeshInstance->getVertexOffset();
@@ -218,7 +218,7 @@ namespace WL
 	}
 #endif
 
-	void CRenderer::commitToGpu(DeviceContext* pDeviceContext, std::list<RenderUnit*>& renderChunk)
+	void CRenderer::commitToGpu(DeviceContext* pDeviceContext, std::list<SRenderUnit*>& renderChunk)
 	{
 		for (auto& item : renderChunk)
 		{

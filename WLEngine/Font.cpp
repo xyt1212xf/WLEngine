@@ -72,7 +72,7 @@ namespace WL
 
 	}
 
-	const CFont::FontCell& CFont::getCell(char c) const
+	const CFont::SFontCell& CFont::getCell(char c) const
 	{
 		int nIndex = c - 32;
 		if( nIndex < (int)mFontCells.size() )
@@ -80,7 +80,7 @@ namespace WL
 			return mFontCells[nIndex];
 		}
 		assert(false);
-		static auto errorCell = FontCell();
+		static auto errorCell = SFontCell();
 		return errorCell;
 	}
 

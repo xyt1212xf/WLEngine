@@ -29,39 +29,39 @@ namespace WL
 
 		void drawEntity(std::vector<CActorEntity*>& pDrawEntitiesArray, UINT32 dTime);
 
-		void setWorldMatrix(Matrix44* pMT);
-		void setViewMatrxi(Matrix44* pMT);
-		void setProjectMatrix(Matrix44* pMT);
-		void setOrthoMatrix(Matrix44* pMT);
-		void setViewProjectMatrix(Matrix44* pViewProjectMT);
-		Matrix44* getWorldMatrix();
-		Matrix44* getViewMatrix();
-		Matrix44* getProjectMatrix();
-		Matrix44* getOrthoMatrix();
-		Matrix44* getViweProjectMatrix();
-		void setFillCullMode(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setAlpha(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setDepthStencil(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setDepth(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setDepthCompare(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setRenderState(DeviceContext* pContext, RenderStateDesc* pRS);
-		void setDepthStencilState(DeviceContext* pContext, RenderState* pRS, int nStencilRef = 0);
-		void setBlendState(DeviceContext* pContext, RenderState* pRS);
-		void setRasterizerState(DeviceContext* pContext, RenderState* pRS);
+		void setWorldMatrix(SMatrix44* pMT);
+		void setViewMatrxi(SMatrix44* pMT);
+		void setProjectMatrix(SMatrix44* pMT);
+		void setOrthoMatrix(SMatrix44* pMT);
+		void setViewProjectMatrix(SMatrix44* pViewProjectMT);
+		SMatrix44* getWorldMatrix();
+		SMatrix44* getViewMatrix();
+		SMatrix44* getProjectMatrix();
+		SMatrix44* getOrthoMatrix();
+		SMatrix44* getViweProjectMatrix();
+		void setFillCullMode(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setAlpha(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setDepthStencil(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setDepth(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setDepthCompare(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setRenderState(DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setDepthStencilState(DeviceContext* pContext, SRenderState* pRS, int nStencilRef = 0);
+		void setBlendState(DeviceContext* pContext, SRenderState* pRS);
+		void setRasterizerState(DeviceContext* pContext, SRenderState* pRS);
 
-		void setTransposeWorldMatrix(Matrix44* pMT);
-		void setTransposeViewMatrxi(Matrix44* pMT);
-		void setTransposeProjectMatrix(Matrix44* pMT);	
-		void setTransposeOrthoMatrix(Matrix44* pMT);
-		void setTransposeViewProjectMatrix(Matrix44* pViewProjectMT);
+		void setTransposeWorldMatrix(SMatrix44* pMT);
+		void setTransposeViewMatrxi(SMatrix44* pMT);
+		void setTransposeProjectMatrix(SMatrix44* pMT);	
+		void setTransposeOrthoMatrix(SMatrix44* pMT);
+		void setTransposeViewProjectMatrix(SMatrix44* pViewProjectMT);
 
-		const std::list<shaderParam>& getGlobalShaderParam(ShaderBufferType type);
-		void addGlobalShaderParam(ShaderBufferType type, const shaderParam& param);
-		Matrix44* getTransposeWorldMatrix();
-		Matrix44* getTransposeViewMatrix();
-		Matrix44* getTransposeProjectMatrix();
-		Matrix44* getTransposeOrthoMatrix();
-		Matrix44* getTransposeViweProjectMatrix();
+		const std::list<SShaderParam>& getGlobalShaderParam(ShaderBufferType type);
+		void addGlobalShaderParam(ShaderBufferType type, const SShaderParam& param);
+		SMatrix44* getTransposeWorldMatrix();
+		SMatrix44* getTransposeViewMatrix();
+		SMatrix44* getTransposeProjectMatrix();
+		SMatrix44* getTransposeOrthoMatrix();
+		SMatrix44* getTransposeViweProjectMatrix();
 		
 		void addEntity(CEntity* pEntitiy);
 		void removeEntity(CEntity* pEntitiy);
@@ -127,17 +127,17 @@ namespace WL
 		std::list<CEntity*>	mAllEntities;
 		CDevice*	mpDevice = nullptr;
 		
-		Matrix44	mWorldMatrix;
-		Matrix44	mViewMatrix;
-		Matrix44	mProjectMatrix;
-		Matrix44	mOrthoMatrix;
-		Matrix44	mViewProjectMatrix;
+		SMatrix44	mWorldMatrix;
+		SMatrix44	mViewMatrix;
+		SMatrix44	mProjectMatrix;
+		SMatrix44	mOrthoMatrix;
+		SMatrix44	mViewProjectMatrix;
 
-		Matrix44 mTransposeWorldMatrix;
-		Matrix44 mTransposeViewMatrix;
-		Matrix44 mTransposeProjectMatrix;
-		Matrix44 mTransposeOrthoMatrix;
-		Matrix44 mTransposeViewProjectMatrix;
+		SMatrix44 mTransposeWorldMatrix;
+		SMatrix44 mTransposeViewMatrix;
+		SMatrix44 mTransposeProjectMatrix;
+		SMatrix44 mTransposeOrthoMatrix;
+		SMatrix44 mTransposeViewProjectMatrix;
 
 		DeviceContext* mpImmediateContext = nullptr;
 		std::vector<DeviceContext*>		mpDeviceContext;
@@ -145,7 +145,7 @@ namespace WL
 		CRendererPass* mpCurrentRendererPass = nullptr;
 		mutable std::vector<CRenderer*>	mpRendererArray;
 		std::map<INT32, CRenderer*>	mpActiveRenderer;
-		std::map<ShaderBufferType, std::list<shaderParam>> mConstBufferParamMap;
+		std::map<ShaderBufferType, std::list<SShaderParam>> mConstBufferParamMap;
 		std::map<RenderTargetType, CSurfaceView*>	mRTArray;
 		
 		bool  mbDrawed = false;

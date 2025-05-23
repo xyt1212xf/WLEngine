@@ -9,9 +9,9 @@
 
 namespace WL
 {
-	struct Geometry
+	struct SGeometry
 	{
-		Matrix44 pMatrix[8];
+		SMatrix44 pMatrix[8];
 		UINT32 vertexSize = 0;
 		UINT32 vertexOffset = 0;
 		UINT32 indexType = 0;
@@ -35,21 +35,21 @@ namespace WL
 		WORLD_MT_3,
 	};
 
-	struct RenderUnit
+	struct SRenderUnit
 	{
 		//data
 		CMaterialInstance*	pMaterialInstance = nullptr;
-		std::map<UINT16, std::list<Geometry>>	geometry;
+		std::map<UINT16, std::list<SGeometry>>	geometry;
 		//function
 		void reset();
 	};
 
-	struct RenderUnitGrounp
+	struct SRenderUnitGrounp
 	{
-		RenderUnit* getRenderUnit();
+		SRenderUnit* getRenderUnit();
 		void clearRenderUnit();
-		~RenderUnitGrounp();
-		std::list<RenderUnit*>	mpRenderUnits;
-		std::list<RenderUnit*>	mFreeRenderUnits;
+		~SRenderUnitGrounp();
+		std::list<SRenderUnit*>	mpRenderUnits;
+		std::list<SRenderUnit*>	mFreeRenderUnits;
 	};
 }

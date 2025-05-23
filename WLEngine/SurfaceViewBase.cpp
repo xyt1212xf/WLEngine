@@ -63,23 +63,23 @@ namespace WL
 
 	}
 
-	const Matrix44& CSurfaceViewBase::getOrthoMT() const
+	const SMatrix44& CSurfaceViewBase::getOrthoMT() const
 	{
 		return mOrthoMatrix;
 	}
 
-	const Matrix44& CSurfaceViewBase::getProjectMT() const
+	const SMatrix44& CSurfaceViewBase::getProjectMT() const
 	{
 		return mProjectMatrix;
 	}
 
 
-	const Matrix44& CSurfaceViewBase::getTransposeOrthoMT() const
+	const SMatrix44& CSurfaceViewBase::getTransposeOrthoMT() const
 	{
 		return mTransposeOrthoMatrix;
 	}
 
-	const Matrix44& CSurfaceViewBase::getTransposeProjectMT() const
+	const SMatrix44& CSurfaceViewBase::getTransposeProjectMT() const
 	{
 		return mTransposeProjectMatrix;
 	}

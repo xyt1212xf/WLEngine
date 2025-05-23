@@ -41,9 +41,9 @@ namespace WL
 		mpVoxelMgr->buildTerrain(1);
 		auto& v = mpVoxelMgr->getPosition();
 		Vec3F fMin = { v.x, v.y, v.z };
-		Vec3F fMax = { fMin.x + nSizeX * CVoxelChunk::nSize * Voxel::nSize,
-					   fMin.y + nSizeY * CVoxelChunk::nSize * Voxel::nSize,
-					   fMin.z + nSizeZ * CVoxelChunk::nSize * Voxel::nSize };
+		Vec3F fMax = { fMin.x + nSizeX * CVoxelChunk::nSize * SVoxel::nSize,
+					   fMin.y + nSizeY * CVoxelChunk::nSize * SVoxel::nSize,
+					   fMin.z + nSizeZ * CVoxelChunk::nSize * SVoxel::nSize };
 
 		Vec3F p0 = { fMin.x, fMin.y, fMin.z };
 		Vec3F p1 = { fMin.x, fMin.y, fMax.z };
@@ -120,7 +120,7 @@ namespace WL
 		WL_DECREASE(mpVoxelMgr);
 	}
 
-	bool CVoxelTerrainEditor::onEvent(event& e)
+	bool CVoxelTerrainEditor::onEvent(SEvent& e)
 	{
 		switch (e.message)
 		{
@@ -248,7 +248,7 @@ namespace WL
 		return true;
 	}
 
-	void CVoxelTerrainEditor::generateVoxelChunk(event& e)
+	void CVoxelTerrainEditor::generateVoxelChunk(SEvent& e)
 	{
 		CRay ray(GEngine->getMainCameraEntity());
 		ray.setScreenMouseSpace(e.mouseX, e.mouseY);
@@ -326,17 +326,17 @@ namespace WL
 
 		int tempIndices[CVoxelChunk::nSize +1][CVoxelChunk::nSize +1][CVoxelChunk::nSize +1];
 
-		auto generateFaceLambda = [&](GeometryInfo& geometry, const Vec3I& p0, const Vec3I& p1, const Vec3I& p2, const Vec3I& p3)
+		auto generateFaceLambda = [&](SGeometryInfo& geometry, const Vec3I& p0, const Vec3I& p1, const Vec3I& p2, const Vec3I& p3)
 		{
 			if (tempIndices[p0.x][p0.y][p0.z] > 0 &&
 				tempIndices[p1.x][p1.y][p1.z] > 0 &&
 				tempIndices[p2.x][p2.y][p2.z] > 0 &&
 				tempIndices[p3.x][p3.y][p3.z] > 0)
 			{
-				VertexFormatVoxel& v0 = geometry.vertices[p0.x][p0.y][p0.z];
-				VertexFormatVoxel& v1 = geometry.vertices[p1.x][p1.y][p1.z];
-				VertexFormatVoxel& v2 = geometry.vertices[p2.x][p2.y][p2.z];
-				VertexFormatVoxel& v3 = geometry.vertices[p3.x][p3.y][p3.z];
+				SVertexFormatVoxel& v0 = geometry.vertices[p0.x][p0.y][p0.z];
+				SVertexFormatVoxel& v1 = geometry.vertices[p1.x][p1.y][p1.z];
+				SVertexFormatVoxel& v2 = geometry.vertices[p2.x][p2.y][p2.z];
+				SVertexFormatVoxel& v3 = geometry.vertices[p3.x][p3.y][p3.z];
 
 				v0.uv.x = fPixelOffset;
 				v0.uv.y = fPixelOffset;
@@ -350,7 +350,7 @@ namespace WL
 				v3.uv.x = 0.25f - fPixelOffset;
 				v3.uv.y = 0.25f - fPixelOffset;
 
-				Face face;
+				SFace face;
 				face.pos[0] = p0;
 				face.vPos[0] = v0;
 				{
@@ -429,7 +429,7 @@ namespace WL
 						auto&& v = mpBrush->getIsoSurfaceVec3(pChunk, voxel);
 						if (v.first)
 						{
-							VertexFormatVoxel vec;
+							SVertexFormatVoxel vec;
 							vec.position = v.second;
 							vec.normal = { 0, 0, 0 };
 							vec.uv = { 0, 0 };
@@ -580,7 +580,7 @@ namespace WL
 	}
 
 
-	void CVoxelTerrainEditor::drawNormal(CVoxelChunk* pChunk, GeometryInfo& geometry)
+	void CVoxelTerrainEditor::drawNormal(CVoxelChunk* pChunk, SGeometryInfo& geometry)
 	{
 		if (pChunk->mDrawVertices.size() > 0)
 		{
@@ -588,13 +588,13 @@ namespace WL
 			{
 				GEngine->getCurrentScenePtr()->removeEntity(pChunk->mpNormalEntity);
 			}
-			std::vector<VertexFormatVoxel> vertices;
+			std::vector<SVertexFormatVoxel> vertices;
 			std::vector<UINT16> indices;
 			int i = 0;
 			for (auto item : pChunk->mDrawVertices)
 			{
 				vertices.push_back(item);
-				VertexFormatVoxel v = item;
+				SVertexFormatVoxel v = item;
 				v.position += v.normal;
 				vertices.push_back(v);
 				indices.push_back(i++);
@@ -602,7 +602,7 @@ namespace WL
 			}
 			int nSize = static_cast<int>(vertices.size());
 
-			auto pModelInstance = Foundation::generateModel(vertices.data(), nSize, sizeof(VertexFormatVoxel), indices.data(), static_cast<int>(indices.size()), sizeof(UINT16),
+			auto pModelInstance = Foundation::generateModel(vertices.data(), nSize, sizeof(SVertexFormatVoxel), indices.data(), static_cast<int>(indices.size()), sizeof(UINT16),
 				"resource/Material/newVoxel.ma",
 				"resource/Texture/Voxel/normal.png");
 			pModelInstance->getMaterialInstance()->setTopology(PRIMITIVE_TOPOLOGY_LINELIST);
@@ -620,7 +620,7 @@ namespace WL
 		}
 	}
 
-	void CVoxelTerrainEditor::mouseBrushPlane(event& e)
+	void CVoxelTerrainEditor::mouseBrushPlane(SEvent& e)
 	{
 		CRay ray(GEngine->getMainCameraEntity());
 		ray.setScreenMouseSpace(e.mouseX, e.mouseY);
@@ -672,10 +672,10 @@ namespace WL
 			const auto& lookAt = pCamera->getLookAt();
 			auto&& v3f = lookAt - eye;
 			float fScale = v3f.z / v3f.y;
-			VertexFormatVoxel p0;
-			VertexFormatVoxel p1;
-			VertexFormatVoxel p2;
-			VertexFormatVoxel p3;
+			SVertexFormatVoxel p0;
+			SVertexFormatVoxel p1;
+			SVertexFormatVoxel p2;
+			SVertexFormatVoxel p3;
 
 			p0.uv = { 0, 0 };
 			p0.normal = { 0, 1, 0 };
@@ -716,7 +716,7 @@ namespace WL
 				p3.position = { -brushSize, 0, -brushSize };
 			}
 
-			std::vector<VertexFormatVoxel> drawVertices;
+			std::vector<SVertexFormatVoxel> drawVertices;
 			std::vector<UINT32> drawIndices;
 
 			drawIndices.push_back(0);
@@ -735,7 +735,7 @@ namespace WL
 			mpBrushPlane = GEngine->createEntity<CActorEntity>(Actor);
 			auto pModelInstance = Foundation::generateModel((void*)drawVertices.data(),
 				static_cast<int>(drawVertices.size()),
-				sizeof(VertexFormatVoxel),
+				sizeof(SVertexFormatVoxel),
 				(void*)drawIndices.data(),
 				static_cast<int>(drawIndices.size()),
 				sizeof(UINT32),

@@ -85,7 +85,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialBase::addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubDdata /*= nullptr*/)
+	void CMaterialBase::addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubDdata /*= nullptr*/)
 	{
 		for (auto& item : mpShaders)
 		{
@@ -101,7 +101,7 @@ namespace WL
 		}
 	}
 
-	void CMaterialBase::addTextureBufferValue(const std::string& name, int nRegister, const ImgFileInfo& fileInfo, INT32 nShaderFlags, int Usage /*= USAGE_DYNAMIC*/, UINT32 BindFlags /*= BIND_SHADER_RESOURCE*/, UINT32 CPUAccessFlags /*= CPU_ACCESS_WRITE*/)
+	void CMaterialBase::addTextureBufferValue(const std::string& name, int nRegister, const SImgFileInfo& fileInfo, INT32 nShaderFlags, int Usage /*= USAGE_DYNAMIC*/, UINT32 BindFlags /*= BIND_SHADER_RESOURCE*/, UINT32 CPUAccessFlags /*= CPU_ACCESS_WRITE*/)
 	{
 		for (auto& item : mpShaders)
 		{

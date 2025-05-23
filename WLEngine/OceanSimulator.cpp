@@ -4,7 +4,7 @@
 namespace WL
 {
 
-	float estimateGridCoverage(const QuadNode& quad_node, float screen_area)
+	float estimateGridCoverage(const SQuadNode& quad_node, float screen_area)
 	{
 		// Estimate projected area
 
@@ -29,7 +29,7 @@ namespace WL
 			//{0.1875f, 0.148f},
 		};
 
-		Matrix44 matProj = *GEngine->getProjectMatrix();
+		SMatrix44 matProj = *GEngine->getProjectMatrix();
 		Vec3F eye_point = GEngine->getMainCameraEntity()->getEye();
 		//eye_point = D3DXVECTOR3(eye_point.x, eye_point.z, eye_point.y);
 		float grid_len_world = quad_node.length / CD3D11OceanSimulator::sMeshDim;
@@ -90,25 +90,25 @@ namespace WL
 
 		mRenderNodes.clear();
 		float ocean_extent = sPatchLength * (1 << nFurthestCover);
-		QuadNode root_node = { Vec2F(-ocean_extent * 0.5f, -ocean_extent * 0.5f), ocean_extent, 0, {-1,-1,-1,-1} };
+		SQuadNode root_node = { Vec2F(-ocean_extent * 0.5f, -ocean_extent * 0.5f), ocean_extent, 0, {-1,-1,-1,-1} };
 		buildNodeList(root_node);
 
 		// We assume the center of the ocean surface at (0, 0, 0).
-		static std::list<MeshInstanceInfo*> tempMeshInstances;
+		static std::list<SMeshInstanceInfo*> tempMeshInstances;
 		
-		Matrix44 matView = Matrix44(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1) * GEngine->getMainCameraEntity()->getViewMatrix();
-		Matrix44 matProj = GEngine->getMainCameraEntity()->getProjectMatrix();
+		SMatrix44 matView = SMatrix44(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1) * GEngine->getMainCameraEntity()->getViewMatrix();
+		SMatrix44 matProj = GEngine->getMainCameraEntity()->getProjectMatrix();
 	
 		for (size_t i = 0; i < mRenderNodes.size(); i++)
 		{
-			QuadNode& node = mRenderNodes[i];
+			SQuadNode& node = mRenderNodes[i];
 			if (!isLeaf(node))
 			{
 				continue;
 			}
 			
 			// Check adjacent patches and select mesh pattern
-			QuadRenderParam& render_param = selectMeshPattern(node);
+			SQuadRenderParam& render_param = selectMeshPattern(node);
 
 			// Find the right LOD to render
 			int level_size = sMeshDim;
@@ -173,7 +173,7 @@ namespace WL
 	}
 
 
-	int COceanSimulator::buildNodeList(QuadNode& quad_node)
+	int COceanSimulator::buildNodeList(SQuadNode& quad_node)
 	{
 		// Check against view frustum
 		/* xyt need
@@ -190,16 +190,16 @@ namespace WL
 		if (min_coverage > sUpperGridCoverage && quad_node.length > sPatchLength)
 		{
 			// Recursive rendering for sub-quads.
-			QuadNode sub_node_0 = { quad_node.bottom_left, quad_node.length / 2, 0, {-1, -1, -1, -1} };
+			SQuadNode sub_node_0 = { quad_node.bottom_left, quad_node.length / 2, 0, {-1, -1, -1, -1} };
 			quad_node.sub_node[0] = buildNodeList(sub_node_0);
 
-			QuadNode sub_node_1 = { quad_node.bottom_left + Vec2F(quad_node.length / 2, 0), quad_node.length / 2, 0, {-1, -1, -1, -1} };
+			SQuadNode sub_node_1 = { quad_node.bottom_left + Vec2F(quad_node.length / 2, 0), quad_node.length / 2, 0, {-1, -1, -1, -1} };
 			quad_node.sub_node[1] = buildNodeList(sub_node_1);
 
-			QuadNode sub_node_2 = { quad_node.bottom_left + Vec2F(quad_node.length / 2, quad_node.length / 2), quad_node.length / 2, 0, {-1, -1, -1, -1} };
+			SQuadNode sub_node_2 = { quad_node.bottom_left + Vec2F(quad_node.length / 2, quad_node.length / 2), quad_node.length / 2, 0, {-1, -1, -1, -1} };
 			quad_node.sub_node[2] = buildNodeList(sub_node_2);
 
-			QuadNode sub_node_3 = { quad_node.bottom_left + Vec2F(0, quad_node.length / 2), quad_node.length / 2, 0, {-1, -1, -1, -1} };
+			SQuadNode sub_node_3 = { quad_node.bottom_left + Vec2F(0, quad_node.length / 2), quad_node.length / 2, 0, {-1, -1, -1, -1} };
 			quad_node.sub_node[3] = buildNodeList(sub_node_3);
 
 			visible = !isLeaf(quad_node);
@@ -229,7 +229,7 @@ namespace WL
 		return position;
 	}
 
-	QuadRenderParam& COceanSimulator::selectMeshPattern(const QuadNode& quad_node)
+	SQuadRenderParam& COceanSimulator::selectMeshPattern(const SQuadNode& quad_node)
 	{
 		Vec2F point_left = quad_node.bottom_left + Vec2F(-sPatchLength * 0.5f, quad_node.length * 0.5f);
 		int left_adj_index = searchLeaf(mRenderNodes, point_left);
@@ -246,7 +246,7 @@ namespace WL
 		int left_type = 0;
 		if (left_adj_index != -1 && mRenderNodes[left_adj_index].length > quad_node.length * 0.999f)
 		{
-			QuadNode adj_node = mRenderNodes[left_adj_index];
+			SQuadNode adj_node = mRenderNodes[left_adj_index];
 			float scale = adj_node.length / quad_node.length * (sMeshDim >> quad_node.lod) / (sMeshDim >> adj_node.lod);
 			if (scale > 3.999f)
 			{
@@ -261,7 +261,7 @@ namespace WL
 		int right_type = 0;
 		if (right_adj_index != -1 && mRenderNodes[right_adj_index].length > quad_node.length * 0.999f)
 		{
-			QuadNode adj_node = mRenderNodes[right_adj_index];
+			SQuadNode adj_node = mRenderNodes[right_adj_index];
 			float scale = adj_node.length / quad_node.length * (sMeshDim >> quad_node.lod) / (sMeshDim >> adj_node.lod);
 			if (scale > 3.999f)
 			{
@@ -276,7 +276,7 @@ namespace WL
 		int bottom_type = 0;
 		if (bottom_adj_index != -1 && mRenderNodes[bottom_adj_index].length > quad_node.length * 0.999f)
 		{
-			QuadNode adj_node = mRenderNodes[bottom_adj_index];
+			SQuadNode adj_node = mRenderNodes[bottom_adj_index];
 			float scale = adj_node.length / quad_node.length * (sMeshDim >> quad_node.lod) / (sMeshDim >> adj_node.lod);
 			if (scale > 3.999f)
 			{
@@ -291,7 +291,7 @@ namespace WL
 		int top_type = 0;
 		if (top_adj_index != -1 && mRenderNodes[top_adj_index].length > quad_node.length * 0.999f)
 		{
-			QuadNode adj_node = mRenderNodes[top_adj_index];
+			SQuadNode adj_node = mRenderNodes[top_adj_index];
 			float scale = adj_node.length / quad_node.length * (sMeshDim >> quad_node.lod) / (sMeshDim >> adj_node.lod);
 			if (scale > 3.999f)
 			{

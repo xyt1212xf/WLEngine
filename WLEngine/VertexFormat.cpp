@@ -2,7 +2,7 @@
 namespace WL
 {
 
-	VertexFormat::VertexFormat()
+	SVertexFormat::SVertexFormat()
 	{
 		for( auto item : mFlag )
 		{
@@ -10,14 +10,14 @@ namespace WL
 		}
 	}
 
-	VertexFormat::VertexFormat(VertexFormatKey key, int nStream)
+	SVertexFormat::SVertexFormat(VertexFormatKey key, int nStream)
 	{
 		addElement(key, nStream);
 	}
 
-	void VertexFormat::addElement(VertexFormatKey key, INT32 nSteam /*= 0*/)
+	void SVertexFormat::addElement(VertexFormatKey key, INT32 nSteam /*= 0*/)
 	{
-		VertexElement element;
+		SVertexElement element;
 		
 		switch (key)
 		{
@@ -90,12 +90,12 @@ namespace WL
 	}
 
 
-	INT32 VertexFormat::getVertexSize()
+	INT32 SVertexFormat::getVertexSize()
 	{
 		return vertexSize;
 	}
 
-	const VertexElement& VertexFormat::getVertexElement(int nIndex)
+	const SVertexElement& SVertexFormat::getVertexElement(int nIndex)
 	{
 		if (nIndex < (INT32)elementArray.size())
 		{
@@ -103,58 +103,58 @@ namespace WL
 		}
 		else
 		{
-			static  VertexElement gElement;
+			static  SVertexElement gElement;
 			gElement.szName = "";
 			return gElement;
 		}
 	}
 
-	int VertexFormat::getVerticesOffset() 
+	int SVertexFormat::getVerticesOffset() 
 	{
 		return getVertexMemberOffset(V_POSITION);
 	}
 
-	int VertexFormat::getNormalsOffset() 
+	int SVertexFormat::getNormalsOffset() 
 	{
 		return getVertexMemberOffset(V_NORMAL);
 	}
 
-	int VertexFormat::getBinormalsOffset()
+	int SVertexFormat::getBinormalsOffset()
 	{
 		return getVertexMemberOffset(V_BINORMAL);
 	}
 
-	int VertexFormat::getTangetOffset()
+	int SVertexFormat::getTangetOffset()
 	{
 		return getVertexMemberOffset(V_TANGETN);
 	}
 
-	int VertexFormat::getUVsOffset()
+	int SVertexFormat::getUVsOffset()
 	{
 		return getVertexMemberOffset(V_TEXTURE);
 	}
 
-	int VertexFormat::getBoneIndexOffset()
+	int SVertexFormat::getBoneIndexOffset()
 	{
 		return getVertexMemberOffset(V_BONE_INDEX);
 	}
 
-	int VertexFormat::getWeightOffset()
+	int SVertexFormat::getWeightOffset()
 	{
 		return getVertexMemberOffset(V_WEIGHT);
 	}
 
-	int VertexFormat::getColorFloatOffset()
+	int SVertexFormat::getColorFloatOffset()
 	{
 		return getVertexMemberOffset(V_COLOR_FLOAT);
 	}
 
-	int VertexFormat::getColorUINTOffset()
+	int SVertexFormat::getColorUINTOffset()
 	{
 		return getVertexMemberOffset(V_COLOR_UINT);
 	}
 
-	int VertexFormat::getVertexMemberOffset(VertexFormatKey nKey)
+	int SVertexFormat::getVertexMemberOffset(VertexFormatKey nKey)
 	{
 		if (nKey < V_MAX_COUNT)
 		{

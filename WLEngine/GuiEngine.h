@@ -23,7 +23,7 @@ namespace WL
 		void unInitialize();
 		void addGuiEntity(CGuiEntity* pGui);
 		void removeGuiEntity(CGuiEntity* pGui);
-		bool processMsg(event& e);
+		bool processMsg(SEvent& e);
 		CUIWnd* createUI(WndType type);
 		void registerShortCuts(CHAR k, const std::string& szFunction);
 		void registerShortCuts(CHAR k, std::function<bool(CHAR)> function);

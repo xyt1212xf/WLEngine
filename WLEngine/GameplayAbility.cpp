@@ -6,11 +6,11 @@
 namespace WL
 {
 	DefineScriptClass(CGameplayAbility)
-	GameplayAbilityActorInfo CGameplayAbility::GetActorInfo() const
+	SGameplayAbilityActorInfo CGameplayAbility::GetActorInfo() const
 	{
 		if (nullptr == mCurrentActorInfo)
 		{
-			return GameplayAbilityActorInfo();
+			return SGameplayAbilityActorInfo();
 		}
 		return *mCurrentActorInfo;
 	}
@@ -24,17 +24,17 @@ namespace WL
 	{
 	}
 
-	void CGameplayAbility::onGiveAbility(const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilitySpec& Spec)
+	void CGameplayAbility::onGiveAbility(const SGameplayAbilityActorInfo* ActorInfo, const SGameplayAbilitySpec& Spec)
 	{
 		setCurrentActorInfo(Spec.mHandle, ActorInfo);
 	}
 
-	void CGameplayAbility::endAbility(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+	void CGameplayAbility::endAbility(const SGameplayAbilitySpecHandle Handle, const SGameplayAbilityActorInfo* ActorInfo, const SGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 	{
 
 	}
 
-	void CGameplayAbility::setCurrentActorInfo(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo) const
+	void CGameplayAbility::setCurrentActorInfo(const SGameplayAbilitySpecHandle Handle, const SGameplayAbilityActorInfo* ActorInfo) const
 	{
 		mCurrentActorInfo = ActorInfo;
 		mCurrentSpecHandle = Handle;

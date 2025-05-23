@@ -14,7 +14,7 @@ namespace WL
 	};
 
 	class CTerrainEntity : public CEntity
-						 , public CController
+						 , public SController
 						 , public CTranformComponet
 
 	{

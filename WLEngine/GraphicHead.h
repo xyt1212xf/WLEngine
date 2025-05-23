@@ -1,13 +1,13 @@
 #pragma once
 #include "Common.h"
-struct SUBRESOURCE_DATA
+struct SSUBRESOURCE_DATA
 {
 	const void* pSysMem;
 	UINT SysMemPitch;
 	UINT SysMemSlicePitch;
 };
 
-struct MAPPED_SUBRESOURCE
+struct SMAPPED_SUBRESOURCE
 {
 	void* pData;
 	UINT RowPitch;

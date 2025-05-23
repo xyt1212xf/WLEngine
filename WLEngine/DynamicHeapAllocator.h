@@ -11,20 +11,20 @@ namespace WL
 	{
 #define LARGE_BLOCK_ALLOC(_SIZE) LLAllocator::malloc (_SIZE)
 #define LARGE_BLOCK_FREE(_PTR, _SIZE) LLAllocator::free (_PTR, _SIZE)
-		struct LargeAllocations
+		struct SLargeAllocations
 		{
-			LargeAllocations* next;
+			SLargeAllocations* next;
 			char* allocatedPtr;
 			void* returnedPtr;
 			size_t            allocatedSize;
 			size_t            returnedSize;
 		};
-		LargeAllocations* m_FirstLargeAllocation = nullptr;
+		SLargeAllocations* m_FirstLargeAllocation = nullptr;
 
-		struct PoolElement 
+		struct SPoolElement 
 		{
 #ifdef _DEBUG
-			PoolElement() {}
+			SPoolElement() {}
 #endif
 			bool Contains(const void* ptr) const
 			{
@@ -36,7 +36,7 @@ namespace WL
 			UINT32 allocationCount = 0;
 		};
 
-		typedef std::list<PoolElement> PoolList;
+		typedef std::list<SPoolElement> PoolList;
 	private:
 		// Helper function to get proper allocated size from tlsf allocator
 		static size_t getTlsfAllocationSize(const CAllocationHeader* header)
@@ -44,7 +44,7 @@ namespace WL
 			size_t size = tlsf_block_size(header->getAllocationPtr());
 			return header->adjustUserPtrSize(size);
 		}
-		PoolElement& getActivePool(size_t size)
+		SPoolElement& getActivePool(size_t size)
 		{
 			return getPoolList(size).front();
 		}
@@ -106,7 +106,7 @@ namespace WL
 			{
 				newRealPtr = (char*)tlsf_memalign(getActivePool(realSize).tlsfPool, align, realSize);
 			}
-			LargeAllocations* largeAlloc = nullptr;
+			SLargeAllocations* largeAlloc = nullptr;
 			if (nullptr == newRealPtr)
 			{
 				// only try to make new tlsfBlocks if the amount is less than a 16th of the blocksize - else spill to LargeAllocations
@@ -129,7 +129,7 @@ namespace WL
 						}
 					}
 #else
-					std::list<PoolElement>::iterator pool = poolList.end();
+					std::list<SPoolElement>::iterator pool = poolList.end();
 					--pool;
 					while (pool != poolList.end()) // List wraps around so end is the element just before the head of the list
 					{
@@ -179,8 +179,8 @@ namespace WL
 							else
 							{
 								m_TotalReservedBytes += allocatePoolSize;
-								PoolElement* newPoolPtr = (PoolElement*)LLAllocator::malloc(sizeof(PoolElement));
-								PoolElement& newPool = *(new (newPoolPtr)PoolElement());
+								SPoolElement* newPoolPtr = (SPoolElement*)LLAllocator::malloc(sizeof(SPoolElement));
+								SPoolElement& newPool = *(new (newPoolPtr)SPoolElement());
 								newPool.memoryBase = (char*)memoryBlock;
 								newPool.memorySize = allocatePoolSize;
 								newPool.tlsfPool = tlsf_create(memoryBlock, allocatePoolSize);
@@ -224,7 +224,7 @@ namespace WL
 					}
 
 					// large allocation that don't fit on a clean block
-					largeAlloc = (LargeAllocations*)LLAllocator::malloc(sizeof(LargeAllocations));
+					largeAlloc = (SLargeAllocations*)LLAllocator::malloc(sizeof(SLargeAllocations));
 					largeAlloc->allocatedPtr = largeAllocPtr;
 
 					largeAlloc->allocatedSize = realSize;

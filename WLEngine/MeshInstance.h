@@ -34,18 +34,18 @@ namespace WL
 		virtual void setScale(const Vec3F& vec)final;
 		virtual void setRotation(const Vec3F& vec) final;
 
-		void setViewMT(Matrix44* pMT);
-		void setTransposeViewMT(Matrix44* pMT);
+		void setViewMT(SMatrix44* pMT);
+		void setTransposeViewMT(SMatrix44* pMT);
 
-		void setProjectMT(Matrix44* pMT);
-		void setTransposeProjectMT(Matrix44* pMT);
+		void setProjectMT(SMatrix44* pMT);
+		void setTransposeProjectMT(SMatrix44* pMT);
 
-		Matrix44& getViewMT()const;
-		Matrix44& getTransposeViewMT()const;
+		SMatrix44& getViewMT()const;
+		SMatrix44& getTransposeViewMT()const;
 
-		Matrix44& getProjectMT()const;
-		Matrix44& getTransposeProjectMT()const;
-		Matrix44& getTransposeViweProjectMatrix()const;
+		SMatrix44& getProjectMT()const;
+		SMatrix44& getTransposeProjectMT()const;
+		SMatrix44& getTransposeViweProjectMatrix()const;
 
 		void setIndexCount(UINT32 nCount);
 		UINT32 getIndexCount(int nLod = -1)const;
@@ -59,23 +59,23 @@ namespace WL
 		Vec3F	mLocalPosition = {0, 0, 0};
 		Vec3F	mLocalScale = { 1, 1, 1 };
 		Vec3F	mLocalRotation = { 0, 0, 0 };
-		Matrix44* mpViewMT = nullptr;
-		Matrix44* mpTransposeViewMT = nullptr;
-		Matrix44* mpProjectMT = nullptr;
-		Matrix44* mpTransposeProjectMT = nullptr;
+		SMatrix44* mpViewMT = nullptr;
+		SMatrix44* mpTransposeViewMT = nullptr;
+		SMatrix44* mpProjectMT = nullptr;
+		SMatrix44* mpTransposeProjectMT = nullptr;
 
-		mutable Matrix44 mTransposeViewProjectMT;
+		mutable SMatrix44 mTransposeViewProjectMT;
 		UINT32 mStartIndex = 0;
 		UINT32 mBaseStartIndex = 0;
 		UINT32 mIndexCount = 0;
 	};
 
-	struct MeshInstanceInfo 
+	struct SMeshInstanceInfo 
 	{
 		std::string name = "";
 		CMeshInstance* pMeshInstance = nullptr;
 		CMaterialInstance* pMaterialInstance = nullptr;
 		CSkeletonAniComponent* pAnimation = nullptr;
-		void operator = (const MeshInstanceInfo& mat);
+		void operator = (const SMeshInstanceInfo& mat);
 	};
 }

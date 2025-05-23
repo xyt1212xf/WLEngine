@@ -639,7 +639,7 @@ namespace WL
 		return true;
 	}
 
-	bool CDX11Shader::addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData)
+	bool CDX11Shader::addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData)
 	{
 		if (size != 0)
 		{
@@ -690,7 +690,7 @@ namespace WL
 			matrixBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			matrixBufferDesc.MiscFlags = 0;
-			matrixBufferDesc.StructureByteStride = sizeof(Matrix44);
+			matrixBufferDesc.StructureByteStride = sizeof(SMatrix44);
 			ID3D11Buffer* tConstBuffer = nullptr;
 			// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 			HRESULT result = mpDevice->getGraphicsDevice()->CreateBuffer(&matrixBufferDesc, NULL, &tConstBuffer);
@@ -766,7 +766,7 @@ namespace WL
 		return bResult;
 	}
 
-	bool CDX11Shader::addTextureParam(const std::string& name, INT32 nRegister, ImgFileInfo fileInfo, 
+	bool CDX11Shader::addTextureParam(const std::string& name, INT32 nRegister, SImgFileInfo fileInfo, 
 		int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags)
 	{
 		bool bResult = false;

@@ -7,7 +7,7 @@
 #include "ScriptEntity.h"
 namespace WL
 {
-	struct RenderUnitGrounp;
+	struct SRenderUnitGrounp;
 	class CBTNode;
 	class WLENGINE_API CActorEntity : public CScriptEntity, public CTranformComponet
 	{
@@ -34,10 +34,10 @@ namespace WL
 		void test(int value);
 		
 
-		void setViewMT(Matrix44* pMT);
-		void setTransposeViewMT(Matrix44* pMT);
-		void setProjectMT(Matrix44* pMT);
-		void setTransposeProjectMT(Matrix44* pMT);
+		void setViewMT(SMatrix44* pMT);
+		void setTransposeViewMT(SMatrix44* pMT);
+		void setProjectMT(SMatrix44* pMT);
+		void setTransposeProjectMT(SMatrix44* pMT);
 		void addBehaviorTree(const std::string& szComponent);
 		const std::map<INT32, CModelInstance*>& getModels() const;
 		CModelInstance* getModelInstance(int nKey = 0) const;

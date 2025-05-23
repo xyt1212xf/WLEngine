@@ -31,15 +31,15 @@ namespace WL
 		void setDiffuseDirection(const Vec4F& dir);
 		const Vec4F& getDiffuseDirection()const;
 		
-		Matrix44& getLightViewMT();
-		Matrix44& getLightTransposeViewMT();
+		SMatrix44& getLightViewMT();
+		SMatrix44& getLightTransposeViewMT();
 
-		Matrix44& getLightOriginMT();
-		Matrix44& getLightProjectionMT();
+		SMatrix44& getLightOriginMT();
+		SMatrix44& getLightProjectionMT();
 
-		Matrix44& getLightTransposeProjectionMT();
+		SMatrix44& getLightTransposeProjectionMT();
 
-		Matrix44& getLightTransposeVPMT();
+		SMatrix44& getLightTransposeVPMT();
 	protected:
 		virtual void _update(UINT32 dTime);
 		
@@ -48,26 +48,26 @@ namespace WL
 		Vec4F	mDiffuseLight = { 0,0,0,1 };
 		Vec4F	mDiffuseDirection = { 0.33f, 0.33f, 0.33f, 1.0f};
 
-		Matrix44 mLightView;
-		Matrix44 mLightTransposeView;
+		SMatrix44 mLightView;
+		SMatrix44 mLightTransposeView;
 
-		Matrix44 mLightProjection;
-		Matrix44 mLightTransposeProjection;
+		SMatrix44 mLightProjection;
+		SMatrix44 mLightTransposeProjection;
 
-		Matrix44 mLightOrigin;
-		Matrix44 mLightTransposeOrigin;
+		SMatrix44 mLightOrigin;
+		SMatrix44 mLightTransposeOrigin;
 
-		Matrix44 mLightTransposeVPMT;
+		SMatrix44 mLightTransposeVPMT;
 
-		Matrix44 mLightTransposeOriginOrProjection;
+		SMatrix44 mLightTransposeOriginOrProjection;
 
 		std::mutex mMutex;
-		shaderParam	mAmbientColorHandle;
-		shaderParam	mDiffuseColorHandle;
-		shaderParam	mSpecularColorHandle;
+		SShaderParam	mAmbientColorHandle;
+		SShaderParam	mDiffuseColorHandle;
+		SShaderParam	mSpecularColorHandle;
 		std::vector<CLightEntity*>	mLights;
 		std::vector<CLightEntity*>	mEffectLights;
-		std::vector<LightData>	mLightData;
+		std::vector<SLightData>	mLightData;
 		bool mbOriginMT = false;
 	};
 }

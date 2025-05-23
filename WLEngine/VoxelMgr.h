@@ -12,7 +12,7 @@ namespace WL
 	};
 
 	//方向不一样的算不同的方块，感觉方向不同的方块不会有方块的种类多
-	struct ChunkInfo
+	struct SChunkInfo
 	{
 		bool   isLoad:1;
 		INT16  voxelType:15;		

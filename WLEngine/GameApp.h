@@ -8,7 +8,7 @@ namespace WL
 	public:
 		CGameApp();
 		virtual ~CGameApp();
-		bool entry(WindowConfig& config);
+		bool entry(SWindowConfig& config);
 		bool destoryEngine();
 		void run();
 

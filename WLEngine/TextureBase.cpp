@@ -24,7 +24,7 @@ namespace WL
 
 	}
 
-	bool CTextureBase::initialise(const ImgFileInfo& fileInfo)
+	bool CTextureBase::initialise(const SImgFileInfo& fileInfo)
 	{
 		return false;
 	}

@@ -20,7 +20,7 @@ namespace WL
 	{
 		friend class CCameraEntity;
 	private:
-		CFrustum(Matrix44* pViewMatrix, Matrix44* pProjectMatrix);
+		CFrustum(SMatrix44* pViewMatrix, SMatrix44* pProjectMatrix);
 		void update();
 		bool checkPoint(const Vec3F& pt);
 		bool checkCube(const Vec3F& pCenter, float radius);
@@ -28,10 +28,10 @@ namespace WL
 		bool checkRectangle(const Vec3F& pCenter, const Vec3F& radius);
 
 	private:
-		Plane m_planes[6];
-		Matrix44* mpViewMatrix = nullptr;
-		Matrix44* mpProjectMatrix = nullptr;
-		WindowConfig* mpDeviceConfig = nullptr;
+		SPlane m_planes[6];
+		SMatrix44* mpViewMatrix = nullptr;
+		SMatrix44* mpProjectMatrix = nullptr;
+		SWindowConfig* mpDeviceConfig = nullptr;
 	};
 
 	class CCameraEntity : public CEntity,
@@ -64,15 +64,15 @@ namespace WL
 
 		void buildViewMatrix();
 		void buildPerspectiveFovMatrix(float fovy, float wndWidth, float wndHeight, float fNear, float fFar);
-		Matrix44* getViewMatrixPtr() const;
-		Matrix44* getProjectMatrixPtr() const;
-		Matrix44* getViewMatrixTransposePtr() const;
-		Matrix44* getProjectMatrixTransposePtr() const;
+		SMatrix44* getViewMatrixPtr() const;
+		SMatrix44* getProjectMatrixPtr() const;
+		SMatrix44* getViewMatrixTransposePtr() const;
+		SMatrix44* getProjectMatrixTransposePtr() const;
 
-		Matrix44 getViewMatrix()const;
-		Matrix44 getProjectMatrix()const;
-		Matrix44 getViewMatrixTranspose()const;
-		Matrix44 getProjectMatrixTranspose()const;
+		SMatrix44 getViewMatrix()const;
+		SMatrix44 getProjectMatrix()const;
+		SMatrix44 getViewMatrixTranspose()const;
+		SMatrix44 getProjectMatrixTranspose()const;
 		//CRay*	  getRayFromScreen(int nX, int nY);
 
 		std::vector<CActorEntity*>& getDrawEntities();
@@ -96,12 +96,12 @@ namespace WL
 		Vec3F		mUp = { 0, 1, 0 };
 		Vec3F		mFrontDirection = { 0,0,0 };
 		Vec3F		mLeftDirection = { 0,0,0 };
-		mutable Matrix44	mViewMatrix;
-		mutable Matrix44	mProjectMatrix;
-		Matrix44	mViewProjectMatrix;
-		mutable Matrix44	mTransposeViewMatrix;
-		mutable Matrix44	mTransposeProjectMatrix;
-		Matrix44	mTransposeViewProjectMatrix;
+		mutable SMatrix44	mViewMatrix;
+		mutable SMatrix44	mProjectMatrix;
+		SMatrix44	mViewProjectMatrix;
+		mutable SMatrix44	mTransposeViewMatrix;
+		mutable SMatrix44	mTransposeProjectMatrix;
+		SMatrix44	mTransposeViewProjectMatrix;
 		CameraType	mCameraType = Free;
 		CFrustum*	mpFrustum = nullptr;
 		std::vector<CActorEntity*>	mDrawEntities;

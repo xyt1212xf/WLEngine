@@ -9,15 +9,15 @@ namespace WL
 	public:
 		CDX11RenderStateMgr(CDevice* pDevice);
 		virtual ~CDX11RenderStateMgr();
-		bool setAlpha(ID3D11DeviceContext* pContext, RenderStateDesc* pRS);
-		bool setDepthStencil(ID3D11DeviceContext* pContext, RenderStateDesc* pRS);
-		bool setDepth(ID3D11DeviceContext* pContext, RenderStateDesc* pRS);
-		bool setDepthCompare(ID3D11DeviceContext* pContext, RenderStateDesc* pRS);
-		bool setFillCullMode(ID3D11DeviceContext* pContext, RenderStateDesc* pRS);
-		void setDepthStencilState(ID3D11DeviceContext* pContext, RenderState* pRS, int nStencilRef = 0);
-		void setBlendState(ID3D11DeviceContext* pContext, RenderState* pRS, Vec4F blendFactor = {0, 0, 0, 0}, UINT SampleMas = 0xffffffff);
-		void setRasterizerState(ID3D11DeviceContext* pContext, RenderState* pRS);
-		virtual RenderState* createRenderState(RenderStateDesc& renderStateDesc)final;
+		bool setAlpha(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS);
+		bool setDepthStencil(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS);
+		bool setDepth(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS);
+		bool setDepthCompare(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS);
+		bool setFillCullMode(ID3D11DeviceContext* pContext, SRenderStateDesc* pRS);
+		void setDepthStencilState(ID3D11DeviceContext* pContext, SRenderState* pRS, int nStencilRef = 0);
+		void setBlendState(ID3D11DeviceContext* pContext, SRenderState* pRS, Vec4F blendFactor = {0, 0, 0, 0}, UINT SampleMas = 0xffffffff);
+		void setRasterizerState(ID3D11DeviceContext* pContext, SRenderState* pRS);
+		virtual SRenderState* createRenderState(SRenderStateDesc& renderStateDesc)final;
 
 	private:
 		void initRasterizerState();

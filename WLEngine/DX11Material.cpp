@@ -14,7 +14,7 @@ namespace WL
 
 	}
 
-	bool CDX11Material::initialiseSampler(SamplerDesc* pSampler)
+	bool CDX11Material::initialiseSampler(SSamplerDesc* pSampler)
 	{
 		// Load the texture in.
 		CDevice* pDevice = GEngine->getDevice();

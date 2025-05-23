@@ -34,12 +34,12 @@ namespace WL
 		//return true;
 	}
 
-	void CNoLightRendererPass::drawEntity(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
+	void CNoLightRendererPass::drawEntity(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, std::vector<CActorEntity*>& entities, int nBegin, int nCount)
 	{
 		for (int i = nBegin; i < nBegin + nCount; ++i)
 		{
 			auto pActor = entities[i];
-			RenderUnit* pRenderUnit = nullptr;
+			SRenderUnit* pRenderUnit = nullptr;
 			for (auto item : pActor->getModels())
 			{
 				auto& meshsInfo = (item.second)->getAllMeshInfo();
@@ -53,7 +53,7 @@ namespace WL
 						pRenderUnit->pMaterialInstance = child.pMaterialInstance;
 						UINT16 nOrder = child.pMaterialInstance->getRenderOrder();
 
-						Geometry geometry;
+						SGeometry geometry;
 						geometry.pMaterialInstance = child.pMaterialInstance;
 						geometry.pTextures = child.pMaterialInstance->getTexturesPtr();
 						geometry.vertexSize = child.pMeshInstance->getVertexTypeSize();
@@ -75,7 +75,7 @@ namespace WL
 		}
 	}
 
-	void CNoLightRendererPass::drawEnd(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
+	void CNoLightRendererPass::drawEnd(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderGroup, CommandList*& pCommandList, int nContext)
 	{
 		Parent::drawEnd(pDeviceContext, pRenderGroup, pCommandList, nContext);
 	}
@@ -112,7 +112,7 @@ namespace WL
 		return mDrawEntities;
 	}
 
-	void CNoLightRendererPass::commitToGpu(DeviceContext* pDeviceContext, RenderUnitGrounp* pRenderUnitGroup)
+	void CNoLightRendererPass::commitToGpu(DeviceContext* pDeviceContext, SRenderUnitGrounp* pRenderUnitGroup)
 	{
 		for (auto& item : pRenderUnitGroup->mpRenderUnits)
 		{

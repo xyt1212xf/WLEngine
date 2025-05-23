@@ -5,11 +5,11 @@
 
 namespace WL
 {
-	struct ImgFileInfo
+	struct SImgFileInfo
 	{
-		ImgFileInfo() = default;
+		SImgFileInfo() = default;
 
-		ImgFileInfo(int size, int format, int width, int height, int type)
+		SImgFileInfo(int size, int format, int width, int height, int type)
 		{
 			nFileSize = size;
 			nFormat = format;

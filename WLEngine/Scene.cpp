@@ -352,7 +352,7 @@ namespace WL
 		}
 	}
 
-	//bool CScene::processInputEvent(event& msg)
+	//bool CScene::processInputEvent(SEvent& msg)
 	//{
 	//	auto pScene = GEngine->getCurrentScenePtr();
 	//	if (nullptr != pScene)
@@ -368,7 +368,7 @@ namespace WL
 	//	mpGameCtrl = pGameCtrl;
 	//}
 
-	void CScene::initCamera(const json::reference& value, WindowConfig* config)
+	void CScene::initCamera(const json::reference& value, SWindowConfig* config)
 	{
 		Vec3F eye, lookAt, up;
 		float fov, width, height, nearPlane, farPlane;
@@ -437,7 +437,7 @@ namespace WL
 		return 0;
 
 	}
-	void CScene::initEntities(const json& value, WindowConfig* config)
+	void CScene::initEntities(const json& value, SWindowConfig* config)
 	{
 		bool bVisible = false;
 		for (const auto& actor : value)
@@ -534,7 +534,7 @@ namespace WL
 		//}
 	}
 
-	void CScene::initChunks(const json& value, WindowConfig* config)
+	void CScene::initChunks(const json& value, SWindowConfig* config)
 	{
 		auto pVoxelMgr = GEngine->getVoxelMgr();
 		if (nullptr != pVoxelMgr)
@@ -575,8 +575,8 @@ namespace WL
 						szContent.append(".dt");
 #endif
 					}
-					position *= (CVoxelChunk::nSize * Voxel::nSize);
-					ChunkInfo info = { false, 1, std::move(voxels) };
+					position *= (CVoxelChunk::nSize * SVoxel::nSize);
+					SChunkInfo info = { false, 1, std::move(voxels) };
 					float fLength = Math::getLengthsqr(position, mBornPos);
 					if (fLength < fViewMaxLength)
 					{
@@ -600,7 +600,7 @@ namespace WL
 		}
 	}
 	
-	void CScene::initLight(const json::reference& value, WindowConfig* config)
+	void CScene::initLight(const json::reference& value, SWindowConfig* config)
 	{
 		CSkyEntity* pSky = GEngine->createEntity<CSkyEntity>(EntityType::Sky);
 		std::string szModel;
@@ -779,7 +779,7 @@ namespace WL
 //		}
 	}
 
-	void CScene::initSky(const json::reference& value, WindowConfig* config)
+	void CScene::initSky(const json::reference& value, SWindowConfig* config)
 	{
 		CSkyEntity* pSky = GEngine->createEntity<CSkyEntity>(EntityType::Sky);
 
@@ -884,7 +884,7 @@ namespace WL
 	}
 
 
-	void CScene::initSkyBox(const json::reference& value, WindowConfig* config)
+	void CScene::initSkyBox(const json::reference& value, SWindowConfig* config)
 	{
 		//TiXmlElement* pChildElement = pType->FirstChildElement();
 		//while (pChildElement)
@@ -921,7 +921,7 @@ namespace WL
 		//}
 	}
 
-	void CScene::initBornIn(const json::reference& value, WindowConfig* config)
+	void CScene::initBornIn(const json::reference& value, SWindowConfig* config)
 	{
 		for (const auto& [k, v] : value.items())
 		{
@@ -934,7 +934,7 @@ namespace WL
 		}
 	}
 
-	void CScene::initTerrain(const json::reference& value, WindowConfig* config)
+	void CScene::initTerrain(const json::reference& value, SWindowConfig* config)
 	{
 		bool bVisible = false;
 		CTerrainEntity* pTerrain = GEngine->createEntity<CTerrainEntity>(EntityType::Terrain);
@@ -980,7 +980,7 @@ namespace WL
 	}
 
 
-	void CScene::initGui(const json::reference& value, WindowConfig* config)
+	void CScene::initGui(const json::reference& value, SWindowConfig* config)
 	{
 		std::string szModel;
 		bool bVisible = false;

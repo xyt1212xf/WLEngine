@@ -149,7 +149,7 @@ namespace WL
 
 	bool CShaderBase::addPSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -169,7 +169,7 @@ namespace WL
 
 	bool CShaderBase::addDSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -189,7 +189,7 @@ namespace WL
 
 	bool CShaderBase::addHSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -209,7 +209,7 @@ namespace WL
 
 	bool CShaderBase::addVSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -229,7 +229,7 @@ namespace WL
 
 	bool CShaderBase::addGSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -247,9 +247,9 @@ namespace WL
 		return addGSConstBuffer(name, size, nRegister);
 	}
 
-	bool CShaderBase::addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData)
+	bool CShaderBase::addCSValue(const std::string& name, INT32 size, INT32 nRegister, INT32 nOffset, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -270,7 +270,7 @@ namespace WL
 
 	bool CShaderBase::addStructValue(const std::string& name, INT32 size, INT32 nStructSize, INT32 nRegister, INT32 nOffset)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nSize = size;
@@ -289,12 +289,12 @@ namespace WL
 		return addStructedParam(name, nStructSize, size, nRegister);
 	}
 
-	bool CShaderBase::addTextureBufferValue(const std::string& name, int nRegister, const ImgFileInfo& fileInfo, INT32 nShaderFlags, 
+	bool CShaderBase::addTextureBufferValue(const std::string& name, int nRegister, const SImgFileInfo& fileInfo, INT32 nShaderFlags, 
 		int Usage /*= USAGE_DYNAMIC*/,
 		UINT32 BindFlags /*= BIND_SHADER_RESOURCE*/,
 		UINT32 CPUAccessFlags /*= CPU_ACCESS_WRITE*/)
 	{
-		shaderParam handle;
+		SShaderParam handle;
 		handle.uId = ++gIndex;
 		handle.szName = name;
 		handle.nRegister = nRegister;
@@ -336,7 +336,7 @@ namespace WL
 		return false;
 	}
 
-	bool CShaderBase::addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SUBRESOURCE_DATA* pSubData )
+	bool CShaderBase::addCSConstBuffer(const std::string& name, INT32 size, INT32 nRegister, int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags, SSUBRESOURCE_DATA* pSubData )
 	{
 		return false;
 	}
@@ -351,7 +351,7 @@ namespace WL
 		return false;
 	}
 
-	bool CShaderBase::addTextureParam(const std::string& name, INT32 nRegister, ImgFileInfo fileInfo, 
+	bool CShaderBase::addTextureParam(const std::string& name, INT32 nRegister, SImgFileInfo fileInfo, 
 		int Usage, UINT32 BindFlags, UINT32 CPUAccessFlags)
 	{
 		return false;

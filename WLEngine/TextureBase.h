@@ -32,11 +32,11 @@ namespace WL
 		virtual ~CTextureBase();
 		virtual bool initialiseTexture2D(INT32 width, INT32 height, UINT32 nFormat, UINT32 nBindFlag);
 		virtual void clearRenderTargetView(DeviceContext* pContext, const Vec4F& cololr);
-		virtual bool initialise(const ImgFileInfo& fileInfo);
+		virtual bool initialise(const SImgFileInfo& fileInfo);
 		bool saveToFile(const std::string saveFile = "", DWORD nFormat = D3DX11_IFF_PNG);
 		
 	protected:
 		TextureType mType = D2;
-		ImgFileInfo mFileInfo;
+		SImgFileInfo mFileInfo;
 	};
 }
