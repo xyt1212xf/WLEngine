@@ -3,17 +3,17 @@
 
 namespace WL
 {
-	struct AllocationRootReference;
+	struct SAllocationRootReference;
 
-	struct ProfilerAllocationHeader
+	struct SProfilerAllocationHeader
 	{
-		AllocationRootReference* rootReference = nullptr;
+		SAllocationRootReference* rootReference = nullptr;
 	};
 
-	struct AllocationRootReference
+	struct SAllocationRootReference
 	{
-		AllocationRootReference(ProfilerAllocationHeader* header, size_t size, const char* areaName, const char* objectName);
-		~AllocationRootReference();
+		SAllocationRootReference(SProfilerAllocationHeader* header, size_t size, const char* areaName, const char* objectName);
+		~SAllocationRootReference();
 		void setObjectName(const char* objectName);
 
 		volatile size_t  m_AccumulatedSize = 0;

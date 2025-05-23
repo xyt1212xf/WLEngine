@@ -19,7 +19,7 @@ namespace WL
 		bool loadLightEntity(CActorEntity* pEntity, std::string szFile);
 		bool loadSkyEntity(CActorEntity* pEntity, std::string szModel);
 		bool loadSkyBoxEntity(CActorEntity* pEntity, std::string szModel);
-		bool loadTerrainEntity(CEntity* pEntity, std::string szModel);
+		bool loadTerrainEntity(CEntity* pEntity, int builderType, std::string szSizeInfo);
 		bool loadOceanEntity(CActorEntity* pEntity, std::string szModel);
 
 	private:

@@ -2,7 +2,7 @@
 #include "MemoryMgr.h"
 namespace WL
 {
-	AllocationRootReference::AllocationRootReference(ProfilerAllocationHeader* header, size_t size, const char* areaName, const char* objectName)
+	SAllocationRootReference::SAllocationRootReference(SProfilerAllocationHeader* header, size_t size, const char* areaName, const char* objectName)
 	: m_AccumulatedSize(size)
 	, m_AreaName(areaName)
 	{
@@ -10,13 +10,13 @@ namespace WL
 		header->rootReference = this;
 	}
 
-	AllocationRootReference::~AllocationRootReference()
+	SAllocationRootReference::~SAllocationRootReference()
 	{
 		AssertMsg(m_AccumulatedSize == 0, "some allocations have not been deleted, yet reference count is 0. This should not happen");
 		//GetMemoryProfiler()->UnregisterRootAllocation(this);
 	}
 
-	void AllocationRootReference::setObjectName(const char* objectName)
+	void SAllocationRootReference::setObjectName(const char* objectName)
 	{
 		m_ObjectName = objectName ? objectName : "";
 	}
@@ -50,7 +50,7 @@ namespace WL
 
 	int CMemoryProfiler::getHeaderSize()
 	{
-		return sizeof(ProfilerAllocationHeader);
+		return sizeof(SProfilerAllocationHeader);
 	}
 
 	void CMemoryProfiler::allocateStructs()

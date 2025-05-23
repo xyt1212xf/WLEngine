@@ -8,7 +8,7 @@
 
 namespace WL
 {
-	struct GameplayAbilitySpec;
+	struct SGameplayAbilitySpec;
 	class CAbilitySystemComponent : public CComponent, public CScriptEntity
 	{
 		DeclareScriptClass(CAbilitySystemComponent);
@@ -16,7 +16,7 @@ namespace WL
 		CAbilitySystemComponent();
 		void setOwnerActor(CActorEntity* NewOwnerActor);
 		bool tryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate);
-		GameplayAbilitySpec* findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const;
+		SGameplayAbilitySpec* findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const;
 
 		CActorEntity* getOwnerActor() const 
 		{
@@ -25,10 +25,10 @@ namespace WL
 
 	protected:
 		/** Will be called from GiveAbility or from OnRep. Initializes events (triggers and inputs) with the given ability */
-		virtual void onGiveAbility(GameplayAbilitySpec& AbilitySpec);
+		virtual void onGiveAbility(SGameplayAbilitySpec& AbilitySpec);
 
 		/** Will be called from RemoveAbility or from OnRep. Unbinds inputs with the given ability */
-		virtual void onRemoveAbility(GameplayAbilitySpec& AbilitySpec);
+		virtual void onRemoveAbility(SGameplayAbilitySpec& AbilitySpec);
 		void incrementAbilityListLock();
 		void decrementAbilityListLock();
 
@@ -42,9 +42,9 @@ namespace WL
 		GameplayAbilityActorInfo*	mpAbilityActorInfo = nullptr;
 
 	protected:
-		GameplayAbilitySpecContainer mActivatableAbilities;
+		SGameplayAbilitySpecContainer mActivatableAbilities;
 		std::vector<GameplayAbilitySpecHandle> mAbilityPendingRemoves;
-		std::vector<GameplayAbilitySpec> mAbilityPendingAdds;
+		std::vector<SGameplayAbilitySpec> mAbilityPendingAdds;
 
 	private:
 		bool mbAbilityPendingClearAll = false;

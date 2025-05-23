@@ -34,7 +34,7 @@ namespace WL
     bool CAbilitySystemComponent::tryActivateAbility(GameplayAbilitySpecHandle AbilityToActivate)
     {
         GameplayTagContainer FailureTags;
-        GameplayAbilitySpec* Spec = findAbilitySpecFromHandle(AbilityToActivate);
+        SGameplayAbilitySpec* Spec = findAbilitySpecFromHandle(AbilityToActivate);
         if (!Spec)
         {
             return false;
@@ -55,13 +55,13 @@ namespace WL
         return internalTryActivateAbility(AbilityToActivate);;
     }
 
-    GameplayAbilitySpec* CAbilitySystemComponent::findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const
+    SGameplayAbilitySpec* CAbilitySystemComponent::findAbilitySpecFromHandle(GameplayAbilitySpecHandle Handle) const
     {
         return nullptr;
     }
 
 
-    void CAbilitySystemComponent::onGiveAbility(GameplayAbilitySpec& AbilitySpec)
+    void CAbilitySystemComponent::onGiveAbility(SGameplayAbilitySpec& AbilitySpec)
     {
         if (nullptr != AbilitySpec.mpAbility)
         {
@@ -69,7 +69,7 @@ namespace WL
         }
     }
 
-	void CAbilitySystemComponent::onRemoveAbility(GameplayAbilitySpec& AbilitySpec)
+	void CAbilitySystemComponent::onRemoveAbility(SGameplayAbilitySpec& AbilitySpec)
 	{
 
 	}

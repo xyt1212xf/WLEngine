@@ -938,6 +938,8 @@ namespace WL
 	{
 		bool bVisible = false;
 		CTerrainEntity* pTerrain = GEngine->createEntity<CTerrainEntity>(EntityType::Terrain);
+		std::string sizeInfo = "";
+		int buildType = 0;
 		for (const auto& [k, v] : value.items())
 		{
 			if ("chunk" == k)
@@ -960,13 +962,20 @@ namespace WL
 				auto value = Foundation::splitString<float>(szContent, ",");
 				pTerrain->setPosition(Vec3F(&value[0]));
 			}
-			else if ("model" == k)
+			else if ("builder" == k)
 			{
-				GEngine->loadTerrainEntity(pTerrain, v.get<std::string>());
+				buildType = v.get<int>();
+			}
+			else if ("size" == k)
+			{
+				sizeInfo = v.get<std::string>();
 			}
 		}
-		mpTerrainEntity = pTerrain;
-		addEntity(pTerrain);
+		if (GEngine->loadTerrainEntity(pTerrain, buildType, sizeInfo))
+		{
+			mpTerrainEntity = pTerrain;
+			addEntity(pTerrain);
+		}
 		WL_DECREASE(pTerrain);
 	}
 

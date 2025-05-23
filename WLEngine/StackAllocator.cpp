@@ -1,7 +1,7 @@
 #include "StackAllocator.h"
 namespace WL
 {
-	CStackAllocator::CStackAllocator(size_t blocksize, MemLabelId fallbackMemLabel, const char* name)
+	CStackAllocator::CStackAllocator(size_t blocksize, SMemLabelId fallbackMemLabel, const char* name)
 	: CBaseAllocator(name)
 	{
 

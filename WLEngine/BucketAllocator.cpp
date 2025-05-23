@@ -23,7 +23,7 @@ namespace WL
 			m_Buckets[i] = WL_NEW_ALIGNED(Buckets(bucketSize, realBucketSize), MemLabelRef(kMemDefaultId), 16);
 		}
 		// Add some initial buckets
-		m_LargeBlocks = reinterpret_cast<LargeBlock*>(WL_MALLOC(MemLabelRef(kMemDefaultId), sizeof(LargeBlock) * maxLargeBlocksCount));
+		m_LargeBlocks = reinterpret_cast<SLargeBlock*>(WL_MALLOC(MemLabelRef(kMemDefaultId), sizeof(SLargeBlock) * maxLargeBlocksCount));
 		if (m_LargeBlocks == NULL || !addLargeBlock())
 		{
 			for (size_t i = 0; i < bucketsCount; ++i)
@@ -121,7 +121,7 @@ namespace WL
 		if (newUsedSize < m_LargeBlockSize)
 		{
 			int largeBlockOffset = (newUsedSize & (~0xFF)) - kBlockSize;
-			const LargeBlock& largeBlock = m_LargeBlocks[largeBlockIndex];
+			const SLargeBlock& largeBlock = m_LargeBlocks[largeBlockIndex];
 
 			addBlockToBuckets(buckets, largeBlock.firstBlockPtr + largeBlockOffset, kBlockSize);
 			return true;
@@ -157,7 +157,7 @@ namespace WL
 
 		const int bucketsSize = buckets->bucketsSize;
 		const int bucketSizeWithHeaders = getRealBucketSize(bucketsSize);
-		Block* block = new(ptr) Block(bucketsSize);
+		SBlock* block = new(ptr) SBlock(bucketsSize);
 
 		char* p = reinterpret_cast<char*>(alignPtr(block + 1, kMaxAlignment));
 		char* endPtr = reinterpret_cast<char*>(ptr) + size - bucketSizeWithHeaders;

@@ -106,9 +106,17 @@ namespace WL
 #endif
 	}
 
-	bool CEntityMgr::loadTerrainEntity(CEntity* pEntity, std::string szModel)
+	bool CEntityMgr::loadTerrainEntity(CEntity* pEntity, int builderType, std::string szSizeInfo)
 	{
-		return false;
+		switch (builderType)
+		{
+		case 1:
+		{}
+			break;
+		default:
+			break;
+		}
+		return true;
 	}
 
 	bool CEntityMgr::loadOceanEntity(CActorEntity* pEntity, std::string szModel)

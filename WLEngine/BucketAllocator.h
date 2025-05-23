@@ -35,15 +35,15 @@ namespace WL
 			return m_Buckets[size > 0 ? ((size - 1) >> m_BucketGranularityBits) : 0]; 
 		}
 	private:
-		struct Block
+		struct SBlock
 		{
-			Block(int bs) : bucketSize(bs) {}
+			SBlock(int bs) : bucketSize(bs) {}
 
 			int bucketSize = 0;
 		};
-		struct LargeBlock
+		struct SLargeBlock
 		{
-			LargeBlock(void* p, void* e, char* b) : realPtr(p), endPtr(e), firstBlockPtr(b) {}
+			SLargeBlock(void* p, void* e, char* b) : realPtr(p), endPtr(e), firstBlockPtr(b) {}
 
 			void* realPtr = nullptr;
 			void* endPtr = nullptr;
@@ -51,9 +51,9 @@ namespace WL
 		};
 
 		void	addBlockToBuckets(Buckets* buckets, void* ptr, int size);
-		INLINE Block* getBlockFromPtr(const void* ptr) const
+		INLINE SBlock* getBlockFromPtr(const void* ptr) const
 		{
-			return reinterpret_cast<Block*>(((size_t)ptr) & ~(kBlockSize - 1)); 
+			return reinterpret_cast<SBlock*>(((size_t)ptr) & ~(kBlockSize - 1)); 
 		}
 	private:
 		std::vector<Buckets*>    m_Buckets;                        ///< Buckets of various size.
@@ -64,7 +64,7 @@ namespace WL
 		const size_t               m_MaxBucketSize = 0;
 		const int                  m_MaxLargeBlocks;
 		const int                  m_LargeBlockSize;                 ///< Size of large memory block for all small allocations.
-		LargeBlock* m_LargeBlocks;                    ///< Large blocks of continuous memory.
+		SLargeBlock* m_LargeBlocks;                    ///< Large blocks of continuous memory.
 		ALIGN_TYPE(4) mutable volatile int m_UsedLargeBlocks = 0;
 		ALIGN_TYPE(4) volatile int m_CurrentLargeBlockUsedSize;
 		CMutex                     m_NewLargeBlockMutex;

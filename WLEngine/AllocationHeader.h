@@ -60,7 +60,7 @@ namespace WL
 #pragma pack(pop)
 	
 	template<bool HasAllocationSize>
-	struct RealSizeHelper
+	struct SRealSizeHelper
 	{
 		template<class T>
 		static size_t getRealAllocationSize(const T* header)
@@ -170,9 +170,9 @@ namespace WL
 			return (void*)((const char*)this + getSize());
 		}
 
-		ProfilerAllocationHeader* getProfilerHeader() const
+		SProfilerAllocationHeader* getProfilerHeader() const
 		{
-			return (ProfilerAllocationHeader*)((const char*)this + getSelfSize());
+			return (SProfilerAllocationHeader*)((const char*)this + getSelfSize());
 		}
 				
 		///< Return size without header size
@@ -197,7 +197,7 @@ namespace WL
 		// Required for correct GetPaddingCount and InitAllocationSizeHeader functions resolving when using PSM compiler.
 		typedef typename std::conditional<THasAllocationSize<CMemoryDebuggingHeader>::result, CMemoryDebuggingHeader, T>::type BaseTypeWithPadding;
 
-		friend struct RealSizeHelper<THasAllocationSize<BaseTypeWithPadding>::result>;
+		friend struct SRealSizeHelper<THasAllocationSize<BaseTypeWithPadding>::result>;
 	};
 
 

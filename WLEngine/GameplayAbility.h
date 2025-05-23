@@ -5,7 +5,7 @@
 
 namespace WL
 {
-	struct GameplayAbilitySpec;
+	struct SGameplayAbilitySpec;
 	struct GameplayAbilityActorInfo;
 	class CGameplayAbility : public CScriptEntity 
 	{
@@ -15,9 +15,9 @@ namespace WL
 
 		GameplayAbilityActorInfo GetActorInfo() const;
 
-		virtual void onGiveAbility(const GameplayAbilityActorInfo* ActorInfo, const GameplayAbilitySpec& Spec);
+		virtual void onGiveAbility(const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilitySpec& Spec);
 		/** Native function, called if an ability ends normally or abnormally. If bReplicate is set to true, try to replicate the ending to the client/server */
-		virtual void endAbility(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo, const GameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+		virtual void endAbility(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo, const SGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 		/** Modifies actor info, only safe on instanced abilities */
 		virtual void setCurrentActorInfo(const GameplayAbilitySpecHandle Handle, const GameplayAbilityActorInfo* ActorInfo) const;

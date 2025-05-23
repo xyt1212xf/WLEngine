@@ -7,26 +7,26 @@ namespace WL
 {
 	class CGameplayAbility;
 
-	struct  GameplayAbilityActivationInfo
+	struct  SGameplayAbilityActivationInfo
 	{
 	};
 
-	struct GameplayAbilitySpec final : public CRefcount
+	struct SGameplayAbilitySpec final : public CRefcount
 	{
-		~GameplayAbilitySpec() = default;
+		~SGameplayAbilitySpec() = default;
 		CGameplayAbility* mpAbility = nullptr;
 
 
 		GameplayAbilitySpecHandle mHandle;
-		GameplayAbilityActivationInfo	mActivationInfo;	
+		SGameplayAbilityActivationInfo	mActivationInfo;	
 		GameplayTagContainer mDynamicAbilityTags;
 		INT32 mLevel;
 
 		UINT8 mPendingRemove : 1;
 	};
 
-	struct GameplayAbilitySpecContainer
+	struct SGameplayAbilitySpecContainer
 	{
-		std::vector<GameplayAbilitySpec> mItems;
+		std::vector<SGameplayAbilitySpec> mItems;
 	};
 }

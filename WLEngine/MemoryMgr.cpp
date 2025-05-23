@@ -126,7 +126,7 @@ namespace WL
 				tempAllocatorSize = tempSize;
 			// On a main thread we allow kMemTempJobAlloc allocations as they must be short-lived.
 			// Other threads might live for longer and steal space from a renderer.
-			const MemLabelId fallbackLabel = isMainThread ? MemLabelId(kMemTempJobAllocId) : MemLabelId(kMemTempOverflowId);
+			const SMemLabelId fallbackLabel = isMainThread ? SMemLabelId(kMemTempJobAllocId) : SMemLabelId(kMemTempOverflowId);
 			CStackAllocator* tempAllocator = WL_NEW(CStackAllocator(tempAllocatorSize, fallbackLabel, "ALLOC_TEMP_THREAD"), Manager);
 			m_FrameTempAllocator->threadInitialize(tempAllocator);
 		}

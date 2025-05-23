@@ -36,20 +36,20 @@ namespace WL
 
 		kMemLabelCount
 	};
-	struct AllocationRootReference;
+	struct SAllocationRootReference;
 
-	struct MemLabelId 
+	struct SMemLabelId 
 	{
-		MemLabelId() = default;
-		MemLabelId(MemLabelIdentifier id)
+		SMemLabelId() = default;
+		SMemLabelId(MemLabelIdentifier id)
 		{
 			identifier = id;
 		}
 		MemLabelIdentifier identifier;
-		AllocationRootReference* m_RootReference = nullptr;
+		SAllocationRootReference* m_RootReference = nullptr;
 	};
 
-	typedef const MemLabelId& MemLabelRef;
+	typedef const SMemLabelId& MemLabelRef;
 
 	INLINE MemLabelIdentifier getLabelIdentifier(MemLabelRef label)
 	{

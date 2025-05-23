@@ -5,7 +5,7 @@ namespace WL
 	class CStackAllocator : public CBaseAllocator
 	{
 	public:
-		CStackAllocator(size_t blocksize, MemLabelId fallbackMemLabel, const char* name);
+		CStackAllocator(size_t blocksize, SMemLabelId fallbackMemLabel, const char* name);
 		virtual ~CStackAllocator();
 		/// Allocate memory block of the specified size (minimum size) and alignment.
 		virtual void* allocate(size_t size, int align) final;
