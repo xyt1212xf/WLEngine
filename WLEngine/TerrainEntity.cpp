@@ -18,6 +18,13 @@ namespace WL
 	{
 		WL_DECREASE(mCameraEntityPtr);
 		mCameraEntityPtr = nullptr;
+		for (auto item : mChunkMgr)
+		{
+			WL_DELETE(item.second, Model);
+		}
+		mChunkMgr.clear();
+		mShowChunks.clear();
+		mHideChunks.clear();
 	}
 
 	void CTerrainEntity::_tick(UINT32 dt)
@@ -42,9 +49,9 @@ namespace WL
 		}
 
 		mCameraChunkPos = cameraChunkPos;
-		for (auto item : mShowActorEntities)
+		for (auto item : mShowChunks)
 		{
-			item.mFlag = 0;
+			item->mFlag = 0;
 		}
 
 		INT32 nStartX = cameraChunkPos.x - mRangeRadius;
@@ -54,6 +61,8 @@ namespace WL
 
 		INT32 nHeight = cameraChunkPos.y;
 		
+		std::list<STerrainChunk*> tempShowChunks;
+
 		for (int i = nStartX; i < nEndX; ++i)
 		{
 			for (int j = nStartZ; j < nEndZ; ++j)
@@ -62,28 +71,61 @@ namespace WL
 				auto [iter, inserted] = mChunkMgr.try_emplace(pos);
 				if (inserted)
 				{
-					
+					auto* pChunk = createTerrainChunk(pos);
+					if (nullptr != pChunk)
+					{
+						mShowChunks.push_back(pChunk);
+						iter->second = pChunk;
+					}
+					else
+					{
+						mChunkMgr.erase(iter);
+					}
 				}
 				else
 				{
-					(iter->second).mFlag = 1;
-					//不考虑是否已经在在显示队列里面
-					mShowActorEntities.push_back(iter->second);
+					(iter->second)->mFlag = 1;
+					tempShowChunks.push_back(iter->second);					
 				}
 			}
 		}
-		auto iter = mShowActorEntities.begin();
-		while (iter != mShowActorEntities.end())
+
+		UINT32 time = ::GetTickCount();
+		auto iter = mShowChunks.begin();
+		while (iter != mShowChunks.end())
 		{
-			if (0 == (*iter).mFlag)
+			if (0 == (*iter)->mFlag)
 			{
-				(*iter).mActorPtr->hide();
-				iter = mShowActorEntities.erase(iter);
+				(*iter)->mActorPtr->hide();
+				(*iter)->mHideStartTime = time;
+				mHideChunks.push_back(*iter);
+				iter = mShowChunks.erase(iter);
 			}
 			else
 			{
 				++iter;
 			}
 		}
+		//交换显示列表
+		std::swap(mShowChunks, tempShowChunks);
 	}	
+
+	STerrainChunk* CTerrainEntity::createTerrainChunk(const Vec3F& pos)
+	{
+		if (auto* pChunk = WL_NEW(STerrainChunk, Model))
+		{
+			if (auto* pActorPtr = WL_NEW(CActorEntity, Entity))
+			{
+				
+				pChunk->mActorPtr = pActorPtr;
+			}
+			else
+			{
+				WL_DELETE(pChunk, Model);
+			}
+			return pChunk;
+		}
+		return nullptr;
+	}
 }
+

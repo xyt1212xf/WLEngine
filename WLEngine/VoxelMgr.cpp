@@ -14,7 +14,7 @@ namespace WL
 	{
 		for( auto item : mpChunks)
 		{
-			WL_DELETE(item, SVoxel);
+			WL_DELETE(item,Voxel);
 		}
 	}
 
@@ -68,7 +68,7 @@ namespace WL
 				for (int z = 0; z < nSizeZ; ++z)
 				{
 					position.z = mPosition.z + z * fSizeZ;
-					CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, SVoxel);
+					CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, Voxel);
 					pVoxelChunk->createVoxel(Vec3F(position.x - x * SVoxel::nSize,
 												   position.y - y * SVoxel::nSize,
 												   position.z - z * SVoxel::nSize));
@@ -153,13 +153,13 @@ namespace WL
 
 	void CVoxelMgr::createChunk(const Vec3F& pos, const std::list<Vec3F>& voxels)
 	{
-		CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, SVoxel);
+		CVoxelChunk* pVoxelChunk = WL_NEW(CVoxelChunk, Voxel);
 		mpChunks.push_back(pVoxelChunk);
 		pVoxelChunk->createChunk(pos, voxels);
 		pVoxelChunk->buildChunkEntity();
 	}
 
-	void CVoxelMgr::setProduceVoxlerule(VoxelRuleEnum type)
+	void CVoxelMgr::setProduceVoxleRule(VoxelRuleEnum type)
 	{
 		mType = type;
 	}

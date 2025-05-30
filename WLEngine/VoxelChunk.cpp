@@ -22,7 +22,7 @@ namespace WL
 				{
 					for (int z = 0; z < nSize; ++z)
 					{
-						WL_DELETE(mVoxelArray[x][y][z], SVoxel);
+						WL_DELETE(mVoxelArray[x][y][z], Voxel);
 					}
 				}
 			}
@@ -139,6 +139,7 @@ namespace WL
 		Vec3F fMin;
 		Vec3F fMax;
 		mVoxelArray.resize(nSize);
+		mVoxels.resize(nSize * nSize * nSize);
 		for (int x = 0; x < nSize; ++x)
 		{
 			mVoxelArray[x].resize(nSize);
@@ -147,7 +148,7 @@ namespace WL
 				mVoxelArray[x][y].resize(nSize);
 				for (int z = 0; z < nSize; ++z)
 				{
-					SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
+					SVoxel* pVoxel = WL_NEW(SVoxel, Voxel);
 
 					pVoxel->nX = (int)x;
 					pVoxel->nY = (int)y;
@@ -183,7 +184,7 @@ namespace WL
 		
 		for( auto item : voxels )
 		{
-			SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
+			SVoxel* pVoxel = WL_NEW(SVoxel, Voxel);
 			pVoxel->drawVertices.resize(1);
 			pVoxel->nX = (int)item.x;
 			pVoxel->nY = (int)item.y;
@@ -214,7 +215,7 @@ namespace WL
 			{
 				Vec3F fMin;
 				Vec3F fMax;
-				SVoxel* pVoxel = WL_NEW(SVoxel, SVoxel);
+				SVoxel* pVoxel = WL_NEW(SVoxel, Voxel);
 				pVoxel->drawVertices.resize(1);
 				pVoxel->nX = x;
 				pVoxel->nY = y;

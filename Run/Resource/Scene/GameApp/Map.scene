@@ -80,42 +80,6 @@
 						"position":"0,0,0",
 						"scale":"1,1,1",
 						"rotation":"0,0,0"
-					},
-					{
-						"type":16,
-						"name":"StartNode",
-						"model":"Resource/Model/csTest.md",
-						"visible":true,
-						"position":"12,994,1359",
-						"scale":"1,1,1",
-						"rotation":"0,0,0"
-					},
-					{
-						"type":16,
-						"name":"MiniWan",
-						"model":"Resource/Model/MiniWan.md",
-						"visible":true,
-						"position":"0,990,1359",
-						"scale":"1,1,1",
-						"rotation":"0,1,0"
-					},
-					{
-						"type":16,
-						"name":"MiniWan",
-						"model":"Resource/Model/MiniWan.md",
-						"visible":true,
-						"position":"10,990,1359",
-						"scale":"1,1,1",
-						"rotation":"0,1,0"
-					},
-					{
-						"type":16,
-						"name":"MiniWan",
-						"model":"Resource/Model/MiniWan.md",
-						"visible":true,
-						"position":"-10,990,1359",
-						"scale":"1,1,1",
-						"rotation":"0,1,0"
 					}
 				]
 			}

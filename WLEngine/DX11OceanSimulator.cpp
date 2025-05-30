@@ -271,7 +271,7 @@ namespace WL
 		WL_DELETE(m_pUAV_Dxyz, SurfaceView);
 		WL_DELETE(mpDisplacement, SurfaceView);
 		WL_DELETE(mpGradientMap, SurfaceView);
-		WL_DELETE(mpOceanRS, SRenderState);
+		WL_DELETE(mpOceanRS, RenderState);
 		//SAFE_RELEASE(mpImmutableCB);
 		//SAFE_RELEASE(mpPerFrameCB);
 

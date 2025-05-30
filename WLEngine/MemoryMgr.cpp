@@ -309,7 +309,7 @@ namespace WL
 
 		m_AllocatorMap[kMemDynamicGeometryId].pAlloc = gfxAllocator;
 		m_AllocatorMap[kMemImmediateGeometryId].pAlloc = gfxAllocator;
-		m_AllocatorMap[kMemSGeometryId].pAlloc = gfxAllocator;
+		m_AllocatorMap[kMemGeometryId].pAlloc = gfxAllocator;
 		m_AllocatorMap[kMemVertexDataId].pAlloc = gfxAllocator;
 		m_AllocatorMap[kMemBatchedGeometryId].pAlloc = gfxAllocator;
 		m_AllocatorMap[kMemTextureId].pAlloc = gfxAllocator;

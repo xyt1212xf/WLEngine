@@ -2,7 +2,7 @@
 #include "Scene.h"
 namespace WL
 {
-	static UINT32 id;
+	static std::atomic<UINT32> id;
 	CEntity::CEntity()
 	{		
 		mID = ++id;
