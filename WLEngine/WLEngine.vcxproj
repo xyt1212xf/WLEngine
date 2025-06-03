@@ -282,6 +282,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelInstance.h" />
     <ClInclude Include="Mutex.h" />
+    <ClInclude Include="Name.h" />
     <ClInclude Include="NoLightRendererPass.h" />
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="OceanEntity.h" />
@@ -461,6 +462,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="Mutex.cpp" />
+    <ClCompile Include="Name.cpp" />
     <ClCompile Include="NoLightRendererPass.cpp" />
     <ClCompile Include="OceanEntity.cpp" />
     <ClCompile Include="OceanModelInstance.cpp" />
