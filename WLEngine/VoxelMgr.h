@@ -31,7 +31,7 @@ namespace WL
 		void setBrush(CVoxelBrush* pBrush);
 		void buildTerrain(int nType);
 		void createChunk(const Vec3F& pos, const std::list<Vec3F>& voxels);
-		void setProduceVoxlerule(VoxelRuleEnum type);
+		void setProduceVoxleRule(VoxelRuleEnum type);
 		VoxelRuleEnum getProduceVoxlerule() const;
 
 	private:

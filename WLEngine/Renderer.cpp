@@ -14,7 +14,7 @@ namespace WL
 		}
 		else
 		{
-			pRenderUnit = WL_NEW(SRenderUnit, SRenderUnit);
+			pRenderUnit = WL_NEW(SRenderUnit, RenderUnit);
 		}
 		mpRenderUnits.emplace_back(pRenderUnit);
 		return pRenderUnit;
@@ -34,12 +34,12 @@ namespace WL
 	{	
 		for (auto item : mpRenderUnits)
 		{
-			WL_DELETE(item, SRenderUnit);
+			WL_DELETE(item, RenderUnit);
 		}
 		mpRenderUnits.clear();
 		for (auto item : mFreeRenderUnits)
 		{
-			WL_DELETE(item, SRenderUnit);
+			WL_DELETE(item, RenderUnit);
 		}
 		mFreeRenderUnits.clear();
 

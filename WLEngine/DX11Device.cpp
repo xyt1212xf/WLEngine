@@ -19,7 +19,7 @@ namespace WL
 		DEV_RELEASE(mpDepthStencilView);
 		DEV_RELEASE(mpBackBuffer);
 
-		WL_DELETE(mpRenderStateMgr, SRenderState);
+		WL_DELETE(mpRenderStateMgr, RenderState);
 
 		for (auto item : mMultipleWindowSwapChain)
 		{
@@ -243,7 +243,7 @@ namespace WL
 						continue;
 					}
 					//m_CurrentSwapChain->Release();
-					mpRenderStateMgr = WL_NEW(CRenderStateMgr, SRenderState)(dynamic_cast<CDevice*>(this));   
+					mpRenderStateMgr = WL_NEW(CRenderStateMgr, RenderState)(dynamic_cast<CDevice*>(this));   
 
 					mMultipleWindowSwapChain[hWnd] = m_CurrentSwapChain;
 

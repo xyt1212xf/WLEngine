@@ -7,10 +7,11 @@
 namespace WL
 {
 	class CCameraEntity;
-	struct STerrainChunk
+	struct STerrainChunk : public CRefcount
 	{
 		CActorEntity* mActorPtr = nullptr;
 		UINT8 mFlag = 0;
+		UINT32 mHideStartTime = 0;
 	};
 
 	class CTerrainEntity : public CEntity
@@ -25,13 +26,15 @@ namespace WL
 	private:
 		virtual void _tick(UINT32 dt) override;
 		void updateChunk(UINT32 dt);
+		STerrainChunk* createTerrainChunk(const Vec3F& pos);
 
 	private:
 		Vec3F mCameraChunkPos = { 0,0,0 };
 		CCameraEntity* mCameraEntityPtr = nullptr;
 		float mRangeRadius = 10;
 
-		std::map<Vec3F, STerrainChunk>	mChunkMgr;
-		std::list<STerrainChunk>	mShowActorEntities;
+		std::map<Vec3F, STerrainChunk*>	mChunkMgr;
+		std::list<STerrainChunk*>	mShowChunks;
+		std::list<STerrainChunk*>	mHideChunks;
 	};
 }

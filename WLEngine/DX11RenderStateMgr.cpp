@@ -703,7 +703,7 @@ namespace WL
 	SRenderState* CDX11RenderStateMgr::createRenderState(SRenderStateDesc& renderStateDesc)
 	{
 		auto pDevice = mpDevice->getGraphicsDevice();
-		SRenderState* pRenderState = WL_NEW(SRenderState, SRenderState);
+		SRenderState* pRenderState = WL_NEW(SRenderState, RenderState);
 		HRESULT result = S_OK;
 		if (renderStateDesc.bCreateDepthStencil)
 		{
