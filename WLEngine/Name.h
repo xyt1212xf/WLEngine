@@ -12,7 +12,7 @@ namespace WL
 		bool operator == (const CName& name) const;
 		bool operator == (const std::string& name) const;
 		bool operator == (const char* pName) const;
-		INT32 getOrder() const;
+		std::string cstr() const;
 
 	private:
 		static INT32 _calculateOrder(CName& name);

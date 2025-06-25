@@ -24,9 +24,9 @@ namespace WL
 		_calculateOrder(*this);
 	}
 
-	INT32 CName::getOrder() const
+	std::string CName::cstr() const
 	{
-		return mOrder;
+		return mName;
 	}
 
 	bool CName::operator==(const char* pName) const
