@@ -172,7 +172,7 @@ void generateSDF(int searchDistance)
 
 
 int main()
-{
+{	
 	unsigned error = lodepng_decode32_file(&input, &input_width, &input_height, INPUT_NAME);
 	if (error) 
 	{

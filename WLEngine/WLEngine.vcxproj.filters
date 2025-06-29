@@ -707,6 +707,9 @@
     <ClInclude Include="Component.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Name.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1212,6 +1215,9 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Name.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
