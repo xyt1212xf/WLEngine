@@ -1,0 +1,4 @@
+在这个目录建立build,然后进入build目录，指向下面的语句
+cmake .. -G "Visual Studio 17 2022" -A x64
+
+CMakeLists.txt替换build\_deps\eabase-src\这个目录下的同名文件。cmake的版本使用4.0之后的。
