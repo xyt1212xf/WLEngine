@@ -43,6 +43,9 @@
 #include "ClassType.h"
 #include "Export.h"
 
+#define UNLIKELY(x)  __builtin_expect(!!(x), 0)
+#define LIKELY(x)    __builtin_expect(!!(x), 1)
+
 #define SafeDeleteArray( pObject ) \
 	if(pObject != nullptr)\
 	{\

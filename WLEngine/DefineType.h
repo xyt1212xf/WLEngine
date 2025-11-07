@@ -28,6 +28,8 @@ typedef unsigned __int64    DWORD64;
 typedef unsigned __int64    UINT64;
 typedef float           	F32;
 typedef double          	F64;
+typedef unsigned __int64    SIZE_T;
+
 const float		ROUNDING_ERROR_f32 = 0.000001f;
 const double	ROUNDING_ERROR_f64 = 0.00000001;
 #define InOut 

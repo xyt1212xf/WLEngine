@@ -1,10 +1,10 @@
+#include <math.h>
 #include "GameApp.h"
 #include "tinyxml.h"
 #include "Scene.h"
 #include "MathLib.h"
 #include "Malloc.h"
 #include "TimerClock.h"
-#include <math.h>
 
 namespace WL
 {

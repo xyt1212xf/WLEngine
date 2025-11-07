@@ -166,8 +166,10 @@
     <ClInclude Include="AbilitySystemComponent.h" />
     <ClInclude Include="ActorEntity.h" />
     <ClInclude Include="AllocationHeader.h" />
+    <ClInclude Include="Allocator.h" />
     <ClInclude Include="AllocatorLabelNames.h" />
     <ClInclude Include="AllocatorLabels.h" />
+    <ClInclude Include="Array.h" />
     <ClInclude Include="AtomicNode.h" />
     <ClInclude Include="AtomicOps.h" />
     <ClInclude Include="AtomicQueue.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentFactory.h" />
     <ClInclude Include="ComponentGroup.h" />
+    <ClInclude Include="ContainerAllocationPolicies.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="CustomRenderer.h" />
     <ClInclude Include="DataAsset.h" />
@@ -261,6 +264,7 @@
     <ClInclude Include="LightEntity.h" />
     <ClInclude Include="LightMeshRendererPass.h" />
     <ClInclude Include="LightRenderer.h" />
+    <ClInclude Include="List.h" />
     <ClInclude Include="LogAssert.h" />
     <ClInclude Include="LowLevelDefaultAllocator.h" />
     <ClInclude Include="LuaBind.h" />
@@ -350,6 +354,7 @@
     <ClInclude Include="UIImage.h" />
     <ClInclude Include="UILabel.h" />
     <ClInclude Include="UIWnd.h" />
+    <ClInclude Include="UnrealMemory.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="VoxelBrush.h" />
@@ -383,6 +388,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentFactory.cpp" />
     <ClCompile Include="ComponentGroup.cpp" />
+    <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="CustomRenderer.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="DefaultAllocator.cpp" />
@@ -522,6 +528,7 @@
     <ClCompile Include="UIImage.cpp" />
     <ClCompile Include="UILabel.cpp" />
     <ClCompile Include="UIWnd.cpp" />
+    <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="VertexFormat.cpp" />
     <ClCompile Include="VoxelBrush.cpp" />
     <ClCompile Include="VoxelChunk.cpp" />

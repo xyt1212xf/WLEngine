@@ -117,6 +117,9 @@
     <Filter Include="Core\GameplayAbilitySystem">
       <UniqueIdentifier>{4def4e50-ee41-4be3-bc5f-c09ed0d42ec7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Stl">
+      <UniqueIdentifier>{bccad930-3e4b-4e9a-a11b-cf0e67bd8c41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -309,9 +312,6 @@
       <Filter>Core\Math</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
-      <Filter>Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector.h">
       <Filter>Core\Math</Filter>
     </ClInclude>
     <ClInclude Include="AllocationHeader.h">
@@ -709,6 +709,24 @@
     </ClInclude>
     <ClInclude Include="Name.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Array.h">
+      <Filter>Core\Stl</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>Core\Stl</Filter>
+    </ClInclude>
+    <ClInclude Include="Allocator.h">
+      <Filter>Core\Stl</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainerAllocationPolicies.h">
+      <Filter>Core\Stl</Filter>
+    </ClInclude>
+    <ClInclude Include="UnrealMemory.h">
+      <Filter>Core\Stl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1218,6 +1236,12 @@
     </ClCompile>
     <ClCompile Include="Name.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="UnrealMemory.cpp">
+      <Filter>Core\Stl</Filter>
+    </ClCompile>
+    <ClCompile Include="ContainerAllocationPolicies.cpp">
+      <Filter>Core\Stl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
