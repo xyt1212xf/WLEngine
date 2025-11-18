@@ -289,6 +289,7 @@
     <ClInclude Include="Name.h" />
     <ClInclude Include="NoLightRendererPass.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="NumericLimits.h" />
     <ClInclude Include="OceanEntity.h" />
     <ClInclude Include="OceanModelInstance.h" />
     <ClInclude Include="OceanSimulator.h" />

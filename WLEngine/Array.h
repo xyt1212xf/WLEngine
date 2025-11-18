@@ -3,7 +3,7 @@
 
 namespace WL
 {
-	template<typename InElementType, typename InAllocatorType>
+	template<typename InElementType, typename InAllocatorType = FDefaultAllocator>
 	class TArray
 	{
 		template <typename OtherInElementType, typename OtherAllocator>
@@ -23,7 +23,7 @@ namespace WL
 		using ElementAllocatorType = std::conditional_t <
 			AllocatorType::NeedsElementType,
 			typename AllocatorType::template ForElementType<ElementType>,
-			typename AllocatorType::ForAnyElementType
+			typename AllocatorType::ForAnyElementType>;
 
 	protected:
 		SizeType             ArrayNum;

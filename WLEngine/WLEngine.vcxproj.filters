@@ -728,6 +728,9 @@
     <ClInclude Include="UnrealMemory.h">
       <Filter>Core\Stl</Filter>
     </ClInclude>
+    <ClInclude Include="NumericLimits.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">

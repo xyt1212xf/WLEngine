@@ -5,11 +5,12 @@
 #include "MathLib.h"
 #include "Malloc.h"
 #include "TimerClock.h"
-
+#include "Array.h"
 namespace WL
 {
 	CGameApp::CGameApp()
 	{
+		TArray<int> a;
 	}
 
 	CGameApp::~CGameApp()

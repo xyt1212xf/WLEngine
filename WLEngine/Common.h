@@ -38,6 +38,7 @@
 #endif
 
 #endif 
+#include "NumericLimits.h"
 #include "LogAssert.h"
 #include "DefineType.h"
 #include "ClassType.h"
