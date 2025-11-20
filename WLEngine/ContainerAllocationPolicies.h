@@ -4,6 +4,39 @@
 
 namespace WL
 {
+	/** The indirect allocation policy always allocates the elements indirectly. */
+	template<uint32 Alignment = DEFAULT_ALIGNMENT>
+	class TAlignedHeapAllocator
+	{
+	public:
+		using SizeType = int32;
+		enum { NeedsElementType = false };
+		enum { RequireRangeCheck = true };
+
+	};
+
+
+	template <typename AllocatorType>
+	struct TAllocatorTraitsBase
+	{
+		enum { IsZeroConstruct = false };
+		enum { SupportsFreezeMemoryImage = false };
+		enum { SupportsElementAlignment = false };
+		enum { SupportsSlackTracking = false };
+	};
+
+	template <typename AllocatorType>
+	struct TAllocatorTraits : TAllocatorTraitsBase<AllocatorType>
+	{
+	};
+
+	template <uint32 Alignment>
+	struct TAllocatorTraits<TAlignedHeapAllocator<Alignment>> : TAllocatorTraitsBase<TAlignedHeapAllocator<Alignment>>
+	{
+		enum { IsZeroConstruct = true };
+		enum { SupportsSlackTracking = true };
+	};
+
 	[[noreturn]] void OnInvalidSizedHeapAllocatorNum(INT32 IndexSize, INT64 NewNum, SIZE_T NumBytesPerElement);
 
 	/** A type which is used to represent a script type that is unknown at compile time. */

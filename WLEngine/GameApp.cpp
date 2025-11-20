@@ -11,6 +11,7 @@ namespace WL
 	CGameApp::CGameApp()
 	{
 		TArray<int> a;
+		a.Push(3);
 	}
 
 	CGameApp::~CGameApp()

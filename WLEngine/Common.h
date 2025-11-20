@@ -22,6 +22,7 @@
 	#define ALIGN_OF(T) __alignof(T)
 	#define ALIGN_TYPE(val) __declspec(align(val))
 	#define INLINE __forceinline
+	#define FORCENOINLINE  __declspec(noinline)   // ¼û WindowsPlatform.h [^20^]
 #elif defined(__ARMCC_VERSION)
 	#define ALIGN_OF(T) __alignof__(T)
 	#define ALIGN_TYPE(val) __attribute__((aligned(val)))  // ARMCC supports GNU extension
@@ -38,11 +39,14 @@
 #endif
 
 #endif 
+
 #include "NumericLimits.h"
+#include "UnrealTemplate.h"
 #include "LogAssert.h"
 #include "DefineType.h"
 #include "ClassType.h"
 #include "Export.h"
+
 
 #define UNLIKELY(x)  __builtin_expect(!!(x), 0)
 #define LIKELY(x)    __builtin_expect(!!(x), 1)

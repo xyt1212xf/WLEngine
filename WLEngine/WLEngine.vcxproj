@@ -275,6 +275,7 @@
     <ClInclude Include="MathLib.h" />
     <ClInclude Include="MathLibSSE.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MemoryBase.h" />
     <ClInclude Include="MemoryCookie.h" />
     <ClInclude Include="MemoryHelper.h" />
     <ClInclude Include="MemoryMgr.h" />
@@ -356,6 +357,7 @@
     <ClInclude Include="UILabel.h" />
     <ClInclude Include="UIWnd.h" />
     <ClInclude Include="UnrealMemory.h" />
+    <ClInclude Include="UnrealTemplate.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="VoxelBrush.h" />
