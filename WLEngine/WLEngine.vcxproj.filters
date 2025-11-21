@@ -120,6 +120,9 @@
     <Filter Include="Core\Stl">
       <UniqueIdentifier>{bccad930-3e4b-4e9a-a11b-cf0e67bd8c41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Memory\Unreal">
+      <UniqueIdentifier>{58f6bc89-c14d-41f4-89e9-3090c83199b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -734,8 +737,17 @@
     <ClInclude Include="UnrealTemplate.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="GenericPlatformMemory.h">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClInclude>
     <ClInclude Include="MemoryBase.h">
-      <Filter>Core\Memory</Filter>
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsPlatformMemory.h">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClInclude>
+    <ClInclude Include="MallocAnsi.h">
+      <Filter>Core\Memory\Unreal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1251,6 +1263,15 @@
     </ClCompile>
     <ClCompile Include="ContainerAllocationPolicies.cpp">
       <Filter>Core\Stl</Filter>
+    </ClCompile>
+    <ClCompile Include="GenericPlatformMemory.cpp">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClCompile>
+    <ClCompile Include="MallocAnsi.cpp">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryBase.cpp">
+      <Filter>Core\Memory\Unreal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,19 +4,6 @@
 
 namespace WL
 {
-	struct FScopedMallocTimer
-	{
-		FORCEINLINE FScopedMallocTimer(INT32 InIndex)
-		{
-		}
-		FORCEINLINE ~FScopedMallocTimer()
-		{
-		}
-		FORCEINLINE void Hit(INT32 InIndex)
-		{
-		}
-	};
-
 	struct FMemory
 	{
 		/** Some allocators can be given hints to treat allocations differently depending on how the memory is used, it's lifetime etc. */
@@ -32,6 +19,29 @@ namespace WL
 
 		static void Free(void* Original);
 		[[nodiscard]] static SIZE_T GetAllocSize(void* Original);
+
+		static SIZE_T QuantizeSize(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+
+		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+
+	private:
+		static void GCreateMalloc();
 	};
+
+
+	struct FScopedMallocTimer
+	{
+		FORCEINLINE FScopedMallocTimer(INT32 InIndex)
+		{
+		}
+		FORCEINLINE ~FScopedMallocTimer()
+		{
+		}
+		FORCEINLINE void Hit(INT32 InIndex)
+		{
+		}
+	};
+
+
 }
 

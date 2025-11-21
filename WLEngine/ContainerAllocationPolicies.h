@@ -2,8 +2,73 @@
 #include "Common.h"
 #include "UnrealMemory.h"
 
+#define UE_CONTAINER_SLACK_GROWTH_FACTOR_DENOMINATOR 8
+#define UE_CONTAINER_SLACK_GROWTH_FACTOR_NUMERATOR 3
 namespace WL
 {
+	template <typename SizeType>
+	FORCEINLINE SizeType DefaultCalculateSlackGrow(SizeType NewMax, SizeType CurrentMax, SIZE_T BytesPerElement, bool bAllowQuantize, uint32 Alignment = DEFAULT_ALIGNMENT)
+	{
+#if AGGRESSIVE_MEMORY_SAVING
+		const SIZE_T FirstGrow = 1;
+		const SIZE_T ConstantGrow = 0;
+#else
+		const SIZE_T FirstGrow = 4;
+		const SIZE_T ConstantGrow = 16;
+#endif
+
+		SizeType Retval;
+	//	checkSlow(NewMax > CurrentMax && NewMax > 0);
+
+		SIZE_T Grow = FirstGrow; // this is the amount for the first alloc
+#if 1
+		if (CurrentMax)
+		{
+			// Allocate slack for the array proportional to its size.
+			Grow = SIZE_T(NewMax) + UE_CONTAINER_SLACK_GROWTH_FACTOR_NUMERATOR * SIZE_T(NewMax) / UE_CONTAINER_SLACK_GROWTH_FACTOR_DENOMINATOR + ConstantGrow;
+		}
+		else if (SIZE_T(NewMax) > Grow)
+		{
+			Grow = SIZE_T(NewMax);
+		}
+#else
+
+#if CONTAINER_INITIAL_ALLOC_ZERO_SLACK
+		if (CurrentMax)
+		{
+			// Allocate slack for the array proportional to its size.
+			Grow = SIZE_T(NewMax) + UE_CONTAINER_SLACK_GROWTH_FACTOR_NUMERATOR * SIZE_T(NewMax) / UE_CONTAINER_SLACK_GROWTH_FACTOR_DENOMINATOR + ConstantGrow;
+		}
+		else if (SIZE_T(NewMax) > Grow)
+		{
+			Grow = SIZE_T(NewMax);
+		}
+#else
+		if (CurrentMax || SIZE_T(NewMax) > Grow)
+		{
+			// Allocate slack for the array proportional to its size.
+			Grow = SIZE_T(NewMax) + UE_CONTAINER_SLACK_GROWTH_FACTOR_NUMERATOR * SIZE_T(NewMax) / UE_CONTAINER_SLACK_GROWTH_FACTOR_DENOMINATOR + ConstantGrow;
+		}
+#endif
+#endif
+		if (bAllowQuantize)
+		{
+			Retval = (SizeType)(FMemory::QuantizeSize(Grow * BytesPerElement, Alignment) / BytesPerElement);
+		}
+		else
+		{
+			Retval = (SizeType)Grow;
+		}
+		// NumElements and MaxElements are stored in 32 bit signed integers so we must be careful not to overflow here.
+		if (NewMax > Retval)
+		{
+			Retval = TNumericLimits<SizeType>::Max();
+		}
+
+		return Retval;
+	}
+
+
 	/** The indirect allocation policy always allocates the elements indirectly. */
 	template<uint32 Alignment = DEFAULT_ALIGNMENT>
 	class TAlignedHeapAllocator
@@ -149,6 +214,14 @@ namespace WL
 			SizeType GetInitialCapacity() const
 			{
 				return 0;
+			}
+			FORCEINLINE SizeType CalculateSlackGrow(SizeType NewMax, SizeType CurrentMax, SIZE_T NumBytesPerElement) const
+			{
+				return DefaultCalculateSlackGrow(NewMax, CurrentMax, NumBytesPerElement, true);
+			}
+			FORCEINLINE SizeType CalculateSlackGrow(SizeType NewMax, SizeType CurrentMax, SIZE_T NumBytesPerElement, uint32 AlignmentOfElement) const
+			{
+				return DefaultCalculateSlackGrow(NewMax, CurrentMax, NumBytesPerElement, true, (uint32)AlignmentOfElement);
 			}
 
 		private:

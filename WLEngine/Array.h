@@ -6,72 +6,76 @@
 
 namespace WL
 {
-	// Called only when we KNOW we are going to do a realloc increasing by 1.
-	// In this case, we know that max == num and can simplify things in a very 
-	// hot location in the code.
-	// This returns the old ArrayMax in order to save a register clobber/reload.
-	//template <uint32 Flags, typename AllocatorInstanceType>
-	// TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Impl(
-	//	uint32                                       ElementSize,
-	//	uint32                                       ElementAlignment,
-	//	AllocatorInstanceType& AllocatorInstance,
-	//	TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
-	//)
-	//{
-
-	//	using SizeType = TAllocatorSizeType_T<AllocatorInstanceType>;
-	//	using USizeType = std::make_unsigned_t<SizeType>;
-
-	//	const USizeType UOldMax = (USizeType)ArrayMax;
-	//	const USizeType UNewNum = UOldMax + 1U;
-	//	const SizeType  OldMax = (SizeType)UOldMax;
-	//	const SizeType  NewNum = (SizeType)UNewNum;
-	//	return OldMax;
-//
-//		// This should only happen when we've underflowed or overflowed SizeType
-//		if (NewNum < OldMax)
-//		{
-//			OnInvalidArrayNum((unsigned long long)UNewNum);
-//		}
-//
-//		SizeType NewMax;
-//		if constexpr (!!(Flags & 1)) // TAllocatorTraits<AllocatorType>::SupportsElementAlignment
-//		{
-//			NewMax = AllocatorInstance.CalculateSlackGrow(NewNum, OldMax, ElementSize, ElementAlignment);
-//			AllocatorInstance.ResizeAllocation(UOldMax, NewMax, ElementSize, ElementAlignment);
-//		}
-//		else
-//		{
-//			NewMax = AllocatorInstance.CalculateSlackGrow(NewNum, OldMax, ElementSize);
-//			AllocatorInstance.ResizeAllocation(UOldMax, NewMax, ElementSize);
-//		}
-//		ArrayMax = NewMax;
-//#if UE_ENABLE_ARRAY_SLACK_TRACKING
-//		if constexpr (!!(Flags & 2)) // TAllocatorTraits<AllocatorType>::SupportsSlackTracking
-//		{
-//			AllocatorInstance.SlackTrackerLogNum(NewNum);
-//		}
-//#endif
-//
-//		return OldMax;
-//	}
+	[[noreturn]] void OnInvalidArrayNum(unsigned long long NewNum)
+	{
+		for (;;);
+	}
 
 	// A hacky way to get the SizeType, since it's defined in the
 	// (outer) allocator type, not the (inner) allocator instance type
 	template <typename AllocatorInstanceType>
 	using TAllocatorSizeType_T = decltype(std::declval<AllocatorInstanceType&>().GetInitialCapacity());
 
+	// Called only when we KNOW we are going to do a realloc increasing by 1.
+	// In this case, we know that max == num and can simplify things in a very 
+	// hot location in the code.
+	// This returns the old ArrayMax in order to save a register clobber/reload.
+	template <uint32 Flags, typename AllocatorInstanceType>
+	TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Impl(
+		uint32                                       ElementSize,
+		uint32                                       ElementAlignment,
+		AllocatorInstanceType& AllocatorInstance,
+		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
+	)
+	{
+
+		using SizeType = TAllocatorSizeType_T<AllocatorInstanceType>;
+		using USizeType = std::make_unsigned_t<SizeType>;
+
+		const USizeType UOldMax = (USizeType)ArrayMax;
+		const USizeType UNewNum = UOldMax + 1U;
+		const SizeType  OldMax = (SizeType)UOldMax;
+		const SizeType  NewNum = (SizeType)UNewNum;
+
+		// This should only happen when we've underflowed or overflowed SizeType
+		if (NewNum < OldMax)
+		{
+			OnInvalidArrayNum((unsigned long long)UNewNum);
+		}
+
+		SizeType NewMax;
+		if constexpr (!!(Flags & 1)) // TAllocatorTraits<AllocatorType>::SupportsElementAlignment
+		{
+			NewMax = AllocatorInstance.CalculateSlackGrow(NewNum, OldMax, ElementSize, ElementAlignment);
+			AllocatorInstance.ResizeAllocation(UOldMax, NewMax, ElementSize, ElementAlignment);
+		}
+		else
+		{
+			NewMax = AllocatorInstance.CalculateSlackGrow(NewNum, OldMax, ElementSize);
+			AllocatorInstance.ResizeAllocation(UOldMax, NewMax, ElementSize);
+		}
+		ArrayMax = NewMax;
+#if UE_ENABLE_ARRAY_SLACK_TRACKING
+		if constexpr (!!(Flags & 2)) // TAllocatorTraits<AllocatorType>::SupportsSlackTracking
+		{
+			AllocatorInstance.SlackTrackerLogNum(NewNum);
+		}
+#endif
+		return OldMax;
+	}
+
+
 	// Version for small sizes/alignments. This allows the parameter setup to be a single instruction
 	// note the uint16 limitation allows for a single instruction setup on arm.
-	//template <uint32 Flags, typename AllocatorInstanceType>
-	//FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Tiny(
-	//	uint16 ElementSizeAndAlignment,
-	//	AllocatorInstanceType& AllocatorInstance,
-	//	TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
-	//)
-	//{
-	//	return ReallocGrow1_DoAlloc_Impl<Flags, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
-	//}
+	template <uint32 Flags, typename AllocatorInstanceType>
+	FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Tiny(
+		uint16 ElementSizeAndAlignment,
+		AllocatorInstanceType& AllocatorInstance,
+		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
+	)
+	{
+		return ReallocGrow1_DoAlloc_Impl<Flags, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
+	}
 
 	// Flags are passed as a uint32 to minimize PDB impact of these generated symbols.
 	//
@@ -130,7 +134,7 @@ namespace WL
 			{
 				if constexpr (sizeof(ElementType) <= 255 && alignof(ElementType) <= 255) // -V590 
 				{
-				//	ArrayNum = ReallocGrow1_DoAlloc_Tiny<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType) | (alignof(ElementType) << 8), AllocatorInstance, ArrayMax);
+					ArrayNum = ReallocGrow1_DoAlloc_Tiny<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType) | (alignof(ElementType) << 8), AllocatorInstance, ArrayMax);
 				}
 				else
 				{
