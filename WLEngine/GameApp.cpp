@@ -10,8 +10,7 @@ namespace WL
 {
 	CGameApp::CGameApp()
 	{
-		TArray<int> a;
-		a.Push(3);
+
 	}
 
 	CGameApp::~CGameApp()
@@ -53,6 +52,8 @@ namespace WL
 
 	void CGameApp::run()
 	{
+		TArray<int> a;
+		a.Push(3);
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 		while (msg.message != WM_QUIT)

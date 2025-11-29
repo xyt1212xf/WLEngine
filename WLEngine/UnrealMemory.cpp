@@ -42,6 +42,20 @@ namespace WL
 		return Result;
 	}
 
+	void* FMemory::Malloc(SIZE_T Count, uint32 Alignment /*= DEFAULT_ALIGNMENT*/)
+	{
+		void* Alloc = nullptr;
+		if (nullptr == GMalloc)
+		{
+			Alloc = MallocExternal(Count, Alignment);
+		}
+		else
+		{
+
+		}
+		return Alloc;
+	}
+
 	void* FMemory::Realloc(void* Original, SIZE_T Count, uint32 Alignment /*= DEFAULT_ALIGNMENT*/)
 	{
 		void* Ptr = nullptr;
@@ -51,6 +65,15 @@ namespace WL
 	void FMemory::GCreateMalloc()
 	{
 		static int ThreadSafeCreationResult = FMemory_GCreateMalloc_ThreadUnsafe();
+	}
+
+	void* FMemory::MallocExternal(SIZE_T Count, uint32 Alignment /*= DEFAULT_ALIGNMENT*/)
+	{
+		if (nullptr == GMalloc)
+		{
+			GCreateMalloc();
+		}
+		return GMalloc->Malloc(Count, Alignment);
 	}
 
 }

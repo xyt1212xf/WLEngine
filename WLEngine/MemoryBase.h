@@ -27,6 +27,21 @@ namespace WL
 	class FMalloc : public FUseSystemMallocForNew
 	{
 	public:
+		virtual void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT) = 0;
+
+		virtual void* TryMalloc(SIZE_T Count, uint32 Alignment);
+
+		virtual void* Realloc(void* Ptr, SIZE_T NewSize, uint32 Alignment) = 0;
+
+		virtual void Free(void* Ptr) = 0;
+
+		virtual void* TryRealloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+
+		virtual bool GetAllocationSize(void* Original, SIZE_T& SizeOut)
+		{
+			return false;
+		}
+
 		virtual SIZE_T QuantizeSize(SIZE_T Count, uint32 Alignment)
 		{
 			return Count; // Default implementation has no way of determining this

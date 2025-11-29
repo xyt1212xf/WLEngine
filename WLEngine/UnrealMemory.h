@@ -22,10 +22,12 @@ namespace WL
 
 		static SIZE_T QuantizeSize(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
+		static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
 	private:
 		static void GCreateMalloc();
+		static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 	};
 
 

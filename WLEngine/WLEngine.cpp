@@ -7,6 +7,7 @@
 #include "BehaviorTree.h"
 #include "GameplayHeader.h"
 #include "GameplayTagsManager.h"
+#include "UnrealMemory.h"
 
 #ifdef TERRAIN_EDIT
 #include "VoxelTerrainEditor.h"
@@ -46,7 +47,7 @@ namespace WL
 	bool CEngine::initialize()
 	{
 		CMemoryMgr::initialize();
-
+		FMemory::Malloc(65535, 4);
 		mbRunning = true;
 		mpThreadPools = WL_NEW(CThreadPool, Thread);
 		bool bValue = false;
