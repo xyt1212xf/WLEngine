@@ -74,7 +74,20 @@ namespace WL
 		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
 	)
 	{
-		return ReallocGrow1_DoAlloc_Impl<Flags, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
+		auto xx = typeid(AllocatorInstanceType).name();
+		int x = Flags;
+		return ReallocGrow1_DoAlloc_Impl<1, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
+	}
+
+	template <uint32 Flags, typename AllocatorInstanceType>
+	FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc(
+		uint32                                       ElementSize,
+		uint32                                       ElementAlignment,
+		AllocatorInstanceType& AllocatorInstance,
+		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
+	)
+	{
+		return ReallocGrow1_DoAlloc_Impl<Flags, AllocatorInstanceType>(ElementSize, ElementAlignment, AllocatorInstance, ArrayMax);
 	}
 
 	// Flags are passed as a uint32 to minimize PDB impact of these generated symbols.
@@ -87,6 +100,7 @@ namespace WL
 	[[nodiscard]] constexpr uint32 GetAllocatorFlags()
 	{
 		uint32 Result = 0;
+	//	auto xx = typeid(AllocatorType).name();
 		if constexpr (TAllocatorTraits<AllocatorType>::SupportsElementAlignment)
 		{
 			Result |= 1;
@@ -130,6 +144,7 @@ namespace WL
 		template <typename... ArgsType>
 		FORCEINLINE SizeType Emplace(ArgsType&&... Args)
 		{
+			auto xx = typeid(AllocatorType).name();
 			if (ArrayNum == ArrayMax)
 			{
 				if constexpr (sizeof(ElementType) <= 255 && alignof(ElementType) <= 255) // -V590 
@@ -138,7 +153,7 @@ namespace WL
 				}
 				else
 				{
-				//	ArrayNum = ReallocGrow1_DoAlloc<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType), alignof(ElementType), AllocatorInstance, ArrayMax);
+					ArrayNum = ReallocGrow1_DoAlloc<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType), alignof(ElementType), AllocatorInstance, ArrayMax);
 				}
 			}
 			SizeType OldArrayNum = ArrayNum;

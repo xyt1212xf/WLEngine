@@ -270,6 +270,7 @@
     <ClInclude Include="LowLevelDefaultAllocator.h" />
     <ClInclude Include="LuaBind.h" />
     <ClInclude Include="MallocAnsi.h" />
+    <ClInclude Include="MallocMimalloc.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialBase.h" />
     <ClInclude Include="MaterialInstance.h" />
@@ -460,6 +461,7 @@
     <ClCompile Include="LowLevelDefaultAllocator.cpp" />
     <ClCompile Include="LuaBind.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
+    <ClCompile Include="MallocMimalloc.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialBase.cpp" />
     <ClCompile Include="MaterialInstance.cpp" />
@@ -545,6 +547,7 @@
     <ClCompile Include="VoxelTerrainBuild.cpp" />
     <ClCompile Include="VoxelTerrainEditor.cpp" />
     <ClCompile Include="Win.cpp" />
+    <ClCompile Include="WindowsPlatformMemory.cpp" />
     <ClCompile Include="WLEngine.cpp" />
   </ItemGroup>
   <ItemGroup>

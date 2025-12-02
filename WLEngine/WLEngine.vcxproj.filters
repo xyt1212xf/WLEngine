@@ -749,6 +749,9 @@
     <ClInclude Include="MallocAnsi.h">
       <Filter>Core\Memory\Unreal</Filter>
     </ClInclude>
+    <ClInclude Include="MallocMimalloc.h">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1271,6 +1274,12 @@
       <Filter>Core\Memory\Unreal</Filter>
     </ClCompile>
     <ClCompile Include="MemoryBase.cpp">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClCompile>
+    <ClCompile Include="MallocMimalloc.cpp">
+      <Filter>Core\Memory\Unreal</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsPlatformMemory.cpp">
       <Filter>Core\Memory\Unreal</Filter>
     </ClCompile>
   </ItemGroup>

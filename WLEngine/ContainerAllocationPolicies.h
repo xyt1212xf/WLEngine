@@ -211,6 +211,31 @@ namespace WL
 #endif
 				}
 			}
+			void ResizeAllocation(SizeType CurrentNum, SizeType NewMax, SIZE_T NumBytesPerElement, uint32 AlignmentOfElement)
+			{
+				// Avoid calling FMemory::Realloc( nullptr, 0 ) as ANSI C mandates returning a valid pointer which is not what we want.
+				if (Data || NewMax)
+				{
+					static_assert(sizeof(SizeType) <= sizeof(SIZE_T), "SIZE_T is expected to handle all possible sizes");
+
+					// Check for under/overflow
+					bool bInvalidResize = NewMax < 0 || NumBytesPerElement < 1 || NumBytesPerElement >(SIZE_T)MAX_int32;
+					if constexpr (sizeof(SizeType) == sizeof(SIZE_T))
+					{
+						bInvalidResize = bInvalidResize || ((SIZE_T)(USizeType)NewMax > (SIZE_T)TNumericLimits<SizeType>::Max() / NumBytesPerElement);
+					}
+					if (UNLIKELY(bInvalidResize))
+					{
+						OnInvalidSizedHeapAllocatorNum(IndexSize, NewMax, NumBytesPerElement);
+					}
+
+#if UE_ENABLE_ARRAY_SLACK_TRACKING
+					Data = (FScriptContainerElement*)FArraySlackTrackingHeader::Realloc(Data, NewMax, NumBytesPerElement, AlignmentOfElement > alignof(FArraySlackTrackingHeader) ? AlignmentOfElement : alignof(FArraySlackTrackingHeader));
+#else
+					Data = (FScriptContainerElement*)BaseMallocType::Realloc(Data, NewMax * NumBytesPerElement, AlignmentOfElement);
+#endif
+				}
+			}
 			SizeType GetInitialCapacity() const
 			{
 				return 0;

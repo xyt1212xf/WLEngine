@@ -1,10 +1,11 @@
 #include "MemoryBase.h"
+#include "UnrealMemory.h"
+
 namespace WL
 {
 	void* FUseSystemMallocForNew::operator new(size_t Size)
 	{
-	//	return FMemory::SystemMalloc(Size);
-		return nullptr;
+		return FMemory::SystemMalloc(Size);
 	}
 
 	void FUseSystemMallocForNew::operator delete(void* Ptr)

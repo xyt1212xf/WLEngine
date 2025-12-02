@@ -25,6 +25,19 @@ namespace WL
 		static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
+		FORCEINLINE static void* SystemMalloc(SIZE_T Size)
+		{
+			void* Ptr = ::malloc(Size);
+			//MemoryTrace_Alloc(uint64(Ptr), Size, 0, EMemoryTraceRootHeap::SystemMemory);
+			return Ptr;
+		}
+
+		FORCEINLINE static  void SystemFree(void* Ptr)
+		{
+			//MemoryTrace_Free(uint64(Ptr), EMemoryTraceRootHeap::SystemMemory);
+			::free(Ptr);
+		}
+
 	private:
 		static void GCreateMalloc();
 		static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);

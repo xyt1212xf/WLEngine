@@ -1,4 +1,6 @@
 #include "UnrealMemory.h"
+#include "WindowsPlatformMemory.h"
+
 namespace WL
 {
 	FMalloc* GMalloc = nullptr;
@@ -6,7 +8,7 @@ namespace WL
 	/** Helper function called on first allocation to create and initialize GMalloc */
 	static int FMemory_GCreateMalloc_ThreadUnsafe()
 	{
-		GMalloc = nullptr;
+		GMalloc = FPlatformMemory::BaseAllocator();
 		return 0;
 	}
 

@@ -1,7 +1,11 @@
 #pragma once
+#include <windows.h>
 #include "GenericPlatformMemory.h"
 namespace WL
 {
+	LPVOID __stdcall MiMallocVirtualAlloc(LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect);
+
+
 	/**
 	* Windows implementation of the memory OS functions
 	**/
@@ -21,7 +25,10 @@ namespace WL
 			MCR_PhysicalLLM, // total physical memory displayed in the LLM stats (on consoles CPU + GPU)
 			MCR_MAX
 		};
+		static void MiMallocInit();
 	};
+
+
 
 	typedef FWindowsPlatformMemory FPlatformMemory;
 }

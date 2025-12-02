@@ -1,5 +1,5 @@
 #include "GenericPlatformMemory.h"
-#include "MallocAnsi.h"
+#include "MallocMimalloc.h"
 
 namespace WL
 {
@@ -10,9 +10,15 @@ namespace WL
 		{
 			return Instance;
 		}
-
-		Instance = new FMallocAnsi();
+		AllocatorToUse = EMemoryAllocatorToUse::Mimalloc;
+		Instance = new FMallocMimalloc();
 
 		return Instance;
 	}
+
+	void FGenericPlatformMemory::OnOutOfMemory(uint64 Size, uint32 Alignment)
+	{
+
+	}
+
 }
