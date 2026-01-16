@@ -16,11 +16,35 @@ namespace TinyL
 		OP_PRINT,  // print R[a]
 		OP_HALT
 	};
-	using Number = double;
 	struct Instr 
 	{
 		Op op; 
 		uint8_t a, b, c; 
 		int16_t off; 
+	};
+
+	struct Variable
+	{
+		union 
+		{
+			double  d;
+			float   f;
+			int32_t i;
+			int16_t s;
+			int8_t  c;
+			uint32_t ui;
+			uint16_t us;
+			uint8_t  uc;
+		};
+		uint8_t type = 0;
+		Variable(double value)
+		: d(value)
+		{
+
+		}
+		Variable()
+		: d(std::numeric_limits<double>::quiet_NaN())
+		{
+		}
 	};
 }

@@ -27,7 +27,7 @@ namespace TinyL
 	struct Token 
 	{
 		TkType type; 
-		Number num;
+		Variable num;
 		std::string s; 
 	};
 	class CLexer

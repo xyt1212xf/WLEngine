@@ -21,7 +21,7 @@ namespace TinyL
 		{
 			return code; 
 		}
-		std::vector<Number> getKst()const 
+		std::vector<Variable> getKst()const
 		{
 			return kst; 
 		}
@@ -50,7 +50,7 @@ namespace TinyL
 			} 
 			nxt();
 		}
-		uint8_t addK(Number v) 
+		uint8_t addK(Variable v)
 		{
 			kst.push_back(v); 
 			return kst.size() - 1; 
@@ -69,7 +69,7 @@ namespace TinyL
 		CLexer& L; 
 		Token tk;
 		std::vector<Instr> code;
-		std::vector<Number> kst;
+		std::vector<Variable> kst;
 		std::map<std::string, uint8_t> vars;  // 全局变量表
 		uint8_t R = 0;			              // 下一个可用寄存器
 	};

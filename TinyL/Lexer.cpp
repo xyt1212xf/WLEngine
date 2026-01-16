@@ -20,7 +20,7 @@ namespace TinyL
 		}
 		if (i >= src.size())
 		{
-			return { TK_EOF,0, ""};
+			return { TK_EOF, Variable(), ""};
 		}
 		if (isdigit(src[i])) 
 		{
@@ -29,7 +29,7 @@ namespace TinyL
 			{
 				++i;
 			}
-			return { TK_NUMBER, std::stod(src.substr(st,i - st)), ""};
+			return { TK_NUMBER, Variable(std::stod(src.substr(st,i - st))), ""};
 		}
 		if (isalpha(src[i])) 
 		{
@@ -39,25 +39,25 @@ namespace TinyL
 				++i;
 			}
 			std::string w = src.substr(st, i - st);
-			if (w == "print") return { TK_PRINT,0,w };
-			if (w == "while") return { TK_WHILE,0,w };
-			if (w == "do")    return { TK_DO,0,w };
-			if (w == "end")   return { TK_END,0,w };
-			return { TK_IDENT,0,w };
+			if (w == "print") return { TK_PRINT,Variable(),w};
+			if (w == "while") return { TK_WHILE,Variable(),w};
+			if (w == "do")    return { TK_DO,Variable(),w };
+			if (w == "end")   return { TK_END,Variable(),w };
+			return { TK_IDENT,Variable(),w };
 		}
 		char c = src[i++];
 		switch (c) 
 		{
-		case ';': return { TK_SEMI,0,""};
-		case '(': return { TK_LP,0,""};
-		case ')': return { TK_RP,0,""};
-		case '+': return { TK_PLUS,0,""};
-		case '-': return { TK_MINUS,0,""};
-		case '*': return { TK_STAR,0,""};
-		case '/': return { TK_SLASH,0,""};
-		case '<': return { TK_LT,0, ""};
-		case '=': return { TK_EQ,0, ""};
+		case ';': return { TK_SEMI,Variable(),""};
+		case '(': return { TK_LP,Variable(),""};
+		case ')': return { TK_RP,Variable(),""};
+		case '+': return { TK_PLUS,Variable(),""};
+		case '-': return { TK_MINUS,Variable(),""};
+		case '*': return { TK_STAR,Variable(),""};
+		case '/': return { TK_SLASH,Variable(),""};
+		case '<': return { TK_LT, Variable(), ""};
+		case '=': return { TK_EQ, Variable(), ""};
 		}
-		return { TK_ERROR,0, "" };
+		return { TK_ERROR, Variable(), "" };
 	}
 }

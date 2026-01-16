@@ -5,7 +5,7 @@ namespace TinyL
 {
 	struct VM 
 	{
-		VM(const std::vector<Instr>& c, const std::vector<Number>& k, uint8_t vn)
+		VM(const std::vector<Instr>& c, const std::vector<Variable>& k, uint8_t vn)
 		: code(c)
 		, kst(k) 
 		{
@@ -14,9 +14,9 @@ namespace TinyL
 		}
 		void run();
 
-		std::vector<Number> stack;
-		std::vector<Number> vars;
+		std::vector<Variable> stack;
+		std::vector<Variable> vars;
 		const std::vector<Instr>& code;
-		const std::vector<Number>& kst;
+		const std::vector<Variable>& kst;
 	};
 }

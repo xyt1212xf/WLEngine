@@ -26,22 +26,22 @@ namespace TinyL
 			break;
 			case OP_ADD:
 			{
-				stack[I.a] = stack[I.b] + stack[I.c];
+				stack[I.a].d = stack[I.b].d + stack[I.c].d;
 			}
 			break;
 			case OP_SUB:
 			{
-				stack[I.a] = stack[I.b] - stack[I.c];
+				stack[I.a].d = stack[I.b].d - stack[I.c].d;
 			}
 			break;
 			case OP_MUL:
 			{
-				stack[I.a] = stack[I.b] * stack[I.c];
+				stack[I.a].d = stack[I.b].d * stack[I.c].d;
 			}
 			break;
 			case OP_LT:
 			{
-				stack[I.a] = stack[I.b] < stack[I.c];
+				stack[I.a].d = stack[I.b].d < stack[I.c].d;
 			}
 			break;
 			case OP_JMP:
@@ -51,7 +51,7 @@ namespace TinyL
 			break;
 			case OP_JMPF:
 			{
-				if (stack[I.a] == 0)
+				if (stack[I.a].d == 0)
 				{
 					pc += I.off;
 				}
@@ -59,7 +59,7 @@ namespace TinyL
 			break;
 			case OP_PRINT:
 			{
-				std::cout << stack[I.a] << '\n';
+				std::cout << stack[I.a].d << '\n';
 			}
 			break;
 			case OP_HALT:
