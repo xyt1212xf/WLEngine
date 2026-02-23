@@ -13,7 +13,7 @@ namespace TinyL
 		{
 			while (tk.type != TK_EOF)
 			{
-				statement();
+				stmt();
 			}
 			emit(OP_HALT);
 		}
@@ -21,7 +21,7 @@ namespace TinyL
 		{
 			return code; 
 		}
-		std::vector<Variable> getKst()const
+		std::vector<Number> getKst()const
 		{
 			return kst; 
 		}
@@ -36,7 +36,7 @@ namespace TinyL
 		uint8_t term();
 
 		uint8_t factor(); 
-		void statement();
+		void stmt(); //statement的缩写
 		void nxt() 
 		{
 			tk = L.next();
@@ -50,14 +50,26 @@ namespace TinyL
 			} 
 			nxt();
 		}
-		uint8_t addK(Variable v)
+		uint8_t addK(Number v)
 		{
 			kst.push_back(v); 
-			return kst.size() - 1; 
+			return kst.size() - 1;
+		}
+		uint8_t addKStr(const std::string& s) 
+		{
+			/* 把字符串哈希成数字，偷懒用下标 */
+			static std::vector<std::string> pool;
+			auto it = std::find(pool.begin(), pool.end(), s);
+			if (it == pool.end())
+			{
+				pool.push_back(s); 
+				return pool.size() - 1; 
+			}
+			return it - pool.begin();
 		}
 		uint8_t reg() 
 		{
-			return R++; 
+			return nextReg++;
 		}
 
 		void emit(Op op, uint8_t a = 0, uint8_t b = 0, uint8_t c = 0, int16_t off = 0) 
@@ -68,9 +80,9 @@ namespace TinyL
 	private:
 		CLexer& L; 
 		Token tk;
-		std::vector<Instr> code;
-		std::vector<Variable> kst;
-		std::map<std::string, uint8_t> vars;  // 全局变量表
-		uint8_t R = 0;			              // 下一个可用寄存器
+		std::vector<Instr> code;          // 主函数字节码
+		std::vector<Number> kst;
+		std::map<std::string, uint8_t> vars;
+		uint8_t nextReg = 0;
 	};
 }

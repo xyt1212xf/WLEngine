@@ -1,29 +1,51 @@
-// TinyL.cpp : This file contains the 'main' function. Program execution begins and ends there.
+Ôªø// TinyL.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>
 #include "TinyL.h"
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
 
 int main()
 {
-	std::string src = R"(
-	n = 5;
-	i = 1;
-	while i < 10 do
-	  print i;
-	  i = i * 2;
-	end
-	)";
-	TinyL::CLexer L(src);
-	TinyL::CCompiler C(L);          // 1. ¥ ∑®+”Ô∑®∑÷Œˆ
-	C.compile();            // 2. …˙≥…◊÷Ω⁄¬Î °˙ C.code ±ªÃÓ∫√
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	const auto& opcodes = C.getCode();          // 3. ƒ√µΩ“˝”√
-	const auto& kpool = C.getKst();
-	uint8_t gvars = C.getVars();
+	int* p = new int[30];
+	p[0] = 1;
+	// ‚ùå UBÔºö‰∫∫‰∏∫ËØªÂèñ cookie
+	size_t n = *(reinterpret_cast<size_t*>(p) - 1);
 
-	TinyL::VM vm(opcodes, kpool, gvars);   // 4. ππ‘Ï VM
-	vm.run();                       // 5. ÷¥––
+	std::cout << "cookie says n = " << n << std::endl;
+
+	delete[] p;
+//
+//	std::cout << "end of main\n";
+//	return 0;
+//	std::string src = R"(
+//n = 5;
+//i = 1;
+//while i <= n do
+//  print i;
+//  i = i + 1;
+//end
+//
+//t = {x=10, y=20};
+//print t.x;
+//t.z = 30;
+//print t.z;
+//
+//function fact(k)
+//  if k <= 1 then return 1; end
+//  return k * fact(k - 1);
+//end
+//print fact(5);
+//)";
+// 	TinyL::CLexer L(src);
+// 	TinyL::CCompiler C(L);
+// 	C.compile();
+//	TinyL::VM vm(C.getCode(), C.getKst(), C.getVars());
+//	vm.run();
+	return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
