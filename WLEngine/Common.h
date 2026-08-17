@@ -159,4 +159,7 @@ namespace WL
 		CNoncopyable(const CNoncopyable&);
 		CNoncopyable& operator=(const CNoncopyable&);
 	};
+
+	using ObjectHandle = uint32_t;
+	constexpr ObjectHandle INVALID_HANDLE = 0xFFFFFFFF;
 }

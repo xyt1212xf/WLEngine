@@ -10,7 +10,6 @@ namespace WL
 		CObject* Parent = WL_NEW(CObject, Object)("Parent");
 		CGCObjectMgr::getSinglePtr()->AddToRoot(Parent);
 
-		// 建立引用链（模拟 UPROPERTY）
 		Parent->AddReference(Child);
 		Child->AddReference(GrandChild);
 
