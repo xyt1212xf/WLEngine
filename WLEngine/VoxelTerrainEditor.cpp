@@ -177,22 +177,22 @@ namespace WL
 
 					{
 						auto i = Foundation::changeToScreenCoordinate(vPos);
-						int x = 0;
+					//	int x = 0;
 
 					}
 					auto xy = Math::matrixMulVec3(mt, vPos);
-					float sx = pCamera->getViewSize().x * 0.5f;
-					float sy = pCamera->getViewSize().y * 0.5f;
+					//float sx = pCamera->getViewSize().x * 0.5f;
+					//float sy = pCamera->getViewSize().y * 0.5f;
 					{
-						float x = (xy.x / xy.z) + 0.5f;
-						float y = (xy.y / -xy.z) + 0.5f;
-						float z = 0;
+					//	float x = (xy.x / xy.z) + 0.5f;
+					//	float y = (xy.y / -xy.z) + 0.5f;
+					//	float z = 0;
 					}
 					float x = (xy.x / xy.z) * 0.5f + 0.5f ;
 					float y = (xy.y / xy.z) * 0.5f + 0.5f;
 					x = x * pCamera->getViewSize().x;
 					y = (1 - y) * pCamera->getViewSize().y;
-					float z = xy.y / xy.z;
+					//float z = xy.y / xy.z;
 				}
 			}
 			//e.bProcess = true;
@@ -590,7 +590,7 @@ namespace WL
 			}
 			std::vector<SVertexFormatVoxel> vertices;
 			std::vector<UINT16> indices;
-			int i = 0;
+			UINT16 i = 0;
 			for (auto item : pChunk->mDrawVertices)
 			{
 				vertices.push_back(item);

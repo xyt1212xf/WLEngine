@@ -5,18 +5,23 @@
 #include "TinyL.h"
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-
+#include <map>
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	std::map<int,int>aaa;
+	
+	for (auto& [k,v]:aaa)
+	{
+	}
 	int* p = new int[30];
 	p[0] = 1;
 	// ❌ UB：人为读取 cookie
 	size_t n = *(reinterpret_cast<size_t*>(p) - 1);
 
 	std::cout << "cookie says n = " << n << std::endl;
-
+	
 	delete[] p;
 //
 //	std::cout << "end of main\n";
