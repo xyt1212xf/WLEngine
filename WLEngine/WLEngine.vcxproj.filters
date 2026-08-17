@@ -752,6 +752,15 @@
     <ClInclude Include="MallocMimalloc.h">
       <Filter>Core\Memory\Unreal</Filter>
     </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GCObjectMgr.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Class.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1281,6 +1290,15 @@
     </ClCompile>
     <ClCompile Include="WindowsPlatformMemory.cpp">
       <Filter>Core\Memory\Unreal</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GCObjectMgr.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Class.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

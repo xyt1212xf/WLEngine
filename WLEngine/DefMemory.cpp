@@ -79,6 +79,7 @@ void free_internal(void* ptr)
 void* operator new(size_t size, WL::MemLabelRef label, int align, const char* file, int line)
 {
 	void* pData = malloc_internal(size, align, label, WL::kAllocateOptionNone, file, line);
+
 	return pData;
 }
 

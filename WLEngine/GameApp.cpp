@@ -6,6 +6,8 @@
 #include "Malloc.h"
 #include "TimerClock.h"
 #include "Array.h"
+#include "GCObjectMgr.h"
+#include "Object.h"
 namespace WL
 {
 	CGameApp::CGameApp()

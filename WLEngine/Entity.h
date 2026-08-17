@@ -1,6 +1,7 @@
 #pragma once
 #include "Refcount.h"
 #include "ComponentGroup.h"
+#include "Object.h"
 namespace WL
 {
 	enum EntityType
@@ -18,7 +19,7 @@ namespace WL
 	};
 	class CScene;
 	class CEntityFactory;
-	class WLENGINE_API CEntity : public SComponentGrounp, public CRefcount
+	class WLENGINE_API CEntity : public SComponentGrounp, public CObject
 	{
 		friend CScene;
 		friend CEntityFactory;

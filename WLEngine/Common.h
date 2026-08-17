@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <set>
 #include <vector>
 #include <list>
@@ -46,6 +47,8 @@
 #include "DefineType.h"
 #include "ClassType.h"
 #include "Export.h"
+#include "Class.h"
+
 
 #ifdef _MSC_VER          // MSVC
 #define __builtin_expect(EXP, C)  (EXP)

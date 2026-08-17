@@ -8,6 +8,7 @@
 #include "GameplayHeader.h"
 #include "GameplayTagsManager.h"
 #include "UnrealMemory.h"
+#include "GCObjectMgr.h"
 
 #ifdef TERRAIN_EDIT
 #include "VoxelTerrainEditor.h"
@@ -46,6 +47,7 @@ namespace WL
 
 	bool CEngine::initialize()
 	{
+		CGCObjectMgr::createInstance();
 		CMemoryMgr::initialize();
 		FMemory::Malloc(65535, 4);
 		mbRunning = true;
@@ -110,6 +112,7 @@ namespace WL
 		WL_DELETE(mpScene, Scene);
 		WL_DELETE(mpThreadPools, Thread);
 		CMemoryMgr::unInitialize();
+		CGCObjectMgr::destory();
 	}
 
 	bool CEngine::isRun()

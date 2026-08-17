@@ -184,6 +184,7 @@
     <ClInclude Include="CallBack.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CameraEntity.h" />
+    <ClInclude Include="Class.h" />
     <ClInclude Include="ClassType.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Common.h" />
@@ -246,6 +247,7 @@
     <ClInclude Include="GameplayTagContainer.h" />
     <ClInclude Include="GameplayTagNode.h" />
     <ClInclude Include="GameplayTagsManager.h" />
+    <ClInclude Include="GCObjectMgr.h" />
     <ClInclude Include="GenericPlatformMemory.h" />
     <ClInclude Include="GpuBuffer.h" />
     <ClInclude Include="GpuBufferBase.h" />
@@ -294,6 +296,7 @@
     <ClInclude Include="NoLightRendererPass.h" />
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="NumericLimits.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="OceanEntity.h" />
     <ClInclude Include="OceanModelInstance.h" />
     <ClInclude Include="OceanSimulator.h" />
@@ -391,6 +394,7 @@
     <ClCompile Include="CallBack.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CameraEntity.cpp" />
+    <ClCompile Include="Class.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentFactory.cpp" />
@@ -442,6 +446,7 @@
     <ClCompile Include="GameplayTagContainer.cpp" />
     <ClCompile Include="GameplayTagNode.cpp" />
     <ClCompile Include="GameplayTagsManager.cpp" />
+    <ClCompile Include="GCObjectMgr.cpp" />
     <ClCompile Include="GenericPlatformMemory.cpp" />
     <ClCompile Include="GpuBuffer.cpp" />
     <ClCompile Include="GpuBufferBase.cpp" />
@@ -481,6 +486,7 @@
     <ClCompile Include="Mutex.cpp" />
     <ClCompile Include="Name.cpp" />
     <ClCompile Include="NoLightRendererPass.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="OceanEntity.cpp" />
     <ClCompile Include="OceanModelInstance.cpp" />
     <ClCompile Include="OceanSimulator.cpp" />
