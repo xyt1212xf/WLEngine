@@ -2,9 +2,6 @@
 #include "TSingle.h"
 #include "Object.h"
 #include "Common.h"
-#include "DefMemory.h"
-//#include "AllocatorLabelNames.h"
-
 namespace WL
 {
 	enum EObjectFlags : int
@@ -28,6 +25,11 @@ namespace WL
 		void InsertObject(CObject* Obj);
 		
 		int CollectGarbage();
+
+	private:
+		void MarkRecursive(CObject* Obj);
+		void MarkPhase();
+		int SweepPhase();
 
 	private:
 		// 所有被管理的对象

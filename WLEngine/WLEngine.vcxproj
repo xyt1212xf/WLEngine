@@ -123,6 +123,7 @@
       <PreprocessToFile>false</PreprocessToFile>
       <AdditionalOptions>/Bt+ %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

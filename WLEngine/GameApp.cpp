@@ -56,6 +56,11 @@ namespace WL
 	{
 		TArray<int> a;
 		a.Push(3);
+
+		CScene* pTestScene = WL_NEW(CScene, Object);
+			
+		CGCObjectMgr::getSinglePtr()->CollectGarbage();
+
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 		while (msg.message != WM_QUIT)

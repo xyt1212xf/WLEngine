@@ -54,7 +54,7 @@ namespace WL
 		static const UINT32 kMagicValue = 0xDFA;
 		static const UINT32 kFooterSize = 4;
 		static const UINT8  kFooterValue = 0xFD;
-		UINT16 m_AllocatorIdentifier;
+		UINT32 m_AllocatorIdentifier;
 		UINT16 m_Magic : 12;
 	};
 #pragma pack(pop)

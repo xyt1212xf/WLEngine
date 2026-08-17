@@ -49,7 +49,7 @@ namespace WL
 		auto pBTree = CBehaviorTreeMgr::getBTree(szComponent);
 		if (pBTree.has_value())
 		{
-			addComponent(pBTree.value());
+			ComponentGroup.addComponent(pBTree.value());
 		}
 	}
 
@@ -134,7 +134,7 @@ namespace WL
 		}
 		if (mModelInstanceMap.size() == 0)
 		{
-			removeComponent<CCollision>();
+			GetCmpGround().removeComponent<CCollision>();
 		}
 	}
 
@@ -149,7 +149,7 @@ namespace WL
 		}
 		if (mModelInstanceMap.size() == 0)
 		{
-			removeComponent<CCollision>();
+			GetCmpGround().removeComponent<CCollision>();
 		}
 	}
 
@@ -162,7 +162,7 @@ namespace WL
 		auto pComponent = reinterpret_cast<CComponent*>(pScriptEntity);
 		if (!hasComponetByScript(pComponent->getComponentName()))
 		{
-			addComponent(pComponent);
+			ComponentGroup.addComponent(pComponent);
 		}
 	}
 
@@ -171,13 +171,13 @@ namespace WL
 		auto pComponent = reinterpret_cast<CComponent*>(pScriptEntity);
 		if(nullptr != pComponent)
 		{
-			removeComponent(pComponent);
+			ComponentGroup.removeComponent(pComponent);
 		}
 	}
 
 	bool CActorEntity::hasComponetByScript(const std::string& componentName)
 	{
-		return getComponetByName(componentName) != nullptr ? true : false;
+		return ComponentGroup.getComponetByName(componentName) != nullptr ? true : false;
 	}
 
 	void CActorEntity::test(int value)
@@ -285,7 +285,7 @@ namespace WL
 
 	void CActorEntity::_tick(UINT32 dt)
 	{
-		for (auto [k, value] : mComponent)
+		for (auto [k, value] : ComponentGroup.mComponent)
 		{
 			value->tick(dt);
 		}

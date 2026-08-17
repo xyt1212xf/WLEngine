@@ -43,7 +43,7 @@ namespace WL
 		if (nullptr != pModel)
 		{
 			pEntity->addModel(pModel);
-			pEntity->addComponent<CCollision>();
+			pEntity->GetCmpGround().addComponent<CCollision>();
 			return true;
 		}
 		else
@@ -63,7 +63,7 @@ namespace WL
 		if (nullptr != pModel)
 		{
 			pEntity->addModel(pModel, 0);
-			pEntity->removeComponent<CCollision>();
+			pEntity->GetCmpGround().removeComponent<CCollision>();
 			return true;
 		}
 		else
@@ -96,7 +96,7 @@ namespace WL
 		if (nullptr != pModel)
 		{
 			pEntity->addModel(pModel, 0);
-			pEntity->removeComponent<CCollision>();
+			pEntity->GetCmpGround().removeComponent<CCollision>();
 			return true;
 		}
 		else
@@ -125,7 +125,7 @@ namespace WL
 		if (nullptr != pModel)
 		{
 			pEntity->addModel(pModel, 0);
-			pEntity->removeComponent<CCollision>();
+			pEntity->GetCmpGround().removeComponent<CCollision>();
 			return true;
 		}
 		else

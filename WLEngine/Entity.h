@@ -19,7 +19,7 @@ namespace WL
 	};
 	class CScene;
 	class CEntityFactory;
-	class WLENGINE_API CEntity : public SComponentGrounp, public CObject
+	class WLENGINE_API CEntity : public CObject
 	{
 		friend CScene;
 		friend CEntityFactory;
@@ -41,11 +41,13 @@ namespace WL
 		bool leaveScene(CScene* pScene);
 		CEntity& operator = (CEntity&& entity)noexcept;
 		CEntity& operator = (const CEntity& entity);
+		SComponentGrounp& GetCmpGround() ;
 
 	protected:
 		virtual void _tick(UINT32 dt);
 
 	protected:
+		SComponentGrounp ComponentGroup;
 		std::string mszName = "Entity";
 		EntityType	mType = Entity;
 		UINT32		mID = 0;

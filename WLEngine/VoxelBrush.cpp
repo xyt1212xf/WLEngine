@@ -34,7 +34,7 @@ namespace WL
 		Vec3F vPos = { 0, 0, 0 };
 		mpBrushEntity = GEngine->createEntity<CActorEntity>(EntityType::Actor);
 		mpBrushEntity->addModel("Resource/Model/cubeBrush.md", 0);
-		mpBrushEntity->addComponent<CCollision>();
+		mpBrushEntity->GetCmpGround().addComponent<CCollision>();
 		mpBrushEntity->setPosition(vPos);
 		mpBrushEntity->setEntityName("brushEntity");
 		auto pModelInstance = mpBrushEntity->getModelInstance();

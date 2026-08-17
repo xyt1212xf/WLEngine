@@ -8,6 +8,8 @@
 #include "StackAllocator.h"
 #include "BucketAllocator.h"
 #include "DefaultAllocator.h"
+#include "GCObjectMgr.h"
+#include "Object.h"
 
 //typedef DualThreadAllocator< DynamicHeapAllocator< LowLevelAllocator > > MainThreadAllocator;
 typedef WL::TLSAllocator<WL::CStackAllocator> TempTLSAllocator;
@@ -79,7 +81,10 @@ void free_internal(void* ptr)
 void* operator new(size_t size, WL::MemLabelRef label, int align, const char* file, int line)
 {
 	void* pData = malloc_internal(size, align, label, WL::kAllocateOptionNone, file, line);
-
+	if (label.identifier == WL::kMemObjectId)
+	{
+		WL::CGCObjectMgr::getSinglePtr()->InsertObject(static_cast<WL::CObject*>(pData));
+	}
 	return pData;
 }
 

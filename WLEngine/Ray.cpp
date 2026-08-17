@@ -193,7 +193,7 @@ namespace WL
 	{
 		if (nullptr != pActorEntity)
 		{
-			auto pComponet = pActorEntity->getComponent<CCollision>();
+			auto pComponet = pActorEntity->GetCmpGround().getComponent<CCollision>();
 			if (nullptr != pComponet)
 			{
 				const SMatrix44& matView = *mpCameraEntity->getViewMatrixPtr();

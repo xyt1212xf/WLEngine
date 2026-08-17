@@ -80,6 +80,11 @@ namespace WL
 		return pScene->removeEntity(this);
 	}
 
+	SComponentGrounp& CEntity::GetCmpGround() 
+	{
+		return ComponentGroup;
+	}
+
 	CEntity& CEntity::operator=(const CEntity& entity)
 	{
 		mpScene = entity.mpScene;
