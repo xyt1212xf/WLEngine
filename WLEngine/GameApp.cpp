@@ -6,8 +6,10 @@
 #include "Malloc.h"
 #include "TimerClock.h"
 #include "Array.h"
-#include "GCObjectMgr.h"
-#include "Object.h"
+
+#ifdef _DEBUG
+#include "TestGameFunc.h"
+#endif
 namespace WL
 {
 	CGameApp::CGameApp()
@@ -57,10 +59,11 @@ namespace WL
 		TArray<int> a;
 		a.Push(3);
 
-		CScene* pTestScene = WL_NEW(CScene, Object);
-			
-		CGCObjectMgr::getSinglePtr()->CollectGarbage();
+#ifdef _DEBUG
+	
+		GCTest();
 
+#endif
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 		while (msg.message != WM_QUIT)

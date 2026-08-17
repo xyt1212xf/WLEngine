@@ -340,6 +340,7 @@
     <ClInclude Include="SurfaceView.h" />
     <ClInclude Include="SurfaceViewBase.h" />
     <ClInclude Include="TerrainEntity.h" />
+    <ClInclude Include="TestGameFunc.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureArray.h" />
     <ClInclude Include="TextureBase.h" />
@@ -528,6 +529,7 @@
     <ClCompile Include="SurfaceView.cpp" />
     <ClCompile Include="SurfaceViewBase.cpp" />
     <ClCompile Include="TerrainEntity.cpp" />
+    <ClCompile Include="TestGameFunc.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureArray.cpp" />
     <ClCompile Include="TextureBase.cpp" />

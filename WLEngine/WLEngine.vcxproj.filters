@@ -123,6 +123,9 @@
     <Filter Include="Core\Memory\Unreal">
       <UniqueIdentifier>{58f6bc89-c14d-41f4-89e9-3090c83199b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestGameUnit">
+      <UniqueIdentifier>{896796b4-9a6b-4fd6-8554-7af89182b483}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -761,6 +764,9 @@
     <ClInclude Include="Class.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="TestGameFunc.h">
+      <Filter>TestGameUnit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1299,6 +1305,9 @@
     </ClCompile>
     <ClCompile Include="Class.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGameFunc.cpp">
+      <Filter>TestGameUnit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
