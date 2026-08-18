@@ -1,4 +1,6 @@
 #include "GCObjectMgr.h"
+#include "Object.h"
+#include "DefMemory.h"
 
 namespace WL
 {

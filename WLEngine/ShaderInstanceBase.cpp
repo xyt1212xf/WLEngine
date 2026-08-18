@@ -1,4 +1,5 @@
 #include "ShaderInstanceBase.h"
+#include "DefMemory.h"
 namespace WL
 {
 

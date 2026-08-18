@@ -1,5 +1,6 @@
 #pragma once
 #include "AllocatorLabels.h"
+#include "Object.h"
 
 //extern void* operator new (size_t size, WL::MemLabelRef label, int align, const char* areaName, const char* objectName, const char* file, int line);
 extern void* operator new (size_t size, WL::MemLabelRef label, int align, const char* file, int line);
@@ -28,6 +29,8 @@ extern void* realloc_internal(void* ptr, size_t size, int align, WL::MemLabelRef
 extern void free_internal(void* ptr);
 extern void  free_alloc_internal(void* ptr, WL::MemLabelRef label);
 
+
+
 #define WL_MALLOC(label, size)  malloc_internal(size, kDefaultMemoryAlignment, label, kAllocateOptionNone, __FILE__, __LINE__)
 #define WL_MALLOC_NULL(label, size)                 malloc_internal(size, kDefaultMemoryAlignment, label, kAllocateOptionReturnNullIfOutOfMemory, __FILE__, __LINE__)
 #define WL_MALLOC_ALIGNED(label, size, align)       malloc_internal(size, align, label, kAllocateOptionNone, __FILE__, __LINE__)
@@ -42,16 +45,6 @@ extern void  free_alloc_internal(void* ptr, WL::MemLabelRef label);
 #define WL_FREE(label, ptr)                         free_alloc_internal(ptr, label)
 
 
-template<typename T>
-INLINE void delete_internal(T* ptr, WL::MemLabelRef label)
-{
-	if (nullptr != ptr)
-	{
-		ptr->~T();
-	}
-	WL_FREE(label, (void*)ptr);
-}
-
 #define HEAP_NEW(cls) new (getPreallocatedMemory(sizeof(cls))) cls
 #define HEAP_DELETE(obj, cls) obj->~cls(); obj = nullptr;
 
@@ -64,4 +57,24 @@ INLINE void delete_internal(T* ptr, WL::MemLabelRef label)
 
 #define WL_NEW_ALIGNED(type, label, align) new (label, align, __FILE__, __LINE__) type
 
+
+template<typename T>
+INLINE void delete_internal(T* ptr, WL::MemLabelRef label)
+{
+	if (nullptr != ptr)
+	{
+		if (label.identifier == WL::kMemObjectId)
+		{
+			void* rawPtr = reinterpret_cast<char*>(ptr) + sizeof(WL::ObjectHeader);
+			WL::CObject* pObject = reinterpret_cast<WL::CObject*>(rawPtr);
+			pObject->~CObject();
+			WL_FREE(label, ptr);
+		}
+		else
+		{
+			ptr->~T();
+		}
+		WL_FREE(label, (void*)ptr);
+	}
+}
 

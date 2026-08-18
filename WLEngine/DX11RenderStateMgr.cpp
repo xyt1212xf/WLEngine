@@ -1,4 +1,5 @@
 #include "DX11RenderStateMgr.h"
+#include "DefMemory.h"
 namespace WL
 {
 #define MAX_DEPTH_STENCIL_MODES 9

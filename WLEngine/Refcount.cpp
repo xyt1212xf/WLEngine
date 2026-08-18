@@ -1,4 +1,5 @@
 #include "Refcount.h"
+#include "MemoryMgr.h"
 namespace WL
 {
 	CRefcount::CRefcount()
