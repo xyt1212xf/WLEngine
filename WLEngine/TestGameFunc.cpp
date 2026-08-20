@@ -12,8 +12,10 @@ namespace WL
 		CObject* B = NewObject<CObject>("B");
 		CObject* C = NewObject<CObject>("C");
 		CObject* D = NewObject<CObject>("D");
-		CG->AddToRoot(B);
-		CG->AddReference(B, D);
-		CG->CollectGarbage();
+		GC->AddToRoot(B);
+		GC->AddReference(B, D);
+		GC->CollectGarbage();
+	//	GC->RemoveFromRoot(B);
+	//	GC->CollectGarbage();
 	}
 }

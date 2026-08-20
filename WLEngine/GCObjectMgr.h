@@ -68,32 +68,32 @@ namespace WL
 		static ObjectHandle NextHandle;
 	};
 
-	extern CGCObjectMgr* CG;
+	extern CGCObjectMgr* GC;
 	template<typename T>
 	T* NewObject(const std::string& Name)
 	{
 		T* Object = nullptr;
-		if (CG != nullptr)
+		if (GC != nullptr)
 		{
 			UINT32 _ObjectSize = sizeof(T);
-			if (CG->PoolUsed + ObjectHeadSize + _ObjectSize > CG->PoolCapacity)
+			if (GC->PoolUsed + ObjectHeadSize + _ObjectSize > GC->PoolCapacity)
 			{
-				CG->CollectGarbage();
-				WL_FREE(MemLabelRef(kMemObjectId), CG->MemoryPool);
-				CG->MemoryPool = reinterpret_cast<char*>(WL_MALLOC(MemLabelRef(kMemObjectId), CG->PoolCapacity * 2));
-				CG->PoolCapacity *= 2;
+				GC->CollectGarbage();
+				WL_FREE(MemLabelRef(kMemObjectId), GC->MemoryPool);
+				GC->MemoryPool = reinterpret_cast<char*>(WL_MALLOC(MemLabelRef(kMemObjectId), GC->PoolCapacity * 2));
+				GC->PoolCapacity *= 2;
 			}
 		
-			size_t Offset = CG->PoolUsed;
-			CG->PoolUsed += ObjectHeadSize + _ObjectSize;
-			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(CG->MemoryPool + Offset);
+			size_t Offset = GC->PoolUsed;
+			GC->PoolUsed += ObjectHeadSize + _ObjectSize;
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(GC->MemoryPool + Offset);
 			memset(Header, 0, ObjectHeadSize);
 			Header->SelfHandle = CGCObjectMgr::NextHandle++;
 			strncpy_s(Header->Name, Name.c_str(), sizeof(Header->Name) - 1);
 			Header->ObjectSize = _ObjectSize;
-			CG->HandleToOffset[Header->SelfHandle] = Offset;
-			CG->AliveHandles.insert(Header->SelfHandle);
-			Object = new (CG->MemoryPool + Offset + ObjectHeadSize)T(Name);
+			GC->HandleToOffset[Header->SelfHandle] = Offset;
+			GC->AliveHandles.insert(Header->SelfHandle);
+			Object = new (GC->MemoryPool + Offset + ObjectHeadSize)T(Name);
 		}
 		return Object;
 	}

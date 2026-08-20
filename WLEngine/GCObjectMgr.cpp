@@ -5,10 +5,10 @@
 namespace WL
 {
 	ObjectHandle CGCObjectMgr::NextHandle = 0;
-	CGCObjectMgr* CG = nullptr;
+	CGCObjectMgr* GC = nullptr;
 	CGCObjectMgr::CGCObjectMgr()
 	{
-		CG = this;
+		GC = this;
 		MemoryPool = reinterpret_cast<char*>(WL_MALLOC(MemLabelRef(kMemObjectId), PoolCapacity * 2));
 	}
 
@@ -101,7 +101,7 @@ namespace WL
 
 	void CGCObjectMgr::MarkPhase() 
 	{
-		// 1. 先清除所有对象的标记
+		// 先清除所有对象的标记
 		for (auto& [Handle, Offset] : HandleToOffset) 
 		{
 			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + Offset);
@@ -128,30 +128,26 @@ namespace WL
 		{
 			SortedHandles.emplace_back(Handle);
 		}
-		std::sort(SortedHandles.begin(), SortedHandles.end());
+		//std::sort(SortedHandles.begin(), SortedHandles.end());
 		for (ObjectHandle Handle : SortedHandles) 
 		{
-			FObjectHeader* Header = GetHeader(Handle);
-			if (Header && Header->bMarked) 
+			if (FObjectHeader* Header = GetHeader(Handle))
 			{
-				// 存活对象：记录移动计划
-				MovePlan.emplace_back(HandleToOffset[Handle], NewOffset);
-				HandleToNewRowIndex[Handle] = NewRowIndex++;
-				NewOffset += Header->ObjectSize + ObjectHeadSize;
-			}
-			else 
-			{
-				// 死亡对象：清理
-				if (Header) 
+				if (Header->bMarked)
 				{
-					if (Header->SelfHandle != INVALID_HANDLE)
-					{
-						RefTable.FreeRow(Header->SelfHandle);
-					}
+					// 存活对象：记录移动计划
+					MovePlan.emplace_back(HandleToOffset[Handle], NewOffset);
+					HandleToNewRowIndex[Handle] = NewRowIndex++;
+					NewOffset += Header->ObjectSize + ObjectHeadSize;
 				}
-				CObject* Obj = reinterpret_cast<CObject*>(MemoryPool + HandleToOffset[Handle] + ObjectHeadSize);
-				Obj->~CObject();
-				AliveHandles.erase(Handle);
+				else
+				{
+					// 死亡对象：清理
+					RefTable.FreeRow(Header->SelfHandle);	
+					CObject* Obj = reinterpret_cast<CObject*>(MemoryPool + HandleToOffset[Handle] + ObjectHeadSize);
+					Obj->~CObject();
+					AliveHandles.erase(Handle);
+				}
 			}
 		}
 
@@ -188,8 +184,16 @@ namespace WL
 
 	void CReferenceTable::FreeRow(UINT32 RowIndex)
 	{
-		References[RowIndex].clear();
-		References[RowIndex].shrink_to_fit();
+		References.erase(RowIndex);
+#if 0
+		if (auto iter = References.find(RowIndex); iter != References.end())
+		{
+			auto& vec = iter->second; 
+			vec.clear();
+			vec.shrink_to_fit();
+			decltype(it->second)().swap(it->second); 
+		}
+#endif
 	}
 
 
@@ -221,32 +225,29 @@ namespace WL
 									const std::unordered_map<ObjectHandle, size_t>& HandleToNewRowIndex,
 									const std::function<UINT32(ObjectHandle)>& GetOldIndexFunc)
 	{
-		if (References.size() == 0)
-		{
-			return;
-		}
 		std::unordered_map<UINT32, std::vector<ObjectHandle>> NewReferences;
+		NewReferences.reserve(HandleToNewRowIndex.size());
 		// 按新索引顺序重建引用表
 		for (const auto& [Handle, NewIndex] : HandleToNewRowIndex) 
 		{
 			UINT32 OldIndex = GetOldIndexFunc(Handle);  
-			auto& OldRefs = References[OldIndex];
-
-			std::vector<ObjectHandle> FilteredRefs;
-			for (ObjectHandle Ref : OldRefs) 
+			if (auto iter = References.find(OldIndex); iter != References.end())
 			{
-				// 只保留指向存活对象的引用
-				if (AliveObjects.count(Ref)) 
+				std::vector<ObjectHandle> FilteredRefs;
+				for (ObjectHandle Ref : iter->second)
 				{
-					FilteredRefs.emplace_back(Ref);
+					// 只保留指向存活对象的引用
+					if (AliveObjects.count(Ref))
+					{
+						FilteredRefs.emplace_back(Ref);
+					}
 				}
+				if (!FilteredRefs.empty())
+				{
+					std::swap(NewReferences[NewIndex], FilteredRefs);
+				}
+			
 			}
-
-			if (NewIndex >= NewReferences.size()) 
-			{
-				NewReferences[NewIndex].resize(NewIndex + 1);
-			}
-			NewReferences[NewIndex] = std::move(FilteredRefs);
 		}
 
 		References = std::move(NewReferences);
