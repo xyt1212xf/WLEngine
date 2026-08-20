@@ -5,8 +5,9 @@ namespace WL
 {
 	struct ObjectHeader 
 	{
-		ObjectHandle	SelfHandle;
-		UINT32			ReferenceTableIndex; // 指向全局引用表的索引
+		ObjectHandle	SelfHandle = INVALID_HANDLE;
+		UINT32			ReferenceTableIndex = INVALID_HANDLE; // 指向全局引用表的索引
+		UINT32			ObjectSize = 0;
 		char			Name[32];
 		bool			bMarked = false;
 	};
@@ -26,4 +27,5 @@ namespace WL
 		bool bMarked = false;     
 		std::vector<CObject*> References; 
 	};
+	inline INT32 ObjectHeadSize = sizeof(ObjectHeader);
 }

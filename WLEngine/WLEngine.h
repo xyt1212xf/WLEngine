@@ -110,13 +110,13 @@ namespace WL
 		mpThreadPools->enqueueDetach(std::forward<F>(f), std::forward<Args>(args)...);
 #endif
 	}
-	template< typename T >
-	T* NewObject()
-	{
-		T* TObject = WL_NEW(T, Object);
-		CGCObjectMgr::getSinglePtr()->InsertObject(TObject);
-		return TObject;
-	}
+	//template< typename T >
+	//T* NewObject()
+	//{
+	//	T* TObject = WL_NEW(T, Object);
+	//	CGCObjectMgr::getSinglePtr()->InsertObject(TObject);
+	//	return TObject;
+	//}
 }
 
 

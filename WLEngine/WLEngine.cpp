@@ -47,7 +47,6 @@ namespace WL
 
 	bool CEngine::initialize()
 	{
-		CGCObjectMgr::createInstance();
 		CMemoryMgr::initialize();
 		FMemory::Malloc(65535, 4);
 		mbRunning = true;
@@ -68,6 +67,7 @@ namespace WL
 				  CTimerEngine::initialize() &&
 				  CFontEngine::initialize();
 
+		CGCObjectMgr::createInstance();
 		
 		commitCommand(commandType::RecoverDraw);
 		registerController(WL_NEW(CSceneController, Controller)(mpScene), 1);

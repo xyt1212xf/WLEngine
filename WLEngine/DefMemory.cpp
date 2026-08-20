@@ -84,7 +84,6 @@ void* operator new(size_t size, WL::MemLabelRef label, int align, const char* fi
 	if (label.identifier == WL::kMemObjectId)
 	{
 		pData = malloc_internal(size + sizeof(WL::ObjectHeader), align, label, WL::kAllocateOptionNone, file, line);	
-		WL::CGCObjectMgr::getSinglePtr()->InsertObject(static_cast<WL::CObject*>(pData));
 		void* pUserData = static_cast<char*>(pData) + sizeof(WL::ObjectHeader);
 		pData = static_cast<void*>(pUserData);
 	}

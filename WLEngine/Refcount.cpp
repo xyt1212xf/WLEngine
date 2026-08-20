@@ -3,7 +3,7 @@
 namespace WL
 {
 	CRefcount::CRefcount()
-		: mCount(1)
+	: mCount(1)
 	{
 
 	}
