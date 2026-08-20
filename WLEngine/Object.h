@@ -3,16 +3,15 @@
 #include "Refcount.h"
 namespace WL
 {
-	struct ObjectHeader 
+	struct FObjectHeader 
 	{
 		ObjectHandle	SelfHandle = INVALID_HANDLE;
-		UINT32			ReferenceTableIndex = INVALID_HANDLE; // 指向全局引用表的索引
 		UINT32			ObjectSize = 0;
 		char			Name[32];
 		bool			bMarked = false;
 	};
 
-	class  CObject : public CRefcount
+	class  WLENGINE_API CObject : public CRefcount
 	{
 		friend class CGCObjectMgr;
 	public:
@@ -25,5 +24,5 @@ namespace WL
 		std::string Name;
  
 	};
-	inline INT32 ObjectHeadSize = sizeof(ObjectHeader);
+	inline INT32 ObjectHeadSize = sizeof(FObjectHeader);
 }

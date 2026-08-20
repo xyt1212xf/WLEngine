@@ -25,7 +25,7 @@ namespace WL
 	{
 		if (Obj) 
 		{
-			ObjectHeader* Header = reinterpret_cast<ObjectHeader*>(reinterpret_cast<char*>(Obj) - ObjectHeadSize);
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(reinterpret_cast<char*>(Obj) - ObjectHeadSize);
 			RootSet.insert(Header->SelfHandle);
 		}
 	}
@@ -33,17 +33,19 @@ namespace WL
 	// 从根集移除
 	void CGCObjectMgr::RemoveFromRoot(CObject* Obj)
 	{
-		//RootSet.erase(Obj);
+		if (Obj)
+		{
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(reinterpret_cast<char*>(Obj) - ObjectHeadSize);
+			RootSet.erase(Header->SelfHandle);
+		}
 	}
 
-	void CGCObjectMgr::InsertObject(CObject* Header)
+	void CGCObjectMgr::AddReference(CObject* Obj, CObject* Child)
 	{
-		//Header->ReferenceTableIndex = RefTable.AllocateRow();
-
-		//HandleToOffset[Header->SelfHandle] = Offset;
-		//AliveHandles.insert(Header->SelfHandle);
+		FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(reinterpret_cast<char*>(Obj) - ObjectHeadSize);
+		FObjectHeader* ChildHeader = reinterpret_cast<FObjectHeader*>(reinterpret_cast<char*>(Child) - ObjectHeadSize);
+		RefTable.AddReference(Header->SelfHandle, ChildHeader->SelfHandle);
 	}
-
 
 	size_t CGCObjectMgr::CollectGarbage()
 	{
@@ -51,7 +53,7 @@ namespace WL
 		return SweepAndCompact();
 	}
 
-	ObjectHeader* CGCObjectMgr::GetHeader(ObjectHandle Handle)
+	FObjectHeader* CGCObjectMgr::GetHeader(ObjectHandle Handle)
 	{
 		auto It = HandleToOffset.find(Handle);
 		if (It == HandleToOffset.end()) 
@@ -63,12 +65,12 @@ namespace WL
 		{
 			return nullptr;  // 偏移越界（不应该发生）
 		}
-		return reinterpret_cast<ObjectHeader*>(MemoryPool + Offset);
+		return reinterpret_cast<FObjectHeader*>(MemoryPool + Offset);
 	}
 
-	ObjectHeader* CGCObjectMgr::GetHeaderSafe(ObjectHandle Handle)
+	FObjectHeader* CGCObjectMgr::GetHeaderSafe(ObjectHandle Handle)
 	{
-		ObjectHeader* Header = GetHeader(Handle);
+		FObjectHeader* Header = GetHeader(Handle);
 		if (!Header)
 		{
 			return nullptr;
@@ -83,7 +85,7 @@ namespace WL
 
 	void CGCObjectMgr::MarkRecursive(ObjectHandle Handle)
 	{
-		ObjectHeader* Header = GetHeaderSafe(Handle);
+		FObjectHeader* Header = GetHeaderSafe(Handle);
 		if (!Header || Header->bMarked)
 		{
 			return;
@@ -91,7 +93,7 @@ namespace WL
 		Header->bMarked = true;
 
 		// 通过引用表遍历引用
-		for (ObjectHandle Ref : RefTable.GetReferences(Header->ReferenceTableIndex)) 
+		for (ObjectHandle Ref : RefTable.GetReferences(Header->SelfHandle)) 
 		{
 			MarkRecursive(Ref);
 		}
@@ -102,7 +104,7 @@ namespace WL
 		// 1. 先清除所有对象的标记
 		for (auto& [Handle, Offset] : HandleToOffset) 
 		{
-			ObjectHeader* Header = reinterpret_cast<ObjectHeader*>(MemoryPool + Offset);
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + Offset);
 			Header->bMarked = false;
 		}
 
@@ -129,7 +131,7 @@ namespace WL
 		std::sort(SortedHandles.begin(), SortedHandles.end());
 		for (ObjectHandle Handle : SortedHandles) 
 		{
-			ObjectHeader* Header = GetHeader(Handle);
+			FObjectHeader* Header = GetHeader(Handle);
 			if (Header && Header->bMarked) 
 			{
 				// 存活对象：记录移动计划
@@ -142,9 +144,9 @@ namespace WL
 				// 死亡对象：清理
 				if (Header) 
 				{
-					if (Header->ReferenceTableIndex != INVALID_HANDLE)
+					if (Header->SelfHandle != INVALID_HANDLE)
 					{
-						RefTable.FreeRow(Header->ReferenceTableIndex);
+						RefTable.FreeRow(Header->SelfHandle);
 					}
 				}
 				CObject* Obj = reinterpret_cast<CObject*>(MemoryPool + HandleToOffset[Handle] + ObjectHeadSize);
@@ -155,9 +157,9 @@ namespace WL
 
 		// 2. 压缩引用表
 		RefTable.Compact(AliveHandles, HandleToNewRowIndex,
-			[this](ObjectHandle Handle) -> size_t {
-				ObjectHeader* Header = GetHeader(Handle);
-				return Header ? Header->ReferenceTableIndex : 0;
+			[this](ObjectHandle Handle) -> UINT32 {
+				FObjectHeader* Header = GetHeader(Handle);
+				return Header ? Header->SelfHandle : INVALID_HANDLE;
 			});
 
 		// 3. 移动存活对象到新位置
@@ -166,14 +168,12 @@ namespace WL
 		{
 			if (OldOff != NewOff) 
 			{
-				ObjectHeader* Header = reinterpret_cast<ObjectHeader*>(MemoryPool + OldOff);
+				FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + OldOff);
 				memmove(MemoryPool + NewOff, MemoryPool + OldOff, ObjectHeadSize + Header->ObjectSize);
 			}
 
 			// 更新对象头中的引用表索引
-			ObjectHeader* Header = reinterpret_cast<ObjectHeader*>(MemoryPool + NewOff);
-			Header->ReferenceTableIndex = HandleToNewRowIndex[Header->SelfHandle];
-
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + NewOff);
 			// 保存新的偏移映射
 			NewHandleToOffset[Header->SelfHandle] = NewOff;
 		}
@@ -185,22 +185,6 @@ namespace WL
 		return SortedHandles.size() - AliveHandles.size();
 	}
 
-	UINT32 CReferenceTable::AllocateRow()
-	{
-		UINT32 Index = INVALID_HANDLE;
-		//if (!FreeIndices.empty())
-		//{
-		//	Index = FreeIndices.back();
-		//	FreeIndices.pop_back();
-		//	References[Index].clear();
-		//}
-		//else
-		//{
-		//	Index = References.size();
-		//	References.emplace_back();
-		//}
-		return Index;
-	}
 
 	void CReferenceTable::FreeRow(UINT32 RowIndex)
 	{
@@ -235,7 +219,7 @@ namespace WL
 
 	void CReferenceTable::Compact(const std::unordered_set<ObjectHandle>& AliveObjects, 
 									const std::unordered_map<ObjectHandle, size_t>& HandleToNewRowIndex,
-									const std::function<size_t(ObjectHandle)>& GetOldIndexFunc)
+									const std::function<UINT32(ObjectHandle)>& GetOldIndexFunc)
 	{
 		if (References.size() == 0)
 		{

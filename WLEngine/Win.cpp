@@ -21,10 +21,10 @@ extern "C"
 
 			for (auto& item : js.items())
 			{
-				const auto& k = item.key();
+				const auto& key = item.key();
 
 				auto& value = item.value();
-				if ("Win32config" == k)
+				if ("Win32config" == key)
 				{
 					for (const auto& [k, v] : value.items())
 					{
@@ -38,7 +38,7 @@ extern "C"
 						}
 					}
 				}
-				else if ("DX11" == k)
+				else if ("DX11" == key)
 				{
 					for (const auto& [k, v] : value.items())
 					{

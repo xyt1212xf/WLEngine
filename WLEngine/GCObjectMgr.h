@@ -15,14 +15,13 @@ namespace WL
 	class CReferenceTable
 	{
 	public:
-		UINT32 AllocateRow();
 		void FreeRow(UINT32 RowIndex);
 		void AddReference(UINT32 RowIndex, ObjectHandle Target);
 		const std::vector<ObjectHandle>& GetReferences(UINT32 RowIndex) const;
 		void ClearReferences(UINT32 RowIndex);
 		void Compact(const std::unordered_set<ObjectHandle>& AliveObjects, 
 					 const std::unordered_map<ObjectHandle, size_t>& HandleToNewRowIndex,
-					 const std::function<size_t(ObjectHandle)>& GetOldIndexFunc);
+					 const std::function<UINT32(ObjectHandle)>& GetOldIndexFunc);
 
 	private:
 		std::unordered_map<UINT32, std::vector<ObjectHandle>> References;
@@ -32,6 +31,7 @@ namespace WL
 	{
 		template<typename U>
 		friend U* NewObject(const std::string& Name);
+
 	public:
 		CGCObjectMgr();
 		~CGCObjectMgr();
@@ -39,13 +39,13 @@ namespace WL
 		void AddToRoot(CObject* Obj);
 		// ´Ó¸ù¼¯ÒÆ³ý
 		void RemoveFromRoot(CObject* Obj);
-		
-		void InsertObject(CObject* Obj);
-		
+				
+		void AddReference(CObject* Obj, CObject* Child);
+
 		size_t CollectGarbage();
 		
-		ObjectHeader* GetHeader(ObjectHandle Handle) ;
-		ObjectHeader* GetHeaderSafe(ObjectHandle Handle);
+		FObjectHeader* GetHeader(ObjectHandle Handle) ;
+		FObjectHeader* GetHeaderSafe(ObjectHandle Handle);
 
 	private:
 		void MarkRecursive(ObjectHandle Handle);
@@ -86,11 +86,10 @@ namespace WL
 		
 			size_t Offset = CG->PoolUsed;
 			CG->PoolUsed += ObjectHeadSize + _ObjectSize;
-			ObjectHeader* Header = reinterpret_cast<ObjectHeader*>(CG->MemoryPool + Offset);
+			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(CG->MemoryPool + Offset);
 			memset(Header, 0, ObjectHeadSize);
 			Header->SelfHandle = CGCObjectMgr::NextHandle++;
 			strncpy_s(Header->Name, Name.c_str(), sizeof(Header->Name) - 1);
-			Header->ReferenceTableIndex = CG->RefTable.AllocateRow();
 			Header->ObjectSize = _ObjectSize;
 			CG->HandleToOffset[Header->SelfHandle] = Offset;
 			CG->AliveHandles.insert(Header->SelfHandle);

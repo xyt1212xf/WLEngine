@@ -5,7 +5,7 @@
 
 namespace WL
 {
-	struct WLENGINE_API DataAsset : public CScriptEntity, public CRefcount
+	struct WLENGINE_API DataAsset : public CScriptEntity
 	{
 		DataAsset()
 		{

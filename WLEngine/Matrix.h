@@ -1,5 +1,9 @@
 #pragma once
 #include "Common.h"
+
+#pragma warning(push)
+#pragma warning(disable: 4201)
+
 namespace WL
 {
 	struct SMatrix44
@@ -94,5 +98,8 @@ namespace WL
 			float m[4][3];
 		};
 	};
-
+	static_assert(sizeof(SMatrix44) == sizeof(float) * 16, "Size mismatch");
+	static_assert(sizeof(SMatrix43) == sizeof(float) * 12, "Size mismatch");
 }
+
+#pragma warning(pop)

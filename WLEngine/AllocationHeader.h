@@ -37,7 +37,7 @@ namespace WL
 #endif
 	{
 	public:
-		UINT16 getAllocatorIdentifier() const
+		UINT32 getAllocatorIdentifier() const
 		{
 			return m_AllocatorIdentifier; 
 		}

@@ -936,14 +936,14 @@ namespace WL
 										}
 										else
 										{
-											int nTextureIndex = 4;
-											for (int i = 0; i < (int)strList.size(); i += 2)
+											//int nTextureIndex = 4;
+											for (int n = 0; n < (int)strList.size(); n += 2)
 											{
-												auto pTexture = dynamic_cast<CTexture*>(createResource(strList[i], Texture));
+												auto pTexture = dynamic_cast<CTexture*>(createResource(strList[n], Texture));
 												if (nullptr != pTexture)
 												{
-													int index = Foundation::stringToType<int>(strList[i + 1]);
-													auto pSample = pMaterial->getSampler(index);
+													int index = Foundation::stringToType<int>(strList[n + 1]);
+													SamplerState* pSample = pMaterial->getSampler(index);
 													if (nullptr != pSample)
 													{
 														pTexture->setSampleState(pSample);
@@ -1205,7 +1205,7 @@ namespace WL
 		{
 			pIB[i] = i;
 		}
-		auto pEntity = GEngine->createEntity<CActorEntity>(EntityType::Actor);
+		//auto pEntity = GEngine->createEntity<CActorEntity>(EntityType::Actor);
 
 		CModel* pModel = dynamic_cast<CModel*>(GEngine->createResource(Model));
 		pModel->addMesh(szName, pVB, sizeof(SVertexVT) * 6, sizeof(SVertexVT), pIB, sizeof(UINT32) * 6, sizeof(UINT32));
@@ -1278,7 +1278,7 @@ namespace WL
 		if (nullptr != pMesh)
 		{
 			GEngine->commitCommand(commandType::StopDraw);
-			pMesh->fillVertexBuffer(pVertices, nVerticesCount, VertexSize);
+			pMesh->fillVertexBuffer(pVertices, nVerticesCount, static_cast<UINT8>(VertexSize));
 			pMesh->fillIndexBuffer(pIndices, nIndicesCount, IndexSize);
 			GEngine->commitCommand(commandType::RecoverDraw);
 		}
@@ -2532,41 +2532,41 @@ namespace WL
 		// Close the file.
 		fin.close();
 		int vIndex, tIndex, nIndex;
-		int indicesCount = -1;
+		INT16 indicesCount = -1;
 		for (int i = 0; i < (int)faces.size(); i++)
 		{
-			SVertexFormatVTN v;
+			SVertexFormatVTN vertex;
 			vIndex = faces[i].vIndex1 - 1;
 			tIndex = faces[i].tIndex1 - 1;
 			nIndex = faces[i].nIndex1 - 1;
 
-			v.position = position[vIndex];
-			v.uv = uv[tIndex];
-			v.normal = normal[nIndex];
+			vertex.position = position[vIndex];
+			vertex.uv = uv[tIndex];
+			vertex.normal = normal[nIndex];
 
-			vertices.emplace_back(v);
+			vertices.emplace_back(vertex);
 			indices.push_back(++indicesCount);
 
 			vIndex = faces[i].vIndex2 - 1;
 			tIndex = faces[i].tIndex2 - 1;
 			nIndex = faces[i].nIndex2 - 1;
 
-			v.position = position[vIndex];
-			v.uv = uv[tIndex];
-			v.normal = normal[nIndex];
+			vertex.position = position[vIndex];
+			vertex.uv = uv[tIndex];
+			vertex.normal = normal[nIndex];
 
-			vertices.emplace_back(v);
+			vertices.emplace_back(vertex);
 			indices.push_back(++indicesCount);
 
 			vIndex = faces[i].vIndex3 - 1;
 			tIndex = faces[i].tIndex3 - 1;
 			nIndex = faces[i].nIndex3 - 1;
 
-			v.position = position[vIndex];
-			v.uv = uv[tIndex];
-			v.normal = normal[nIndex];
+			vertex.position = position[vIndex];
+			vertex.uv = uv[tIndex];
+			vertex.normal = normal[nIndex];
 
-			vertices.emplace_back(v);
+			vertices.emplace_back(vertex);
 			indices.push_back(++indicesCount);
 		}
 		pMesh->fillVertexBuffer(&vertices[0], sizeof(SVertexFormatVTN) * vertices.size(), sizeof(SVertexFormatVTN));
@@ -3030,12 +3030,12 @@ namespace WL
 
 
 		// Set the number of indices to be the same as the vertex count.
-		INT32 indexCount = vertexCount;
+		UINT32 indexCount = vertexCount;
 		std::vector<UINT8> vertices;
 		std::vector<UINT32> indices;
-		int nVertexSize = vertexFormat.getVertexSize();
+		INT32 nVertexSize = vertexFormat.getVertexSize();
 		vertices.resize(vertexCount * nVertexSize);
-		indices.resize(vertexCount);
+		indices.resize(indexCount);
 		// Read up to the beginning of the data.
 
 		fin.get(input);
@@ -3063,7 +3063,7 @@ namespace WL
 		// Close the model file.
 		fin.close();
 
-		pMesh->fillVertexBuffer(vertices.data(), vertices.size(), nVertexSize);
+		pMesh->fillVertexBuffer(vertices.data(), vertices.size(), static_cast<UINT8>(nVertexSize));
 		pMesh->fillIndexBuffer(&indices[0], sizeof(UINT32) * indices.size(), sizeof(UINT32));
 		return true;
 	}

@@ -13,7 +13,7 @@ namespace WL
 		CObject* C = NewObject<CObject>("C");
 		CObject* D = NewObject<CObject>("D");
 		CG->AddToRoot(B);
-		//B->AddReference(C);
+		CG->AddReference(B, D);
 		CG->CollectGarbage();
 	}
 }

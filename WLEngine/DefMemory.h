@@ -65,7 +65,7 @@ INLINE void delete_internal(T* ptr, WL::MemLabelRef label)
 	{
 		if (label.identifier == WL::kMemObjectId)
 		{
-			void* rawPtr = reinterpret_cast<char*>(ptr) + sizeof(WL::ObjectHeader);
+			void* rawPtr = reinterpret_cast<char*>(ptr) + sizeof(WL::FObjectHeader);
 			WL::CObject* pObject = reinterpret_cast<WL::CObject*>(rawPtr);
 			pObject->~CObject();
 			WL_FREE(label, ptr);

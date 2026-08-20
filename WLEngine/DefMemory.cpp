@@ -83,8 +83,8 @@ void* operator new(size_t size, WL::MemLabelRef label, int align, const char* fi
 	void* pData = nullptr;
 	if (label.identifier == WL::kMemObjectId)
 	{
-		pData = malloc_internal(size + sizeof(WL::ObjectHeader), align, label, WL::kAllocateOptionNone, file, line);	
-		void* pUserData = static_cast<char*>(pData) + sizeof(WL::ObjectHeader);
+		pData = malloc_internal(size + sizeof(WL::FObjectHeader), align, label, WL::kAllocateOptionNone, file, line);	
+		void* pUserData = static_cast<char*>(pData) + sizeof(WL::FObjectHeader);
 		pData = static_cast<void*>(pUserData);
 	}
 	else
