@@ -13,11 +13,9 @@ namespace WL
 		Name = std::move(InName);
 	}
 
-	void CObject::AddReference(CObject* Obj)
+	const std::string& CObject::GetName() const
 	{
-		if (Obj) 
-		{
-			References.push_back(Obj);
-		}
+		return Name;
 	}
+
 }

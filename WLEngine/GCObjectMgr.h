@@ -25,8 +25,7 @@ namespace WL
 					 const std::function<size_t(ObjectHandle)>& GetOldIndexFunc);
 
 	private:
-		std::vector<std::vector<ObjectHandle>> References;
-		std::vector<UINT32> FreeIndices;
+		std::unordered_map<UINT32, std::vector<ObjectHandle>> References;
 	};
 
 	class CGCObjectMgr : public TSingle<CGCObjectMgr>
@@ -69,12 +68,12 @@ namespace WL
 		static ObjectHandle NextHandle;
 	};
 
-
+	extern CGCObjectMgr* CG;
 	template<typename T>
 	T* NewObject(const std::string& Name)
 	{
 		T* Object = nullptr;
-		if (CGCObjectMgr* CG = CGCObjectMgr::getSinglePtr())
+		if (CG != nullptr)
 		{
 			UINT32 _ObjectSize = sizeof(T);
 			if (CG->PoolUsed + ObjectHeadSize + _ObjectSize > CG->PoolCapacity)

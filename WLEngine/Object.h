@@ -19,13 +19,11 @@ namespace WL
 		CObject() = default;
 		CObject(const std::string& InName);
 		CObject(std::string&& InName) noexcept;
-
-		void AddReference(CObject* Obj);
+		const std::string& GetName() const;
 		
 	private:
 		std::string Name;
-		bool bMarked = false;     
-		std::vector<CObject*> References; 
+ 
 	};
 	inline INT32 ObjectHeadSize = sizeof(ObjectHeader);
 }
