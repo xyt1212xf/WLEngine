@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{bda71c1f-8918-4ed7-979f-fbd878021e54}</ProjectGuid>
     <RootNamespace>WLEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -112,7 +112,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;D3D11;TIXML_USE_STL;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;D3D12;TIXML_USE_STL;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -224,6 +224,7 @@
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DX11TextureArray.h" />
     <ClInclude Include="DX11UnDef.h" />
+    <ClInclude Include="DX12Device.h" />
     <ClInclude Include="DynamicHeapAllocator.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EngineBase.h" />
@@ -430,6 +431,7 @@
     <ClCompile Include="DX11SurfaceView.cpp" />
     <ClCompile Include="DX11Texture.cpp" />
     <ClCompile Include="DX11TextureArray.cpp" />
+    <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="DynamicHeapAllocator.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Entity.cpp" />

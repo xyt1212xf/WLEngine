@@ -20,7 +20,6 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 
-
 typedef D3D11_INPUT_ELEMENT_DESC		INPUT_ELEMENT_DESC;
 typedef ID3D11SamplerState				SamplerState;
 //typedef D3D11_SAMPLER_DESC				SAMPLER_DESC;
@@ -28,6 +27,7 @@ typedef D3D11_TEXTURE_ADDRESS_MODE		TEXTURE_ADDRESS_MODE;
 typedef D3D11_FILTER					FILTER;
 //typedef D3D11_COMPARISON_FUNC			COMPARISON_FUNC;
 typedef D3D11_USAGE						USAGE;
+
 
 #define DeviceContext ID3D11DeviceContext
 #define CommandList ID3D11CommandList

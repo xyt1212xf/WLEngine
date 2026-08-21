@@ -139,10 +139,16 @@ enum FORMAT
 #include "DX11Device.h"
 #endif
 
+#ifdef D3D12
+#include "DX12Device.h"
+#endif
+
 namespace WL
 {
 #ifdef D3D11
 	class CDevice : public CDX11Device
+#else if D3D12
+	class CDevice : public CDX12Device
 #endif
 	{
 	public:
