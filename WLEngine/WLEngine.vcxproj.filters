@@ -126,9 +126,6 @@
     <Filter Include="TestGameUnit">
       <UniqueIdentifier>{896796b4-9a6b-4fd6-8554-7af89182b483}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphic\DX12">
-      <UniqueIdentifier>{50c5270b-5d85-474d-88d1-670813e8d328}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -770,9 +767,6 @@
     <ClInclude Include="TestGameFunc.h">
       <Filter>TestGameUnit</Filter>
     </ClInclude>
-    <ClInclude Include="DX12Device.h">
-      <Filter>Graphic\DX12</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Font.cpp">
@@ -1314,9 +1308,6 @@
     </ClCompile>
     <ClCompile Include="TestGameFunc.cpp">
       <Filter>TestGameUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12Device.cpp">
-      <Filter>Graphic\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

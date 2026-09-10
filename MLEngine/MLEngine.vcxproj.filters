@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2b8cb50c-fe50-47d1-a6a1-08ffa50730c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{b822af3c-2195-48d3-acd5-e566a7407300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{521de66f-6d2e-4f3d-8285-3885c113edb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{8499b3c4-d816-4046-974f-dc70571e741e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MLEngine.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Win.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MLEngine.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Win.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
