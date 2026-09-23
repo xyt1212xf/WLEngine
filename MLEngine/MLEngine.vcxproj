@@ -21,21 +21,27 @@
   <ItemGroup>
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="MLEngine.cpp" />
+    <ClCompile Include="Plug.cpp" />
     <ClCompile Include="Win.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Array.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="DefineType.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Foundation.h" />
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GraphicPlug.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
     <ClInclude Include="json_fwd.hpp" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />
     <ClInclude Include="NumericLimits.h" />
+    <ClInclude Include="Plug.h" />
+    <ClInclude Include="TSingle.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Win.h" />
   </ItemGroup>
@@ -178,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TinyXML.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Lua.lib;TinyXML.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)Run\$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(ProjectDir)x64\Release\$(TargetName).lib</ImportLibrary>
     </Link>

@@ -22,6 +22,12 @@
     <Filter Include="ExtraLibrary\Json">
       <UniqueIdentifier>{51dae339-0437-456e-b2bf-6fdac6e02624}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\TemplateLib">
+      <UniqueIdentifier>{4bab7db3-3fb1-4251-9728-83296e0af214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Graphic">
+      <UniqueIdentifier>{dccef9db-90aa-4cd4-ab5f-3f44fedcb91b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -35,6 +41,12 @@
     </ClCompile>
     <ClCompile Include="Foundation.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Plug.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicPlug.cpp">
+      <Filter>Core\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +88,18 @@
     </ClInclude>
     <ClInclude Include="Foundation.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Plug.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Array.h">
+      <Filter>Core\TemplateLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TSingle.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicPlug.h">
+      <Filter>Core\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

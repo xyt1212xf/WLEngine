@@ -1,6 +1,6 @@
 #pragma once
 #include "Common.h"
-namespace WL
+namespace ML
 {
 	template<typename Type>
 	class TSingle
