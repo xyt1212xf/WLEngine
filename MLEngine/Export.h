@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef WLENGINE_EXPORTS 
-#define WLENGINE_API __declspec(dllexport)
+#ifdef MLENGINE_EXPORTS 
+#define MLENGINE_API __declspec(dllexport)
 #else						/* }{ */
-#define WLENGINE_API __declspec(dllimport)
+#define MLENGINE_API __declspec(dllimport)
 #endif	
 

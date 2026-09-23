@@ -19,13 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Foundation.cpp" />
+    <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="DefineType.h" />
+    <ClInclude Include="Export.h" />
+    <ClInclude Include="Foundation.h" />
+    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="jsonHeader.h" />
+    <ClInclude Include="json_fwd.hpp" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />
+    <ClInclude Include="NumericLimits.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Win.h" />
   </ItemGroup>
@@ -123,7 +133,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;D3D12;TIXML_USE_STL;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;MLENGINE_EXPORTS;_WINDOWS;_USRDLL;D3D12;TIXML_USE_STL;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -152,7 +162,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;WLENGINE_EXPORTS;_WINDOWS;_USRDLL;TIXML_USE_STL;D3D12;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;MLENGINE_EXPORTS;_WINDOWS;_USRDLL;TIXML_USE_STL;D3D12;_CRT_SECURE_NO_WARNINGS;WIN64</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -168,7 +178,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)Run;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Lua.lib;TinyXML.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TinyXML.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)Run\$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(ProjectDir)x64\Release\$(TargetName).lib</ImportLibrary>
     </Link>

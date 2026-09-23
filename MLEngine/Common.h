@@ -43,13 +43,16 @@
 
 #endif 
 
-//#include "NumericLimits.h"
+#include "jsonHeader.h"
+#include "NumericLimits.h"
 //#include "UnrealTemplate.h"
 //#include "LogAssert.h"
-//#include "DefineType.h"
+#include "DefineType.h"
 //#include "ClassType.h"
-//#include "Export.h"
+#include "Export.h"
 //#include "Class.h"
+#include "Vector.h"
+
 
 
 #ifdef _MSC_VER          // MSVC

@@ -1,5 +1,8 @@
 #pragma once
+#include "Common.h"
 #include "Win.h"
+#include "Message.h"
+
 namespace ML
 {
 	enum eRT
@@ -8,14 +11,15 @@ namespace ML
 		LightRT = 1,
 		FrontRT = 2,
 	};
-	class CVoxelMgr;
-	class CScene;
+	//class CVoxelMgr;
+	//class CScene;
 
 	class CEngine : public CWinPlatform
 	{
 	public:
 		CEngine();
 		virtual ~CEngine();
+		bool processMsg(SEvent& e);
 	};
 	inline CEngine* GEngine = nullptr;
 }

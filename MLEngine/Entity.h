@@ -19,7 +19,7 @@ namespace WL
 	};
 	class CScene;
 	class CEntityFactory;
-	class WLENGINE_API CEntity : public CObject
+	class MLENGINE_API CEntity : public CObject
 	{
 		friend CScene;
 		friend CEntityFactory;

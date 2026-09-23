@@ -1,5 +1,7 @@
 #pragma once
 #include "Common.h"
+#include "Foundation.h"
+
 namespace ML
 {
 	class CWinPlatform

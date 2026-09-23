@@ -5,7 +5,7 @@
 namespace WL
 {
 	class CComponent;
-	struct WLENGINE_API SComponentGrounp
+	struct MLENGINE_API SComponentGrounp
 	{
 		//////////////////////////////////////////////////////////////////////////
 		//Function

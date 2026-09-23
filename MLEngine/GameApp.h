@@ -1,7 +1,7 @@
 #pragma once
-#include "WLEngine.h"
-
-namespace WL
+#include "MLEngine.h"
+#include "Message.h"
+namespace ML
 {
 	class CGameApp
 	{

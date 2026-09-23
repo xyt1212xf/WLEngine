@@ -2,9 +2,11 @@
 #include <iostream>
 #include "Win.h"
 #include "MLEngine.h"
+#include "GameApp.h"
+
 extern "C" 
 {
-	WLENGINE_API int wlMain(HINSTANCE hInstance, HINSTANCE, int nShow)
+	MLENGINE_API int wlMain(HINSTANCE hInstance, HINSTANCE, int nShow)
 	{
 		try
 		{
