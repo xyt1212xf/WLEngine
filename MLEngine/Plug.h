@@ -3,7 +3,7 @@
 
 namespace ML
 {
-	class CPlug : public TSingle<CPlug>
+	class MLENGINE_API CPlug : public TSingle<CPlug>
 	{
 	public:
 		virtual bool Initialise();

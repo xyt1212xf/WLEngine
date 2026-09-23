@@ -25,8 +25,17 @@
     <Filter Include="Core\TemplateLib">
       <UniqueIdentifier>{4bab7db3-3fb1-4251-9728-83296e0af214}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Graphic">
+    <Filter Include="Core\Plugs">
+      <UniqueIdentifier>{3e9b308e-f0e8-44ee-9291-566324ac7015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Plugs\Graphic">
       <UniqueIdentifier>{dccef9db-90aa-4cd4-ab5f-3f44fedcb91b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Devices">
+      <UniqueIdentifier>{db563540-8f95-4b98-93db-7c8610c8f21f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Devices\Graphic">
+      <UniqueIdentifier>{d22eff12-6872-422d-be13-b1f91371369e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,11 +51,14 @@
     <ClCompile Include="Foundation.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Plug.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicPlug.cpp">
-      <Filter>Core\Graphic</Filter>
+      <Filter>Core\Plugs\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Plug.cpp">
+      <Filter>Core\Plugs</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Device.cpp">
+      <Filter>Core\Devices\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +101,6 @@
     <ClInclude Include="Foundation.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Plug.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Array.h">
       <Filter>Core\TemplateLib</Filter>
     </ClInclude>
@@ -99,7 +108,16 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="GraphicPlug.h">
-      <Filter>Core\Graphic</Filter>
+      <Filter>Core\Plugs\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Plug.h">
+      <Filter>Core\Plugs</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Device.h">
+      <Filter>Core\Devices\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Core\Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

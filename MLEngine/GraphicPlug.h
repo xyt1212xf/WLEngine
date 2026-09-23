@@ -3,7 +3,7 @@
 
 namespace ML
 {
-	class CGraphicPlug : public CPlug
+	class MLENGINE_API CGraphicPlug : public CPlug
 	{
 	public:
 		virtual bool Initialise() override final;
