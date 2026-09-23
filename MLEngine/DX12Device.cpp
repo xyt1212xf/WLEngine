@@ -37,120 +37,120 @@ namespace ML
 	#endif	
 			IDXGIFactory4* factory = nullptr;
 			HRESULT hr = CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory));
-		//	if (hr == S_OK)
-		//	{
-		//		D3D_FEATURE_LEVEL levels[] =
-		//		{
-		//			D3D_FEATURE_LEVEL_12_1,
-		//			D3D_FEATURE_LEVEL_12_0,
-		//			D3D_FEATURE_LEVEL_11_1,
-		//			D3D_FEATURE_LEVEL_11_0
-		//		};
-		//		IDXGIAdapter1* hardwareAdapter = nullptr;
-		//		GetHardwareAdapter(factory, &hardwareAdapter);
-		//		for (auto level : levels)
-		//		{
-		//			if (SUCCEEDED(D3D12CreateDevice(hardwareAdapter, level,IID_PPV_ARGS(&mpDevice))))
-		//			{
-		//				// 成功创建，device 支持该 Feature Level
-		//				break;
-		//			}
-		//		}
-		//		// Describe and create the command queue.
-		//		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-		//		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-		//		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+			if (hr == S_OK)
+			{
+				D3D_FEATURE_LEVEL levels[] =
+				{
+					D3D_FEATURE_LEVEL_12_1,
+					D3D_FEATURE_LEVEL_12_0,
+					D3D_FEATURE_LEVEL_11_1,
+					D3D_FEATURE_LEVEL_11_0
+				};
+				IDXGIAdapter1* hardwareAdapter = nullptr;
+				GetHardwareAdapter(factory, &hardwareAdapter);
+				for (auto level : levels)
+				{
+					if (SUCCEEDED(D3D12CreateDevice(hardwareAdapter, level,IID_PPV_ARGS(&mpDevice))))
+					{
+						// 成功创建，device 支持该 Feature Level
+						break;
+					}
+				}
+				// Describe and create the command queue.
+				D3D12_COMMAND_QUEUE_DESC queueDesc = {};
+				queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+				queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-		//		hr = mpDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue));
-		//		if (hr != S_OK)
-		//		{	
-		//			break;
-		//		}
-		//		// Describe and create the swap chain.
-		//		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-		//		swapChainDesc.BufferCount = FrameCount;
-		//		//Lion
-		//		swapChainDesc.Width = 1024;
-		//		swapChainDesc.Height = 768;
+				hr = mpDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue));
+				if (hr != S_OK)
+				{	
+					break;
+				}
+				// Describe and create the swap chain.
+				DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+				swapChainDesc.BufferCount = FrameCount;
+				//Lion
+				swapChainDesc.Width = 1024;
+				swapChainDesc.Height = 768;
 
-		//		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		//		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		//		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-		//		swapChainDesc.SampleDesc.Count = 1;
+				swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+				swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+				swapChainDesc.SampleDesc.Count = 1;
 
-		//		IDXGISwapChain1* swapChain = nullptr;
-		//		hr = factory->CreateSwapChainForHwnd(
-		//			mCommandQueue,        // Swap chain needs the queue so that it can force a flush on it.
-		//			hWnd,
-		//			&swapChainDesc,
-		//			nullptr,
-		//			nullptr,
-		//			&swapChain);
-		//		if (hr != S_OK)
-		//		{
-		//			break;
-		//		}
-		//		// This sample does not support fullscreen transitions.
-		//		factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
-		//		factory->Release();
+				IDXGISwapChain1* swapChain = nullptr;
+				hr = factory->CreateSwapChainForHwnd(
+					mCommandQueue,        // Swap chain needs the queue so that it can force a flush on it.
+					hWnd,
+					&swapChainDesc,
+					nullptr,
+					nullptr,
+					&swapChain);
+				if (hr != S_OK)
+				{
+					break;
+				}
+				// This sample does not support fullscreen transitions.
+				factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
+				factory->Release();
 
-		//		hr = swapChain->QueryInterface(IID_PPV_ARGS(&mSwapChain));
-		//		swapChain->Release();
-		//		mFrameIndex = mSwapChain->GetCurrentBackBufferIndex();
+				hr = swapChain->QueryInterface(IID_PPV_ARGS(&mSwapChain));
+				swapChain->Release();
+				mFrameIndex = mSwapChain->GetCurrentBackBufferIndex();
 
-		//		// Create descriptor heaps.
-		//		{
-		//			// Describe and create a render target view (RTV) descriptor heap.
-		//			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-		//			rtvHeapDesc.NumDescriptors = FrameCount;
-		//			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-		//			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		//			hr = mpDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&mRtvHeap));
-		//			if (hr != S_OK)
-		//			{
-		//				break;
-		//			}
+				// Create descriptor heaps.
+				{
+					// Describe and create a render target view (RTV) descriptor heap.
+					D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+					rtvHeapDesc.NumDescriptors = FrameCount;
+					rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+					rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+					hr = mpDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&mRtvHeap));
+					if (hr != S_OK)
+					{
+						break;
+					}
 
-		//			mRtvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-		//		}
-		//		// Create frame resources.
-		//		{
-		//			CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+					mRtvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+				}
+				// Create frame resources.
+				{
+					CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
 
-		//			// Create a RTV for each frame.
-		//			mRenderTargets.resize(FrameCount);
-		//			for (UINT n = 0; n < FrameCount; n++)
-		//			{
-		//				mSwapChain->GetBuffer(n, IID_PPV_ARGS(&mRenderTargets[n]));
-		//				mpDevice->CreateRenderTargetView(mRenderTargets[n], nullptr, rtvHandle);
-		//				rtvHandle.Offset(1, mRtvDescriptorSize);
-		//			}
-		//		}
-		//		hr = mpDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator));
-		//		if (hr != S_OK)
-		//		{
-		//			break;
-		//		}
-		//	}
-		//	// Create the command list.
-		//	mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator, nullptr, IID_PPV_ARGS(&mCommandList));
+					// Create a RTV for each frame.
+					mRenderTargets.resize(FrameCount);
+					for (UINT n = 0; n < FrameCount; n++)
+					{
+						mSwapChain->GetBuffer(n, IID_PPV_ARGS(&mRenderTargets[n]));
+						mpDevice->CreateRenderTargetView(mRenderTargets[n], nullptr, rtvHandle);
+						rtvHandle.Offset(1, mRtvDescriptorSize);
+					}
+				}
+				hr = mpDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator));
+				if (hr != S_OK)
+				{
+					break;
+				}
+			}
+			// Create the command list.
+			mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator, nullptr, IID_PPV_ARGS(&mCommandList));
 
-		//	// Command lists are created in the recording state, but there is nothing
-		//	// to record yet. The main loop expects it to be closed, so close it now.
-		//	mCommandList->Close();
-		//	// Create synchronization objects.
-		//	{
-		//		mpDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence));
-		//		mFenceValue = 1;
+			// Command lists are created in the recording state, but there is nothing
+			// to record yet. The main loop expects it to be closed, so close it now.
+			mCommandList->Close();
+			// Create synchronization objects.
+			{
+				mpDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence));
+				mFenceValue = 1;
 
-		//		// Create an event handle to use for frame synchronization.
-		//		mFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-		//		if (mFenceEvent == nullptr)
-		//		{
-		//			HRESULT_FROM_WIN32(GetLastError());
-		//			break;
-		//		}
-		//	}
+				// Create an event handle to use for frame synchronization.
+				mFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+				if (mFenceEvent == nullptr)
+				{
+					HRESULT_FROM_WIN32(GetLastError());
+					break;
+				}
+			}
 			return true;
 		} while (false);
 		return false;

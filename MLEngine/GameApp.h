@@ -11,9 +11,6 @@ namespace ML
 		bool entry(SWindowConfig& config);
 		bool destoryEngine();
 		void run();
-
-	private:
-		CEngine* mpEngine = nullptr;
 	};
 
 }

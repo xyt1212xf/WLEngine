@@ -1,12 +1,11 @@
-#include <windowsx.h>
-#include <iostream>
+
 #include "Win.h"
 #include "MLEngine.h"
 #include "GameApp.h"
 
 extern "C" 
 {
-	MLENGINE_API int wlMain(HINSTANCE hInstance, HINSTANCE, int nShow)
+	MLENGINE_API int mlMain(HINSTANCE hInstance, HINSTANCE, int nShow)
 	{
 		try
 		{
@@ -35,7 +34,7 @@ extern "C"
 						}
 					}
 				}
-				else if ("DX11" == key)
+				else if ("DX12" == key)
 				{
 					for (const auto& [k, v] : value.items())
 					{
@@ -113,7 +112,8 @@ namespace ML
 		case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
+			//HDC hdc = 
+			BeginPaint(hWnd, &ps);
 			EndPaint(hWnd, &ps);
 		}
 		break;
@@ -163,7 +163,7 @@ namespace ML
 		wc.hCursor = LoadCursor(0, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = 0;
-		wc.lpszClassName = "WLWin32ClassName";
+		wc.lpszClassName = "MLWin32ClassName";
 		if (!RegisterClass(&wc))
 		{
 			MessageBoxA(0, "RegisterClass Failed.", 0, 0);
@@ -179,7 +179,7 @@ namespace ML
 		int width = R.right - R.left;
 		int height = R.bottom - R.top;
 
-		mhMainWnd = CreateWindowEx(0, "WLWin32ClassName", config.szTitle.c_str(),
+		mhMainWnd = CreateWindowEx(0, "MLWin32ClassName", config.szTitle.c_str(),
 			WS_OVERLAPPEDWINDOW, (screenWidth - width) / 2, (screenHeight - height) / 2, width, height, 0, 0, config.hInstance, 0);
 
 		if (!mhMainWnd)
@@ -196,7 +196,9 @@ namespace ML
 			AllocConsole();
 			FILE* f;
 			freopen_s(&f, "CONOUT$", "w", stdout);  // Redirect stdout to the console window
+#ifdef _DEBUG
 			std::cout << "Console window is open!" << std::endl;
+#endif
 		}
 		return true;
 	}

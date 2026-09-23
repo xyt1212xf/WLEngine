@@ -1,4 +1,5 @@
 #include "MLEngine.h"
+#include "GraphicPlug.h"
 //#include "Scene.h"
 //#include "GameController.h"
 //#include "SceneController.h"
@@ -29,10 +30,27 @@ namespace ML
 //		_CrtDumpMemoryLeaks();
 	}
 
+	bool CEngine::Initialise(const SWindowConfig& config)
+	{
+		mGraphicPlug = new CGraphicPlug();
+		return mGraphicPlug->Initialise();
+	}
+
+	bool CEngine::UnInitialise()
+	{
+		return false;
+	}
+
 	bool CEngine::processMsg(SEvent& e)
 	{
 		return false;
 	}
+
+	CWinPlatform& CEngine::GetPlatform() 
+	{
+		return mPlatform;
+	}
+
 
 //
 //	void CEngine::update(UINT32 dTime)

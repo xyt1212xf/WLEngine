@@ -37,6 +37,11 @@
 
 #ifdef _WINDOWS
 #include <windows.h>
+#include <windowsx.h>
+#ifdef _DEBUG
+	#include <iostream>
+#endif
+
 #ifdef _MSC_VER
 #define NOMINMAX
 #endif

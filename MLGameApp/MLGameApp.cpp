@@ -7,7 +7,7 @@
 
 extern "C"
 {
-	int (*wlMain)(HINSTANCE hInstance, HINSTANCE h, int nShow) = nullptr;
+	int (*mlMain)(HINSTANCE hInstance, HINSTANCE h, int nShow) = nullptr;
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -26,13 +26,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	{
 		do
 		{
-			wlMain = (int (*)(HINSTANCE, HINSTANCE, int))GetProcAddress(hGame, "wlMain");
-			if (nullptr == wlMain)
+			mlMain = (int (*)(HINSTANCE, HINSTANCE, int))GetProcAddress(hGame, "mlMain");
+			if (nullptr == mlMain)
 			{
 				MessageBoxA(NULL, "load dll failed", "Error", MB_OK | MB_ICONWARNING);
 				continue;
 			}
-			ret = wlMain(hInstance, hPrevInstance, nCmdShow);
+			ret = mlMain(hInstance, hPrevInstance, nCmdShow);
 			FreeLibrary(hGame);
 		} while (false);
 	}

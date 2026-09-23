@@ -13,6 +13,15 @@
 		"depthBufferFormat":45,	
         "MASS":true
 	},
+	"DX12":
+	{
+        "fullScreen":false,
+        "vsync":false,
+        "fps":30,
+		"backBufferFormat":28,
+		"depthBufferFormat":45,	
+        "MASS":true
+	},
 	"Plugin": 
 	{
         "RENDERER":1,
