@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7076be72-77d9-4f0f-b46d-5385e39ea2b8}</ProjectGuid>
-    <RootNamespace>GameApp</RootNamespace>
+    <ProjectGuid>{6110BA11-89CA-49ED-ACC0-4C4FCA736F3D}</ProjectGuid>
+    <RootNamespace>MLGameApp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>WLGameApp</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -138,18 +137,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
-    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="MLGameApp.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="MLGameApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="GameApp.rc" />
+    <ResourceCompile Include="MLGameApp.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="GameApp.ico" />
+    <Image Include="MLGameApp.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
