@@ -1,6 +1,6 @@
 #pragma once
 #include "NumericLimits.h"
-namespace WL
+namespace ML
 {
 	enum
 	{

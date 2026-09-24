@@ -1,8 +1,8 @@
 #pragma once
 //#include "Allocator.h"
-//#include "UnrealTemplate.h"
-//#include "NumericLimits.h"
-//#include "ContainerAllocationPolicies.h"
+#include "UnrealTemplate.h"
+#include "NumericLimits.h"
+#include "ContainerAllocationPolicies.h"
 
 namespace ML
 {
@@ -11,10 +11,10 @@ namespace ML
 //		for (;;);
 //	}
 //
-//	// A hacky way to get the SizeType, since it's defined in the
-//	// (outer) allocator type, not the (inner) allocator instance type
-//	template <typename AllocatorInstanceType>
-//	using TAllocatorSizeType_T = decltype(std::declval<AllocatorInstanceType&>().GetInitialCapacity());
+	// A hacky way to get the SizeType, since it's defined in the
+	// (outer) allocator type, not the (inner) allocator instance type
+	template <typename AllocatorInstanceType>
+	using TAllocatorSizeType_T = decltype(std::declval<AllocatorInstanceType&>().GetInitialCapacity());
 //
 //	// Called only when we KNOW we are going to do a realloc increasing by 1.
 //	// In this case, we know that max == num and can simplify things in a very 
@@ -63,21 +63,20 @@ namespace ML
 //#endif
 //		return OldMax;
 //	}
-//
-//
-//	// Version for small sizes/alignments. This allows the parameter setup to be a single instruction
-//	// note the uint16 limitation allows for a single instruction setup on arm.
-//	template <uint32 Flags, typename AllocatorInstanceType>
-//	FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Tiny(
-//		uint16 ElementSizeAndAlignment,
-//		AllocatorInstanceType& AllocatorInstance,
-//		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
-//	)
-//	{
-//		auto xx = typeid(AllocatorInstanceType).name();
-//		int x = Flags;
-//		return ReallocGrow1_DoAlloc_Impl<1, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
-//	}
+
+
+	// Version for small sizes/alignments. This allows the parameter setup to be a single instruction
+	// note the uint16 limitation allows for a single instruction setup on arm.
+	//template <uint32 Flags, typename AllocatorInstanceType>
+	//FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc_Tiny(
+	//	uint16 ElementSizeAndAlignment,
+	//	AllocatorInstanceType& AllocatorInstance,
+	//	TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax)
+	//{
+	//	auto xx = typeid(AllocatorInstanceType).name();
+	//	int x = Flags;
+	//	return ReallocGrow1_DoAlloc_Impl<1, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
+	//}
 //
 //	template <uint32 Flags, typename AllocatorInstanceType>
 //	FORCENOINLINE TAllocatorSizeType_T<AllocatorInstanceType> ReallocGrow1_DoAlloc(
@@ -114,51 +113,51 @@ namespace ML
 //
 //
 //
-//	template<typename InElementType, typename InAllocatorType = FDefaultAllocator>
-//	class TArray
-//	{
-//		template <typename OtherInElementType, typename OtherAllocator>
-//		friend class TArray;
-//	public:
-//		using SizeType = typename InAllocatorType::SizeType;
-//		using ElementType = InElementType;
-//		using AllocatorType = InAllocatorType;
-//
-//		using ElementAllocatorType = std::conditional_t <
-//			AllocatorType::NeedsElementType,
-//			typename AllocatorType::template ForElementType<ElementType>,
-//			typename AllocatorType::ForAnyElementType>;
-//
-//	public:
-//		TArray()
-//		: ArrayNum(0)
-//		, ArrayMax(AllocatorInstance.GetInitialCapacity())
-//		{
-//		}
-//		
-//		FORCEINLINE void CheckAddress(const ElementType* Addr) const
-//		{
-//			//checkf(Addr < GetData() || Addr >= (GetData() + ArrayMax), TEXT("Attempting to use a container element (%p) which already comes from the container being modified (%p, ArrayMax: %lld, ArrayNum: %lld, SizeofElement: %zu)!"), Addr, GetData(), (long long)ArrayMax, (long long)ArrayNum, sizeof(ElementType));
-//		}
-//
-//		template <typename... ArgsType>
-//		FORCEINLINE SizeType Emplace(ArgsType&&... Args)
-//		{
-//			auto xx = typeid(AllocatorType).name();
-//			if (ArrayNum == ArrayMax)
-//			{
-//				if constexpr (sizeof(ElementType) <= 255 && alignof(ElementType) <= 255) // -V590 
-//				{
-//					ArrayNum = ReallocGrow1_DoAlloc_Tiny<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType) | (alignof(ElementType) << 8), AllocatorInstance, ArrayMax);
-//				}
-//				else
-//				{
-//					ArrayNum = ReallocGrow1_DoAlloc<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType), alignof(ElementType), AllocatorInstance, ArrayMax);
-//				}
-//			}
-//			SizeType OldArrayNum = ArrayNum;
-//			return OldArrayNum;
-//		}
+	template<typename InElementType, typename InAllocatorType>
+	class TArray
+	{
+		template <typename OtherInElementType, typename OtherAllocator>
+		friend class TArray;
+	public:
+		using SizeType = typename InAllocatorType::SizeType;
+		using ElementType = InElementType;
+		using AllocatorType = InAllocatorType;
+
+		using ElementAllocatorType = std::conditional_t <
+			AllocatorType::NeedsElementType,
+			typename AllocatorType::template ForElementType<ElementType>,
+			typename AllocatorType::ForAnyElementType>;
+
+	public:
+		TArray()
+		: ArrayNum(0)
+		, ArrayMax(AllocatorInstance.GetInitialCapacity())
+		{
+		}
+		
+		FORCEINLINE void CheckAddress(const ElementType* Addr) const
+		{
+			//checkf(Addr < GetData() || Addr >= (GetData() + ArrayMax), TEXT("Attempting to use a container element (%p) which already comes from the container being modified (%p, ArrayMax: %lld, ArrayNum: %lld, SizeofElement: %zu)!"), Addr, GetData(), (long long)ArrayMax, (long long)ArrayNum, sizeof(ElementType));
+		}
+
+		template <typename... ArgsType>
+		FORCEINLINE SizeType Emplace(ArgsType&&... Args)
+		{
+			//auto xx = typeid(AllocatorType).name();
+			//if (ArrayNum == ArrayMax)
+			//{
+			//	if constexpr (sizeof(ElementType) <= 255 && alignof(ElementType) <= 255) // -V590 
+			//	{
+			//		ArrayNum = ReallocGrow1_DoAlloc_Tiny<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType) | (alignof(ElementType) << 8), AllocatorInstance, ArrayMax);
+			//	}
+			//	else
+			//	{
+			//		ArrayNum = ReallocGrow1_DoAlloc<GetAllocatorFlags<AllocatorType>()>(sizeof(ElementType), alignof(ElementType), AllocatorInstance, ArrayMax);
+			//	}
+			//}
+			SizeType OldArrayNum = ArrayNum;
+			return OldArrayNum;
+		}
 //
 //		FORCEINLINE void Push(ElementType&& Item)
 //		{
@@ -170,24 +169,26 @@ namespace ML
 //			Add(Item);
 //		}
 //		
-//		FORCEINLINE SizeType Add(ElementType&& Item)
-//		{
-//			CheckAddress(&Item);
-//			return Emplace(MoveTempIfPossible(Item));
-//		}
-//
-//		FORCEINLINE SizeType Add(const ElementType& Item)
-//		{
-//			CheckAddress(&Item);
-//			return Emplace(Item);
-//		}
-//
-//	protected:
-//		SizeType             ArrayNum;
-//		SizeType             ArrayMax;
-//		ElementAllocatorType AllocatorInstance;
-//
-//	private:
-//		using USizeType = typename std::make_unsigned_t<SizeType>;
-//	};
+		FORCEINLINE SizeType Add(ElementType&& Item)
+		{
+			CheckAddress(&Item);
+			return Emplace(MoveTempIfPossible(Item));
+		}
+
+		FORCEINLINE SizeType Add(const ElementType& Item)
+		{
+			CheckAddress(&Item);
+			return Emplace(Item);
+		}
+
+	protected:
+		SizeType             ArrayNum;
+		SizeType             ArrayMax;
+		ElementAllocatorType AllocatorInstance;
+
+	private:
+		using USizeType = typename std::make_unsigned_t<SizeType>;
+	};
 }
+
+#include "ContainersFwd.h"

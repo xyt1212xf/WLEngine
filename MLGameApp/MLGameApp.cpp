@@ -24,6 +24,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 #endif
 	if (nullptr != hGame)
 	{
+
+		//	a.Add(3);
 		do
 		{
 			mlMain = (int (*)(HINSTANCE, HINSTANCE, int))GetProcAddress(hGame, "mlMain");

@@ -1,7 +1,7 @@
 #include "MemoryBase.h"
 #include "UnrealMemory.h"
 
-namespace WL
+namespace ML
 {
 	void* FUseSystemMallocForNew::operator new(size_t Size)
 	{

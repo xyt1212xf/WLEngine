@@ -5,7 +5,7 @@
 //#include "MathLib.h"
 //#include "Malloc.h"
 //#include "TimerClock.h"
-//#include "Array.h"
+#include "Array.h"
 
 #ifdef _DEBUG
 #include "TestGameFunc.h"
@@ -14,7 +14,8 @@ namespace ML
 {
 	CGameApp::CGameApp()
 	{
-
+		ML::TArray<INT32> a;
+		a.Add(3);
 	}
 
 	CGameApp::~CGameApp()

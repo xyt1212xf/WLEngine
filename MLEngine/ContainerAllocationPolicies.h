@@ -1,10 +1,11 @@
 #pragma once
 #include "Common.h"
 #include "UnrealMemory.h"
+#include "NumericLimits.h"
 
 #define UE_CONTAINER_SLACK_GROWTH_FACTOR_DENOMINATOR 8
 #define UE_CONTAINER_SLACK_GROWTH_FACTOR_NUMERATOR 3
-namespace WL
+namespace ML
 {
 	template <typename SizeType>
 	FORCEINLINE SizeType DefaultCalculateSlackGrow(SizeType NewMax, SizeType CurrentMax, SIZE_T BytesPerElement, bool bAllowQuantize, uint32 Alignment = DEFAULT_ALIGNMENT)

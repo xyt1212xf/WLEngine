@@ -70,7 +70,7 @@ typedef unsigned __int64    SIZE_T;
 #define MIN_dbl			(2.2250738585072014e-308)	/* min positive value */
 #define MAX_dbl			(1.7976931348623158e+308)	
 
-namespace WL
+namespace ML
 {
 	/* Numeric type traits
 	 *****************************************************************************/

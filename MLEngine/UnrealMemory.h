@@ -2,7 +2,7 @@
 #include "Common.h"
 #include "MemoryBase.h"
 
-namespace WL
+namespace ML
 {
 	struct FMemory
 	{
@@ -18,12 +18,12 @@ namespace WL
 		};
 
 		static void Free(void* Original);
-		[[nodiscard]] static SIZE_T GetAllocSize(void* Original);
+	//	[[nodiscard]] static SIZE_T GetAllocSize(void* Original);
 
 		static SIZE_T QuantizeSize(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
-		static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
-		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+	//	static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+	//	static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
 		FORCEINLINE static void* SystemMalloc(SIZE_T Size)
 		{
@@ -32,15 +32,15 @@ namespace WL
 			return Ptr;
 		}
 
-		FORCEINLINE static  void SystemFree(void* Ptr)
-		{
-			//MemoryTrace_Free(uint64(Ptr), EMemoryTraceRootHeap::SystemMemory);
-			::free(Ptr);
-		}
+	//	FORCEINLINE static  void SystemFree(void* Ptr)
+	//	{
+	//		//MemoryTrace_Free(uint64(Ptr), EMemoryTraceRootHeap::SystemMemory);
+	//		::free(Ptr);
+	//	}
 
-	private:
-		static void GCreateMalloc();
-		static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+	//private:
+	//	static void GCreateMalloc();
+	//	static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 	};
 
 

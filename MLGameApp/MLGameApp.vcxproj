@@ -105,14 +105,14 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;D3D12;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)WLEngine;$(SolutionDir)Lua;$(SolutionDir)TinyXML;$(solutiondir)ThirdLibrary\DX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MLEngine;$(SolutionDir)Lua;$(SolutionDir)TinyXML;$(solutiondir)ThirdLibrary\DX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)Run\$(TargetName)_D64$(TargetExt)</OutputFile>
-      <AdditionalDependencies>WLEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Run;$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)x64\Debug;$(SolutionDir)WLEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MLEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Run;$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)x64\Debug;$(SolutionDir)MLEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +124,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;D3D11;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)WLEngine;$(SolutionDir)Lua;$(SolutionDir)TinyXML;$(solutiondir)ThirdLibrary\DX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MLEngine;$(SolutionDir)Lua;$(SolutionDir)TinyXML;$(solutiondir)ThirdLibrary\DX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>WLEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Run;$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)WLEngine\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Run;$(SolutionDir)ThirdLibrary\DX\Lib\x64;$(SolutionDir)MLEngine\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

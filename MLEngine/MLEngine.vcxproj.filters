@@ -37,6 +37,9 @@
     <Filter Include="Core\Devices\Graphic">
       <UniqueIdentifier>{d22eff12-6872-422d-be13-b1f91371369e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{1f1e6cb7-1e3d-4c20-8378-542274718edb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -59,6 +62,15 @@
     </ClCompile>
     <ClCompile Include="DX12Device.cpp">
       <Filter>Core\Devices\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="ContainerAllocationPolicies.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryBase.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="UnrealMemory.cpp">
+      <Filter>Core\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +130,21 @@
     </ClInclude>
     <ClInclude Include="Device.h">
       <Filter>Core\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="UnrealTemplate.h">
+      <Filter>Core\TemplateLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainerAllocationPolicies.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryBase.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainersFwd.h">
+      <Filter>Core\TemplateLib</Filter>
+    </ClInclude>
+    <ClInclude Include="UnrealMemory.h">
+      <Filter>Core\Memory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

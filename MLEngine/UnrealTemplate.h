@@ -1,6 +1,6 @@
 #pragma once
 #include <type_traits>
-namespace WL
+namespace ML
 {
 	template <typename T>
 	FORCEINLINE constexpr std::remove_reference_t<T>&& MoveTempIfPossible(T&& Obj) noexcept
