@@ -33,7 +33,6 @@ namespace ML
 
 	private:
 		TArray<CPlug*> mPlugs;
-		CGraphicPlug* mGraphicPlug = nullptr;
 		CWinPlatform mPlatform;
 	};
 	inline CEngine* GEngine = nullptr;

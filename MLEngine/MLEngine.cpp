@@ -32,8 +32,9 @@ namespace ML
 
 	bool CEngine::Initialise(const SWindowConfig& config)
 	{
-		mGraphicPlug = new CGraphicPlug();
-		return mGraphicPlug->Initialise();
+		CGraphicPlug* graphicPlug = new CGraphicPlug();
+		mPlugs.Add(graphicPlug);
+		return graphicPlug ->Initialise();
 	}
 
 	bool CEngine::UnInitialise()
@@ -49,7 +50,10 @@ namespace ML
 
 	void CEngine::Run(int32 deltaSeconds)
 	{
-		
+		//for (const CPlug* plug : mPlatform)
+		//{
+
+		//}
 	}
 
 	CWinPlatform& CEngine::GetPlatform()

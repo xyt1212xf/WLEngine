@@ -139,6 +139,54 @@ namespace ML
 			return (ElementType*)AllocatorInstance.GetAllocation();
 		}
 
+		/**
+		* Checks array invariants: if array size is greater than or equal to zero and less
+		* than or equal to the maximum.
+		*/
+		FORCEINLINE void CheckInvariants() const
+		{
+			//checkSlow((ArrayNum >= 0) & (ArrayMax >= ArrayNum)); // & for one branch
+		}
+		/**
+		* Checks if index is in array range.
+		*
+		* @param Index Index to check.
+		*/
+		FORCEINLINE void RangeCheck(SizeType Index) const
+		{
+			CheckInvariants();
+
+			// Template property, branch will be optimized out
+			if constexpr (AllocatorType::RequireRangeCheck)
+			{
+			//	checkf((Index >= 0) & (Index < ArrayNum),TEXT("Array index out of bounds: %lld into an array of size %lld"),(long long)Index, (long long)ArrayNum); // & for one branch
+			}
+		}
+
+		/**
+		 * Array bracket operator. Returns reference to element at given index.
+		 *
+		* @returns Reference to indexed element.
+		*/
+		[[nodiscard]] FORCEINLINE ElementType& operator[](SizeType Index) 
+		{
+			RangeCheck(Index);
+			return GetData()[Index];
+		}
+
+		/**
+		* Array bracket operator. Returns reference to element at given index.
+		*
+		* Const version of the above.
+		*
+		* @returns Reference to indexed element.
+		*/
+		[[nodiscard]] FORCEINLINE const ElementType& operator[](SizeType Index) const
+		{
+			RangeCheck(Index);
+			return GetData()[Index];
+		}
+
 		FORCEINLINE void CheckAddress(const ElementType* Addr) const
 		{
 			IsValidAddress(Addr, GetData(), ArrayMax); 
