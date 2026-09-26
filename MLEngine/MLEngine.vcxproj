@@ -24,6 +24,7 @@
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
+    <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="MemoryBase.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Plug.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
     <ClInclude Include="json_fwd.hpp" />
+    <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="MemoryBase.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />

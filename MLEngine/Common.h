@@ -10,13 +10,13 @@
 #include <mutex> 
 #include <assert.h>
 #include <atomic>
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
 #include <cmath>
 #include <optional>
 #include <forward_list>
 #include <functional>
-#include <algorithm>
 #if defined(__GNUC__) || defined(__SNC__) || defined(__clang__) || defined(__ghs__)
 	#define ALIGN_OF(T) __alignof__(T)
 	#define ALIGN_TYPE(val) __attribute__((aligned(val)))

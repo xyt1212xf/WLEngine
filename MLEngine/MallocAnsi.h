@@ -1,6 +1,6 @@
 #pragma once
 #include "MemoryBase.h"
-namespace WL
+namespace ML
 {
 	void* AnsiMalloc(SIZE_T Size, uint32 Alignment);
 	void* AnsiRealloc(void* Ptr, SIZE_T NewSize, uint32 Alignment);

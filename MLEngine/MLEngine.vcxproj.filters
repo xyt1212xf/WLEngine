@@ -72,6 +72,9 @@
     <ClCompile Include="UnrealMemory.cpp">
       <Filter>Core\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="MallocAnsi.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -144,6 +147,9 @@
       <Filter>Core\TemplateLib</Filter>
     </ClInclude>
     <ClInclude Include="UnrealMemory.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MallocAnsi.h">
       <Filter>Core\Memory</Filter>
     </ClInclude>
   </ItemGroup>

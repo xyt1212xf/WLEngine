@@ -18,12 +18,12 @@ namespace ML
 		};
 
 		static void Free(void* Original);
-	//	[[nodiscard]] static SIZE_T GetAllocSize(void* Original);
+		[[nodiscard]] static SIZE_T GetAllocSize(void* Original);
 
 		static SIZE_T QuantizeSize(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
-	//	static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
-	//	static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+		static void* Malloc(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
 
 		FORCEINLINE static void* SystemMalloc(SIZE_T Size)
 		{
@@ -38,9 +38,24 @@ namespace ML
 	//		::free(Ptr);
 	//	}
 
-	//private:
-	//	static void GCreateMalloc();
-	//	static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+		static FORCEINLINE void* Memcpy(void* Dest, const void* Src, SIZE_T Count)
+		{
+			return std::memcpy(Dest, Src, Count);
+		}
+
+		template< class T >
+		static FORCEINLINE void Memcpy(T& Dest, const T& Src)
+		{
+			static_assert(!std::is_pointer_v<T>(), "For pointers use the three parameters function");
+			Memcpy(&Dest, &Src, sizeof(T));
+		}
+
+
+	private:
+		static void GCreateMalloc();
+		static void* MallocExternal(SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+		static void* ReallocExternal(void* Original, SIZE_T Count, uint32 Alignment = DEFAULT_ALIGNMENT);
+		static void FreeExternal(void* Original);
 	};
 
 

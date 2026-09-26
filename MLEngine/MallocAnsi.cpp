@@ -1,9 +1,10 @@
 #include "MallocAnsi.h"
-namespace WL
+namespace ML
 {
 	void* AnsiMalloc(SIZE_T Size, uint32 Alignment)
 	{
-		return nullptr;
+		void* Result = _aligned_malloc( Size, Alignment );
+		return Result;
 	}
 
 	void* AnsiRealloc(void* Ptr, SIZE_T NewSize, uint32 Alignment)
@@ -35,7 +36,6 @@ namespace WL
 
 	void* FMallocAnsi::TryMalloc(SIZE_T Size, uint32 Alignment)
 	{
-		return nullptr;
 //#if !UE_BUILD_SHIPPING
 //		uint64 LocalMaxSingleAlloc = MaxSingleAlloc.Load(EMemoryOrder::Relaxed);
 //		if (LocalMaxSingleAlloc != 0 && Size > LocalMaxSingleAlloc)
@@ -44,11 +44,11 @@ namespace WL
 //		}
 //#endif
 
-		//Alignment = FMath::Max(Size >= 16 ? (uint32)16 : (uint32)8, Alignment);
+		Alignment = std::max<uint32>(Size >= 16 ? (uint32)16 : (uint32)8, Alignment);
 
-		//void* Result = AnsiMalloc(Size, Alignment);
+		void* Result = AnsiMalloc(Size, Alignment);
 
-		//return Result;
+		return Result;
 	}
 
 	
