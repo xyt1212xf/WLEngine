@@ -50,10 +50,10 @@ namespace ML
 
 	void CEngine::Run(int32 deltaSeconds)
 	{
-		//for (const CPlug* plug : mPlatform)
-		//{
-
-		//}
+		for (const CPlug* plug : mPlugs)
+		{
+			plug->Process(deltaSeconds);
+		}
 	}
 
 	CWinPlatform& CEngine::GetPlatform()

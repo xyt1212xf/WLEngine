@@ -1,7 +1,6 @@
 #include "Plug.h"
 namespace ML
 {
-
 	bool CPlug::Initialise()
 	{
 		return false;
@@ -12,7 +11,7 @@ namespace ML
 		return false;
 	}
 
-	void CPlug::Process(int32 DeltaSeconds)
+	void CPlug::Process(int32 DeltaSeconds) const
 	{
 
 	}

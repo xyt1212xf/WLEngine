@@ -27,7 +27,7 @@ namespace ML
 		bool ProcessMsg(SEvent& e);
 		void Run(int32 deltaSeconds);
 		CWinPlatform& GetPlatform();
-	
+		
 		template<typename T>
 		T* GetPlugs() const;
 

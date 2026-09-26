@@ -133,6 +133,25 @@ namespace ML
 		{
 		}
 
+		ElementType* begin()
+		{
+			return GetData(); 
+		}
+		
+		ElementType* end()
+		{
+			return GetData() + ArrayNum; 
+		}
+
+		const ElementType* begin() const
+		{
+			return GetData(); 
+		}
+		
+		const ElementType* end()const 
+		{
+			return GetData() + ArrayNum; 
+		}
 
 		[[nodiscard]] FORCEINLINE ElementType* GetData() const
 		{
@@ -213,6 +232,18 @@ namespace ML
 			(void)new (Ptr) ElementType(std::forward<ArgsType>(Args)...);
 			return OldArrayNum;
 		}
+
+		/**
+		 * Initializer list constructor
+		*/
+		[[nodiscard]] TArray(std::initializer_list<InElementType> InitList)
+		{
+			// This is not strictly legal, as std::initializer_list's iterators are not guaranteed to be pointers, but
+			// this appears to be the case on all of our implementations.  Also, if it's not true on a new implementation,
+			// it will fail to compile rather than behave badly.
+			CopyToEmpty(InitList.begin(), (SizeType)InitList.size(), 0);
+		}
+
 //
 //		FORCEINLINE void Push(ElementType&& Item)
 //		{
@@ -235,10 +266,21 @@ namespace ML
 			CheckAddress(&Item);
 			return Emplace(Item);
 		}
-
+	private:
+		/**
+		 * Copies data from one array into this array. Uses the fast path if the
+		 * data in question does not need a constructor.
+		 *
+		 * @param Source The source array to copy
+		 * @param PrevMax The previous allocated size
+		 */
+		template <typename OtherElementType, typename OtherSizeType>
+		void CopyToEmpty(const OtherElementType* OtherData, OtherSizeType OtherNum, SizeType PrevMax)
+		{
+		}
 	protected:
-		SizeType             ArrayNum;
-		SizeType             ArrayMax;
+		SizeType             ArrayNum = 0;
+		SizeType             ArrayMax = 0;
 		ElementAllocatorType AllocatorInstance;
 
 	private:

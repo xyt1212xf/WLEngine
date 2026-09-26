@@ -4,6 +4,20 @@
 
 namespace ML
 {
+
+	CGraphicPlug::CGraphicPlug()
+	{
+		
+	}
+
+	CGraphicPlug::~CGraphicPlug()
+	{
+		if (mpDeviceBase)
+		{
+
+		}
+	}
+
 	bool CGraphicPlug::Initialise()
 	{
 		if (nullptr == mpDeviceBase)
@@ -19,7 +33,7 @@ namespace ML
 		return false;
 	}
 
-	void CGraphicPlug::Process(int32 DeltaSeconds)
+	void CGraphicPlug::Process(int32 DeltaSeconds) const
 	{
 
 	}
