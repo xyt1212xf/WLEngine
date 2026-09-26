@@ -160,6 +160,9 @@ namespace ML
 				}
 			}
 			SizeType OldArrayNum = ArrayNum;
+			ArrayNum++;
+			void* Ptr = (char*)AllocatorInstance.GetAllocation() + sizeof(ElementType) * OldArrayNum;
+			(void)new (Ptr) ElementType(std::forward<ArgsType>(Args)...);
 			return OldArrayNum;
 		}
 //
