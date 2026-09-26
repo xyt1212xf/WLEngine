@@ -9,6 +9,7 @@ namespace ML
 	public:
 		virtual bool Initialise() override final;
 		virtual bool UnInitialise()override final;
+		virtual void Process(int32 DeltaSeconds) override final;
 
 	private:
 		CDX12Device*	mpDeviceBase = nullptr;

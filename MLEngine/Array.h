@@ -28,7 +28,7 @@ namespace ML
 		return Result;
 	}
 
-	[[noreturn]] void OnInvalidArrayNum(unsigned long long NewNum)
+	[[noreturn]] static void OnInvalidArrayNum(unsigned long long NewNum)
 	{
 		for (;;);
 	}

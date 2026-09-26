@@ -38,5 +38,6 @@ namespace ML
 		int mouseY = 0;
 		INT64 wParam = 0;
 		INT64 lParam = 0;
+		INT32 deltaSeconds = 0;
 	};
 }

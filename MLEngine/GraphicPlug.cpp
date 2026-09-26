@@ -19,4 +19,9 @@ namespace ML
 		return false;
 	}
 
+	void CGraphicPlug::Process(int32 DeltaSeconds)
+	{
+
+	}
+
 }

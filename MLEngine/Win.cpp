@@ -105,7 +105,7 @@ namespace ML
 		msg.mouseY = GET_Y_LPARAM(lParam);
 		msg.wParam = wParam;
 		msg.lParam = lParam;
-		GEngine->processMsg(msg);
+		GEngine->ProcessMsg(msg);
 
 		switch (message)
 		{

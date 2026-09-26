@@ -3,7 +3,7 @@
 #include "Win.h"
 #include "Message.h"
 #include "TSingle.h"
-
+#include "Array.h"
 
 namespace ML
 {
@@ -15,6 +15,7 @@ namespace ML
 	};
 	//class CVoxelMgr;
 	//class CScene;
+	class CPlug;
 	class CGraphicPlug;
 	class CEngine : public TSingle<CEngine>
 	{
@@ -23,14 +24,15 @@ namespace ML
 		virtual ~CEngine();
 		bool Initialise(const SWindowConfig& config);
 		bool UnInitialise();
-		bool processMsg(SEvent& e);
+		bool ProcessMsg(SEvent& e);
+		void Run(int32 deltaSeconds);
 		CWinPlatform& GetPlatform();
-
+	
 		template<typename T>
 		T* GetPlugs() const;
 
 	private:
-		//TArray<CPlug*> mPlugs;
+		TArray<CPlug*> mPlugs;
 		CGraphicPlug* mGraphicPlug = nullptr;
 		CWinPlatform mPlatform;
 	};

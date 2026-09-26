@@ -41,12 +41,18 @@ namespace ML
 		return false;
 	}
 
-	bool CEngine::processMsg(SEvent& e)
+
+	bool CEngine::ProcessMsg(SEvent& e)
 	{
 		return false;
 	}
 
-	CWinPlatform& CEngine::GetPlatform() 
+	void CEngine::Run(int32 deltaSeconds)
+	{
+		
+	}
+
+	CWinPlatform& CEngine::GetPlatform()
 	{
 		return mPlatform;
 	}

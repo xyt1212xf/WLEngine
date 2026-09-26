@@ -71,6 +71,8 @@ namespace ML
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
+			UINT32 dTime = ::GetTickCount();
+			GEngine->Run(dTime - nNowTime);
 			//UINT32 dTime = ::GetTickCount();
 			//UINT32 offTime = dTime - nNowTime;
 			//auto pLua = GEngine->getLuaState();

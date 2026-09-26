@@ -8,5 +8,6 @@ namespace ML
 	public:
 		virtual bool Initialise();
 		virtual bool UnInitialise();
+		virtual void Process(int32 DeltaSeconds);
 	};
 }
