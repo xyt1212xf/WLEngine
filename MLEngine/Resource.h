@@ -3,7 +3,7 @@
 #include "Refcount.h"
 namespace ML
 {
-	enum ResourceType
+	enum class ResourceType : uint16
 	{
 		Mesh,
 		Texture,
@@ -14,7 +14,7 @@ namespace ML
 		Model,
 		SurfaceView,
 		Resource,
-		UnKnow = 0XFFFF,
+		UnKnow = 0XFF,
 	};
 	
 	enum class ResourceStatus : uint8
@@ -23,7 +23,7 @@ namespace ML
 		loaded,
 		unloading,
 		unloaded,
-		UnKnow = 0XFFFF,
+		UnKnow = 0XFF,
 	};
 
 	//const static std::string szTextureFlag[] =
@@ -64,8 +64,7 @@ namespace ML
 
 	protected:
 		ResourceStatus mStatus = ResourceStatus::UnKnow;
-		ResourceType sResType = UnKnow;
-		ResourceType mType = UnKnow;
+		ResourceType sResType = ResourceType::UnKnow;
 		UINT32	mUUID = 0;
 		std::string mName = "";
 		std::string mResourceName = "";

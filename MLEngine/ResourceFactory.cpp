@@ -23,7 +23,7 @@ namespace ML
 		CResource* pResource = nullptr;
 		switch (type)
 		{
-		case Mesh:
+		case ResourceType::Mesh:
 		{
 			pResource = new CMesh();
 			pResource->mTypeName = "Mesh";

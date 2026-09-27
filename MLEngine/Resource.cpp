@@ -43,7 +43,7 @@ namespace ML
 
 	ResourceType CResource::getType()
 	{
-		return mType;
+		return sResType;
 	}
 
 	std::string CResource::getTypeName() const

@@ -39,6 +39,7 @@
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
+    <ClCompile Include="VertexStreamFactory.cpp" />
     <ClCompile Include="Win.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +80,7 @@
     <ClInclude Include="UnrealMemory.h" />
     <ClInclude Include="UnrealTemplate.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="VertexStreamFactory.h" />
     <ClInclude Include="Win.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

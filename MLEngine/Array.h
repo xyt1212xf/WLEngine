@@ -235,6 +235,27 @@ namespace ML
 			return GetData()[Index];
 		}
 
+		[[nodiscard]] FORCEINLINE bool IsValidIndex(SizeType Index) const
+		{
+			return Index >= 0 && Index < ArrayNum;
+		}
+
+		[[nodiscard]] bool IsEmpty() const
+		{
+			return ArrayNum == 0;
+		}
+
+		[[nodiscard]] FORCEINLINE SizeType Max() const
+		{
+			return ArrayMax;
+		}
+
+		/** @returns Number of bytes used, excluding slack */
+		[[nodiscard]] FORCEINLINE SIZE_T NumBytes() const
+		{
+			return static_cast<SIZE_T>(ArrayNum) * sizeof(ElementType);
+		}
+
 		FORCEINLINE void CheckAddress(const ElementType* Addr) const
 		{
 			IsValidAddress(Addr, GetData(), ArrayMax); 

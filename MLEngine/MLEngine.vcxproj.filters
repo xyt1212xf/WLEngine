@@ -49,6 +49,12 @@
     <Filter Include="Core\Resource">
       <UniqueIdentifier>{ca9c4b3c-9f9a-4b50-be9c-1fe708dd8e34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Factory">
+      <UniqueIdentifier>{0156bc58-51a1-46d8-82b3-a0b3480594f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Factory\Graphic">
+      <UniqueIdentifier>{e8a13780-bce0-4273-9def-9e4b77a03d46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -113,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="ResourceMgr.cpp">
       <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexStreamFactory.cpp">
+      <Filter>Core\Factory\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="ResourceMgr.h">
       <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexStreamFactory.h">
+      <Filter>Core\Factory\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
