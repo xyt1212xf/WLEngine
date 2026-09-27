@@ -53,11 +53,11 @@ namespace ML
 
 	bool CGameApp::destoryEngine()
 	{
-		//if (nullptr != mpEngine)
-		//{
-		//	mpEngine->unInitialize();
-		//	mpEngine->destory();
-		//}
+		if (nullptr != GEngine)
+		{
+			GEngine->UnInitialise();
+			GEngine->destory();
+		}
 		return true;
 	}
 

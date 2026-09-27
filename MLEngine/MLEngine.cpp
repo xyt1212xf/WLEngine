@@ -33,13 +33,21 @@ namespace ML
 
 	bool CEngine::Initialise(const SWindowConfig& config)
 	{
+		mbRunning = true;
+		mpThreadPools = new CThreadPool();
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
 		mPlugs.Add(graphicPlug);
-		return graphicPlug ->Initialise();
+		if (graphicPlug->Initialise())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	bool CEngine::UnInitialise()
 	{
+		mbRunning = false;
+		SafeDelete(mpThreadPools);
 		return false;
 	}
 
@@ -60,6 +68,11 @@ namespace ML
 		double castTime = timeColor.getTimerMilliSec();
 	//	std::cout<<castTime<<"\n";
 		timeColor.reset();
+	}
+
+	bool CEngine::IsRun()
+	{
+		return mbRunning;
 	}
 
 	CWinPlatform& CEngine::GetPlatform()

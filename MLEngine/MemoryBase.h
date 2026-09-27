@@ -1,5 +1,8 @@
 #pragma once
 #include "Common.h"
+#define ML_NEW(type, label) new (WL::MemLabelRef(kMem##label##Id), WL::kDefaultMemoryAlignment, __FILE__, __LINE__) type
+#define ML_DELETE(ptr, label) { if(ptr) delete ptr; ptr = nullptr; }
+
 namespace ML
 {
 	enum

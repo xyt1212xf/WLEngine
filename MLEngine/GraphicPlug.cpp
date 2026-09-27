@@ -1,6 +1,8 @@
 #include "GraphicPlug.h"
 #include "MLEngine.h"
 #include "DX12Device.h"
+#include "Renderer.h"
+#include "TimerClock.h"
 
 namespace ML
 {
@@ -23,8 +25,16 @@ namespace ML
 		if (nullptr == mpDeviceBase)
 		{
 			mpDeviceBase = new CDX12Device;
-			return mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd());
-		}
+			if (mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd()))
+			{
+				GEngine->threadDetach([this]()
+					{
+						CThreadPool::setThreadName("RenderThread", GetCurrentThreadId());
+						mpRenderer->_Draw();
+					});
+				return true;
+			}
+		}	
 		return false;
 	}
 

@@ -3,7 +3,7 @@
 namespace ML
 {
 	class CDX12Device;
-
+	class CRenderer;
 	class MLENGINE_API CGraphicPlug : public CPlug
 	{
 	public:
@@ -16,5 +16,6 @@ namespace ML
 
 	private:
 		CDX12Device*	mpDeviceBase = nullptr;
+		CRenderer*		mpRenderer = nullptr;
 	};
 }

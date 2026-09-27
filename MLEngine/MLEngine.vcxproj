@@ -28,6 +28,7 @@
     <ClCompile Include="MemoryBase.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Plug.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="Win.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="MLEngine.h" />
     <ClInclude Include="NumericLimits.h" />
     <ClInclude Include="Plug.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />
     <ClInclude Include="TSingle.h" />
