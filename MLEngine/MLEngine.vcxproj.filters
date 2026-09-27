@@ -40,6 +40,9 @@
     <Filter Include="Core\Memory">
       <UniqueIdentifier>{1f1e6cb7-1e3d-4c20-8378-542274718edb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Thread">
+      <UniqueIdentifier>{12ff62fb-bef0-4236-96de-ae2c9e0a76f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="MallocAnsi.cpp">
       <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerClock.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +157,12 @@
     </ClInclude>
     <ClInclude Include="MallocAnsi.h">
       <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerClock.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Core\Thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

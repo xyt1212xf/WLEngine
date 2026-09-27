@@ -1,5 +1,6 @@
 #include "MLEngine.h"
 #include "GraphicPlug.h"
+#include "TimerClock.h"
 //#include "Scene.h"
 //#include "GameController.h"
 //#include "SceneController.h"
@@ -50,10 +51,15 @@ namespace ML
 
 	void CEngine::Run(int32 deltaSeconds)
 	{
+		static CTimerClock timeColor;
+		timeColor.begin();
 		for (const CPlug* plug : mPlugs)
 		{
 			plug->Process(deltaSeconds);
 		}
+		double castTime = timeColor.getTimerMilliSec();
+	//	std::cout<<castTime<<"\n";
+		timeColor.reset();
 	}
 
 	CWinPlatform& CEngine::GetPlatform()

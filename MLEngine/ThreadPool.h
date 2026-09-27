@@ -9,8 +9,9 @@
 #include <future>
 #include <functional>
 #include <stdexcept>
+#include "Common.h"
 
-namespace WL
+namespace ML
 {
 	class CThreadPool 
 	{

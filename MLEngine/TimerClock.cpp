@@ -1,5 +1,5 @@
 #include "TimerClock.h"
-namespace WL
+namespace ML
 {
 	void CTimerClock::begin()
 	{
@@ -13,7 +13,7 @@ namespace WL
 
 	double CTimerClock::getTimerSecond()
 	{
-		return getTimerMicroSec() * 0.000001f;
+		return getTimerMicroSec() * 0.000001;
 	}
 
 	double CTimerClock::getTimerMilliSec()

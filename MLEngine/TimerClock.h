@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 #include "Common.h"
-namespace WL
+namespace ML
 {
 	class CTimerClock
 	{
