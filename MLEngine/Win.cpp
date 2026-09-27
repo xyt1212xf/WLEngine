@@ -208,7 +208,7 @@ namespace ML
 		return mhMainWnd;
 	}
 
-	SWindowConfig* CWinPlatform::getWindowConfigPtr()
+	SWindowConfig* CWinPlatform::getWindowConfigPtr() 
 	{
 		return &mConfig;
 	}

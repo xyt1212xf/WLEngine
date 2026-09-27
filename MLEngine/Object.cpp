@@ -1,5 +1,5 @@
 #include "Object.h"
-namespace WL
+namespace ML
 {
 
 	CObject::CObject(const std::string& InName)

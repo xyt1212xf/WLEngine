@@ -1,6 +1,6 @@
 #include "Component.h"
 
-namespace WL
+namespace ML
 {
 	CComponent::~CComponent()
 	{

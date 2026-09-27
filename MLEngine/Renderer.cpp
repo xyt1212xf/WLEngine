@@ -1,8 +1,17 @@
 #include "Renderer.h"
 #include "MLEngine.h"
 #include "TimerClock.h"
+#include "GraphicPlug.h"
+#include "DX12Device.h"
+
 namespace ML
 {
+	CRenderer::CRenderer(CGraphicPlug* plug)
+	: mpPlug(plug)
+	{
+
+	}
+
 	CRenderer::~CRenderer()
 	{
 
@@ -25,6 +34,7 @@ namespace ML
 
 	bool CRenderer::_Begin()
 	{
+		mpPlug->GetDevice()->BeginDraw();	
 		return true;
 	}
 

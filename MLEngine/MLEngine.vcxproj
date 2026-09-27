@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="Foundation.cpp" />
@@ -27,7 +28,9 @@
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="MemoryBase.cpp" />
     <ClCompile Include="MLEngine.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plug.cpp" />
+    <ClCompile Include="Refcount.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
@@ -36,6 +39,7 @@
   <ItemGroup>
     <ClInclude Include="Array.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ContainerAllocationPolicies.h" />
     <ClInclude Include="ContainersFwd.h" />
     <ClInclude Include="DefineType.h" />
@@ -52,8 +56,11 @@
     <ClInclude Include="MemoryBase.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />
+    <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="NumericLimits.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Plug.h" />
+    <ClInclude Include="Refcount.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />

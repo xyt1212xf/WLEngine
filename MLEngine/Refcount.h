@@ -1,10 +1,9 @@
 #pragma once
 #include "Common.h"
-#include "Export.h"
 
-namespace WL
+namespace ML
 {
-	class WLENGINE_API CRefcount
+	class CRefcount
 	{
 	public:
 		CRefcount();
@@ -14,6 +13,6 @@ namespace WL
 		unsigned short getRefCount();
 
 	protected:
-		unsigned short mCount;
+		unsigned short mCount = 0;
 	};
 }

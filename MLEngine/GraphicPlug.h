@@ -13,6 +13,7 @@ namespace ML
 		virtual bool Initialise() override final;
 		virtual bool UnInitialise()override final;
 		virtual void Process(int32 DeltaSeconds) const override final;
+		CDX12Device* GetDevice();
 
 	private:
 		CDX12Device*	mpDeviceBase = nullptr;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Refcount.h"
-namespace WL
+namespace ML
 {
 	struct FObjectHeader 
 	{
@@ -11,7 +11,7 @@ namespace WL
 		bool			bMarked = false;
 	};
 
-	class  WLENGINE_API CObject : public CRefcount
+	class CObject : public CRefcount
 	{
 		friend class CGCObjectMgr;
 	public:
@@ -21,8 +21,7 @@ namespace WL
 		const std::string& GetName() const;
 		
 	private:
-		std::string Name;
- 
+		std::string Name = "";
 	};
 	inline INT32 ObjectHeadSize = sizeof(FObjectHeader);
 }

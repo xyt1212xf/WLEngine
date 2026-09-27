@@ -1,4 +1,5 @@
 #include "DX12Device.h"
+#include "MLEngine.h"
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")
@@ -9,11 +10,41 @@ namespace ML
     static const UINT32 FrameCount = 2;
 	CDX12Device::CDX12Device()
 	{
-
+		mFrameIndex = 0;
 	}
 
 	CDX12Device::~CDX12Device()
 	{
+	}
+
+	void CDX12Device::BeginDraw()
+	{
+		// Reuse the memory associated with command recording.
+		// We can only reset when the associated command lists have finished execution on the GPU.
+		mCommandAllocator->Reset();
+
+		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+		// Reusing the command list reuses memory.
+		mCommandList->Reset(mCommandAllocator, nullptr);
+
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			mRenderTargets[mFrameIndex],
+			D3D12_RESOURCE_STATE_PRESENT,
+			D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+		// Indicate a state transition on the resource usage.
+		mCommandList->ResourceBarrier(1, &barrier);
+
+		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
+		mCommandList->RSSetViewports(1, &mScreenViewport);
+		mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+		++mFrameIndex;
+	}
+
+	void CDX12Device::EndDraw()
+	{
+
 	}
 
 	bool CDX12Device::initDevice(HWND hWnd)
@@ -35,6 +66,7 @@ namespace ML
 				}
 			}
 	#endif	
+			const SWindowConfig* winConfig = GEngine->GetPlatform().getWindowConfigPtr();
 			IDXGIFactory4* factory = nullptr;
 			HRESULT hr = CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory));
 			if (hr == S_OK)
@@ -69,9 +101,8 @@ namespace ML
 				// Describe and create the swap chain.
 				DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 				swapChainDesc.BufferCount = FrameCount;
-				//Lion
-				swapChainDesc.Width = 1024;
-				swapChainDesc.Height = 768;
+				swapChainDesc.Width = winConfig->nWidth;
+				swapChainDesc.Height = winConfig->nHeight;
 
 				swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -151,6 +182,16 @@ namespace ML
 					break;
 				}
 			}
+
+			mScreenViewport.TopLeftX = 0;
+			mScreenViewport.TopLeftY = 0;
+			mScreenViewport.Width = static_cast<float>(winConfig->nWidth);
+			mScreenViewport.Height = static_cast<float>(winConfig->nHeight);
+			mScreenViewport.MinDepth = 0.0f;
+			mScreenViewport.MaxDepth = 1.0f;
+
+			mScissorRect = { 0, 0, winConfig->nWidth, winConfig->nHeight};
+
 			return true;
 		} while (false);
 		return false;

@@ -23,13 +23,16 @@ namespace ML
 	{
 		friend class CGraphicPlug;
 	public:
-		CRenderer() = default;
+		CRenderer(CGraphicPlug* plug);
 		virtual ~CRenderer();
-
+		
 	private:
 		void _Draw();
 		bool _Begin();
 		void _Flush();
 		void _End();
+
+	private:
+		CGraphicPlug*	mpPlug = nullptr;
 	};
 }

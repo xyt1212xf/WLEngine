@@ -43,6 +43,9 @@
     <Filter Include="Core\Plugs\Renderer">
       <UniqueIdentifier>{dccef9db-90aa-4cd4-ab5f-3f44fedcb91b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Component">
+      <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -83,6 +86,15 @@
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Core\Plugs\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Refcount.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +181,18 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Core\Plugs\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Refcount.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="NonCopyable.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

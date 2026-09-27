@@ -1,10 +1,9 @@
 #pragma once
-#include "Common.h"
-#include "MemoryMgr.h"
+#include "NonCopyable.h"
 
-namespace WL
+namespace ML
 {
-	class WLENGINE_API CComponent : public CNonCopyable
+	class CComponent : public CNonCopyable
 	{
 	public:
 		CComponent() = default;

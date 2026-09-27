@@ -27,6 +27,7 @@ namespace ML
 			mpDeviceBase = new CDX12Device;
 			if (mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd()))
 			{
+				mpRenderer = new CRenderer(this);
 				GEngine->threadDetach([this]()
 					{
 						CThreadPool::setThreadName("RenderThread", GetCurrentThreadId());
@@ -46,6 +47,11 @@ namespace ML
 	void CGraphicPlug::Process(int32 DeltaSeconds) const
 	{
 
+	}
+
+	CDX12Device* CGraphicPlug::GetDevice() 
+	{
+		return mpDeviceBase;
 	}
 
 }

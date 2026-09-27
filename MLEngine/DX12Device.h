@@ -14,6 +14,8 @@ namespace ML
 	public:
 		CDX12Device();
 		virtual ~CDX12Device();
+		void BeginDraw();
+		void EndDraw();
 
 	protected:
 		bool initDevice(HWND hWnd);
@@ -33,8 +35,11 @@ namespace ML
 		ID3D12GraphicsCommandList* mCommandList = nullptr;
 		std::vector<ID3D12Resource*> mRenderTargets;
 
+		D3D12_VIEWPORT mScreenViewport;
+		D3D12_RECT mScissorRect;
+
 		// Synchronization objects.
-		UINT32 mFrameIndex = 0;
+		UINT32 mFrameIndex : 1;
 		HANDLE mFenceEvent;
 		ID3D12Fence* mFence = nullptr;
 		UINT64 mFenceValue = 0;
