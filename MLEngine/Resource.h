@@ -1,36 +1,8 @@
 #pragma once
 #include "Common.h"
 #include "Refcount.h"
-#include "GraphicHead.h"
-
-namespace WL
+namespace ML
 {
-	struct SImgFileInfo
-	{
-		SImgFileInfo() = default;
-
-		SImgFileInfo(int size, int format, int width, int height, int type)
-		{
-			nFileSize = size;
-			nFormat = format;
-			nWidth = width;
-			nHeight = height;
-			nType = type;
-		}
-		union 
-		{
-			UINT32 nFileSize;
-			UINT32 nSliceSize;
-		};
-		
-		int nFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-		int nWidth = 0;
-		int nHeight = 0;
-		int nDepth = 0;
-		int nType = 2;
-		std::string szPath = "";
-	};
-
 	enum ResourceType
 	{
 		Mesh,
@@ -45,14 +17,23 @@ namespace WL
 		UnKnow = 0XFFFF,
 	};
 	
-	const static std::string szTextureFlag[] =
+	enum class ResourceStatus : uint8
 	{
-		"baseTexture",
-		"normalTexture",
-		"detailTexture",
-		"lightMapTexture",
-		"textureArray",
+		loading,
+		loaded,
+		unloading,
+		unloaded,
+		UnKnow = 0XFFFF,
 	};
+
+	//const static std::string szTextureFlag[] =
+	//{
+	//	"baseTexture",
+	//	"normalTexture",
+	//	"detailTexture",
+	//	"lightMapTexture",
+	//	"textureArray",
+	//};
 
 
 	class CResource : public CRefcount
@@ -72,15 +53,18 @@ namespace WL
 		void setName(const std::string& szName);
 		const std::string& getName()const;
 		
-				
+		ResourceStatus GetStatus() const;
 		ResourceType getType();
 		std::string getTypeName() const;
-
+	
 		virtual bool initialise();
 
+	private:
+		void SetStatus(ResourceStatus status);
+
 	protected:
-		static ResourceType sResType;
-		static UINT32 gUUID;
+		ResourceStatus mStatus = ResourceStatus::UnKnow;
+		ResourceType sResType = UnKnow;
 		ResourceType mType = UnKnow;
 		UINT32	mUUID = 0;
 		std::string mName = "";

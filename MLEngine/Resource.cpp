@@ -1,20 +1,14 @@
 #include "Resource.h"
-#include "WLEngine.h"
-
-namespace WL
+#include "MLEngine.h"
+namespace ML
 {
-	UINT32 CResource::gUUID = 0;
 	CResource::CResource()
 	{
-		mUUID = ++gUUID;
 	}
 
 	CResource::~CResource()
 	{
-		if (nullptr != GEngine)
-		{
-			GEngine->removeResource(this);
-		}
+	
 	}
 
 	UINT32 CResource::getUUID()
@@ -42,6 +36,11 @@ namespace WL
 		return mName;
 	}
 
+	ResourceStatus CResource::GetStatus() const
+	{
+		return mStatus;
+	}
+
 	ResourceType CResource::getType()
 	{
 		return mType;
@@ -55,6 +54,11 @@ namespace WL
 	bool CResource::initialise()
 	{
 		return false;
+	}
+
+	void CResource::SetStatus(ResourceStatus status)
+	{
+		mStatus = status;
 	}
 
 }

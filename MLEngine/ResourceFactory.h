@@ -1,22 +1,28 @@
 #pragma once
 #include <string>
 #include "Mesh.h"
-#include "Font.h"
-#include "UIWnd.h"
-#include "Model.h"
-#include "Shader.h"
-#include "Material.h"
-#include "Texture.h"
-#include "SurfaceView.h"
-#include "MemoryMgr.h"
 
-namespace WL
+namespace ML
 {
 	class CResourceFactory 
 	{
 	public:
 		CResourceFactory();
 		virtual ~CResourceFactory();
+
+		template<typename T>
+		T* CreateResource();
+
+		bool LoadResource(const std::string& resourceName);
+
+	private:
 		CResource* createResource(ResourceType type);
 	};
+
+	template<typename T>
+	T* CResourceFactory::CreateResource()
+	{
+		return createResource(T::type);
+	}
+
 }

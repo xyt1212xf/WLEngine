@@ -1,15 +1,13 @@
 #include "Mesh.h"
-namespace WL
+#define LODLEVEL_MAX 3
+namespace ML
 {
-
 	CMesh::CMesh()
 	{
-
 	}
 
 	CMesh::~CMesh()
 	{
-
+	
 	}
-
 }

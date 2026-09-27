@@ -30,7 +30,7 @@ namespace ML
 		void Run(int32 deltaSeconds);
 		bool IsRun();
 		CWinPlatform& GetPlatform();
-	
+			
 		template<class F, class... Args>
 		auto threadJoin(F&& f, Args&&... args);// ->std::future<typename std::result_of<F(Args...)>::type>;
 
@@ -40,7 +40,14 @@ namespace ML
 		template<typename T>
 		T* GetPlugs() const;
 
+		template<typename T>
+		void LoadResourceAsy(const std::string& resourceName) const;
+
+		template<typename T>
+		T* LoadResource(const std::string& resourceName) const;
+
 	private:
+		
 		TArray<CPlug*> mPlugs;
 		CWinPlatform mPlatform;
 		CThreadPool* mpThreadPools = nullptr;

@@ -1,8 +1,7 @@
 
 #include "Class.h"
-namespace WL
+namespace ML
 {
-
 	bool CClass::IsChildOfWalk(const StructInfo* Other) const
 	{
 		for (const StructInfo* Current = SuperStruct; Current != nullptr; Current = Current->SuperStruct)

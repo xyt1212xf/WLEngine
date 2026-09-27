@@ -1,23 +1,11 @@
 #pragma once
 #include "Resource.h"
-#include "GPUBuffer.h"
-#ifdef D3D11
-#include "DX11Mesh.h"
-#endif
-
-namespace WL
+namespace ML
 {
-#ifdef D3D11
-	class CMesh : public CDX11Mesh 
-#endif
+	class CMesh : public CResource
 	{
-	public: 
+	public:
 		CMesh();
-		virtual ~CMesh();
-
-
-	private:
-
+		virtual ~CMesh();	
 	};
-	
 }

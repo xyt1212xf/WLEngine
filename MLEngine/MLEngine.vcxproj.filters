@@ -46,6 +46,9 @@
     <Filter Include="Core\Component">
       <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Resource">
+      <UniqueIdentifier>{ca9c4b3c-9f9a-4b50-be9c-1fe708dd8e34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -95,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Class.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMgr.cpp">
+      <Filter>Core\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +214,21 @@
     </ClInclude>
     <ClInclude Include="AllowShrinking.h">
       <Filter>Core\TemplateLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Class.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFactory.h">
+      <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMgr.h">
+      <Filter>Core\Resource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

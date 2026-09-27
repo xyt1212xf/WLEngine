@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 
-namespace WL
+namespace ML
 {
 	struct StructInfo
 	{

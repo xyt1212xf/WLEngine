@@ -1,6 +1,8 @@
 #pragma once
 #include "Common.h"
 #include "Refcount.h"
+#include "Class.h"
+
 namespace ML
 {
 	struct FObjectHeader 

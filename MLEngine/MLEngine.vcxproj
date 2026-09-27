@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="DX12Device.cpp" />
@@ -27,11 +28,15 @@
     <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="MemoryBase.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plug.cpp" />
     <ClCompile Include="Refcount.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="Win.cpp" />
@@ -39,6 +44,7 @@
   <ItemGroup>
     <ClInclude Include="AllowShrinking.h" />
     <ClInclude Include="Array.h" />
+    <ClInclude Include="Class.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ContainerAllocationPolicies.h" />
@@ -55,6 +61,7 @@
     <ClInclude Include="json_fwd.hpp" />
     <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="MemoryBase.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />
     <ClInclude Include="NonCopyable.h" />
@@ -63,6 +70,9 @@
     <ClInclude Include="Plug.h" />
     <ClInclude Include="Refcount.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceFactory.h" />
+    <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />
     <ClInclude Include="TSingle.h" />
