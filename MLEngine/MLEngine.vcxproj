@@ -37,6 +37,7 @@
     <ClCompile Include="Win.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllowShrinking.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Component.h" />

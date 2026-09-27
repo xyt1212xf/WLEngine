@@ -5,6 +5,40 @@
 
 namespace ML
 {
+
+//
+///**
+// * Default constructs a range of items in memory.
+// *
+// * @param	Elements	The address of the first memory location to construct at.
+// * @param	Count		The number of elements to destruct.
+// */
+//	template <
+//		typename ElementType,
+//		typename SizeType
+//		UE_REQUIRES(sizeof(ElementType) > 0 && TIsZeroConstructType<ElementType>::Value) // the sizeof here should improve the error messages we get when we try to call this function with incomplete types
+//	>
+//	FORCEINLINE void DefaultConstructItems(void* Address, SizeType Count)
+//	{
+//		FMemory::Memset(Address, 0, sizeof(ElementType) * Count);
+//	}
+//	template <
+//		typename ElementType,
+//		typename SizeType
+//		UE_REQUIRES(sizeof(ElementType) > 0 && !TIsZeroConstructType<ElementType>::Value) // the sizeof here should improve the error messages we get when we try to call this function with incomplete types
+//	>
+//	FORCENOINLINE void DefaultConstructItems(void* Address, SizeType Count)
+//	{
+//		ElementType* Element = (ElementType*)Address;
+//		while (Count)
+//		{
+//			::new ((void*)Element) ElementType;
+//			++Element;
+//			--Count;
+//		}
+//	}
+
+
 	enum
 	{
 		// Default allocator alignment. If the default is specified, the allocator applies to engine rules.

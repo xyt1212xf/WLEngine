@@ -2,9 +2,9 @@
 #include <d3d12.h>
 #include "d3dx12.h"
 #include <dxgi1_6.h>
-#include <vector>
 #include "Device.h"
-
+#include "Common.h"
+#include "Array.h"
 
 namespace ML
 {
@@ -21,8 +21,8 @@ namespace ML
 		bool initDevice(HWND hWnd);
 
 	private:
-		void GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
-			bool requestHighPerformanceAdapter = false);
+		void _GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter, bool requestHighPerformanceAdapter = false);
+		void _WaitCommandQueue();
 
 	private:
 
@@ -39,6 +39,7 @@ namespace ML
 		D3D12_RECT mScissorRect;
 
 		// Synchronization objects.
+		TArray<UINT64> mFenceValues; 
 		UINT32 mFrameIndex : 1;
 		HANDLE mFenceEvent;
 		ID3D12Fence* mFence = nullptr;

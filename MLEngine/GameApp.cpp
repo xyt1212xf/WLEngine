@@ -14,10 +14,6 @@ namespace ML
 {
 	CGameApp::CGameApp()
 	{
-		ML::TArray<INT32> a;
-		a.Add(3);
-		int32 ab = a[0];
-
 	}
 
 	CGameApp::~CGameApp()

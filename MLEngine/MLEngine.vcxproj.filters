@@ -194,5 +194,8 @@
     <ClInclude Include="NonCopyable.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="AllowShrinking.h">
+      <Filter>Core\TemplateLib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -133,6 +133,35 @@ namespace ML
 		{
 		}
 
+		[[nodiscard]] FORCEINLINE SizeType Num() const
+		{
+			return ArrayNum;
+		}
+
+		//void SetNum(SizeType NewNum, EAllowShrinking AllowShrinking = EAllowShrinking::Default)
+		//{
+			//if (NewNum > Num())
+			//{
+			//	const SizeType Diff = NewNum - ArrayNum;
+			//	const SizeType Index = AddUninitialized(Diff);
+			//	DefaultConstructItems<ElementType>((void*)((uint8*)AllocatorInstance.GetAllocation() + Index * sizeof(ElementType)), Diff);
+			//}
+			//else if (NewNum < 0)
+			//{
+			//	// Cast to USizeType first to prevent sign extension on negative sizes, producing unusually large values.
+			//	OnInvalidArrayNum((unsigned long long)(USizeType)NewNum);
+			//}
+			//else if (NewNum < Num())
+			//{
+			//	RemoveAt(NewNum, Num() - NewNum, AllowShrinking);
+			//}
+		//}
+
+		//FORCEINLINE void SetNum(SizeType NewNum, bool bAllowShrinking)
+		//{
+			//SetNum(NewNum, bAllowShrinking ? EAllowShrinking::Yes : EAllowShrinking::No);
+		//}
+
 		ElementType* begin()
 		{
 			return GetData(); 

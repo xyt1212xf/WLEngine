@@ -45,7 +45,7 @@ namespace ML
 
 	void CRenderer::_End()
 	{
-
+		mpPlug->GetDevice()->EndDraw();	
 	}
 
 }

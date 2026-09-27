@@ -10,41 +10,14 @@ namespace ML
     static const UINT32 FrameCount = 2;
 	CDX12Device::CDX12Device()
 	{
-		mFrameIndex = 0;
+		for (INT32 i = 0; i < FrameCount; ++i)
+		{
+			mFenceValues.Add(0);
+		}
 	}
 
 	CDX12Device::~CDX12Device()
 	{
-	}
-
-	void CDX12Device::BeginDraw()
-	{
-		// Reuse the memory associated with command recording.
-		// We can only reset when the associated command lists have finished execution on the GPU.
-		mCommandAllocator->Reset();
-
-		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-		// Reusing the command list reuses memory.
-		mCommandList->Reset(mCommandAllocator, nullptr);
-
-		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			mRenderTargets[mFrameIndex],
-			D3D12_RESOURCE_STATE_PRESENT,
-			D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-		// Indicate a state transition on the resource usage.
-		mCommandList->ResourceBarrier(1, &barrier);
-
-		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
-		mCommandList->RSSetViewports(1, &mScreenViewport);
-		mCommandList->RSSetScissorRects(1, &mScissorRect);
-
-		++mFrameIndex;
-	}
-
-	void CDX12Device::EndDraw()
-	{
-
 	}
 
 	bool CDX12Device::initDevice(HWND hWnd)
@@ -79,7 +52,7 @@ namespace ML
 					D3D_FEATURE_LEVEL_11_0
 				};
 				IDXGIAdapter1* hardwareAdapter = nullptr;
-				GetHardwareAdapter(factory, &hardwareAdapter);
+				_GetHardwareAdapter(factory, &hardwareAdapter);
 				for (auto level : levels)
 				{
 					if (SUCCEEDED(D3D12CreateDevice(hardwareAdapter, level,IID_PPV_ARGS(&mpDevice))))
@@ -197,12 +170,11 @@ namespace ML
 		return false;
 	}
 
-	void CDX12Device::GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
+	void CDX12Device::_GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
 		bool requestHighPerformanceAdapter /*= false*/)
 	{
 		*ppAdapter = nullptr;
 		IDXGIAdapter1* adapter = nullptr;
-
 		IDXGIFactory6* factory6 = nullptr;
 		if (SUCCEEDED(pFactory->QueryInterface(IID_PPV_ARGS(&factory6))))
 		{
@@ -256,4 +228,61 @@ namespace ML
 		}
 		*ppAdapter = adapter;
 	}
+
+
+	void CDX12Device::BeginDraw()
+	{
+		_WaitCommandQueue();
+		// Reuse the memory associated with command recording.
+		// We can only reset when the associated command lists have finished execution on the GPU.
+		mCommandAllocator->Reset();
+
+		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+		// Reusing the command list reuses memory.
+		mCommandList->Reset(mCommandAllocator, nullptr);
+
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			mRenderTargets[mFrameIndex],
+			D3D12_RESOURCE_STATE_PRESENT,
+			D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+		// Indicate a state transition on the resource usage.
+		mCommandList->ResourceBarrier(1, &barrier);
+
+		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
+		mCommandList->RSSetViewports(1, &mScreenViewport);
+		mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+	}
+
+	void CDX12Device::EndDraw()
+	{
+		mCommandList->Close();
+		// Add the command list to the queue for execution.
+		ID3D12CommandList* cmdsLists[] = { mCommandList };
+		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		// 记录当前帧的 fence 值
+		mFenceValues[mFrameIndex] = mFenceValue;
+		mCommandQueue->Signal(mFence, mFenceValue);
+		mFenceValue++;
+
+		// swap the back and front buffers
+		mSwapChain->Present(0, 0);
+		++mFrameIndex;
+	}
+
+
+	void CDX12Device::_WaitCommandQueue()
+	{
+		UINT32 waitIndex = ((mFrameIndex + 1) & 0x01);
+		const UINT64 fenceToWait = mFenceValues[waitIndex];
+
+		if (fenceToWait > 0 && mFence->GetCompletedValue() < fenceToWait)
+		{
+			mFence->SetEventOnCompletion(fenceToWait, mFenceEvent);
+			WaitForSingleObject(mFenceEvent, INFINITE);
+		}
+	}
+
 }

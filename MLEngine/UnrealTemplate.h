@@ -1,5 +1,7 @@
 #pragma once
 #include <type_traits>
+#include <sstream>      
+#include <stdexcept>    
 namespace ML
 {
 	template <typename T>
