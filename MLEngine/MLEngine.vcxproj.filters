@@ -55,6 +55,9 @@
     <Filter Include="Core\Factory\Graphic">
       <UniqueIdentifier>{e8a13780-bce0-4273-9def-9e4b77a03d46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Object">
+      <UniqueIdentifier>{c9beec9c-b618-453f-9411-148fe2ab3d6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -111,9 +114,6 @@
     <ClCompile Include="Resource.cpp">
       <Filter>Core\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Core\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceFactory.cpp">
       <Filter>Core\Resource</Filter>
     </ClCompile>
@@ -122,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="VertexStreamFactory.cpp">
       <Filter>Core\Factory\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamableRenderAsset.cpp">
+      <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Core\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMesh.cpp">
+      <Filter>Core\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +239,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Core\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Core\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceFactory.h">
       <Filter>Core\Resource</Filter>
     </ClInclude>
@@ -241,6 +247,15 @@
     </ClInclude>
     <ClInclude Include="VertexStreamFactory.h">
       <Filter>Core\Factory\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamableRenderAsset.h">
+      <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Core\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMesh.h">
+      <Filter>Core\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

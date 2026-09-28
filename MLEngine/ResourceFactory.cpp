@@ -1,5 +1,7 @@
 #include "ResourceFactory.h"
 #include "MLEngine.h"
+#include "MeshResource.h"
+
 namespace ML
 {
 
@@ -25,7 +27,7 @@ namespace ML
 		{
 		case ResourceType::Mesh:
 		{
-			pResource = new CMesh();
+			pResource = new CMeshResource();
 			pResource->mTypeName = "Mesh";
 			break;
 		}

@@ -1,8 +1,9 @@
 #pragma once
-#include "Resource.h"
+#include "StreamableRenderAsset.h"
+
 namespace ML
 {
-	class CMesh : public CResource
+	class CMesh : public CStreamableRenderAsset
 	{
 	public:
 		CMesh();

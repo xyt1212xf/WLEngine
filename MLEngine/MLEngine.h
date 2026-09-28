@@ -41,7 +41,7 @@ namespace ML
 		T* GetPlugs() const;
 
 		template<typename T>
-		void LoadResourceAsy(const std::string& resourceName) const;
+		void LoadResourceAsync(const std::string& resourceName) const;
 
 		template<typename T>
 		T* LoadResource(const std::string& resourceName) const;

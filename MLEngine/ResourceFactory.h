@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Mesh.h"
+#include "Resource.h"
 
 namespace ML
 {
