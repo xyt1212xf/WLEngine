@@ -12,8 +12,20 @@
 #endif
 namespace ML
 {
+	struct MyStruct
+	{
+		~MyStruct()
+		{
+			int32 a = 0;
+		}
+	};
 	CGameApp::CGameApp()
 	{
+		TArray<int32> aa;
+		aa.Add(33);
+		TArray<MyStruct> bb;
+		bb.Add(MyStruct());
+		bb.Empty();
 	}
 
 	CGameApp::~CGameApp()

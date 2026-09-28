@@ -316,6 +316,32 @@ namespace ML
 			CheckAddress(&Item);
 			return Emplace(Item);
 		}
+
+		void Empty(SizeType Slack = 0)
+		{
+			if (Slack < 0)
+			{
+				// Cast to USizeType first to prevent sign extension on negative sizes, producing unusually large values.
+				OnInvalidArrayNum((unsigned long long)(USizeType)Slack);
+			}
+			DestructItems(GetData(), ArrayNum);
+
+			//assert(Slack >= 0);
+			//ArrayNum = 0;
+
+			//SlackTrackerNumChanged();
+
+			//if (ArrayMax != Slack)
+			//{
+			//	ReallocTo<GetAllocatorFlags<AllocatorType>()>(
+			//		sizeof(ElementType),
+			//		alignof(ElementType),
+			//		Slack,
+			//		AllocatorInstance,
+			//		ArrayNum,
+			//		ArrayMax );
+			//}
+		}
 	private:
 		/**
 		 * Copies data from one array into this array. Uses the fast path if the

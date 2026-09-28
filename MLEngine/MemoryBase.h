@@ -38,6 +38,18 @@ namespace ML
 //		}
 //	}
 
+	template <typename ElementType, typename SizeType>
+	inline void DestructItems(ElementType* Element, SizeType Count)
+	{
+		// 编译期判断：如果不是平凡析构，才执行循环
+		if constexpr (!std::is_trivially_destructible_v<ElementType>) 
+		{
+			for (SizeType i = 0; i < Count; ++i) 
+			{
+				Element[i].~ElementType(); // 显式调用析构函数
+			}
+		}
+	}
 
 	enum
 	{
