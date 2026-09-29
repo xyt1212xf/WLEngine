@@ -58,6 +58,12 @@
     <Filter Include="Core\Object">
       <UniqueIdentifier>{c9beec9c-b618-453f-9411-148fe2ab3d6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Object\Mesh">
+      <UniqueIdentifier>{ae910e10-6833-4439-886e-d60e783f090e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame">
+      <UniqueIdentifier>{09e1bdde-3472-48c0-902c-78284f259be2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -126,14 +132,26 @@
     <ClCompile Include="StreamableRenderAsset.cpp">
       <Filter>Core\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Core\Object</Filter>
+    <ClCompile Include="StaticMeshDescription.cpp">
+      <Filter>Core\Object\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="StaticMesh.cpp">
-      <Filter>Core\Object</Filter>
+      <Filter>Core\Object\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshDescription.cpp">
-      <Filter>Core\Object</Filter>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Core\Object\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDescription.cpp">
+      <Filter>Core\Object\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponent.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>GameFrame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,14 +272,26 @@
     <ClInclude Include="StreamableRenderAsset.h">
       <Filter>Core\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Core\Object</Filter>
+    <ClInclude Include="StaticMeshDescription.h">
+      <Filter>Core\Object\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="StaticMesh.h">
-      <Filter>Core\Object</Filter>
+      <Filter>Core\Object\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshDescription.h">
-      <Filter>Core\Object</Filter>
+    <ClInclude Include="Mesh.h">
+      <Filter>Core\Object\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDescription.h">
+      <Filter>Core\Object\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponent.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>GameFrame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

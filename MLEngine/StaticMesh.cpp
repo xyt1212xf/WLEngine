@@ -13,6 +13,6 @@ namespace ML
 
 	void CStaticMesh::BuildFromStaticMeshDescriptions(const TArray<CStaticMeshDescription*>& StaticMeshDescriptions)
 	{
-
+		
 	}
 }

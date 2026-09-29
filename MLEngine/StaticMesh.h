@@ -10,5 +10,6 @@ namespace ML
 		CStaticMesh();
 		virtual ~CStaticMesh();
 		void BuildFromStaticMeshDescriptions(const TArray<CStaticMeshDescription*>& StaticMeshDescriptions);
+		void BuildFromDescription();
 	};
 }
