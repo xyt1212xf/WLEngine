@@ -9,6 +9,7 @@ namespace ML
 	public:
 		CStaticMesh();
 		virtual ~CStaticMesh();
-		void BuildFromStaticMeshDescriptions(const TArray<CStaticMeshDescription*>& StaticMeshDescriptions);
+		virtual void BuildFromMeshDescriptions(const CMeshAttributes& Attrs);
+		
 	};
 }

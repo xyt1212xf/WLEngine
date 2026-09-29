@@ -1,4 +1,5 @@
 #include "StaticMesh.h"
+#include "MeshAttributes.h"
 
 namespace ML
 {
@@ -11,8 +12,9 @@ namespace ML
 	
 	}
 
-	void CStaticMesh::BuildFromStaticMeshDescriptions(const TArray<CStaticMeshDescription*>& StaticMeshDescriptions)
+	void CStaticMesh::BuildFromMeshDescriptions(const CMeshAttributes& Attrs)
 	{
-		
+
 	}
+
 }

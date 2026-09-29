@@ -2,7 +2,7 @@
 #include "Plug.h"
 namespace ML
 {
-	class CDX12Device;
+	class CDX12RHIDevice;
 	class CRenderer;
 	class MLENGINE_API CGraphicPlug : public CPlug
 	{
@@ -13,10 +13,10 @@ namespace ML
 		virtual bool Initialise() override final;
 		virtual bool UnInitialise()override final;
 		virtual void Process(int32 DeltaSeconds) const override final;
-		CDX12Device* GetDevice();
+		CDX12RHIDevice* GetDevice();
 
 	private:
-		CDX12Device*	mpDeviceBase = nullptr;
+		CDX12RHIDevice*	mpDeviceBase = nullptr;
 		CRenderer*		mpRenderer = nullptr;
 	};
 }

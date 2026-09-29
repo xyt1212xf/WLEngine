@@ -24,7 +24,7 @@ namespace ML
 	{
 		if (nullptr == mpDeviceBase)
 		{
-			mpDeviceBase = new CDX12Device;
+			mpDeviceBase = new CDX12RHIDevice;
 			if (mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd()))
 			{
 				mpRenderer = new CRenderer(this);
@@ -49,7 +49,7 @@ namespace ML
 
 	}
 
-	CDX12Device* CGraphicPlug::GetDevice() 
+	CDX12RHIDevice* CGraphicPlug::GetDevice() 
 	{
 		return mpDeviceBase;
 	}

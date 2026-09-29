@@ -25,6 +25,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="DX12Device.cpp" />
+    <ClCompile Include="DX12RHIbuffer.cpp" />
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="ResourceMgr.cpp" />
+    <ClCompile Include="RHIbuffer.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
@@ -70,6 +72,7 @@
     <ClInclude Include="DefineType.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DX12Device.h" />
+    <ClInclude Include="DX12RHIbuffer.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Foundation.h" />
     <ClInclude Include="GameApp.h" />
@@ -98,6 +101,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="ResourceMgr.h" />
+    <ClInclude Include="RHIbuffer.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />
     <ClInclude Include="StaticMeshComponent.h" />

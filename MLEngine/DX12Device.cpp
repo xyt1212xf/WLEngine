@@ -8,7 +8,7 @@
 namespace ML
 {
     static const UINT32 FrameCount = 2;
-	CDX12Device::CDX12Device()
+	CDX12RHIDevice::CDX12RHIDevice()
 	{
 		for (INT32 i = 0; i < FrameCount; ++i)
 		{
@@ -16,11 +16,11 @@ namespace ML
 		}
 	}
 
-	CDX12Device::~CDX12Device()
+	CDX12RHIDevice::~CDX12RHIDevice()
 	{
 	}
 
-	bool CDX12Device::initDevice(HWND hWnd)
+	bool CDX12RHIDevice::initDevice(HWND hWnd)
 	{
 		do 
 		{
@@ -170,7 +170,7 @@ namespace ML
 		return false;
 	}
 
-	void CDX12Device::_GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
+	void CDX12RHIDevice::_GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
 		bool requestHighPerformanceAdapter /*= false*/)
 	{
 		*ppAdapter = nullptr;
@@ -230,7 +230,7 @@ namespace ML
 	}
 
 
-	void CDX12Device::BeginDraw()
+	void CDX12RHIDevice::BeginDraw()
 	{
 		_WaitCommandQueue();
 		// Reuse the memory associated with command recording.
@@ -255,7 +255,7 @@ namespace ML
 
 	}
 
-	void CDX12Device::EndDraw()
+	void CDX12RHIDevice::EndDraw()
 	{
 		mCommandList->Close();
 		// Add the command list to the queue for execution.
@@ -273,7 +273,7 @@ namespace ML
 	}
 
 
-	void CDX12Device::_WaitCommandQueue()
+	void CDX12RHIDevice::_WaitCommandQueue()
 	{
 		UINT32 waitIndex = ((mFrameIndex + 1) & 0x01);
 		const UINT64 fenceToWait = mFenceValues[waitIndex];

@@ -8,12 +8,12 @@
 
 namespace ML
 {
-	class MLENGINE_API CDX12Device : public CDeviceBase
+	class MLENGINE_API CDX12RHIDevice : public CDeviceBase
 	{
 		friend class CGraphicPlug;
 	public:
-		CDX12Device();
-		virtual ~CDX12Device();
+		CDX12RHIDevice();
+		virtual ~CDX12RHIDevice();
 		void BeginDraw();
 		void EndDraw();
 
