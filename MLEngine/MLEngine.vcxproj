@@ -31,7 +31,12 @@
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="MemoryBase.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshAttributes.cpp" />
     <ClCompile Include="MeshDescription.cpp" />
+    <ClCompile Include="MeshPolygonGroup.cpp" />
+    <ClCompile Include="MeshTriangle.cpp" />
+    <ClCompile Include="MeshVertex.cpp" />
+    <ClCompile Include="MeshVertexInstance.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plug.cpp" />
@@ -42,6 +47,7 @@
     <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
+    <ClCompile Include="StaticMeshAttributes.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="StaticMeshDescription.cpp" />
     <ClCompile Include="StreamableRenderAsset.cpp" />
@@ -74,7 +80,12 @@
     <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="MemoryBase.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshAttributes.h" />
     <ClInclude Include="MeshDescription.h" />
+    <ClInclude Include="MeshPolygonGroup.h" />
+    <ClInclude Include="MeshTriangle.h" />
+    <ClInclude Include="MeshVertex.h" />
+    <ClInclude Include="MeshVertexInstance.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MLEngine.h" />
     <ClInclude Include="NonCopyable.h" />
@@ -88,6 +99,7 @@
     <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="StaticMesh.h" />
+    <ClInclude Include="StaticMeshAttributes.h" />
     <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="StaticMeshDescription.h" />
     <ClInclude Include="StreamableRenderAsset.h" />

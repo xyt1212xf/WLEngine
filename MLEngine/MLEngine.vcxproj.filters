@@ -55,14 +55,11 @@
     <Filter Include="Core\Factory\Graphic">
       <UniqueIdentifier>{e8a13780-bce0-4273-9def-9e4b77a03d46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Object">
-      <UniqueIdentifier>{c9beec9c-b618-453f-9411-148fe2ab3d6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Object\Mesh">
-      <UniqueIdentifier>{ae910e10-6833-4439-886e-d60e783f090e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameFrame">
       <UniqueIdentifier>{09e1bdde-3472-48c0-902c-78284f259be2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Resource\Mesh">
+      <UniqueIdentifier>{3c75ab17-cde8-43ca-a230-3e2ed1a4140c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,18 +129,6 @@
     <ClCompile Include="StreamableRenderAsset.cpp">
       <Filter>Core\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshDescription.cpp">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticMesh.cpp">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshDescription.cpp">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Core\Component</Filter>
     </ClCompile>
@@ -158,6 +143,36 @@
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
       <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshDescription.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMesh.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDescription.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshAttributes.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshPolygonGroup.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshTriangle.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshVertex.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshVertexInstance.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshAttributes.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,18 +293,6 @@
     <ClInclude Include="StreamableRenderAsset.h">
       <Filter>Core\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshDescription.h">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticMesh.h">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshDescription.h">
-      <Filter>Core\Object\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
@@ -304,6 +307,36 @@
     </ClInclude>
     <ClInclude Include="Quaternion.h">
       <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshDescription.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMesh.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDescription.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAttributes.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshPolygonGroup.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshTriangle.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshVertex.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshVertexInstance.h">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshAttributes.h">
+      <Filter>Core\Resource\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
