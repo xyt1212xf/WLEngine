@@ -15,6 +15,5 @@ namespace ML
 	protected:
 		CRHIBuffer* VertexBuffer = nullptr;
 		CRHIBuffer* IndexBuffer = nullptr;
-
 	};
 }

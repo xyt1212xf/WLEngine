@@ -10,6 +10,7 @@ namespace ML
 		CDX12RHIbuffer(ID3D12Resource* InResource);
 		virtual ~CDX12RHIbuffer();
 		ID3D12Resource* GetResource() const { return Resource; }
+
 	private:
 		ID3D12Resource* Resource = nullptr;
 	};
