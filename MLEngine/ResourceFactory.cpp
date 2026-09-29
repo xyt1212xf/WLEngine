@@ -31,8 +31,8 @@ namespace ML
 			pResource->mTypeName = "Mesh";
 			break;
 		}
-		return pResource;
 		}
+		return pResource;
 	}
 
 }

@@ -1,7 +1,6 @@
 #include "Quaternion.h"
-#include "Common.h"
 #include "Foundation.h"
-namespace WL
+namespace ML
 {
 
 	CQuaternion CQuaternion::operator+(const CQuaternion& other) const
@@ -124,7 +123,7 @@ namespace WL
 		return normalize();
 	}
 
-	WL::CQuaternion& CQuaternion::normalize()
+	CQuaternion& CQuaternion::normalize()
 	{
 		const float n = mx * mx + my * my + mz * mz + mw * mw;
 

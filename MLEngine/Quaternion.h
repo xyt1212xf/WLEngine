@@ -1,7 +1,8 @@
 #pragma once
+#include "Common.h"
 #include "Vector.h"
 
-namespace WL
+namespace ML
 {
 	class CQuaternion
 	{

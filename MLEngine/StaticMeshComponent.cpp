@@ -2,4 +2,14 @@
 namespace ML
 {
 
+	CStaticMeshComponent::CStaticMeshComponent()
+	{
+
+	}
+
+	CStaticMeshComponent::~CStaticMeshComponent()
+	{
+
+	}
+
 }

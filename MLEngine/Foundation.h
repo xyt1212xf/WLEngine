@@ -102,18 +102,18 @@ namespace ML
 //			out->z = getRandomFloat(min->z, max->z);
 //		}
 //
-//		//! returns if a equals b, taking possible rounding errors into account
-//		INLINE bool equals(const float a, const float b, const float tolerance = ROUNDING_ERROR_f32)
-//		{
-//			return (a + tolerance >= b) && (a - tolerance <= b);
-//		}
-//
-//		//! returns if a equals b, taking possible rounding errors into account
-//		INLINE bool equals(const double a, const double b, const double tolerance = ROUNDING_ERROR_f64)
-//		{
-//			return (a + tolerance >= b) && (a - tolerance <= b);
-//		}
-//
+		//! returns if a equals b, taking possible rounding errors into account
+		INLINE bool equals(const float a, const float b, const float tolerance = ROUNDING_ERROR_f32)
+		{
+			return (a + tolerance >= b) && (a - tolerance <= b);
+		}
+
+		//! returns if a equals b, taking possible rounding errors into account
+		INLINE bool equals(const double a, const double b, const double tolerance = ROUNDING_ERROR_f64)
+		{
+			return (a + tolerance >= b) && (a - tolerance <= b);
+		}
+
 //		template<class T>
 //		INLINE T Min(const T& a, const T& b)
 //		{
@@ -260,34 +260,34 @@ namespace ML
 //			return true;
 //		}
 //
-//		template <typename T>
-//		INLINE void Clamp(OUT T& out, IN T p1, IN T p2)
-//		{
-//			if (out < p1)
-//			{
-//				out = p1;
-//			}
-//			else if (out > p2)
-//			{
-//				out = p2;
-//			}
-//		}
-//
-//
-//		template<class T >
-//		T Clip(T minvalue, T maxvalue, T in)
-//		{
-//			if (in >= minvalue && in <= maxvalue)
-//			{
-//				return in;
-//			}
-//			else if (in < minvalue)
-//			{
-//				return minvalue;
-//			}
-//			return maxvalue;
-//		}
-//
+		template <typename T>
+		INLINE void Clamp(OUT T& out, IN T p1, IN T p2)
+		{
+			if (out < p1)
+			{
+				out = p1;
+			}
+			else if (out > p2)
+			{
+				out = p2;
+			}
+		}
+
+
+		template<class T >
+		T Clip(T minvalue, T maxvalue, T in)
+		{
+			if (in >= minvalue && in <= maxvalue)
+			{
+				return in;
+			}
+			else if (in < minvalue)
+			{
+				return minvalue;
+			}
+			return maxvalue;
+		}
+
 //		INLINE void getPath(TCHAR* path, TCHAR* szbuffer)
 //		{
 //			for (size_t i = _tcslen(szbuffer); i > 0; --i)
@@ -411,11 +411,11 @@ namespace ML
 		//	return dynamic_cast<T1>(object) != nullptr ? true : false;
 		//}
 
-		//template<class T>
-		//constexpr const T& clamp(const T& v, const T& lo, const T& hi)
-		//{
-		//	return (v < lo) ? lo : (hi < v) ? hi : v;
-		//}
+		template<class T>
+		constexpr const T& clamp(const T& v, const T& lo, const T& hi)
+		{
+			return (v < lo) ? lo : (hi < v) ? hi : v;
+		}
 	
 	}
 }
