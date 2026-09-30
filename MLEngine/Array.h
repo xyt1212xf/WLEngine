@@ -342,6 +342,65 @@ namespace ML
 			//		ArrayMax );
 			//}
 		}
+
+		FORCEINLINE void SlackTrackerNumChanged()
+		{
+		}
+
+		template <class PREDICATE_CLASS>
+		SizeType RemoveAll(const PREDICATE_CLASS& Predicate)
+		{
+			const SizeType OriginalNum = ArrayNum;
+			if (!OriginalNum)
+			{
+				return 0; // nothing to do, loop assumes one item so need to deal with this edge case here
+			}
+
+			ElementType* Data = GetData();
+
+			SizeType WriteIndex = 0;
+			SizeType ReadIndex = 0;
+			bool bNotMatch = !::std::invoke(Predicate, Data[ReadIndex]); // use a ! to guarantee it can't be anything other than zero or one
+			do
+			{
+				SizeType RunStartIndex = ReadIndex++;
+				while (ReadIndex < OriginalNum && bNotMatch == !::std::invoke(Predicate, Data[ReadIndex]))
+				{
+					ReadIndex++;
+				}
+				SizeType RunLength = ReadIndex - RunStartIndex;
+				//checkSlow(RunLength > 0);
+				if (bNotMatch)
+				{
+					// this was a non-matching run, we need to move it
+					if (WriteIndex != RunStartIndex)
+					{
+						RelocateConstructItems<ElementType>((void*)(Data + WriteIndex), Data + RunStartIndex, RunLength);
+					}
+					WriteIndex += RunLength;
+				}
+				else
+				{
+					// this was a matching run, delete it
+					DestructItems(Data + RunStartIndex, RunLength);
+				}
+				bNotMatch = !bNotMatch;
+			} while (ReadIndex < OriginalNum);
+
+			ArrayNum = WriteIndex;
+
+			SlackTrackerNumChanged();
+
+			return OriginalNum - ArrayNum;
+		}
+
+		SizeType Remove(const ElementType& Item)
+		{
+			CheckAddress(&Item);
+
+			// Element is non-const to preserve compatibility with existing code with a non-const operator==() member function
+			return RemoveAll([&Item](ElementType& Element) { return Element == Item; });
+		}
 	private:
 		/**
 		 * Copies data from one array into this array. Uses the fast path if the

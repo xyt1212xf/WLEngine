@@ -33,7 +33,13 @@ namespace ML
 
 	void CWorld::RemoveStreamingLevel(const std::string& LevelName)
 	{
-
+		for (CLevelStreaming* LevelSteam : StreamingLevels)
+		{
+			if (LevelSteam->GetLevelName() == LevelName)
+			{
+				StreamingLevels.Remove(LevelSteam);
+			}
+		}
 	}
 
 	CLevelStreaming* CWorld::GetStreamingLevel(const std::string& LevelName) const

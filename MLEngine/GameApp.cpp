@@ -15,6 +15,9 @@ namespace ML
 {
 	CGameApp::CGameApp()
 	{
+		TArray<int32> a;
+		a.Add(3);
+		a.Remove(3);
 	}
 
 	CGameApp::~CGameApp()
