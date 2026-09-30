@@ -2,13 +2,8 @@
 #include "Vector.h"
 namespace ML
 {
-	class CMeshVertex
+	struct FMeshVertex
 	{
-	public:
-		CMeshVertex(); 
-		~CMeshVertex();
-		Vec3F Position;
-		Vec3F Normal;
-		Vec2F UV;
+		Vec3F Position = Vec3F(0.0f, 0.0f, 0.0f);
 	};
 }
