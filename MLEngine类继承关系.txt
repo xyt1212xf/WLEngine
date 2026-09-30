@@ -70,6 +70,12 @@ CMeshAttributes                 (平铺顶点流 + Sections + BakeFromDescriptio
 CVertexStreamFactory (abstract) (BuildInputLayout 纯虚)
 └── CStaticVertexFactory        (静态网格顶点流, UE FLocalVertexFactory 对标)
 
+[CWorld系]
+CWorld
+└── CResource        
+CLevle
+└── CResource        
+
 
 二、数据结构 (POD struct, 无继承)
 --------------------------------------------------------------------------------
@@ -160,6 +166,9 @@ CDX12RHIDevice           ↔ FD3D12DynamicRHI (设备部分)
 CRenderer                ↔ FSceneRenderer (简化)
 CEngine                  ↔ FEngineLoop/GEngine
 CPlug                    ↔ FRenderModule/插件系统 (简化)
+CWorld                   ↔ UWorld
+CLevel                   ↔ ULevel
+
 
 ================================================================================
  注: CMesh 原有的纯虚 BuildFromMeshDescriptions() 已被 CStaticMesh::Build()

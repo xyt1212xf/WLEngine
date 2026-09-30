@@ -61,6 +61,9 @@
     <Filter Include="Core\Resource\Mesh">
       <UniqueIdentifier>{3c75ab17-cde8-43ca-a230-3e2ed1a4140c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFrame\Scene">
+      <UniqueIdentifier>{04ccbbec-6b63-426d-80a6-a179925d4ee1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -193,10 +196,16 @@
       <Filter>Core\Resource\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
-      <Filter>GameFrame</Filter>
+      <Filter>GameFrame\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Level.cpp">
-      <Filter>GameFrame</Filter>
+      <Filter>GameFrame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldPartition.cpp">
+      <Filter>GameFrame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelStreaming.cpp">
+      <Filter>GameFrame\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -384,10 +393,16 @@
       <Filter>Core\Resource\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
-      <Filter>GameFrame</Filter>
+      <Filter>GameFrame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Level.h">
-      <Filter>GameFrame</Filter>
+      <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldPartition.h">
+      <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelStreaming.h">
+      <Filter>GameFrame\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
