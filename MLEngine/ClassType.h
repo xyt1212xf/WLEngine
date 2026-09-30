@@ -1,5 +1,5 @@
 #pragma once
-namespace WL
+namespace ML
 {
 	enum ClassType
 	{

@@ -2,9 +2,7 @@
 #include "Common.h"
 #include "Matrix.h"
 #include "Vector.h"
-#include "Plane.h"
-#include "Ray.h"
-namespace WL
+namespace ML
 {
 	namespace Math
 	{

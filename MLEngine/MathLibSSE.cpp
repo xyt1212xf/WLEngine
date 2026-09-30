@@ -1,5 +1,5 @@
 #include "MathLibSSE.h"
-namespace WL
+namespace ML
 {
 	namespace Math
 	{

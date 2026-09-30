@@ -4,25 +4,25 @@
 #pragma warning(push)
 #pragma warning(disable: 4201)
 
-namespace WL
+namespace ML
 {
-	struct SMatrix44
+	struct FMatrix44
 	{
-		static const SMatrix44& identity() 
+		static const FMatrix44& identity() 
 		{
-			static  SMatrix44 m(	1.0f, 0, 0, 0,
+			static  FMatrix44 m(	1.0f, 0, 0, 0,
 								0, 1.0f, 0, 0,
 								0, 0, 1.0f, 0,
 								0, 0, 0, 1.0f);
 			return m;
 		}
 
-		SMatrix44() = default;
+		FMatrix44() = default;
 		
-		explicit SMatrix44(const float* fStream);
-		SMatrix44(const SMatrix44& m);
-		SMatrix44(SMatrix44&& m);
-		SMatrix44(float f11, float f12, float f13, float f14,
+		explicit FMatrix44(const float* fStream);
+		FMatrix44(const FMatrix44& m);
+		FMatrix44(FMatrix44&& m);
+		FMatrix44(float f11, float f12, float f13, float f14,
 				 float f21, float f22, float f23, float f24,
 				 float f31, float f32, float f33, float f34,
 				 float f41, float f42, float f43, float f44);
@@ -43,26 +43,26 @@ namespace WL
 
 		void transpose();
 
-		void operator = (const SMatrix44& mat);
-		void operator = (SMatrix44&& mat);
+		void operator = (const FMatrix44& mat);
+		void operator = (FMatrix44&& mat);
 
-		bool operator == (const SMatrix44& mat) const;
-		bool operator != (const SMatrix44& mat) const;
+		bool operator == (const FMatrix44& mat) const;
+		bool operator != (const FMatrix44& mat) const;
 
-		SMatrix44 operator * (const SMatrix44& mat) const;
-		SMatrix44 operator + (const SMatrix44& mat) const;
-		SMatrix44 operator - (const SMatrix44& mat) const;
-		SMatrix44 operator / (float f) const;
-		SMatrix44 operator * (float f) const;
+		FMatrix44 operator * (const FMatrix44& mat) const;
+		FMatrix44 operator + (const FMatrix44& mat) const;
+		FMatrix44 operator - (const FMatrix44& mat) const;
+		FMatrix44 operator / (float f) const;
+		FMatrix44 operator * (float f) const;
 
-		void operator *= (const SMatrix44& mat);
-		void operator += (const SMatrix44& mat);
-		void operator -= (const SMatrix44& mat);
+		void operator *= (const FMatrix44& mat);
+		void operator += (const FMatrix44& mat);
+		void operator -= (const FMatrix44& mat);
 		void operator /= (float f);
 		void operator *= (float f);
 
 		void* data();
-		friend SMatrix44 operator * (float f, const SMatrix44& mat);
+		friend FMatrix44 operator * (float f, const FMatrix44& mat);
 
 		//////////////////////////////////////////////////////////////////////////
 		//data
@@ -98,7 +98,7 @@ namespace WL
 			float m[4][3];
 		};
 	};
-	static_assert(sizeof(SMatrix44) == sizeof(float) * 16, "Size mismatch");
+	static_assert(sizeof(FMatrix44) == sizeof(float) * 16, "Size mismatch");
 	static_assert(sizeof(SMatrix43) == sizeof(float) * 12, "Size mismatch");
 }
 

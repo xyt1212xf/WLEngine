@@ -2,12 +2,10 @@
 #include "Common.h"
 #include "Matrix.h"
 #include "Vector.h"
-#include "Plane.h"
-#include "Ray.h"
 #include "Quaternion.h"
 #include "MathLibSSE.h"
 
-namespace WL
+namespace ML
 {
 	namespace Math
 	{
@@ -45,11 +43,11 @@ namespace WL
 		extern CQuaternion lerp(const CQuaternion& vFrom, const CQuaternion& vTo, float t);
 
 
-		extern void buildMatrixLookAtLH(InOut SMatrix44* pOut, const Vec3F* Eye, const Vec3F* LookAt, const Vec3F* Up);
+		extern void buildMatrixLookAtLH(InOut FMatrix44* pOut, const Vec3F* Eye, const Vec3F* LookAt, const Vec3F* Up);
 
-		extern void buildMatrixPerspectiveFovLH(InOut SMatrix44* pOut, float fovy, float Aspect, float fNear, float fFar);
+		extern void buildMatrixPerspectiveFovLH(InOut FMatrix44* pOut, float fovy, float Aspect, float fNear, float fFar);
 
-		extern void buildOrthographicMatrixLH(InOut SMatrix44* pOut, float fWidth, float fHeight, float fNear, float fFar);
+		extern void buildOrthographicMatrixLH(InOut FMatrix44* pOut, float fWidth, float fHeight, float fNear, float fFar);
 
 		extern void computeTriNormal(const Vec3F& v1, const Vec3F& v2, const Vec3F& v3, InOut Vec3F& normalVec);
 
@@ -78,54 +76,54 @@ namespace WL
 
 		extern void vec3RotationZ(InOut Vec3F* pVec3, float radian);
 
-		extern void vec3Transform(InOut Vec3F* pInOut, In const SMatrix44* pMatrix);
+		extern void vec3Transform(InOut Vec3F* pInOut, In const FMatrix44* pMatrix);
 
-		extern void vec4Transform(InOut Vec4F* pInOut, In const SMatrix44* pMatrix);
+		extern void vec4Transform(InOut Vec4F* pInOut, In const FMatrix44* pMatrix);
 
 		//--------------------------
 		// Matrix
 		//--------------------------
-		extern void matrixTranspose(Out SMatrix44* pOut, In const SMatrix44* pIn);
+		extern void matrixTranspose(Out FMatrix44* pOut, In const FMatrix44* pIn);
 
-		extern void matrixTranslation(InOut SMatrix44* pOut, float x, float y, float z);
+		extern void matrixTranslation(InOut FMatrix44* pOut, float x, float y, float z);
 
-		extern void matrixScale(InOut SMatrix44* pOut, float x, float y, float z);
+		extern void matrixScale(InOut FMatrix44* pOut, float x, float y, float z);
 
-		extern void matrixRotationX(InOut SMatrix44* pOut, float radian);
+		extern void matrixRotationX(InOut FMatrix44* pOut, float radian);
 
-		extern void matrixRotationY(InOut SMatrix44* pOut, float radian);
+		extern void matrixRotationY(InOut FMatrix44* pOut, float radian);
 
-		extern void matrixRotationZ(InOut SMatrix44* pOut, float radian);
+		extern void matrixRotationZ(InOut FMatrix44* pOut, float radian);
 
-		extern void matrixRotationEulerian(InOut SMatrix44* pOut, const Vec3F& radian);
+		extern void matrixRotationEulerian(InOut FMatrix44* pOut, const Vec3F& radian);
 
-		extern void matrixScaling(InOut SMatrix44* pOut, float x, float y, float z);
+		extern void matrixScaling(InOut FMatrix44* pOut, float x, float y, float z);
 
-		extern void matrixIdentity(InOut SMatrix44* pOut);
+		extern void matrixIdentity(InOut FMatrix44* pOut);
 		
-		extern bool matrixInverse(InOut SMatrix44* pOut, IN const SMatrix44* pMatrix);
+		extern bool matrixInverse(InOut FMatrix44* pOut, IN const FMatrix44* pMatrix);
 
-		extern void matrixToEulerian_XYZ(In SMatrix44* pIn, Out float &x, Out float &y, Out float&z );
+		extern void matrixToEulerian_XYZ(In FMatrix44* pIn, Out float &x, Out float &y, Out float&z );
 
-		extern void matrixToEulerian_ZYX(In SMatrix44* pIn, Out float& x, Out float& y, Out float& z );
+		extern void matrixToEulerian_ZYX(In FMatrix44* pIn, Out float& x, Out float& y, Out float& z );
 
-		extern Vec4F matrixMulVec4(In const SMatrix44& matrix, In const Vec4F& v);
+		extern Vec4F matrixMulVec4(In const FMatrix44& matrix, In const Vec4F& v);
 
-		extern Vec3F matrixMulVec3(In const SMatrix44& matrix, In const Vec3F& v);
+		extern Vec3F matrixMulVec3(In const FMatrix44& matrix, In const Vec3F& v);
 
 		//--------------------------
 		// Plane
 		//--------------------------
-		extern float planeDotCoord(In SPlane& plane, In const Vec3F& v);
+		//extern float planeDotCoord(In SPlane& plane, In const Vec3F& v);
 
-		extern void PlaneFromPoints(InOut SPlane& plane, const Vec3F& p0, const Vec3F& p1, const Vec3F& p2 );
+		//extern void PlaneFromPoints(InOut SPlane& plane, const Vec3F& p0, const Vec3F& p1, const Vec3F& p2 );
 
-		extern void PlaneFromPointNormal(InOut SPlane& plane, const Vec3F& p, const Vec3F& normal);
+		//extern void PlaneFromPointNormal(InOut SPlane& plane, const Vec3F& p, const Vec3F& normal);
 
 		extern bool intersectTriangle(const float* orig, const float* dir, const float* v0, const float* v1, const float* v2, float* t, float* u, float* v);
 
 		extern bool intersectTriangle(const float* orig, const float* dir, const float* v0, const float* v1, const float* v2, float* t);
 		
-		extern bool inSideAABB(const CAABBox& bigAABB, const CAABBox& smallAABB);
+		//extern bool inSideAABB(const CAABBox& bigAABB, const CAABBox& smallAABB);
 	}
 }

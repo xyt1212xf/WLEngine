@@ -180,6 +180,15 @@
     <ClCompile Include="DX12RHIbuffer.cpp">
       <Filter>Core\Devices\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="MathLib.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathLibSSE.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -349,6 +358,18 @@
     </ClInclude>
     <ClInclude Include="DX12RHIbuffer.h">
       <Filter>Core\Devices\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="MathLib.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathLibSSE.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassType.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
