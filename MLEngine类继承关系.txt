@@ -1,0 +1,167 @@
+================================================================================
+ MLEngine 类继承关系图
+ 生成时间: 2026-09-30
+ 说明: (abstract) = 抽象类/含纯虚函数; (*) = 模板基类; [持有] = 组合关系(非继承)
+================================================================================
+
+一、完整继承树
+--------------------------------------------------------------------------------
+
+【根基类】(无父类)
+CRefcount (引用计数基类)
+CNonCopyable (禁拷贝基类)
+CDeviceBase (设备抽象基类)
+CWinPlatform (Windows 平台层)
+CGameApp    (应用入口)
+CRenderer   (渲染器)
+CResourceFactory (资源工厂)
+CResourceMgr     (资源管理器)
+CVertexStreamFactory (abstract) (顶点流工厂)
+CMeshAttributes  (烘焙数据)
+CStaticMeshLODResources (LOD 渲染数据)
+CThreadPool      (线程池)
+
+
+【CRefcount 系】(资源与对象生命周期)
+CRefcount
+├── CObject                    (带名字的对象, UE UObject 对标)
+│   ├── CStreamableRenderAsset (可流送渲染资产, UE UStreamableRenderAsset 对标)
+│   ├── CActor                 (演员, UE AActor 对标)
+│   │   └── CCharacter         (角色, UE ACharacter 对标)
+│   └── (CClass : StructInfo)  (反射类信息, 见 StructInfo 系)
+├── CResource                  (资源基类, 持 UUID/状态/类型)
+│   └── CMesh                  (网格资源基类)
+│       └── CStaticMesh        (静态网格, UE UStaticMesh 对标)
+└── CRHIBuffer                 (RHI 缓冲抽象)
+    └── CDX12RHIbuffer         (DX12 缓冲实现, 持 ID3D12Resource)
+
+
+【StructInfo 系】(反射)
+StructInfo (结构体信息: 类名/父类指针/继承缓存)
+└── CClass    (运行时类信息: IsChildOf 查询)
+
+
+【CDeviceBase 系】(设备)
+CDeviceBase
+└── CDX12RHIDevice  (DX12 设备: SwapChain/CommandQueue/RTV/Fence)
+
+
+【CPlug 系】(插件, 单例)
+CPlug : TSingle<CPlug>          (引擎插件接口)
+└── CGraphicPlug                (图形插件: 持 Device + Renderer)
+
+
+【CEngine】(引擎主类)
+CEngine : TSingle<CEngine>      (引擎单例: 持 Plug 数组/线程池/平台层)
+
+
+【CComponent 系】(组件)
+CComponent : CNonCopyable       (组件基类: tick/名字)
+├── CTransformComponent         (变换组件, UE USceneComponent 对标)
+└── CStaticMeshComponent        (静态网格组件, UE UStaticMeshComponent 对标)
+
+
+【CMeshAttributes 系】(烘焙中间数据)
+CMeshAttributes                 (平铺顶点流 + Sections + BakeFromDescription)
+└── CStaticMeshAttributes       (当前为空, 预留扩展)
+
+
+【CVertexStreamFactory 系】(顶点工厂)
+CVertexStreamFactory (abstract) (BuildInputLayout 纯虚)
+└── CStaticVertexFactory        (静态网格顶点流, UE FLocalVertexFactory 对标)
+
+
+二、数据结构 (POD struct, 无继承)
+--------------------------------------------------------------------------------
+FMeshVertex            (拓扑顶点, 只有 Position)
+FMeshVertexInstance    (顶点实例: VertexID + Normal/Tangent/UV0/Color)
+FMeshTriangle          (三角形: 3 个 VertexInstanceID + PolygonGroupID)
+FMeshPolygonGroup      (多边形组/材质槽: Name + MaterialIndex)
+FMeshDescription       (拓扑容器: 持上述 4 个数组)
+FStaticMeshSection     (可绘制分段: MaterialIndex/FirstIndex/NumTriangles)
+FObjectHeader          (对象头: Handle/Size/Name/GC标记)
+SDataStreamUnit        (顶点流单元: Buffer/Slot/Offset/Stride/Format)
+SMeshVertexSchema      (顶点布局描述: 8 个 SDataStreamUnit)
+SInputElement          (输入布局元素)
+
+
+三、关键组合关系 (持有, 非继承)
+--------------------------------------------------------------------------------
+CEngine
+ ├── [持有] TArray<CPlug*>          → CGraphicPlug
+ ├── [持有] CThreadPool*
+ └── [持有] CWinPlatform
+
+CGraphicPlug
+ ├── [持有] CDX12RHIDevice*
+ └── [持有] CRenderer*
+
+CRenderer
+ └── [持有] CGraphicPlug*           (渲染线程通过它拿设备)
+
+CDX12RHIDevice
+ └── [持有] ID3D12Device/CommandQueue/SwapChain/RTV Heap/Fence...
+
+CStaticMesh                          (UE UStaticMesh)
+ ├── [持有] TArray<CStaticMeshDescription*>  SourceModels  (每 LOD 源数据)
+ ├── [持有] TArray<CStaticMeshLODResources*> RenderData    (每 LOD 渲染数据)
+ └── [持有] TArray<std::string>      MaterialSlots         (材质槽名)
+
+CStaticMeshDescription               (UE FStaticMeshSourceModel)
+ └── [持有] FMeshDescription         OwnedMeshDescription  (拓扑数据)
+
+CStaticMeshLODResources              (UE FStaticMeshLODResources)
+ ├── [持有] CRHIBuffer* ×4           Position/Tangent/Color/IndexBuffer
+ └── [持有] TArray<FStaticMeshSection> Sections
+
+CStaticMeshComponent
+ └── [引用] CStaticMesh*             (组件引用网格, 不持有)
+
+CDX12RHIbuffer
+ └── [持有] ID3D12Resource*
+
+
+四、静态网格数据流 (P0 已打通)
+--------------------------------------------------------------------------------
+CStaticMeshDescription::CreateCube()
+    │ 填充
+    ▼
+FMeshDescription (拓扑: Vertex/VertexInstance/Triangle/PolygonGroup)
+    │ CMeshAttributes::BakeFromDescription()  平铺+按材质分组
+    ▼
+CMeshAttributes (平铺流: Positions/Normals/Tangents/UVs/Indices + Sections)
+    │ CStaticMeshLODResources::InitResources()  拷贝元数据+算包围球
+    ▼
+CStaticMeshLODResources (Sections + Bounds + Buffer指针[P1填GPU])
+    │ P1: VB/IB 上传
+    ▼
+GPU (per-stream vertex buffers + index buffer)
+
+
+五、与 UE5 的对标速查
+--------------------------------------------------------------------------------
+CObject                  ↔ UObject
+CActor                   ↔ AActor
+CCharacter               ↔ ACharacter
+CComponent               ↔ UActorComponent
+CTransformComponent      ↔ USceneComponent
+CStaticMeshComponent     ↔ UStaticMeshComponent
+CResource                ↔ UObject (资源语义)
+CStaticMesh              ↔ UStaticMesh
+CStaticMeshDescription   ↔ FStaticMeshSourceModel
+FMeshDescription         ↔ FMeshDescription
+CMeshAttributes          ↔ (UE 无, 自加的烘焙中间层)
+FStaticMeshSection       ↔ FStaticMeshSection
+CStaticMeshLODResources  ↔ FStaticMeshLODResources
+CStaticVertexFactory     ↔ FLocalVertexFactory
+CRHIBuffer               ↔ FRHIBuffer
+CDX12RHIbuffer           ↔ FD3D12Buffer
+CDX12RHIDevice           ↔ FD3D12DynamicRHI (设备部分)
+CRenderer                ↔ FSceneRenderer (简化)
+CEngine                  ↔ FEngineLoop/GEngine
+CPlug                    ↔ FRenderModule/插件系统 (简化)
+
+================================================================================
+ 注: CMesh 原有的纯虚 BuildFromMeshDescriptions() 已被 CStaticMesh::Build()
+     流程取代并移除; CMesh 目前仅作为网格资源基类存在。
+================================================================================
