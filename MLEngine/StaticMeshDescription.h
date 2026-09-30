@@ -11,10 +11,11 @@ namespace ML
 		CStaticMeshDescription() = default;
 		virtual ~CStaticMeshDescription();
 
-		void CreateCube(Vec3F Coneter, Vec3F HalfExtents);
+		void CreateCube(Vec3F Center, Vec3F HalfExtents);
 
-	//	FVertexArray& Vertices() { return GetMeshDescription().Vertices(); }
-	//	const FVertexArray& Vertices() const { return GetMeshDescription().Vertices(); }
+		// Access to the owned topology (read/write for editors and importers).
+		FMeshDescription& GetMeshDescription() { return OwnedMeshDescription; }
+		const FMeshDescription& GetMeshDescription() const { return OwnedMeshDescription; }
 
 	protected:
 		FMeshDescription OwnedMeshDescription;

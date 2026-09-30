@@ -326,8 +326,8 @@ namespace ML
 			}
 			DestructItems(GetData(), ArrayNum);
 
-			//assert(Slack >= 0);
-			//ArrayNum = 0;
+			assert(Slack >= 0);
+			ArrayNum = 0;
 
 			//SlackTrackerNumChanged();
 

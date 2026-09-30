@@ -189,6 +189,9 @@
     <ClCompile Include="Matrix.cpp">
       <Filter>Core\Math</Filter>
     </ClCompile>
+    <ClCompile Include="StaticMeshResources.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -370,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="ClassType.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshResources.h">
+      <Filter>Core\Resource\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

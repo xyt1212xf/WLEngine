@@ -55,6 +55,7 @@
     <ClCompile Include="StaticMeshAttributes.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="StaticMeshDescription.cpp" />
+    <ClCompile Include="StaticMeshResources.cpp" />
     <ClCompile Include="StreamableRenderAsset.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="StaticMeshAttributes.h" />
     <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="StaticMeshDescription.h" />
+    <ClInclude Include="StaticMeshResources.h" />
     <ClInclude Include="StreamableRenderAsset.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />

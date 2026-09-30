@@ -10,7 +10,7 @@ namespace ML
 	public:
 		CMesh();
 		virtual ~CMesh();	
-		virtual void BuildFromMeshDescriptions(const CMeshAttributes& Attrs) = 0;
+	//	virtual void BuildFromMeshDescriptions(const CMeshAttributes& Attrs) = 0;
 
 	protected:
 		CRHIBuffer* VertexBuffer = nullptr;
