@@ -2,12 +2,12 @@
 namespace ML
 {
 
-	CDX12RHIbuffer::CDX12RHIbuffer(ID3D12Resource* InResource)
+	CDX12RHIBuffer::CDX12RHIBuffer(ID3D12Resource* InResource)
 	{
 
 	}
 
-	CDX12RHIbuffer::~CDX12RHIbuffer()
+	CDX12RHIBuffer::~CDX12RHIBuffer()
 	{
 
 	}

@@ -192,6 +192,12 @@
     <ClCompile Include="StaticMeshResources.cpp">
       <Filter>Core\Resource\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -376,6 +382,12 @@
     </ClInclude>
     <ClInclude Include="StaticMeshResources.h">
       <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>GameFrame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

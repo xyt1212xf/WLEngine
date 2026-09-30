@@ -29,6 +29,7 @@
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="MathLib.cpp" />
     <ClCompile Include="MathLibSSE.cpp" />
@@ -62,6 +63,7 @@
     <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="VertexStreamFactory.cpp" />
     <ClCompile Include="Win.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
@@ -85,6 +87,7 @@
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
     <ClInclude Include="json_fwd.hpp" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="MathLib.h" />
     <ClInclude Include="MathLibSSE.h" />
@@ -125,6 +128,7 @@
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexStreamFactory.h" />
     <ClInclude Include="Win.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

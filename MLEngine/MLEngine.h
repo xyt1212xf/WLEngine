@@ -29,6 +29,8 @@ namespace ML
 		bool ProcessMsg(SEvent& e);
 		void Run(int32 deltaSeconds);
 		bool IsRun();
+		bool LoadScene(const std::string& name);
+		void LoadSceneAsync(const std::string& name);
 		CWinPlatform& GetPlatform();
 			
 		template<class F, class... Args>

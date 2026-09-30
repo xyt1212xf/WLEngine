@@ -11,6 +11,7 @@ namespace ML
 		bool entry(SWindowConfig& config);
 		bool destoryEngine();
 		void run();
+		void loadScene(const std::string& name);
 	};
 
 }

@@ -75,6 +75,16 @@ namespace ML
 		return mbRunning;
 	}
 
+	bool CEngine::LoadScene(const std::string& name)
+	{
+		return true;
+	}
+
+	void CEngine::LoadSceneAsync(const std::string& name)
+	{
+		
+	}
+
 	CWinPlatform& CEngine::GetPlatform()
 	{
 		return mPlatform;

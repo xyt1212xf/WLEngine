@@ -6,6 +6,7 @@
 //#include "Malloc.h"
 //#include "TimerClock.h"
 #include "Array.h"
+#include "StaticMesh.h"
 
 //#ifdef _DEBUG
 //#include "TestGameFunc.h"
@@ -59,6 +60,7 @@ namespace ML
 
 	void CGameApp::run()
 	{
+		loadScene("");
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 		while (msg.message != WM_QUIT)
@@ -69,6 +71,7 @@ namespace ML
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
+			
 			UINT32 dTime = ::GetTickCount();
 			GEngine->Run(dTime - nNowTime);
 			//UINT32 dTime = ::GetTickCount();
@@ -82,6 +85,16 @@ namespace ML
 			//	nNowTime = dTime;
 			//}
 		}
+	}
+
+	void CGameApp::loadScene(const std::string& name)
+	{
+		CStaticMesh Mesh;
+		Mesh.AddMaterialSlot("Default");
+		int32 LOD0 = Mesh.AddSourceModel();
+		Mesh.GetSourceModel(LOD0)->CreateCube(Vec3F(0, 0, 0), Vec3F(1, 1, 1));
+		Mesh.Build();
+
 	}
 
 }
