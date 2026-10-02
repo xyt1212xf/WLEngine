@@ -16,7 +16,7 @@ namespace ML
 
 	}
 
-	void CPlug::Process(int32 DeltaSeconds) const
+	void CPlug::Process(float DeltaSeconds) const
 	{
 
 	}

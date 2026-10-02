@@ -12,7 +12,7 @@ namespace ML
 
 		virtual bool Initialise() override final;
 		virtual bool UnInitialise()override final;
-		virtual void Process(int32 DeltaSeconds) const override final;
+		virtual void Process(float DeltaSeconds) const override final;
 		virtual void Start() override final;
 		CDX12RHIDevice* GetDevice();
 

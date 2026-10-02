@@ -32,10 +32,10 @@ namespace ML
 		bool UnInitialise();
 		bool ProcessMsg(SEvent& e);
 		void Start();
-		void Run(int32 deltaSeconds);
+		void Run(float deltaSeconds);
 		bool IsRun();
 		bool LoadScene(const std::string& name);
-		void LoadSceneAsync(const std::string& name, FOnSceneLoaded func);
+		void LoadSceneAsync(FOnSceneLoaded func, const std::string& name);
 		CWinPlatform& GetPlatform();
 			
 		template<class F, class... Args>

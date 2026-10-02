@@ -83,7 +83,7 @@ namespace ML
 		}
 	}
 
-	void CEngine::Run(int32 deltaSeconds)
+	void CEngine::Run(float deltaSeconds)
 	{
 		static CTimerClock timeColor;
 		timeColor.begin();
@@ -106,7 +106,7 @@ namespace ML
 		return true;
 	}
 
-	void CEngine::LoadSceneAsync(const std::string& name, FOnSceneLoaded func)
+	void CEngine::LoadSceneAsync(FOnSceneLoaded func, const std::string& name)
 	{
 		if (nullptr == mpWorld)
 		{
@@ -115,8 +115,8 @@ namespace ML
 		}
 		if (mpWorld)
 		{
-			bool bResult = false;
-			func(bResult, name);
+			GEngine->threadDetach(func, name);
+			//CThreadPool::enqueueDetach(func, bResult, name);
 		}
 	}
 

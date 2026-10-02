@@ -10,6 +10,6 @@ namespace ML
 		virtual bool Initialise();
 		virtual bool UnInitialise();
 		virtual void Start();
-		virtual void Process(int32 DeltaSeconds) const;
+		virtual void Process(float DeltaSeconds) const;
 	};
 }

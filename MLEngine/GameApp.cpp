@@ -63,7 +63,7 @@ namespace ML
 
 	void CGameApp::run()
 	{
-		loadScene("");
+		loadScene("Test");
 		
 		GEngine->Start();
 		static UINT32 nNowTime = GetTickCount();
@@ -79,7 +79,7 @@ namespace ML
 			}
 			
 			UINT32 dTime = ::GetTickCount();
-			GEngine->Run(dTime - nNowTime);
+			GEngine->Run((dTime - nNowTime)*0.001f);
 			//UINT32 dTime = ::GetTickCount();
 			//UINT32 offTime = dTime - nNowTime;
 			//auto pLua = GEngine->getLuaState();
@@ -97,11 +97,11 @@ namespace ML
 	{
 		if (GEngine)
 		{
-			auto func = [](bool bResult, const std::string&)
+			auto loadFunc = [](const std::string& name)
 				{
-					int32 a = 0;
+
 				};
-			GEngine->LoadSceneAsync(name, func);
+			GEngine->LoadSceneAsync(loadFunc, name);
 		}
 		CStaticMesh Mesh;
 		Mesh.AddMaterialSlot("Default");
