@@ -1,7 +1,7 @@
 #include <math.h>
 #include "GameApp.h"
 //#include "tinyxml.h"
-//#include "Scene.h"
+#include "World.h"
 //#include "MathLib.h"
 //#include "Malloc.h"
 //#include "TimerClock.h"
@@ -41,6 +41,7 @@ namespace ML
 				{
 					continue;
 				}
+				mpWorld = new CWorld();
 			}
 			else
 			{
@@ -97,11 +98,11 @@ namespace ML
 	{
 		if (GEngine)
 		{
-			auto loadFunc = [](const std::string& name)
+			auto loadFunc = [](CWorld* pWorld)
 				{
 
 				};
-			GEngine->LoadSceneAsync(loadFunc, name);
+			mpWorld->LoadAsync(name, loadFunc);
 		}
 		CStaticMesh Mesh;
 		Mesh.AddMaterialSlot("Default");

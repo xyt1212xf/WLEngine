@@ -4,24 +4,42 @@
 
 namespace ML
 {
+	enum class EWorldLoadState : uint8
+	{
+		Idle,
+		Parsing,
+		BuildingActors,
+		UploadingGPU,
+		Ready,
+		Failed
+	};
+
 	class CLevel;
 	class CLevelStreaming;
 	class CGameMode;
+	using FOnSceneLoaded = std::function<void(class CWorld*)>;
+
 	class CWorld : public CResource
 	{
+        friend class CEngine;
 	public:
+		CWorld() = default;
 		CWorld(const std::string& name);
-		CWorld(std::string&& name);
+		CWorld(std::string&& name) noexcept;
 		virtual ~CWorld();
-		bool Initialise(const std::string& FilePath);
-		void Destroy();
+	
+		// 异步加载
+		void LoadAsync( const std::string& FilePath, FOnSceneLoaded OnLoaded = nullptr);
+
+
 		// 主关卡
 		CLevel* GetPersistentLevel() const { return PersistentLevel; }
 
 		void Update(float DeltaTime);
 
+		bool IsReady() const { return LoadState == EWorldLoadState::Ready; }
 
-		void SetOnLoadedCallback(FOnSceneLoaded Callback) { OnLoaded = Callback; }
+		void SetOnLoadedCallback(FOnSceneLoaded Callback) { OnLoadedFunc = Callback; }
 
 		bool IsLoaded() const { return bLoaded; }
 		bool IsVisible() const { return bVisible; }
@@ -34,14 +52,26 @@ namespace ML
 		const TArray<CLevelStreaming*>& GetStreamingLevels() const { return StreamingLevels; }
 
 	private:
-		std::string Name;
+		// 主线程里调用
+		void TickLoad();
+
+		void Tick(float deltaSeconds);
+
+		void ParseFile();
+		void BuildActors();
+		void InitActorsForPlay();
+		void UploadGPUResources();
+
+	private:
+		std::string PendingFilePath = "";
+		std::string Name = "";
 		bool bLoaded = false;
 		bool bVisible = false;
 
 		CGameMode* GameMode = nullptr;
 		CLevel* PersistentLevel = nullptr;
 		TArray<CLevelStreaming*> StreamingLevels;
-
-		FOnSceneLoaded OnLoaded;
+		EWorldLoadState LoadState = EWorldLoadState::Idle;
+		FOnSceneLoaded OnLoadedFunc;
 	};
 }

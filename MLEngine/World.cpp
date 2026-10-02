@@ -1,6 +1,7 @@
 #include "World.h"
 #include "LevelStreaming.h"
 #include "GameMode.h"
+#include "MLEngine.h"
 
 namespace ML
 {
@@ -9,7 +10,7 @@ namespace ML
 		Name = name;
 	}
 
-	CWorld::CWorld(std::string&& name)
+	CWorld::CWorld(std::string&& name) noexcept
 	{
 		Name = std::move(name);
 	}
@@ -19,14 +20,39 @@ namespace ML
 
 	}
 
-	bool CWorld::Initialise(const std::string& FilePath)
+
+	void CWorld::LoadAsync(const std::string& FilePath, FOnSceneLoaded OnLoaded /*= nullptr*/)
 	{
-		return true;
+		PendingFilePath = FilePath;
+		OnLoadedFunc = OnLoaded;
+		LoadState = EWorldLoadState::Parsing;
+		GEngine->threadDetach([this]()
+			{
+				ParseFile();
+				BuildActors();
+				// GPU 上传必须主线程做，所以这里只标记
+				LoadState = EWorldLoadState::UploadingGPU;
+			});
 	}
 
-	void CWorld::Destroy()
+	void CWorld::TickLoad()
 	{
+		if (LoadState == EWorldLoadState::UploadingGPU)
+		{
+			UploadGPUResources();
+			InitActorsForPlay();
+			LoadState = EWorldLoadState::Ready;
+			if(OnLoadedFunc)
+			{
+				OnLoadedFunc(this);
+			}
+		}
 
+	}
+
+	void CWorld::Tick(float deltaSeconds)
+	{
+		
 	}
 
 	CLevelStreaming* CWorld::AddStreamingLevel(const std::string& LevelName, const std::string& FilePath)
@@ -58,6 +84,26 @@ namespace ML
 			}
 		}
 		return nullptr;
+	}
+
+	void CWorld::ParseFile()
+	{
+
+	}
+
+	void CWorld::BuildActors()
+	{
+
+	}
+
+	void CWorld::InitActorsForPlay()
+	{
+
+	}
+
+	void CWorld::UploadGPUResources()
+	{
+
 	}
 
 }

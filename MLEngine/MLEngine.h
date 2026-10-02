@@ -35,7 +35,7 @@ namespace ML
 		void Run(float deltaSeconds);
 		bool IsRun();
 		bool LoadScene(const std::string& name);
-		void LoadSceneAsync(FOnSceneLoaded func, const std::string& name);
+		//void LoadSceneAsync(FOnSceneLoaded func, const std::string& name);
 		CWinPlatform& GetPlatform();
 			
 		template<class F, class... Args>

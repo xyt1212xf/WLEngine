@@ -91,6 +91,16 @@ namespace ML
 		{
 			plug->Process(deltaSeconds);
 		}
+
+		if (mpWorld)
+		{
+			mpWorld->TickLoad();   // 推进异步加载
+
+			if (mpWorld->IsReady())
+			{
+				mpWorld->Tick(deltaSeconds);     // 正常游戏逻辑
+			}
+		}
 		double castTime = timeColor.getTimerMilliSec();
 	//	std::cout<<castTime<<"\n";
 		timeColor.reset();
@@ -106,19 +116,19 @@ namespace ML
 		return true;
 	}
 
-	void CEngine::LoadSceneAsync(FOnSceneLoaded func, const std::string& name)
-	{
-		if (nullptr == mpWorld)
-		{
-			mpWorld = new CWorld("GameLevel");
+	//void CEngine::LoadSceneAsync(FOnSceneLoaded func, const std::string& name)
+	//{
+	//	if (nullptr == mpWorld)
+	//	{
+	//		mpWorld = new CWorld("GameLevel");
 
-		}
-		if (mpWorld)
-		{
-			GEngine->threadDetach(func, name);
-			//CThreadPool::enqueueDetach(func, bResult, name);
-		}
-	}
+	//	}
+	//	if (mpWorld)
+	//	{
+	//		GEngine->threadDetach(func, name);
+	//		//CThreadPool::enqueueDetach(func, bResult, name);
+	//	}
+	//}
 
 	CWinPlatform& CEngine::GetPlatform()
 	{
