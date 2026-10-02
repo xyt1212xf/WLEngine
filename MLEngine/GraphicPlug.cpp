@@ -9,16 +9,14 @@ namespace ML
 
 	CGraphicPlug::CGraphicPlug()
 	{
-		
+		std::cout<<this;
 	}
 
 	CGraphicPlug::~CGraphicPlug()
 	{
-		if (mpDeviceBase)
-		{
-
-		}
+		SafeDelete(mpDeviceBase);
 	}
+
 
 	bool CGraphicPlug::Initialise()
 	{
@@ -28,11 +26,6 @@ namespace ML
 			if (mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd()))
 			{
 				mpRenderer = new CRenderer(this);
-				GEngine->threadDetach([this]()
-					{
-						CThreadPool::setThreadName("RenderThread", GetCurrentThreadId());
-						mpRenderer->_Draw();
-					});
 				return true;
 			}
 		}	
@@ -49,7 +42,16 @@ namespace ML
 
 	}
 
-	CDX12RHIDevice* CGraphicPlug::GetDevice() 
+	void CGraphicPlug::Start()
+	{
+		GEngine->threadDetach([&]()
+			{
+				CThreadPool::setThreadName("RenderThread", GetCurrentThreadId());
+				mpRenderer->_Draw();
+			});
+	}
+
+	CDX12RHIDevice* CGraphicPlug::GetDevice()
 	{
 		return mpDeviceBase;
 	}

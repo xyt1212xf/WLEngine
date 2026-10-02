@@ -60,6 +60,7 @@
 #include "Vector.h"
 
 
+using FOnSceneLoaded = std::function<void(bool, const std::string&)>;
 
 #ifdef _MSC_VER          // MSVC
 #define __builtin_expect(EXP, C)  (EXP)

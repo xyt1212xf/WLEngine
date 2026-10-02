@@ -33,6 +33,6 @@ namespace ML
 		void _End();
 
 	private:
-		CGraphicPlug*	mpPlug = nullptr;
+		CGraphicPlug*	mpGraphicPlug = nullptr;
 	};
 }

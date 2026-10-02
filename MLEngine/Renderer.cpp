@@ -7,7 +7,7 @@
 namespace ML
 {
 	CRenderer::CRenderer(CGraphicPlug* plug)
-	: mpPlug(plug)
+	: mpGraphicPlug(plug)
 	{
 
 	}
@@ -34,7 +34,7 @@ namespace ML
 
 	bool CRenderer::_Begin()
 	{
-		mpPlug->GetDevice()->BeginDraw();	
+		mpGraphicPlug->GetDevice()->BeginDraw();	
 		return true;
 	}
 
@@ -45,7 +45,7 @@ namespace ML
 
 	void CRenderer::_End()
 	{
-		mpPlug->GetDevice()->EndDraw();	
+		mpGraphicPlug->GetDevice()->EndDraw();	
 	}
 
 }

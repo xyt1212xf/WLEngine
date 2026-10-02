@@ -64,8 +64,11 @@ namespace ML
 	void CGameApp::run()
 	{
 		loadScene("");
+		
+		GEngine->Start();
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
+
 		while (msg.message != WM_QUIT)
 		{
 			//OPTICK_FRAME("MainThread");
@@ -92,6 +95,14 @@ namespace ML
 
 	void CGameApp::loadScene(const std::string& name)
 	{
+		if (GEngine)
+		{
+			auto func = [](bool bResult, const std::string&)
+				{
+					int32 a = 0;
+				};
+			GEngine->LoadSceneAsync(name, func);
+		}
 		CStaticMesh Mesh;
 		Mesh.AddMaterialSlot("Default");
 		int32 LOD0 = Mesh.AddSourceModel();

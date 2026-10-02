@@ -207,6 +207,12 @@
     <ClCompile Include="LevelStreaming.cpp">
       <Filter>GameFrame\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="WorldSet.cpp">
+      <Filter>GameFrame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMode.cpp">
+      <Filter>GameFrame\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -402,6 +408,12 @@
       <Filter>GameFrame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="LevelStreaming.h">
+      <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldSet.h">
+      <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMode.h">
       <Filter>GameFrame\Scene</Filter>
     </ClInclude>
   </ItemGroup>

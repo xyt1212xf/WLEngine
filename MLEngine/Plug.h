@@ -9,6 +9,7 @@ namespace ML
 		virtual ~CPlug() = default;
 		virtual bool Initialise();
 		virtual bool UnInitialise();
+		virtual void Start();
 		virtual void Process(int32 DeltaSeconds) const;
 	};
 }

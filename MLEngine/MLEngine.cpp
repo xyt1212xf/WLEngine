@@ -1,7 +1,8 @@
 #include "MLEngine.h"
 #include "GraphicPlug.h"
 #include "TimerClock.h"
-//#include "Scene.h"
+#include "World.h"
+
 //#include "GameController.h"
 //#include "SceneController.h"
 //#include "CameraController.h"
@@ -18,6 +19,18 @@
 
 namespace ML
 {
+	CWorld* GetWorld()
+	{
+		if (GEngine)
+		{
+			return GEngine->GetWorld();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
 	CEngine::CEngine()
 	{
 //		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -27,6 +40,11 @@ namespace ML
 
 	CEngine::~CEngine()
 	{
+		for (CPlug* plug : mPlugs)
+		{
+			SafeDelete(plug);
+		}
+		mPlugs.Empty();
 		GEngine = nullptr;
 //		_CrtDumpMemoryLeaks();
 	}
@@ -57,6 +75,14 @@ namespace ML
 		return false;
 	}
 
+	void CEngine::Start()
+	{
+		for (CPlug* plug : mPlugs)
+		{
+			plug->Start();
+		}
+	}
+
 	void CEngine::Run(int32 deltaSeconds)
 	{
 		static CTimerClock timeColor;
@@ -80,15 +106,25 @@ namespace ML
 		return true;
 	}
 
-	void CEngine::LoadSceneAsync(const std::string& name)
+	void CEngine::LoadSceneAsync(const std::string& name, FOnSceneLoaded func)
 	{
-		
+		if (nullptr == mpWorld)
+		{
+			mpWorld = new CWorld("GameLevel");
+
+		}
+		if (mpWorld)
+		{
+			bool bResult = false;
+			func(bResult, name);
+		}
 	}
 
 	CWinPlatform& CEngine::GetPlatform()
 	{
 		return mPlatform;
 	}
+
 
 
 //

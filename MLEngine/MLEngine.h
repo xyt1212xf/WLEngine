@@ -19,6 +19,10 @@ namespace ML
 	class CPlug;
 	class CGraphicPlug;
 	class CThreadPool;
+	class CWorld;
+	
+	extern CWorld* GetWorld();
+
 	class CEngine : public TSingle<CEngine>
 	{
 	public:
@@ -27,10 +31,11 @@ namespace ML
 		bool Initialise(const SWindowConfig& config);
 		bool UnInitialise();
 		bool ProcessMsg(SEvent& e);
+		void Start();
 		void Run(int32 deltaSeconds);
 		bool IsRun();
 		bool LoadScene(const std::string& name);
-		void LoadSceneAsync(const std::string& name);
+		void LoadSceneAsync(const std::string& name, FOnSceneLoaded func);
 		CWinPlatform& GetPlatform();
 			
 		template<class F, class... Args>
@@ -47,9 +52,11 @@ namespace ML
 
 		template<typename T>
 		T* LoadResource(const std::string& resourceName) const;
+		
+		CWorld* GetWorld() const {return mpWorld;}
 
 	private:
-		
+		CWorld* mpWorld = nullptr;	
 		TArray<CPlug*> mPlugs;
 		CWinPlatform mPlatform;
 		CThreadPool* mpThreadPools = nullptr;
@@ -82,6 +89,7 @@ namespace ML
 		mpThreadPools->enqueueDetach(std::forward<F>(f), std::forward<Args>(args)...);
 #endif
 	}
+
 }
 
 

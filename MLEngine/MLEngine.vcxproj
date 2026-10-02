@@ -28,6 +28,7 @@
     <ClCompile Include="DX12RHIbuffer.cpp" />
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
@@ -66,6 +67,7 @@
     <ClCompile Include="Win.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldPartition.cpp" />
+    <ClCompile Include="WorldSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
@@ -85,6 +87,7 @@
     <ClInclude Include="Export.h" />
     <ClInclude Include="Foundation.h" />
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="GraphicPlug.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
@@ -133,6 +136,7 @@
     <ClInclude Include="Win.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldPartition.h" />
+    <ClInclude Include="WorldSet.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -27,12 +27,15 @@ namespace ML
 		EStreamingState GetState() const { return State; }
 		CLevel* GetLevel() const { return Level; }
 		std::string GetLevelName() const { return LevelName; }
+		void SetLoadDistance(float Distance ) { mLoadDistance = Distance;}
+		float GetLoadDistance() const {return mLoadDistance;}
 
     private:
 		EStreamingState State = EStreamingState::Unloaded;
 		std::string LevelName;     // 关联的关卡名
 		std::string FilePath;      // 关卡文件路径
 		CLevel* Level = nullptr;   // 加载完成后指向实际的 Level
+		float mLoadDistance = 1000.f;
 
 		FOnLevelLoaded OnLoaded;
 		// 加载请求

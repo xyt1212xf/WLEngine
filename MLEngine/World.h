@@ -6,10 +6,12 @@ namespace ML
 {
 	class CLevel;
 	class CLevelStreaming;
+	class CGameMode;
 	class CWorld : public CResource
 	{
 	public:
-		CWorld();
+		CWorld(const std::string& name);
+		CWorld(std::string&& name);
 		virtual ~CWorld();
 		bool Initialise(const std::string& FilePath);
 		void Destroy();
@@ -18,7 +20,7 @@ namespace ML
 
 		void Update(float DeltaTime);
 
-		using FOnSceneLoaded = std::function<void(bool, const std::string&)>;
+
 		void SetOnLoadedCallback(FOnSceneLoaded Callback) { OnLoaded = Callback; }
 
 		bool IsLoaded() const { return bLoaded; }
@@ -36,6 +38,7 @@ namespace ML
 		bool bLoaded = false;
 		bool bVisible = false;
 
+		CGameMode* GameMode = nullptr;
 		CLevel* PersistentLevel = nullptr;
 		TArray<CLevelStreaming*> StreamingLevels;
 

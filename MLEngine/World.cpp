@@ -1,11 +1,17 @@
 #include "World.h"
 #include "LevelStreaming.h"
+#include "GameMode.h"
 
 namespace ML
 {
-	CWorld::CWorld()
+	CWorld::CWorld(const std::string& name)
 	{
+		Name = name;
+	}
 
+	CWorld::CWorld(std::string&& name)
+	{
+		Name = std::move(name);
 	}
 
 	CWorld::~CWorld()

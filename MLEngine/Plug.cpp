@@ -11,6 +11,11 @@ namespace ML
 		return false;
 	}
 
+	void CPlug::Start()
+	{
+
+	}
+
 	void CPlug::Process(int32 DeltaSeconds) const
 	{
 

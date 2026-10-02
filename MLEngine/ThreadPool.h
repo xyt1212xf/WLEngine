@@ -131,7 +131,8 @@ namespace ML
 			{
 				throw std::runtime_error("enqueue on stopped ThreadPool");
 			}
-			mTasks.emplace([&]() { f(std::forward<Args>(args)...); });
+			auto bound = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+			mTasks.emplace([bound = std::move(bound)]() { bound(); });
 		}
 		mCondition.notify_one();
 	}

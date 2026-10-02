@@ -1,4 +1,6 @@
 #include "Level.h"
+#include "WorldSet.h"
+
 namespace ML
 {
 	CLevel::CLevel()

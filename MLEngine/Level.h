@@ -6,7 +6,7 @@ namespace ML
 {
 	class CActor;
 	class CResource;
-
+	class AWorldSettings;
 	class CLevel : public CRefcount
 	{
 	public:
@@ -35,7 +35,7 @@ namespace ML
 		std::string Name = "";
 		bool bLoaded = false;
 		bool bVisible = false;
-	
+		AWorldSettings* WorldSettings;  // πÿø®πÊ‘Ú	
 		TArray<CActor*> Actors;
 		TArray<CResource*> Resources;
 	};
