@@ -1,5 +1,7 @@
 #pragma once
 #include "Common.h"
+#include "Vector.h"
+#include "Quaternion.h"
 
 #pragma warning(push)
 #pragma warning(disable: 4201)
@@ -33,6 +35,74 @@ namespace ML
 			return m[row][col];
 		}
 
+		static FMatrix44 MakeRotation(const CQuaternion& Quat)
+		{
+			// 四元数 → 旋转矩阵（行主序）
+			float x = Quat.mx;
+			float y = Quat.my;
+			float z = Quat.mz;
+			float w = Quat.mw;
+
+			float x2 = x * x;
+			float y2 = y * y;
+			float z2 = z * z;
+
+			FMatrix44 M;
+			M.zero();
+
+			M._11 = 1.0f - 2.0f * (y2 + z2);
+			M._12 = 2.0f * (x * y + w * z);
+			M._13 = 2.0f * (x * z - w * y);
+			M._14 = 0.0f;
+
+			M._21 = 2.0f * (x * y - w * z);
+			M._22 = 1.0f - 2.0f * (x2 + z2);
+			M._23 = 2.0f * (y * z + w * x);
+			M._24 = 0.0f;
+
+			M._31 = 2.0f * (x * z + w * y);
+			M._32 = 2.0f * (y * z - w * x);
+			M._33 = 1.0f - 2.0f * (x2 + y2);
+			M._34 = 0.0f;
+
+			M._41 = 0.0f;
+			M._42 = 0.0f;
+			M._43 = 0.0f;
+			M._44 = 1.0f;
+
+			return M;
+		}
+
+		static FMatrix44 MakeTranslation(Vec3F pos)
+		{
+			return MakeTranslation(pos.x, pos.y, pos.z);
+		}
+		static FMatrix44 MakeTranslation(float x, float y, float z)
+		{
+			FMatrix44 matrix;
+			matrix.zero();
+			matrix.m[3][0] = x;
+			matrix.m[3][1] = y;
+			matrix.m[3][2] = z;
+			matrix.m[3][3] = 1;
+			return matrix;
+		}
+
+		static FMatrix44 MakeScale(Vec3F pos)
+		{
+			return MakeScale(pos.x, pos.y, pos.z);
+		}
+		static FMatrix44 MakeScale(float x, float y, float z)
+		{
+			FMatrix44 matrix;
+			matrix.zero();
+			matrix.m[0][0] = x;
+			matrix.m[1][1] = y;
+			matrix.m[2][2] = z;
+			return matrix;
+		}
+
+		
 		//! Simple operator for directly accessing every element of the matrix.
 		const float& operator()(const INT32 row, const INT32 col) const 
 		{

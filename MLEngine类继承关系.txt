@@ -20,7 +20,10 @@ CVertexStreamFactory (abstract) (顶点流工厂)
 CMeshAttributes  (烘焙数据)
 CStaticMeshLODResources (LOD 渲染数据)
 CThreadPool      (线程池)
-
+FMatrix44(矩阵)
+TVec2(向量)
+TVec3(向量)
+TVec4(向量)
 
 【CRefcount 系】(资源与对象生命周期)
 CRefcount
@@ -74,7 +77,12 @@ CVertexStreamFactory (abstract) (BuildInputLayout 纯虚)
 CWorld
 └── CResource        
 CLevle
-└── CResource        
+└── CResource
+CLevelStreaming
+└── CRefcount
+CWorldSet
+└── CRefcount
+      
 
 
 二、数据结构 (POD struct, 无继承)
@@ -168,6 +176,8 @@ CEngine                  ↔ FEngineLoop/GEngine
 CPlug                    ↔ FRenderModule/插件系统 (简化)
 CWorld                   ↔ UWorld
 CLevel                   ↔ ULevel
+CGameMode                ↔ UGameMode
+CWorldSet                ↔ UWorldSet
 
 
 ================================================================================

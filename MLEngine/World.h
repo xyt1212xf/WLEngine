@@ -17,6 +17,9 @@ namespace ML
 	class CLevel;
 	class CLevelStreaming;
 	class CGameMode;
+	struct FMeshBatch;
+	struct FViewMatrices;
+
 	using FOnSceneLoaded = std::function<void(class CWorld*)>;
 
 	class CWorld : public CResource
@@ -52,6 +55,8 @@ namespace ML
 		const TArray<CLevelStreaming*>& GetStreamingLevels() const { return StreamingLevels; }
 
 	private:
+		void CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches);
+
 		// 主线程里调用
 		void TickLoad();
 

@@ -17,6 +17,8 @@ namespace ML
 	//
 	// 注意：FStaticMeshSection 定义在 MeshAttributes.h（烘焙输出端），
 	// 这里直接复用，避免两处定义漂移。
+	class CStaticVertexFactory;
+
 	class CStaticMeshLODResources
 	{
 	public:
@@ -50,6 +52,8 @@ namespace ML
 		// 包围球(UE 的 FBoxSphereBounds 简化为 原点 + 半径)
 		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
 		float BoundsRadius = 0.0f;
+
+		CStaticVertexFactory* VertexFactory = nullptr;
 
 		UINT32 NumVertices = 0;
 		UINT32 NumIndices  = 0;

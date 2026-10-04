@@ -2,6 +2,9 @@
 #include "LevelStreaming.h"
 #include "GameMode.h"
 #include "MLEngine.h"
+#include "ViewMatrices.h"
+#include "MeshBatch.h"
+
 
 namespace ML
 {
@@ -33,6 +36,11 @@ namespace ML
 				// GPU 上传必须主线程做，所以这里只标记
 				LoadState = EWorldLoadState::UploadingGPU;
 			});
+	}
+
+	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches)
+	{
+
 	}
 
 	void CWorld::TickLoad()

@@ -213,6 +213,9 @@
     <ClCompile Include="GameMode.cpp">
       <Filter>GameFrame\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="MeshBatch.cpp">
+      <Filter>Core\Plugs\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -415,6 +418,12 @@
     </ClInclude>
     <ClInclude Include="GameMode.h">
       <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshBatch.h">
+      <Filter>Core\Plugs\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewMatrices.h">
+      <Filter>Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

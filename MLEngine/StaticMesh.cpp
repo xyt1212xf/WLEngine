@@ -1,6 +1,6 @@
 #include "StaticMesh.h"
 #include "MeshAttributes.h"
-
+#include "VertexStreamFactory.h"
 namespace ML
 {
 	CStaticMesh::CStaticMesh()
@@ -58,6 +58,15 @@ namespace ML
 			LOD->InitResources(Attrs);
 			RenderData.Add(LOD);
 		}
+	}
+
+	CStaticVertexFactory* CStaticMesh::GetVertexFactory(int32 LODIndex) const
+	{
+		if (LODIndex < 0 || LODIndex >= RenderData.Num())
+		{
+			return nullptr;
+		}
+		return RenderData[LODIndex]->VertexFactory;
 	}
 
 	CStaticMeshLODResources* CStaticMesh::GetRenderData(int32 LODIndex) const

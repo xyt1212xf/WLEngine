@@ -5,6 +5,7 @@
 #include "StaticMeshResources.h"
 namespace ML
 {
+	class CStaticVertexFactory;
 	class CStaticMesh : public CMesh
 	{
 	public:
@@ -17,6 +18,7 @@ namespace ML
 		void Build();
 
 		// Baked render data per LOD (null until Build() has been called).
+		CStaticVertexFactory* GetVertexFactory(int32 LODIndex) const;
 		CStaticMeshLODResources* GetRenderData(int32 LODIndex) const;
 		int32 GetNumLODs() const { return RenderData.Num(); }
 
