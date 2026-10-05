@@ -16,6 +16,8 @@ namespace ML
 		virtual ~CDX12RHIDevice();
 		void BeginDraw();
 		void EndDraw();
+		ID3D12Device* GetDevice() const;
+		ID3D12GraphicsCommandList* GetCommandList() const;
 
 	protected:
 		bool initDevice(HWND hWnd);

@@ -1,16 +1,14 @@
 #pragma once
-#include "Refcount.h"
+#include "DX12RHIbuffer.h"
 
 namespace ML
 {
-	class CRHIBuffer : public CRefcount
+	class CRHIBuffer : public CDX12RHIBuffer
 	{
 	public:
+		CRHIBuffer() = default;
+		virtual ~CRHIBuffer() = default;
 		uint32 GetSize() const { return Size; }
 		uint32 GetStride() const { return Stride; }
-
-	protected:
-		uint32 Size = 0;
-		uint32 Stride = 0;
 	};
 }

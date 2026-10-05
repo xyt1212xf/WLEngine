@@ -273,6 +273,16 @@ namespace ML
 	}
 
 
+	ID3D12Device* CDX12RHIDevice::GetDevice() const
+	{
+		return mpDevice;
+	}
+
+	ID3D12GraphicsCommandList* CDX12RHIDevice::GetCommandList() const
+	{
+		return mCommandList;
+	}
+
 	void CDX12RHIDevice::_WaitCommandQueue()
 	{
 		UINT32 waitIndex = ((mFrameIndex + 1) & 0x01);

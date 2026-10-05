@@ -83,6 +83,13 @@
 		pObject = nullptr;\
 	}
 
+#define SafeRelease( pObject ) \
+	if(pObject != nullptr)\
+	{\
+		pObject->Release();\
+		pObject = nullptr;\
+	}
+
 #define WL_DECREASE( pObject ) \
 	if(pObject != nullptr)\
 	{\

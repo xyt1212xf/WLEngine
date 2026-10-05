@@ -38,7 +38,6 @@ namespace ML
 			delete RenderData[i];
 		}
 		RenderData.Empty();
-
 		for (int32 i = 0; i < SourceModels.Num(); ++i)
 		{
 			CStaticMeshDescription* SrcModel = SourceModels[i];

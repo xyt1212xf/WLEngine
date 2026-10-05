@@ -1,5 +1,8 @@
 #include "StaticMeshResources.h"
 #include "MathLib.h"
+#include "VertexStreamFactory.h"
+#include "DX12RHIbuffer.h"
+
 
 namespace ML
 {
@@ -11,6 +14,9 @@ namespace ML
 	void CStaticMeshLODResources::InitResources(const CMeshAttributes& Attrs)
 	{
 		ReleaseResources();
+
+		VertexFactory = new CStaticVertexFactory();
+	//	VertexFactory->BuildInputLayout();
 
 		if (!Attrs.IsValid())
 		{
@@ -59,6 +65,52 @@ namespace ML
 				}
 			}
 			BoundsRadius = sqrtf(RadiusSq);
+
+			PositionBuffer = new CRHIBuffer();
+			PositionBuffer->Create(
+				EBufferType::Vertex,
+				Positions.Num() * sizeof(Vec3F),
+				sizeof(Vec3F),
+				Positions.GetData()
+			);
+
+		}
+		const TArray<uint32>& Indices = Attrs.GetIndices();
+		if (Indices.Num() > 0)
+		{
+			IndexBuffer = new CRHIBuffer();
+			IndexBuffer->Create(
+				EBufferType::Index,
+				Indices.Num() * sizeof(uint32),
+				sizeof(uint32),
+				Indices.GetData()
+			);
+		}
+
+		// 如果有切线
+		const TArray<Vec4F>& Tangents = Attrs.GetTangents();
+		if (Tangents.Num() > 0)
+		{
+			TangentBuffer = new CRHIBuffer();
+			TangentBuffer->Create(
+				EBufferType::Vertex,
+				Tangents.Num() * sizeof(Vec4F),
+				sizeof(Vec4F),
+				Tangents.GetData()
+			);
+		}
+
+		// 如果有颜色
+		const TArray<Vec4F>& Colors = Attrs.GetColors();
+		if (Colors.Num() > 0)
+		{
+			ColorBuffer = new CRHIBuffer();
+			ColorBuffer->Create(
+				EBufferType::Vertex,
+				Colors.Num() * sizeof(Vec4F),
+				sizeof(Vec4F),
+				Colors.GetData()
+			);
 		}
 	}
 
@@ -74,5 +126,9 @@ namespace ML
 		NumIndices = 0;
 		BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
 		BoundsRadius = 0.0f;
+
+		SafeDelete(VertexFactory);
 	}
+
+
 }

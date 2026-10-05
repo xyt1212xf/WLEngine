@@ -3,6 +3,7 @@
 #include "DX12Device.h"
 #include "Renderer.h"
 #include "TimerClock.h"
+#include "DX12RHIbuffer.h"
 
 namespace ML
 {
