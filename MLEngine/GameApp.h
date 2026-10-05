@@ -12,8 +12,6 @@ namespace ML
 		bool destoryEngine();
 		void run();
 		void loadScene(const std::string& name);
-	private:
-		CWorld* mpWorld = nullptr;
 	};
 
 }

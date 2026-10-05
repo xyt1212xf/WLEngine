@@ -44,11 +44,16 @@ namespace ML
 			ResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 			ResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
+			// 有初始数据时，默认堆先处于 COPY_DEST 状态，拷贝完成后再屏障转换到 GENERIC_READ
+			D3D12_RESOURCE_STATES InitialState = (InitData != nullptr)
+				? D3D12_RESOURCE_STATE_COPY_DEST
+				: D3D12_RESOURCE_STATE_GENERIC_READ;
+
 			HRESULT hr = Device->CreateCommittedResource(
 				&HeapProps,
 				D3D12_HEAP_FLAG_NONE,
 				&ResDesc,
-				D3D12_RESOURCE_STATE_GENERIC_READ,
+				InitialState,
 				nullptr,
 				IID_PPV_ARGS(&Resource)
 			);
@@ -102,28 +107,38 @@ namespace ML
 				UploadBuffer->Unmap(0, nullptr);
 				MappedData = nullptr;
 
-				// 4. 从上传堆拷贝到默认堆
-				ID3D12GraphicsCommandList* CmdList = pRHIDevice->GetCommandList();
-				if (CmdList)
+				// 4. 从上传堆拷贝到默认堆：用专用的临时 command list 录制，
+				//    立刻提交执行并等待 GPU 完成（主渲染 cmd list 此时处于 closed 状态，不能复用）
+				ID3D12CommandAllocator* UploadAllocator = nullptr;
+				ID3D12GraphicsCommandList* UploadList = nullptr;
+
+				if (FAILED(Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&UploadAllocator))) ||
+					FAILED(Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, UploadAllocator, nullptr, IID_PPV_ARGS(&UploadList))))
 				{
-					CmdList->CopyBufferRegion(
-						Resource,
-						0,
-						UploadBuffer,
-						0,
-						Size
-					);
-
-					// 5. 资源屏障：默认堆从 COPY_DEST 到 GENERIC_READ
-					D3D12_RESOURCE_BARRIER Barrier = {};
-					Barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-					Barrier.Transition.pResource = Resource;
-					Barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-					Barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-					Barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-
-					CmdList->ResourceBarrier(1, &Barrier);
+					UploadAllocator->Release();
+					Release();
+					return false;
 				}
+
+				UploadList->CopyBufferRegion(Resource, 0, UploadBuffer, 0, Size);
+
+				// 5. 资源屏障：默认堆从 COPY_DEST 到 GENERIC_READ
+				D3D12_RESOURCE_BARRIER Barrier = {};
+				Barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+				Barrier.Transition.pResource = Resource;
+				Barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+				Barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+				Barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+
+				UploadList->ResourceBarrier(1, &Barrier);
+
+				// 内部会 Close / Execute / Signal / 阻塞等待 fence，并释放 UploadList
+				pRHIDevice->ExecuteUploadAndWait(UploadList);
+
+				UploadAllocator->Release();
+
+				// GPU 拷贝已确认完成，上传堆可以立即释放
+				SafeRelease(UploadBuffer);
 			}
 		}
 		return true;

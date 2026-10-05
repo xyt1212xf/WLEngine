@@ -283,6 +283,18 @@ namespace ML
 		return mCommandList;
 	}
 
+	void CDX12RHIDevice::ExecuteUploadAndWait(ID3D12GraphicsCommandList* UploadList)
+	{
+		UploadList->Close();
+		ID3D12CommandList* lists[] = { UploadList };
+		mCommandQueue->ExecuteCommandLists(1, lists);
+		mCommandQueue->Signal(mFence, mFenceValue);
+		mFence->SetEventOnCompletion(mFenceValue, mFenceEvent);  // CPU 阻塞等拷贝完成
+		WaitForSingleObject(mFenceEvent, INFINITE);
+		mFenceValue++;
+		UploadList->Release();      // 用完即弃（或做成成员复用）
+	}
+
 	void CDX12RHIDevice::_WaitCommandQueue()
 	{
 		UINT32 waitIndex = ((mFrameIndex + 1) & 0x01);

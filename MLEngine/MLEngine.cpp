@@ -57,6 +57,7 @@ namespace ML
 		mPlugs.Add(graphicPlug);
 		if (graphicPlug->Initialise())
 		{
+			mpWorld = new CWorld();
 			return true;
 		}
 		return false;

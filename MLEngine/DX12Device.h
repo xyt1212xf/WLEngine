@@ -18,6 +18,7 @@ namespace ML
 		void EndDraw();
 		ID3D12Device* GetDevice() const;
 		ID3D12GraphicsCommandList* GetCommandList() const;
+		void ExecuteUploadAndWait(ID3D12GraphicsCommandList* UploadList);
 
 	protected:
 		bool initDevice(HWND hWnd);

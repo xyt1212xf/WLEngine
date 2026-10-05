@@ -41,7 +41,6 @@ namespace ML
 				{
 					continue;
 				}
-				mpWorld = new CWorld();
 			}
 			else
 			{
@@ -64,9 +63,9 @@ namespace ML
 
 	void CGameApp::run()
 	{
-		loadScene("Test");
-		
 		GEngine->Start();
+	
+		loadScene("Test");
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 
@@ -102,14 +101,8 @@ namespace ML
 				{
 
 				};
-			mpWorld->LoadAsync(name, loadFunc);
+			GetWorld()->LoadAsync(name, loadFunc);
 		}
-		CStaticMesh Mesh;
-		Mesh.AddMaterialSlot("Default");
-		int32 LOD0 = Mesh.AddSourceModel();
-		Mesh.GetSourceModel(LOD0)->CreateCube(Vec3F(0, 0, 0), Vec3F(1, 1, 1));
-		Mesh.Build();
-
 	}
 
 }

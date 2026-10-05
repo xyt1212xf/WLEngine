@@ -4,6 +4,10 @@
 #include "MLEngine.h"
 #include "ViewMatrices.h"
 #include "MeshBatch.h"
+#include "Level.h"
+#include "Actor.h"
+#include "StaticMesh.h"
+#include "StaticMeshComponent.h"
 
 
 namespace ML
@@ -96,12 +100,33 @@ namespace ML
 
 	void CWorld::ParseFile()
 	{
+		// P0 阶段：硬编码生成一个 Cube（后续 P2 由 ParseFile 读关卡文件替代）
+		// 注意：mesh 必须由堆对象持有（组件引用它），不能是栈上局部变量
+		CStaticMesh* CubeMesh = new CStaticMesh();
+		CubeMesh->AddMaterialSlot("Default");
+		CubeMesh->GetSourceModel(CubeMesh->AddSourceModel())->CreateCube(Vec3F(0, 0, 0), Vec3F(1, 1, 1));
+		CubeMesh->Build();
 
+		CActor* CubeActor = new CActor();
+		CStaticMeshComponent* MeshComp = CubeActor->AddComponent<CStaticMeshComponent>();
+		MeshComp->SetStaticMesh(CubeMesh);
+		MeshComp->SetVisible(true);
+		MeshComp->SetLocation(Vec3F(0, 0, 3.f));   // 放到默认相机前方
+
+		ParseActors.Add(CubeActor);
 	}
 
 	void CWorld::BuildActors()
 	{
-
+		if (!PersistentLevel)
+		{
+			PersistentLevel = new CLevel();
+		}
+		for (CActor* Actor : ParseActors)
+		{
+			PersistentLevel->AddActor(Actor);
+		}	
+		ParseActors.Empty();
 	}
 
 	void CWorld::InitActorsForPlay()

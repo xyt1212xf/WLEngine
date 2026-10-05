@@ -68,6 +68,13 @@ namespace ML
 	template<typename T>
 	T* ML::CEngine::GetPlugs() const
 	{
+		for (CPlug* plug : mPlugs)
+		{
+			if (T* p = dynamic_cast<T*>(plug))
+			{
+				return p;
+			}
+		}
 		return nullptr;
 	}
 

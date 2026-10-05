@@ -13,6 +13,8 @@ namespace ML
 		CStaticMeshComponent();
 		virtual ~CStaticMeshComponent();
 		void GetMeshBatch(FMeshBatch& OutBatch,const FMatrix44& InViewProj) const;
+		void SetStaticMesh(CStaticMesh* InMesh) { StaticMesh = InMesh; }
+		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
 		void SetLocation(const Vec3F& InLocation);
 		void SetRotation(const CQuaternion& InRotation);
 		void SetScale(const Vec3F& InScale);

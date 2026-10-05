@@ -17,6 +17,7 @@ namespace ML
 	class CLevel;
 	class CLevelStreaming;
 	class CGameMode;
+	class CActor;
 	struct FMeshBatch;
 	struct FViewMatrices;
 
@@ -78,5 +79,6 @@ namespace ML
 		TArray<CLevelStreaming*> StreamingLevels;
 		EWorldLoadState LoadState = EWorldLoadState::Idle;
 		FOnSceneLoaded OnLoadedFunc;
+		TArray<CActor*>	ParseActors;
 	};
 }

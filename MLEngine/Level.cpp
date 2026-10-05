@@ -25,12 +25,15 @@ namespace ML
 
 	void CLevel::AddActor(CActor* Actor)
 	{
-
+		if (Actor)
+		{
+			Actors.Add(Actor);
+		}
 	}
 
 	void CLevel::RemoveActor(CActor* Actor)
 	{
-
+		Actors.Remove(Actor);
 	}
 
 	void CLevel::RegisterResources()
