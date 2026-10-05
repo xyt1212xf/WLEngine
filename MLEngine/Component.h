@@ -10,7 +10,7 @@ namespace ML
 		virtual ~CComponent();
 		const std::string& getComponentName() const;
 		void setComponentName(const std::string& szName);
-		virtual void tick([[maybe_unused]] UINT32 dt){};
+		virtual void tick([[maybe_unused]] float DeltaSeconds){};
 		
 	protected:
 		std::string mComponentName = "Component";

@@ -17,4 +17,10 @@ namespace ML
 		Location = Pos;
 	}
 
+
+	void CActor::BeginPlay()
+	{
+
+	}
+
 }

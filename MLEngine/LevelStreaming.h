@@ -30,6 +30,10 @@ namespace ML
 		std::string GetLevelName() const { return LevelName; }
 		void SetLoadDistance(float Distance ) { mLoadDistance = Distance;}
 		float GetLoadDistance() const {return mLoadDistance;}
+		bool IsLoaded() 
+		{
+			return EStreamingState::Loaded == State;
+		}
 
     private:
 		EStreamingState State = EStreamingState::Unloaded;

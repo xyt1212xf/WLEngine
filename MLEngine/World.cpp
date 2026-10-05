@@ -64,7 +64,36 @@ namespace ML
 
 	void CWorld::Tick(float deltaSeconds)
 	{
-		
+		if (PersistentLevel)
+		{
+			for (CActor* Actor : PersistentLevel->GetActors())
+			{
+				if (Actor && Actor->CanTick())
+				{
+					Actor->Tick(deltaSeconds);
+
+					// Ë³´ø Tick ×é¼þ
+					for (CComponent* Comp : Actor->GetComponents())
+					{
+						Comp->tick(deltaSeconds);
+					}
+				}
+			}
+		}
+		for (CLevelStreaming* Stream : StreamingLevels)
+		{
+			if (Stream && Stream->IsLoaded())
+			{
+				CLevel* Lv = Stream->GetLevel();
+				for (CActor* Actor : Lv->GetActors())
+				{
+					if (Actor && Actor->CanTick())
+					{
+						Actor->Tick(deltaSeconds);
+					}
+				}
+			}
+		}
 	}
 
 	CLevelStreaming* CWorld::AddStreamingLevel(const std::string& LevelName, const std::string& FilePath)
@@ -131,7 +160,14 @@ namespace ML
 
 	void CWorld::InitActorsForPlay()
 	{
-
+		if (!PersistentLevel)
+		{
+			return;
+		}
+		for (CActor* Actor : PersistentLevel->GetActors())
+		{
+			Actor->BeginPlay();
+		}
 	}
 
 	void CWorld::UploadGPUResources()

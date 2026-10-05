@@ -10,9 +10,10 @@ namespace ML
 	public:
 		CActor() = default;
 		virtual ~CActor();
-
+		virtual void Tick(float DeltaSeconds) {};
 		void SetActorLocation(const Vec3F& Pos);
 		const Vec3F& GetActorLocation() const { return Location; }
+		void BeginPlay();
 
 		template<class T>
 		T* AddComponent()
@@ -23,6 +24,12 @@ namespace ML
 		}
 
 		const TArray<CComponent*>& GetComponents() const { return Components; }
+		
+		void SetActorTickEnabled(bool b) { bCanTick = b; }
+		bool CanTick() const { return bCanTick; }
+
+	private:
+		bool bCanTick = true;
 
 	private:
 		Vec3F Location;
