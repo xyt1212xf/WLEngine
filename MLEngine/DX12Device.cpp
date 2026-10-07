@@ -205,6 +205,7 @@ namespace ML
 				// actual device yet.
 				if (SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
 				{
+					SafeRelease(factory6);
 					break;
 				}
 			}
@@ -255,6 +256,16 @@ namespace ML
 		// Indicate a state transition on the resource usage.
 		mCommandList->ResourceBarrier(1, &barrier);
 
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(
+			mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+			mFrameIndex,
+			mRtvDescriptorSize);
+
+		mCommandList->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
+		static const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		mCommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+
+
 		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
 		mCommandList->RSSetViewports(1, &mScreenViewport);
 		mCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -263,18 +274,25 @@ namespace ML
 
 	void CDX12RHIDevice::EndDraw()
 	{
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			mRenderTargets[mFrameIndex],
+			D3D12_RESOURCE_STATE_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_PRESENT);
+		mCommandList->ResourceBarrier(1, &barrier);
+
 		mCommandList->Close();
 		// Add the command list to the queue for execution.
 		ID3D12CommandList* cmdsLists[] = { mCommandList };
 		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		// swap the back and front buffers
+		mSwapChain->Present(0, 0);
 
 		// 记录当前帧的 fence 值
 		mFenceValues[mFrameIndex] = mFenceValue;
 		mCommandQueue->Signal(mFence, mFenceValue);
 		mFenceValue++;
 
-		// swap the back and front buffers
-		mSwapChain->Present(0, 0);
 		++mFrameIndex;
 	}
 
