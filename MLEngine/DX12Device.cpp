@@ -61,6 +61,12 @@ namespace ML
 						break;
 					}
 				}
+				SafeRelease(hardwareAdapter);
+				if (nullptr == mpDevice)
+				{
+					break;
+				}
+
 				// Describe and create the command queue.
 				D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 				queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -171,7 +177,7 @@ namespace ML
 	}
 
 	void CDX12RHIDevice::_GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
-		bool requestHighPerformanceAdapter /*= false*/)
+		bool requestHighPerformanceAdapter /*= true*/)
 	{
 		*ppAdapter = nullptr;
 		IDXGIAdapter1* adapter = nullptr;

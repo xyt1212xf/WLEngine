@@ -10,7 +10,9 @@ namespace ML
 
 	CGraphicPlug::CGraphicPlug()
 	{
+#ifdef _DEBUG
 		std::cout<<this;
+#endif
 	}
 
 	CGraphicPlug::~CGraphicPlug()

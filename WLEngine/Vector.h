@@ -429,6 +429,10 @@ namespace WL
 		T x = 0;
 		T y = 0;
 		T z = 0;
+#else
+		T x;
+		T y;
+		T z;
 #endif
 	};
 	using Vec3F = TVec3<float>;
