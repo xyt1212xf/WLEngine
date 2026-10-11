@@ -43,9 +43,6 @@
     <Filter Include="Core\Plugs\Renderer">
       <UniqueIdentifier>{dccef9db-90aa-4cd4-ab5f-3f44fedcb91b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Component">
-      <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Resource">
       <UniqueIdentifier>{ca9c4b3c-9f9a-4b50-be9c-1fe708dd8e34}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="GameFrame\Scene">
       <UniqueIdentifier>{04ccbbec-6b63-426d-80a6-a179925d4ee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Component">
+      <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,7 +112,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>Core\Component</Filter>
+      <Filter>GameFrame\Component</Filter>
     </ClCompile>
     <ClCompile Include="Class.cpp">
       <Filter>Core</Filter>
@@ -133,16 +133,13 @@
       <Filter>Core\Resource</Filter>
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
-      <Filter>Core\Component</Filter>
+      <Filter>GameFrame\Component</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
       <Filter>GameFrame</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>GameFrame</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformComponent.cpp">
-      <Filter>Core\Component</Filter>
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
       <Filter>Core\Math</Filter>
@@ -215,6 +212,18 @@
     </ClCompile>
     <ClCompile Include="MeshBatch.cpp">
       <Filter>Core\Plugs\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimitiveComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -309,7 +318,7 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Core\Component</Filter>
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
     <ClInclude Include="NonCopyable.h">
       <Filter>Core</Filter>
@@ -336,16 +345,13 @@
       <Filter>Core\Resource</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
-      <Filter>Core\Component</Filter>
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
       <Filter>GameFrame</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>GameFrame</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>Core\Component</Filter>
     </ClInclude>
     <ClInclude Include="Quaternion.h">
       <Filter>Core\Math</Filter>
@@ -424,6 +430,18 @@
     </ClInclude>
     <ClInclude Include="ViewMatrices.h">
       <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimitiveComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorComponent.h">
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

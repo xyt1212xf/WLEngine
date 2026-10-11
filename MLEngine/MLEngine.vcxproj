@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="ActorComponent.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshAttributes.cpp" />
     <ClCompile Include="MeshBatch.cpp" />
+    <ClCompile Include="MeshComponent.cpp" />
     <ClCompile Include="MeshDescription.cpp" />
     <ClCompile Include="MeshPolygonGroup.cpp" />
     <ClCompile Include="MeshTriangle.cpp" />
@@ -48,6 +50,7 @@
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plug.cpp" />
+    <ClCompile Include="PrimitiveComponent.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Refcount.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -55,6 +58,7 @@
     <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="RHIbuffer.cpp" />
+    <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
@@ -62,7 +66,6 @@
     <ClCompile Include="StaticMeshResources.cpp" />
     <ClCompile Include="StreamableRenderAsset.cpp" />
     <ClCompile Include="TimerClock.cpp" />
-    <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="VertexStreamFactory.cpp" />
     <ClCompile Include="Win.cpp" />
@@ -72,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="ActorComponent.h" />
     <ClInclude Include="AllowShrinking.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Character.h" />
@@ -103,6 +107,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshAttributes.h" />
     <ClInclude Include="MeshBatch.h" />
+    <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="MeshDescription.h" />
     <ClInclude Include="MeshPolygonGroup.h" />
     <ClInclude Include="MeshTriangle.h" />
@@ -114,6 +119,7 @@
     <ClInclude Include="NumericLimits.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Plug.h" />
+    <ClInclude Include="PrimitiveComponent.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Refcount.h" />
     <ClInclude Include="Renderer.h" />
@@ -121,6 +127,7 @@
     <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="RHIbuffer.h" />
+    <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />
     <ClInclude Include="StaticMeshComponent.h" />
@@ -129,7 +136,6 @@
     <ClInclude Include="StreamableRenderAsset.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />
-    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TSingle.h" />
     <ClInclude Include="UnrealMemory.h" />
     <ClInclude Include="UnrealTemplate.h" />

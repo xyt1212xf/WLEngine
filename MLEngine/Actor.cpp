@@ -1,7 +1,12 @@
 #include "Actor.h"
-#include "Component.h"
+#include "SceneComponent.h"
 namespace ML
 {
+
+	CActor::CActor()
+	{
+		AddComponent<CSceneComponent>();
+	}
 
 	CActor::~CActor()
 	{
@@ -14,9 +19,14 @@ namespace ML
 
 	void CActor::SetActorLocation(const Vec3F& Pos)
 	{
-		Location = Pos;
+		RootComponent->SetLocation(Pos);
 	}
 
+
+	const Vec3F& CActor::GetActorLocation() const
+	{
+		return RootComponent->GetLocation();
+	}
 
 	void CActor::BeginPlay()
 	{

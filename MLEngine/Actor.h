@@ -1,18 +1,19 @@
 #pragma once
 #include "Object.h"
 #include "Array.h"
+#include "SceneComponent.h"
 namespace ML
 {
+	class CSceneComponent;
 	class CComponent;
-
 	class CActor : public CObject
 	{
 	public:
-		CActor() = default;
+		CActor();
 		virtual ~CActor();
 		virtual void Tick(float DeltaSeconds) {};
 		void SetActorLocation(const Vec3F& Pos);
-		const Vec3F& GetActorLocation() const { return Location; }
+		const Vec3F& GetActorLocation() const;
 		void BeginPlay();
 
 		template<class T>
@@ -20,6 +21,15 @@ namespace ML
 		{
 			T* Comp = new T();
 			Components.Add(Comp);
+			// 编译期提问：T 是不是 CSceneComponent 的子类
+			if constexpr (std::is_convertible_v<T*, CSceneComponent*>)
+			{
+				// 只有子类才会生成这段代码；且 Comp 此时隐式转成 CSceneComponent*
+				if (nullptr == RootComponent) 
+				{
+					RootComponent = Comp; 
+				}	
+			}
 			return Comp;
 		}
 
@@ -32,7 +42,7 @@ namespace ML
 		bool bCanTick = true;
 
 	private:
-		Vec3F Location;
+		CSceneComponent* RootComponent = nullptr;
 		TArray<CComponent*> Components;
 	};
 }
