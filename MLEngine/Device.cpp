@@ -2,12 +2,12 @@
 namespace WL
 {
 
-	CDevice::CDevice()
+	CRHIDevice::CRHIDevice()
 	{
 
 	}
 
-	CDevice::~CDevice()
+	CRHIDevice::~CRHIDevice()
 	{
 
 	}

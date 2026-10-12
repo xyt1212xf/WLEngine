@@ -1,7 +1,7 @@
 #include "DX12RHIbuffer.h"
 #include "GraphicPlug.h"
 #include "MLEngine.h"
-
+#include "DX12Device.h"
 namespace ML
 {
 	CDX12RHIBuffer::CDX12RHIBuffer(ID3D12Resource* InResource)
@@ -23,7 +23,7 @@ namespace ML
 		Type = InType;
 		Size = InSize;
 		Stride = InStride;
-		CDX12RHIDevice* pRHIDevice = GEngine->GetPlugs<CGraphicPlug>()->GetDevice();
+		CRHIDevice* pRHIDevice = GEngine->GetPlugs<CGraphicPlug>()->GetDevice();
 
 		if (ID3D12Device* Device = pRHIDevice->GetDevice())
 		{
@@ -161,30 +161,27 @@ namespace ML
 		Stride = 0;
 	}
 
-	D3D12_VERTEX_BUFFER_VIEW CDX12RHIBuffer::GetVertexBufferView() const
+	D3D12_VERTEX_BUFFER_VIEW CDX12RHIBuffer::GetVertexBufferView()
 	{
-		D3D12_VERTEX_BUFFER_VIEW View = {};
-		View.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
-		View.SizeInBytes = Size;
-		View.StrideInBytes = Stride;
-		return View;
+		VertexView.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
+		VertexView.SizeInBytes = Size;
+		VertexView.StrideInBytes = Stride;
+		return VertexView;
 	}
 
-	D3D12_INDEX_BUFFER_VIEW CDX12RHIBuffer::GetIndexBufferView() const
+	D3D12_INDEX_BUFFER_VIEW CDX12RHIBuffer::GetIndexBufferView() 
 	{
-		D3D12_INDEX_BUFFER_VIEW View = {};
-		View.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
-		View.SizeInBytes = Size;
-		View.Format = (Stride == sizeof(uint16)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
-		return View;
+		IndexView.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
+		IndexView.SizeInBytes = Size;
+		IndexView.Format = (Stride == sizeof(uint16)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+		return IndexView;
 	}
 
-	D3D12_CONSTANT_BUFFER_VIEW_DESC CDX12RHIBuffer::GetConstantBufferViewDesc() const
+	D3D12_CONSTANT_BUFFER_VIEW_DESC CDX12RHIBuffer::GetConstantBufferViewDesc() 
 	{
-		D3D12_CONSTANT_BUFFER_VIEW_DESC Desc = {};
-		Desc.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
-		Desc.SizeInBytes = Size;
-		return Desc;
+		ViewDesc.BufferLocation = Resource ? Resource->GetGPUVirtualAddress() : 0;
+		ViewDesc.SizeInBytes = Size;
+		return ViewDesc;
 	}
 
 }

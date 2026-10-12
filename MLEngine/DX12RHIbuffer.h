@@ -1,6 +1,6 @@
 #pragma once
 #include "Refcount.h"
-#include "DX12Device.h"
+#include "Device.h"
 
 namespace ML
 {
@@ -22,9 +22,9 @@ namespace ML
 		virtual bool Create(EBufferType InType, uint32 InSize, uint32 InStride, const void* InitData);
 		virtual void Release();
 
-		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const ;
-		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() const ;
-		D3D12_CONSTANT_BUFFER_VIEW_DESC GetConstantBufferViewDesc() const ;
+		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView();
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView();
+		D3D12_CONSTANT_BUFFER_VIEW_DESC GetConstantBufferViewDesc();
 
 		ID3D12Resource* GetResource() const { return Resource; }
 		ID3D12Resource* GetUploadBuffer() const { return UploadBuffer; }
@@ -34,6 +34,10 @@ namespace ML
 		uint32 Stride = 0;
 
 	private:
+		D3D12_VERTEX_BUFFER_VIEW VertexView = {};
+		D3D12_INDEX_BUFFER_VIEW IndexView = {};
+		D3D12_CONSTANT_BUFFER_VIEW_DESC ViewDesc = {};
+
 		ID3D12Resource* Resource = nullptr;
 		ID3D12Resource* UploadBuffer = nullptr;
 		void* MappedData = nullptr;

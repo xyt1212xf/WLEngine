@@ -1,13 +1,14 @@
 #pragma once
 #include "Common.h"
+#include "DX12Device.h"
 
 namespace ML
 {
-	class MLENGINE_API CDeviceBase
+	class CRHIDevice : public CDX12RHIDevice
 	{
 	public:
-		CDeviceBase() = default;
-		virtual ~CDeviceBase(){};
+		CRHIDevice() = default;
+		virtual ~CRHIDevice(){};
 
 	};
 

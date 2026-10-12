@@ -4,6 +4,7 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 namespace ML
 {
@@ -18,6 +19,8 @@ namespace ML
 
 	CDX12RHIDevice::~CDX12RHIDevice()
 	{
+		SafeRelease(mDepthStencil);
+		SafeRelease(mDsvHeap);
 	}
 
 	bool CDX12RHIDevice::initDevice(HWND hWnd)
@@ -141,6 +144,11 @@ namespace ML
 				{
 					break;
 				}
+				// Depth buffer (needed by the 3D pipeline PSO).
+				if (!_InitDepthBuffer())
+				{
+					break;
+				}
 			}
 			// Create the command list.
 			mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator, nullptr, IID_PPV_ARGS(&mCommandList));
@@ -261,9 +269,12 @@ namespace ML
 			mFrameIndex,
 			mRtvDescriptorSize);
 
-		mCommandList->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
+		// Bind RTV + DSV, clear both.
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv(mDsvHeap->GetCPUDescriptorHandleForHeapStart());
+		mCommandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 		static const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 		mCommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+		mCommandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
 		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
@@ -317,6 +328,56 @@ namespace ML
 		WaitForSingleObject(mFenceEvent, INFINITE);
 		mFenceValue++;
 		UploadList->Release();      // 用完即弃（或做成成员复用）
+	}
+
+	bool CDX12RHIDevice::_InitDepthBuffer()
+	{
+		const SWindowConfig* winConfig = GEngine->GetPlatform().getWindowConfigPtr();
+
+		// DSV descriptor heap (single depth target).
+		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+		dsvHeapDesc.NumDescriptors = 1;
+		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		if (FAILED(mpDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&mDsvHeap))))
+		{
+			return false;
+		}
+
+		D3D12_CLEAR_VALUE clearValue = {};
+		clearValue.Format = DXGI_FORMAT_D32_FLOAT;
+		clearValue.DepthStencil.Depth = 1.0f;
+
+		D3D12_HEAP_PROPERTIES heapProps = {};
+		heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+		D3D12_RESOURCE_DESC depthDesc = {};
+		depthDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		depthDesc.Alignment = 0;
+		depthDesc.Width = winConfig->nWidth;
+		depthDesc.Height = winConfig->nHeight;
+		depthDesc.DepthOrArraySize = 1;
+		depthDesc.MipLevels = 1;
+		depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		depthDesc.SampleDesc.Count = 1;
+		depthDesc.SampleDesc.Quality = 0;
+		depthDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		depthDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+		HRESULT hr = mpDevice->CreateCommittedResource(
+			&heapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&depthDesc,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&clearValue,
+			IID_PPV_ARGS(&mDepthStencil));
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		mpDevice->CreateDepthStencilView(mDepthStencil, nullptr, mDsvHeap->GetCPUDescriptorHandleForHeapStart());
+		return true;
 	}
 
 	void CDX12RHIDevice::_WaitCommandQueue()

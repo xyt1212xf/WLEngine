@@ -2,13 +2,13 @@
 #include <d3d12.h>
 #include "d3dx12.h"
 #include <dxgi1_6.h>
-#include "Device.h"
 #include "Common.h"
 #include "Array.h"
+#include "Refcount.h"
 
 namespace ML
 {
-	class MLENGINE_API CDX12RHIDevice : public CDeviceBase
+	class CDX12RHIDevice : public CRefcount
 	{
 		friend class CGraphicPlug;
 	public:
@@ -19,13 +19,12 @@ namespace ML
 		ID3D12Device* GetDevice() const;
 		ID3D12GraphicsCommandList* GetCommandList() const;
 		void ExecuteUploadAndWait(ID3D12GraphicsCommandList* UploadList);
-
-	protected:
 		bool initDevice(HWND hWnd);
 
 	private:
 		void _GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter, bool requestHighPerformanceAdapter = true);
 		void _WaitCommandQueue();
+		bool _InitDepthBuffer();
 
 	private:
 
@@ -34,6 +33,9 @@ namespace ML
 		ID3D12CommandQueue* mCommandQueue = nullptr;
 		IDXGISwapChain3* mSwapChain = nullptr;
 		ID3D12DescriptorHeap* mRtvHeap = nullptr;
+		// Depth buffer for 3D rendering (D32).
+		ID3D12DescriptorHeap* mDsvHeap = nullptr;
+		ID3D12Resource* mDepthStencil = nullptr;
 		ID3D12CommandAllocator* mCommandAllocator = nullptr;
 		ID3D12GraphicsCommandList* mCommandList = nullptr;
 		std::vector<ID3D12Resource*> mRenderTargets;

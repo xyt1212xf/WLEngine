@@ -44,7 +44,34 @@ namespace ML
 
 	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches)
 	{
-
+		// Iterate the persistent level: actor -> component -> visible static meshes.
+		// (UE: FScene from FPrimitiveSceneProxy registration; simplified here.)
+		if (nullptr == PersistentLevel)
+		{
+			return;
+		}
+		for (CActor* Actor : PersistentLevel->GetActors())
+		{
+			if (nullptr == Actor)
+			{
+				continue;
+			}
+			for (CComponent* Comp : Actor->GetComponents())
+			{
+				CStaticMeshComponent* MeshComp = dynamic_cast<CStaticMeshComponent*>(Comp);
+				if (nullptr == MeshComp || !MeshComp->IsVisible())
+				{
+					continue;
+				}
+				FMeshBatch Batch;
+				MeshComp->GetMeshBatch(Batch, View.ViewProjMatrix);
+				// GetMeshBatch leaves LOD null when the mesh is not built yet.
+				if (Batch.LOD)
+				{
+					OutBatches.Add(Batch);
+				}
+			}
+		}
 	}
 
 	void CWorld::TickLoad()

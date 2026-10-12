@@ -26,10 +26,13 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="DX12Device.cpp" />
+    <ClCompile Include="DX12PipelineState.cpp" />
     <ClCompile Include="DX12RHIbuffer.cpp" />
+    <ClCompile Include="DX12Shader.cpp" />
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="GlobalShader.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
@@ -49,6 +52,7 @@
     <ClCompile Include="MeshVertexInstance.cpp" />
     <ClCompile Include="MLEngine.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PipelineState.cpp" />
     <ClCompile Include="Plug.cpp" />
     <ClCompile Include="PrimitiveComponent.cpp" />
     <ClCompile Include="Quaternion.cpp" />
@@ -59,6 +63,8 @@
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="RHIbuffer.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
@@ -88,11 +94,14 @@
     <ClInclude Include="DefineType.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DX12Device.h" />
+    <ClInclude Include="DX12PipelineState.h" />
     <ClInclude Include="DX12RHIbuffer.h" />
+    <ClInclude Include="DX12Shader.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Foundation.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameMode.h" />
+    <ClInclude Include="GlobalShader.h" />
     <ClInclude Include="GraphicPlug.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
@@ -118,6 +127,7 @@
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="NumericLimits.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PipelineState.h" />
     <ClInclude Include="Plug.h" />
     <ClInclude Include="PrimitiveComponent.h" />
     <ClInclude Include="Quaternion.h" />
@@ -128,6 +138,8 @@
     <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="RHIbuffer.h" />
     <ClInclude Include="SceneComponent.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />
     <ClInclude Include="StaticMeshComponent.h" />

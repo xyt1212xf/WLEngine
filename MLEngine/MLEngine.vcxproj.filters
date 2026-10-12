@@ -64,6 +64,15 @@
     <Filter Include="GameFrame\Component">
       <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFrame\Object">
+      <UniqueIdentifier>{3705e355-8ea1-452c-8dbb-91baadfcbcbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Draw">
+      <UniqueIdentifier>{2f36b0f8-ccd9-4327-947c-56bdec84df17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Draw\Shader">
+      <UniqueIdentifier>{20bd518b-3072-48a4-b8f4-5d2cec209659}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -134,12 +143,6 @@
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>GameFrame\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Actor.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>GameFrame</Filter>
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
       <Filter>Core\Math</Filter>
@@ -224,6 +227,30 @@
     </ClCompile>
     <ClCompile Include="ActorComponent.cpp">
       <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>GameFrame\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>GameFrame\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Shader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalShader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidColorShader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineState.cpp">
+      <Filter>Core\Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12PipelineState.cpp">
+      <Filter>Core\Devices\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,12 +374,6 @@
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>GameFrame\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Actor.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
     <ClInclude Include="Quaternion.h">
       <Filter>Core\Math</Filter>
     </ClInclude>
@@ -442,6 +463,30 @@
     </ClInclude>
     <ClInclude Include="ActorComponent.h">
       <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>GameFrame\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>GameFrame\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Shader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalShader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidColorShader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineState.h">
+      <Filter>Core\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12PipelineState.h">
+      <Filter>Core\Devices\DX12</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

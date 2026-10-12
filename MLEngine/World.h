@@ -26,6 +26,8 @@ namespace ML
 	class CWorld : public CResource
 	{
         friend class CEngine;
+		friend class CRenderer;
+
 	public:
 		CWorld() = default;
 		CWorld(const std::string& name);

@@ -1,9 +1,10 @@
 #include "GraphicPlug.h"
 #include "MLEngine.h"
-#include "DX12Device.h"
+#include "Device.h"
 #include "Renderer.h"
 #include "TimerClock.h"
 #include "DX12RHIbuffer.h"
+#include "GlobalShader.h"
 
 namespace ML
 {
@@ -25,9 +26,11 @@ namespace ML
 	{
 		if (nullptr == mpDeviceBase)
 		{
-			mpDeviceBase = new CDX12RHIDevice;
+			mpDeviceBase = new CRHIDevice;
 			if (mpDeviceBase->initDevice(GEngine->GetPlatform().getMainWnd()))
 			{
+				// Compile all registered global shaders once the device is ready.
+				CGlobalShaderMap::InitGlobalShaders();
 				mpRenderer = new CRenderer(this);
 				return true;
 			}
@@ -37,7 +40,10 @@ namespace ML
 
 	bool CGraphicPlug::UnInitialise()
 	{
-		return false;
+		CGlobalShaderMap::DestroyGlobalShaders();
+		SafeDelete(mpRenderer);
+		SafeDelete(mpDeviceBase);
+		return true;
 	}
 
 	void CGraphicPlug::Process(float DeltaSeconds) const
@@ -54,7 +60,7 @@ namespace ML
 			});
 	}
 
-	CDX12RHIDevice* CGraphicPlug::GetDevice()
+	CRHIDevice* CGraphicPlug::GetDevice()
 	{
 		return mpDeviceBase;
 	}

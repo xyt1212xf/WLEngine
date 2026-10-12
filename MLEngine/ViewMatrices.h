@@ -16,7 +16,9 @@ namespace ML
 		FViewMatrices(const FMatrix44& InView, const FMatrix44& InProj)
 			: ViewMatrix(InView)
 			, ProjMatrix(InProj)
-			, ViewProjMatrix(InProj* InView)  // ×¢Òâ£ºDX ÊÇ Proj * View
+			// Row-vector convention: clip = pos * View * Proj, so the combined
+			// matrix must be View * Proj (NOT Proj * View).
+			, ViewProjMatrix(InView * InProj)
 		{
 		}
 	};
