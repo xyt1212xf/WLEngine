@@ -19,6 +19,7 @@ namespace ML
 			FScopedMallocTimer Timer(3);
 			return;
 		}
+		FreeExternal(Original);
 	}
 
 	SIZE_T FMemory::GetAllocSize(void* Original)
@@ -61,36 +62,14 @@ namespace ML
 
 	void* FMemory::Realloc(void* Original, SIZE_T Count, uint32 Alignment /*= DEFAULT_ALIGNMENT*/)
 	{
-		void* Ptr = nullptr;
-
-		// Depending on the underlying implementation `Malloc` here, even if `Count` is zero,
-		// could do an actual allocation (it is implementation-defined what occurs). So
-		// instead, since we are fine to return null with a `Count` of zero, we check for
-		// that case and skip the `Malloc` call entirely.
-		if (Count > 0)
+		// 直接走底层 ReallocExternal(_aligned_realloc 会保留旧数据)。
+		// 不能走 "Malloc + Memcpy + Free" 路线: GetAllocSize 是空壳(返回 0),
+		// 会导致扩容时旧数据一个字节都拷不过去。
+		if (!GMalloc)
 		{
-			Ptr = Malloc(Count, Alignment);
-
-			if (!Ptr)
-			{
-				return nullptr;
-			}
+			GCreateMalloc();
 		}
-
-		if (Original)
-		{
-			if (Ptr)
-			{
-				SIZE_T OriginalCount = GetAllocSize(Original);
-				SIZE_T CopyCount = std::min<SIZE_T>(Count, OriginalCount); // handle the case where the new size is smaller
-				Memcpy(Ptr, Original, CopyCount);
-			}
-
-			Free(Original);
-		}
-
-		return Ptr;
-
+		return ReallocExternal(Original, Count, Alignment);
 	}
 
 	void FMemory::GCreateMalloc()

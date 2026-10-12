@@ -10,7 +10,7 @@ namespace ML
 		DeferredRenderer = 300,
 		GuiRenderer = 400,
 	};
-	
+
 	enum  DrawQualityLevel
 	{
 		Low,
@@ -18,6 +18,7 @@ namespace ML
 		Hihg,
 	};
 
+	class CPipelineState;
 
 	class CRenderer
 	{
@@ -34,5 +35,7 @@ namespace ML
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
+		// Solid-color pipeline for the first bring-up (created lazily in _Flush).
+		CPipelineState*	mpSolidColorPSO = nullptr;
 	};
 }

@@ -9,12 +9,14 @@ namespace ML
 
 	void* AnsiRealloc(void* Ptr, SIZE_T NewSize, uint32 Alignment)
 	{
-		return nullptr;
+		// _aligned_realloc 保留旧内容并按对齐重新分配; 与 AnsiMalloc 的 _aligned_malloc 配对。
+		void* Result = _aligned_realloc(Ptr, NewSize, Alignment);
+		return Result;
 	}
 
 	void AnsiFree(void* Ptr)
 	{
-
+		_aligned_free(Ptr); // 与 _aligned_malloc/_aligned_realloc 配对, 不能用 free
 	}
 
 	FMallocAnsi::FMallocAnsi()
@@ -55,17 +57,27 @@ namespace ML
 
 	void* FMallocAnsi::Realloc(void* Ptr, SIZE_T NewSize, uint32 Alignment)
 	{
-		return nullptr;
+		void* Result = TryRealloc(Ptr, NewSize, Alignment);
+
+		if (Result == nullptr && NewSize)
+		{
+			//	FPlatformMemory::OnOutOfMemory(NewSize, Alignment);
+		}
+
+		return Result;
 	}
 
 	void* FMallocAnsi::TryRealloc(void* Ptr, SIZE_T NewSize, uint32 Alignment)
 	{
-		return nullptr;
+		// 与 TryMalloc 相同的对齐规则: 小块 8 字节, 大块 16 字节, 且不低于调用方要求
+		Alignment = std::max<uint32>(NewSize >= 16 ? (uint32)16 : (uint32)8, Alignment);
+
+		return AnsiRealloc(Ptr, NewSize, Alignment);
 	}
 
 	void FMallocAnsi::Free(void* Ptr)
 	{
-
+		AnsiFree(Ptr);
 	}
 
 }

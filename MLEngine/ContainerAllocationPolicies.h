@@ -140,7 +140,7 @@ namespace ML
 		{
 			template <int, typename>
 			friend class TSizedHeapAllocator;
-
+		
 		public:
 			/** Default constructor. */
 			ForAnyElementType()

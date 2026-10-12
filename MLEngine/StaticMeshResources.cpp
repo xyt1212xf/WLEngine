@@ -112,6 +112,37 @@ namespace ML
 				Colors.GetData()
 			);
 		}
+
+		// 填充顶点工厂的流布局(SDataStreamUnit), 再构建 InputLayout。
+		// BuildInputLayout 会同时缓存 VB 视图(mCachedVerticesViews),
+		// 渲染时 IASetVertexBuffers 直接用。
+		if (VertexFactory)
+		{
+			VertexFactory->NumVertices = NumVertices;
+			auto FillStream = [](SDataStreamUnit& Unit, ID3D12Resource* Buffer, uint32 Slot, uint32 Stride, DXGI_FORMAT Format)
+				{
+					Unit.Buffer	= Buffer;
+					Unit.Slot	= Slot;
+					Unit.Offset	= 0;
+					Unit.Stride	= Stride;
+					Unit.Format	= Format;
+					Unit.bValid	= (Buffer != nullptr);
+				};
+			FillStream(VertexFactory->Schema.Position,
+				PositionBuffer ? PositionBuffer->GetResource() : nullptr,
+				0, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+			FillStream(VertexFactory->Schema.Color,
+				ColorBuffer ? ColorBuffer->GetResource() : nullptr,
+				1, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+
+			std::vector<std::string> Elements;
+			if (PositionBuffer)	{ Elements.push_back("POSITION"); }
+			if (ColorBuffer)	{ Elements.push_back("COLOR"); }
+			if (!Elements.empty())
+			{
+				VertexFactory->BuildInputLayout(Elements);
+			}
+		}
 	}
 
 	void CStaticMeshLODResources::ReleaseResources()

@@ -1,187 +1,318 @@
 ================================================================================
- MLEngine 类继承关系图
- 生成时间: 2026-09-30
- 说明: (abstract) = 抽象类/含纯虚函数; (*) = 模板基类; [持有] = 组合关系(非继承)
+ MLEngine 类结构分析文档（mini-UE 目标）
+ 生成时间: 2026-10-11（本次为重构后更新版）
+ 范围: 仅 MLEngine 工程（不含测试/工具工程）
+ 本版重点: CTransformComponent 已删除，重构为 UE 同款五层组件链
+           CActorComponent / CSceneComponent / CPrimitiveComponent / CMeshComponent
 ================================================================================
+
+〇、总体架构分层（对照 UE5）
+--------------------------------------------------------------------------------
+ [运行时框架]   CEngine / CPlug / CGraphicPlug / CGameApp / CWinPlatform / CThreadPool
+ [世界/场景]    CWorld / CLevel / CLevelStreaming / CGameMode / CWorldPartition / CWorldSet
+ [GamePlay]     CActor / CCharacter / CComponent→CActorComponent→CSceneComponent→
+                CPrimitiveComponent→CMeshComponent→CStaticMeshComponent
+ [资源]         CResource / CResourceMgr / CResourceFactory / CStreamableRenderAsset
+ [网格数据]     FMeshDescription(拓扑) → CMeshAttributes(烘焙) → CStaticMeshLODResources(渲染数据)
+ [渲染]         CRenderer / FMeshBatch / FViewMatrices / CVertexStreamFactory→CStaticVertexFactory
+ [RHI/设备]     CDeviceBase / CDX12RHIDevice / CRHIBuffer / CDX12RHIBuffer
+ [反射]         StructInfo / CClass
+ [容器/内存]    TArray / TSingle / CRefcount / FMemory 系
+ [数学]         Vec2F/Vec3F/Vec4F / FMatrix44 / CQuaternion / MathLib
 
 一、完整继承树
 --------------------------------------------------------------------------------
 
-【根基类】(无父类)
-CRefcount (引用计数基类)
-CNonCopyable (禁拷贝基类)
-CDeviceBase (设备抽象基类)
-CWinPlatform (Windows 平台层)
-CGameApp    (应用入口)
-CRenderer   (渲染器)
-CResourceFactory (资源工厂)
-CResourceMgr     (资源管理器)
-CVertexStreamFactory (abstract) (顶点流工厂)
-CMeshAttributes  (烘焙数据)
-CStaticMeshLODResources (LOD 渲染数据)
-CThreadPool      (线程池)
-FMatrix44(矩阵)
-FViewMatrices(试图矩阵)
-TVec2(向量)
-TVec3(向量)
-TVec4(向量)
-
-【CRefcount 系】(资源与对象生命周期)
+【CRefcount 系】(引用计数根)
 CRefcount
-├── CObject                    (带名字的对象, UE UObject 对标)
-│   ├── CStreamableRenderAsset (可流送渲染资产, UE UStreamableRenderAsset 对标)
-│   ├── CActor                 (演员, UE AActor 对标)
-│   │   └── CCharacter         (角色, UE ACharacter 对标)
-│   └── (CClass : StructInfo)  (反射类信息, 见 StructInfo 系)
-├── CResource                  (资源基类, 持 UUID/状态/类型)
-│   └── CMesh                  (网格资源基类)
-│       └── CStaticMesh        (静态网格, UE UStaticMesh 对标)
-└── CDX12RHIbuffer             (DX12 缓冲实现, 持 ID3D12Resource)  
-    └──CRHIBuffer              (RHI 缓冲抽象)
+├── CObject                      (对象基类: Name; UE UObject 对标)
+│   ├── CActor                   (演员: RootComponent + Components + Tick/BeginPlay)
+│   │   │                          SetActorLocation 已改为驱动 RootComponent (UE 同款)
+│   │   └── CCharacter           (角色空壳; UE ACharacter)
+│   ├── CStaticMeshDescription   (LOD 源数据: 持 FMeshDescription; UE FStaticMeshSourceModel)
+│   └── CStreamableRenderAsset   (空壳; UE UStreamableRenderAsset)
+├── CResource                    (资源基类: UUID/状态/类型; ResourceType 枚举)
+│   ├── CWorld                   (世界: 异步加载状态机 + Tick + 流送关卡管理; UE UWorld*)
+│   └── CMesh                    (网格资源基类: 一对 VB/IB 指针)
+│       └── CStaticMesh          (静态网格: SourceModels/RenderData/MaterialSlots; UE UStaticMesh)
+├── CLevel                       (关卡: Actors 数组; UE ULevel)
+├── CLevelStreaming              (流送关卡: 状态机 Unloaded/Loading/Loaded/Unloading; UE ULevelStreaming)
+├── CGameMode                    (空壳; UE AGameModeBase)
+├── CWorldPartition              (空壳; UE UWorldPartition)
+├── CWorldSet                    (空壳)
+└── CDX12RHIBuffer               (DX12 缓冲: ID3D12Resource + UploadBuffer + VB/IB/CBV 视图)
+    └── CRHIBuffer               (⚠ 仍见"问题1": 继承方向反了)
+
+【CComponent 系】(本次重构核心，已完全对齐 UE 的五层链)
+CNonCopyable                    (删除拷贝/赋值的空基类)
+└── CComponent                  (组件基类: tick + 名字)
+    └── CActorComponent         (Actor 组件层; UE UActorComponent)
+        └── CSceneComponent     (★Transform 归宿: Location/Rotation/Scale + GetWorldMatrix;
+        │                        UE USceneComponent)
+        └── CPrimitiveComponent (可见性 bVisible; UE UPrimitiveComponent)
+            └── CMeshComponent  (网格组件层; UE UMeshComponent)
+                └── CStaticMeshComponent (StaticMesh 引用 + GetMeshBatch;
+                                          UE UStaticMeshComponent)
 
 
-【StructInfo 系】(反射)
-StructInfo (结构体信息: 类名/父类指针/继承缓存)
-└── CClass    (运行时类信息: IsChildOf 查询)
+【CPlug 系】(插件 + 单例)
+CPlug : TSingle<CPlug>           (引擎插件接口: Initialise/Process/Start)
+└── CGraphicPlug                 (图形插件: 持 Device + Renderer; 启动渲染线程; 全接口 final)
 
+【CEngine】
+CEngine : TSingle<CEngine>       (引擎单例: World/Plugs/Platform/ThreadPool/资源加载)
 
-【CDeviceBase 系】(设备)
-CDeviceBase
-└── CDX12RHIDevice  (DX12 设备: SwapChain/CommandQueue/RTV/Fence)
+【CDeviceBase 系】
+CDeviceBase                      (设备抽象空壳)
+└── CDX12RHIDevice               (DX12 设备: SwapChain/CommandQueue/RTV/Fence/BeginDraw/EndDraw)
 
+【顶点工厂系】
+CVertexStreamFactory             (抽象: BuildInputLayout 纯虚; UE FVertexFactory 简化)
+└── CStaticVertexFactory         (静态网格顶点布局: SMeshVertexSchema; UE FLocalVertexFactory)
 
-【CPlug 系】(插件, 单例)
-CPlug : TSingle<CPlug>          (引擎插件接口)
-└── CGraphicPlug                (图形插件: 持 Device + Renderer)
+【工厂/管理器】(无继承或独立)
+CRenderer                        (渲染器: 渲染线程 _Draw/_Begin/_Flush/_End 循环)
+CGameApp                         (应用入口: entry/run)
+CWinPlatform                     (Win32 窗口)
+CResourceMgr / CResourceFactory  (资源管理/工厂)
+CStaticMeshLODResources          (LOD 渲染数据, 无基类; UE FStaticMeshLODResources)
 
+【反射系】
+StructInfo                       (类名/父类指针/继承缓存)
+└── CClass                       (IsChildOfWalk/IsChildOfArray 查询)
 
-【CEngine】(引擎主类)
-CEngine : TSingle<CEngine>      (引擎单例: 持 Plug 数组/线程池/平台层)
-
-
-【CComponent 系】(组件)
-CComponent : CNonCopyable       (组件基类: tick/名字)
-├── CTransformComponent         (变换组件, UE USceneComponent 对标)
-└── CStaticMeshComponent        (静态网格组件, UE UStaticMeshComponent 对标)
-
-
-【CMeshAttributes 系】(烘焙中间数据)
-CMeshAttributes                 (平铺顶点流 + Sections + BakeFromDescription)
-└── CStaticMeshAttributes       (当前为空, 预留扩展)
-
-
-【CVertexStreamFactory 系】(顶点工厂)
-CVertexStreamFactory (abstract) (BuildInputLayout 纯虚)
-└── CStaticVertexFactory        (静态网格顶点流, UE FLocalVertexFactory 对标)
-
-[CWorld系]
-CWorld
-└── CResource        
-CLevle
-└── CResource
-CLevelStreaming
-└── CRefcount
-CWorldSet
-└── CRefcount
-      
-
-
-二、数据结构 (POD struct, 无继承)
+二、POD 数据结构（无继承）
 --------------------------------------------------------------------------------
-FMeshVertex            (拓扑顶点, 只有 Position)
-FMeshVertexInstance    (顶点实例: VertexID + Normal/Tangent/UV0/Color)
-FMeshTriangle          (三角形: 3 个 VertexInstanceID + PolygonGroupID)
-FMeshPolygonGroup      (多边形组/材质槽: Name + MaterialIndex)
-FMeshDescription       (拓扑容器: 持上述 4 个数组)
+--- 网格拓扑层 (MeshDescription.h 族) ---
+FMeshVertex            (拓扑顶点: Position)
+FMeshVertexInstance    (角点属性: VertexID + Normal/Tangent/UV0/Color)
+FMeshTriangle          (三角形: VertexInstanceID[3] + PolygonGroupID)
+FMeshPolygonGroup      (材质槽分组: Name + MaterialIndex)
+FMeshDescription       (拓扑容器: 上述 4 数组 + Empty/IsEmpty/Validate + Num* 查询)
+
+--- 烘焙层 (MeshAttributes.h) ---
 FStaticMeshSection     (可绘制分段: MaterialIndex/FirstIndex/NumTriangles)
-FObjectHeader          (对象头: Handle/Size/Name/GC标记)
-SDataStreamUnit        (顶点流单元: Buffer/Slot/Offset/Stride/Format)
-SMeshVertexSchema      (顶点布局描述: 8 个 SDataStreamUnit)
+CMeshAttributes        (平铺流: Positions/Normals/Tangents/UVs/Colors + Indices + Sections
+                        + BakeFromDescription 烘焙算法)
+└─(继承) CStaticMeshAttributes (空壳子类; UE FStaticMeshAttributes 对标)
+
+--- 渲染层 ---
+FMeshBatch             (绘制批次: Mesh/LOD/VertexFactory/WorldMatrix/Section/Element; UE FMeshBatch)
+FMeshBatchElement      (FirstIndex/NumIndices/BaseVertex/InstanceCount; UE FMeshBatchElement)
+FViewMatrices          (View/Proj/ViewProj + ViewOrigin; UE FViewMatrices)
+SDataStreamUnit        (单条顶点流: Buffer/Slot/Offset/Stride/Format)
+SMeshVertexSchema      (8 条流 Position/Normal/Tangent/UV0-3/Color 的布局描述)
 SInputElement          (输入布局元素)
 
+--- 其他 ---
+FObjectHeader          (对象头: Handle/Size/Name/GC标记)
+SEvent                 (窗口消息事件)
 
-三、关键组合关系 (持有, 非继承)
+三、组合/所有权关系（谁持有谁）
 --------------------------------------------------------------------------------
 CEngine
- ├── [持有] TArray<CPlug*>          → CGraphicPlug
- ├── [持有] CThreadPool*
- └── [持有] CWinPlatform
+ ├── CWorld*                    mpWorld          (LoadScene 创建)
+ ├── TArray<CPlug*>             mPlugs           (→ CGraphicPlug)
+ ├── CWinPlatform               mPlatform
+ └── CThreadPool*               mpThreadPools    (threadJoin/threadDetach)
 
 CGraphicPlug
- ├── [持有] CDX12RHIDevice*
- └── [持有] CRenderer*
+ ├── CDX12RHIDevice*            mpDeviceBase
+ └── CRenderer*                 mpRenderer       (渲染线程跑 _Draw)
 
-CRenderer
- └── [持有] CGraphicPlug*           (渲染线程通过它拿设备)
+CWorld
+ ├── CGameMode*                 GameMode
+ ├── CLevel*                    PersistentLevel  (BuildActors 创建)
+ ├── TArray<CLevelStreaming*>   StreamingLevels  (AddStreamingLevel)
+ ├── TArray<CActor*>            ParseActors      (解析期临时)
+ └── 加载状态机 EWorldLoadState: Idle→Parsing→BuildingActors→UploadingGPU→Ready
 
-CDX12RHIDevice
- └── [持有] ID3D12Device/CommandQueue/SwapChain/RTV Heap/Fence...
+CLevel
+ ├── TArray<CActor*>            Actors           (AddActor)
+ ├── TArray<CResource*>         Resources
+ └── AWorldSettings*            WorldSettings    (前置声明, 未定义)
 
-CStaticMesh                          (UE UStaticMesh)
- ├── [持有] TArray<CStaticMeshDescription*>  SourceModels  (每 LOD 源数据)
- ├── [持有] TArray<CStaticMeshLODResources*> RenderData    (每 LOD 渲染数据)
- └── [持有] TArray<std::string>      MaterialSlots         (材质槽名)
+CActor
+ ├── CSceneComponent*           RootComponent    (⚠ 目前无人赋值, 见"问题3")
+ └── TArray<CComponent*>        Components       (AddComponent<T> new; 析构已 delete ✔)
 
-CStaticMeshDescription               (UE FStaticMeshSourceModel)
- └── [持有] FMeshDescription         OwnedMeshDescription  (拓扑数据)
+CSceneComponent (含全部 Transform 语义)
+ └── Vec3F Location / CQuaternion Rotation / Vec3F Scale → GetWorldMatrix()
 
-CStaticMeshLODResources              (UE FStaticMeshLODResources)
- ├── [持有] CRHIBuffer* ×4           Position/Tangent/Color/IndexBuffer
- └── [持有] TArray<FStaticMeshSection> Sections
+CStaticMesh
+ ├── TArray<CStaticMeshDescription*> SourceModels (每 LOD 一份源数据)
+ ├── TArray<CStaticMeshLODResources*> RenderData   (Build() 烘焙产物)
+ └── TArray<std::string>        MaterialSlots
 
 CStaticMeshComponent
- └── [引用] CStaticMesh*             (组件引用网格, 不持有)
+ └── CStaticMesh*               StaticMesh       (引用, 不持有)
 
-CDX12RHIbuffer
- └── [持有] ID3D12Resource*
+CStaticMeshLODResources
+ ├── CRHIBuffer* ×4             Position/Tangent/Color/Index Buffer
+ └── CStaticVertexFactory*      VertexFactory    (Build 后仍为 null, 待接)
 
+CDX12RHIBuffer
+ ├── ID3D12Resource*            Resource         (默认堆)
+ ├── ID3D12Resource*            UploadBuffer     (上传堆)
+ └── void*                      MappedData
 
-四、静态网格数据流 (P0 已打通)
+四、三条主要数据流
 --------------------------------------------------------------------------------
-CStaticMeshDescription::CreateCube()
-    │ 填充
-    ▼
-FMeshDescription (拓扑: Vertex/VertexInstance/Triangle/PolygonGroup)
-    │ CMeshAttributes::BakeFromDescription()  平铺+按材质分组
-    ▼
-CMeshAttributes (平铺流: Positions/Normals/Tangents/UVs/Indices + Sections)
-    │ CStaticMeshLODResources::InitResources()  拷贝元数据+算包围球
-    ▼
-CStaticMeshLODResources (Sections + Bounds + Buffer指针[P1填GPU])
-    │ P1: VB/IB 上传
-    ▼
-GPU (per-stream vertex buffers + index buffer)
 
+◆ 流程 A: 静态网格数据管线 (CPU 侧已通, GPU 上传仍断)
+  CreateCube() 填拓扑
+    → FMeshDescription (Vertex/VertexInstance/Triangle/PolygonGroup)
+    → CMeshAttributes::BakeFromDescription()   平铺 + 按材质分组
+    → CStaticMeshLODResources::InitResources() 拷贝 Sections/算包围球
+    → [缺口] VB/IB 真实 GPU 上传 (CDX12RHIBuffer::Create 已具备能力, 未接线)
+    → [缺口] VertexFactory 仍为 null
+
+◆ 流程 B: 世界加载管线 (状态机已通, 硬编码 Cube)
+  CEngine::LoadScene → CWorld::LoadAsync (线程池 threadDetach)
+    → ParseFile()      (硬编码 Cube: CStaticMesh + CActor + CStaticMeshComponent,
+                        SetVisible(true) + SetLocation(0,0,3))
+    → BuildActors()    (装进 PersistentLevel)
+    → 主线程 TickLoad: UploadGPUResources() [空] + InitActorsForPlay() → Ready
+    → CWorld::Tick: 主关卡 Actor::Tick + 组件 tick; 流送关卡 Actor::Tick
+
+◆ 流程 C: 渲染帧循环 (骨架就绪, 中间仍断)
+  渲染线程 CRenderer::_Draw 循环:
+    _Begin  → CDX12RHIDevice::BeginDraw
+    _Flush  → [空]  ← 计划: CWorld::CollectVisibleMeshes(FViewMatrices, OutBatches)
+                        (函数已声明, 实现为空)
+                        遍历 Level→Actor→CStaticMeshComponent::GetMeshBatch
+                        然后按 FMeshBatch 绑定 VB/IB/PSO → DrawIndexed
+    _End    → CDX12RHIDevice::EndDraw
+
+  注: CStaticMeshComponent::GetMeshBatch 已实现——取 LOD0/Section0,
+      WorldMatrix 来自基类 CSceneComponent::GetWorldMatrix() (重构后走基类 ✔);
+      但 InViewProj 参数被忽略, 且 bVisible=false 时直接返回。
 
 五、与 UE5 的对标速查
 --------------------------------------------------------------------------------
-CObject                  ↔ UObject
+CEngine                  ↔ GEngine / FEngineLoop
+CPlug / CGraphicPlug     ↔ 插件模块 / FRenderModule(简化)
+CWorld                   ↔ UWorld
+CLevel                   ↔ ULevel
+CLevelStreaming          ↔ ULevelStreaming
+CGameMode                ↔ AGameModeBase
+CWorldPartition          ↔ UWorldPartition
 CActor                   ↔ AActor
 CCharacter               ↔ ACharacter
 CComponent               ↔ UActorComponent
-CTransformComponent      ↔ USceneComponent
-CStaticMeshComponent     ↔ UStaticMeshComponent
-CResource                ↔ UObject (资源语义)
+CActorComponent          ↔ UActorComponent
+CSceneComponent          ↔ USceneComponent        ★本次对齐
+CPrimitiveComponent      ↔ UPrimitiveComponent   ★本次对齐
+CMeshComponent           ↔ UMeshComponent        ★本次对齐
+CStaticMeshComponent     ↔ UStaticMeshComponent  ★本次对齐
+CObject                  ↔ UObject
+CResource                ↔ UObject(资源语义)
 CStaticMesh              ↔ UStaticMesh
 CStaticMeshDescription   ↔ FStaticMeshSourceModel
-FMeshDescription         ↔ FMeshDescription
-CMeshAttributes          ↔ (UE 无, 自加的烘焙中间层)
+FMeshDescription 族      ↔ FMeshDescription 拓扑体系
+CMeshAttributes / CStaticMeshAttributes ↔ (自加烘焙中间层) / FStaticMeshAttributes
 FStaticMeshSection       ↔ FStaticMeshSection
 CStaticMeshLODResources  ↔ FStaticMeshLODResources
+FMeshBatch/Element       ↔ FMeshBatch/FMeshBatchElement
+FViewMatrices            ↔ FViewMatrices
 CStaticVertexFactory     ↔ FLocalVertexFactory
-CRHIBuffer               ↔ FRHIBuffer
-CDX12RHIbuffer           ↔ FD3D12Buffer
-CDX12RHIDevice           ↔ FD3D12DynamicRHI (设备部分)
-CRenderer                ↔ FSceneRenderer (简化)
-CEngine                  ↔ FEngineLoop/GEngine
-CPlug                    ↔ FRenderModule/插件系统 (简化)
-CWorld                   ↔ UWorld
-CLevel                   ↔ ULevel
-CGameMode                ↔ UGameMode
-CWorldSet                ↔ UWorldSet
+CDX12RHIDevice           ↔ FD3D12DynamicRHI(设备部分)
+CDX12RHIBuffer           ↔ FD3D12Buffer
+CRenderer                ↔ FSceneRenderer(简化)
+(缺失)                   ↔ FPrimitiveSceneProxy / UMaterial / APlayerCameraManager / FScene
 
+六、当前设计问题（按严重度排序）
+--------------------------------------------------------------------------------
+【已解决·原问题2】Transform 已上移到 CSceneComponent，子类残留字段已删除，
+                   组件析构泄漏也已修复。
 
-================================================================================
- 注: CMesh 原有的纯虚 BuildFromMeshDescriptions() 已被 CStaticMesh::Build()
-     流程取代并移除; CMesh 目前仅作为网格资源基类存在。
+【已解决·原问题3】CActor 构造时即 AddComponent<CSceneComponent>() 作为 RootComponent
+                   (等价 UE 构造函数里 CreateDefaultSubobject<USceneComponent> + SetRootComponent)。
+                   AddComponent 通用模板用 if constexpr + is_convertible_v 自动识别
+                   SceneComponent 子类。SetActorLocation/GetActorLocation 不再空指针。
+                   ⚠ 残留语义缺口: 尚无 AttachToComponent 机制 —— Root 是个普通
+                   CSceneComponent, 后加的 CStaticMeshComponent Transform 独立于 Root,
+                   SetActorLocation 移动 Root 时网格组件不会跟随。
+                   过渡方案: 补 SetRootComponent(CSceneComponent*) 允许后期换根;
+                   正式方案: P2 做 AttachToComponent/相对 Transform 层级(UE 同款)。
+
+【已解决·原P1-B】CStaticMeshLODResources::InitResources 已接通 CRHIBuffer::Create,
+                   Position/Tangent/Color/Index 四个 buffer 真实上传 GPU 完成
+                   (默认堆 + 上传堆拷贝 + 屏障 + ExecuteUploadAndWait 全流程)。
+
+【问题1】CRHIBuffer 继承方向反了 (结构性, ★用户已决定不改, 仅存档)
+  现状: CRHIBuffer : CDX12RHIBuffer  (抽象层继承实现层)
+  UE 的做法: FRHIBuffer 是纯虚基类, FD3D12Buffer : FRHIBuffer 是实现。
+  结论: mini 引擎只做 DX12, 保持现状可接受。
+
+【架构决策·图形API层统一约定 (2026-10-11 定)】
+  所有图形API相关类统一采用 "C抽象类 : CDX12具体类" 方向:
+    CShader : CDX12Shader : CResource, CRHIBuffer : CDX12RHIBuffer
+  将来换 API 用宏在编译期切换基类 (如切到 COpenGLShader)。
+  (UE 是"抽象基类 + 实现子类", 方向相反; 用户明确选择不改)
+  配套纪律(保证宏切换可行):
+    1. 具体 API 类(CDX12*)不暴露给上层 —— DX12 专属类型/头文件
+       (ID3DBlob/D3D12_*/d3d12.h) 只允许出现在 DX12*.h/.cpp 中
+    2. GlobalShader/Renderer/SolidColorShader 等上层文件禁止出现任何 ID3D*/D3D12_* 类型
+    3. DX12 类的创建集中在一处(宏/工厂), 不许上层直接 new CDX12*
+
+【问题4】CWorld 的所有权与线程安全 (正确性, 未变)
+  - CWorld::ParseFile 里 new 的 CStaticMesh/CActor/CLevel 无处释放(析构为空)。
+  - LoadAsync 里后台线程调 ParseFile/BuildActors, 与主线程 TickLoad/Tick 之间没有同步,
+    BuildActors 写 PersistentLevel 时主线程可能正在 Tick 读它。
+  - 新增: 渲染线程 _Flush 将读 World/FMeshBatch, 与游戏线程 Tick 并发, 同样无同步。
+  建议: 最低限度在 LoadState 上加原子量/临界区; 析构补齐释放; 渲染数据考虑双缓冲。
+
+【问题5】GetMeshBatch 硬编码 LOD0/Section0 (可接受, 记录在案)
+  忽略 InViewProj 参数(视锥剔除/LOD 选择以后做), 只取第 0 个 LOD 和第 0 个 Section。
+  多材质 Cube 出屏时再改。
+
+【问题6】FMeshBatch 直接耦合 CStaticMesh (可接受, 记录在案)
+  UE 的 FMeshBatch 只依赖 VertexFactory + 材质, 不认识具体 Mesh 类型。
+  mini 阶段可以先这样, 做 SkeletalMesh 时再抽象。
+
+七、下一步路线建议（以"屏幕上画出一个 Cube"为终点倒排）
+--------------------------------------------------------------------------------
+ P1-A  ✔已基本完成: 问题2/3 已修, 问题1 用户决定不改
+ P1-B  ✔已完成: InitResources 已创建 4 个 VB/IB 并上传 GPU
+ P1-C  ✔已完成(2026-10-11): 根签名(HLSL内嵌)+SolidColor.hlsl+CDX12Shader编译
+       +CShader/CGlobalShader/CGlobalShaderMap(注册宏 IMPLEMENT_GLOBAL_SHADER)
+       +CDX12PipelineState/CPipelineState(根签名从字节码提取, 状态集中组装)
+       +深度缓冲(DX12Device: D32+DSV堆, BeginDraw绑RTV+DSV并清深度)
+ P1-D  ✔已完成(2026-10-11): ViewMatrices.h 修正 ViewProj 顺序(行向量约定 View*Proj),
+       _Flush 硬编码相机(原点看+Z, 60°fov) + CollectVisibleMeshes 遍历
+       Actor→CStaticMeshComponent→GetMeshBatch + IASetVB/IB + 根常量MVP
+       (MVP = World * View * Proj, HLSL row_major + mul(v,M), 无需转置)
+       InitResources 末尾填 VertexFactory Schema 并 BuildInputLayout 缓存 VB 视图
+       —— 至此"画出 Cube"链路全部打通, 待运行验证
+ P1-E  FMeshBatch 加 Material 指针(先空壳 CMaterial), 渲染时按 Section 绑定
+       (GetMeshBatch 目前硬编码 LOD0/Section0, 多材质时改)
+ P2    AttachToComponent/相对 Transform 层级, ParseFile 读 JSON 关卡(已有 json.hpp),
+       Actor 序列化/反射(CClass 已有雏形)
+ P3    CLevelStreaming 真实现(距离触发加载), WorldPartition 做空间划分
+ P4    CGameMode / PlayerController / 输入(SEvent 已有) / CCameraComponent
+
+八、文件 → 职责 索引（按目录内平铺）
+--------------------------------------------------------------------------------
+ 运行时:  MLEngine.h/cpp, Plug.h, GraphicPlug.h/cpp, GameApp.h/cpp, Win.h/cpp,
+          ThreadPool.h, TimerClock.h/cpp, Message.h
+ 世界:    World.h/cpp, Level.h/cpp, LevelStreaming.h/cpp, GameMode.h/cpp,
+          WorldPartition.h/cpp, WorldSet.h/cpp
+ GamePlay: Actor.h/cpp, Character.h/cpp, Component.h/cpp,
+          ActorComponent.h/cpp, SceneComponent.h/cpp, PrimitiveComponent.h/cpp,
+          MeshComponent.h/cpp, StaticMeshComponent.h/cpp
+ 网格:    MeshVertex.h/cpp, MeshVertexInstance.h/cpp, MeshTriangle.h/cpp,
+          MeshPolygonGroup.h/cpp, MeshDescription.h/cpp, MeshAttributes.h/cpp,
+          StaticMeshDescription.h/cpp, StaticMeshAttributes.h/cpp, Mesh.h/cpp,
+          StaticMesh.h/cpp, StaticMeshResources.h/cpp, MeshBatch.h/cpp
+ 渲染:    Renderer.h/cpp, ViewMatrices.h, VertexStreamFactory.h/cpp
+ RHI:     Device.h, DX12Device.h/cpp, RHIbuffer.h/cpp, DX12RHIbuffer.h/cpp
+ 资源:    Resource.h/cpp, ResourceMgr.h/cpp, ResourceFactory.h/cpp,
+          StreamableRenderAsset.h/cpp, Refcount.h/cpp, Object.h/cpp
+ 反射:    Class.h/cpp, ClassType.h
+ 容器/内存: Array.h, ContainersFwd.h, ContainerAllocationPolicies.h/cpp,
+          MemoryBase.h/cpp, MallocAnsi.h/cpp, UnrealMemory.h/cpp, UnrealTemplate.h,
+          NonCopyable.h, NumericLimits.h, TSingle.h
+ 数学:    Vector.h, Matrix.h/cpp, Quaternion.h/cpp, MathLib.h/cpp, MathLibSSE.h/cpp
+ 其他:    Common.h, DefineType.h, Foundation.h/cpp, Export.h, json.hpp
 ================================================================================

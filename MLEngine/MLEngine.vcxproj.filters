@@ -489,4 +489,7 @@
       <Filter>Core\Devices\DX12</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="NatvisFile.natvis" />
+  </ItemGroup>
 </Project>
