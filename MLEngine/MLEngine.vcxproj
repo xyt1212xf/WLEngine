@@ -37,6 +37,8 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialMgr.cpp" />
     <ClCompile Include="MathLib.cpp" />
     <ClCompile Include="MathLibSSE.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -64,6 +66,7 @@
     <ClCompile Include="RHIbuffer.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
@@ -109,6 +112,8 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelStreaming.h" />
     <ClInclude Include="MallocAnsi.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialMgr.h" />
     <ClInclude Include="MathLib.h" />
     <ClInclude Include="MathLibSSE.h" />
     <ClInclude Include="Matrix.h" />
@@ -139,6 +144,7 @@
     <ClInclude Include="RHIbuffer.h" />
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />

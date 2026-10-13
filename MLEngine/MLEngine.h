@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 #include "Win.h"
 #include "ThreadPool.h"
@@ -20,7 +20,8 @@ namespace ML
 	class CGraphicPlug;
 	class CThreadPool;
 	class CWorld;
-	
+	class CMgr;
+
 	extern CWorld* GetWorld();
 
 	class CEngine : public TSingle<CEngine>
@@ -48,6 +49,9 @@ namespace ML
 		T* GetPlugs() const;
 
 		template<typename T>
+		T* GetMgr() const;
+
+		template<typename T>
 		void LoadResourceAsync(const std::string& resourceName) const;
 
 		template<typename T>
@@ -58,6 +62,7 @@ namespace ML
 	private:
 		CWorld* mpWorld = nullptr;	
 		TArray<CPlug*> mPlugs;
+		TArray<CMgr*> mMgrs;
 		CWinPlatform mPlatform;
 		CThreadPool* mpThreadPools = nullptr;
 		bool mbRunning = false;
@@ -77,6 +82,20 @@ namespace ML
 		}
 		return nullptr;
 	}
+
+	template<typename T>
+	T* CEngine::GetMgr() const
+	{
+		for (CMgr* mgr : mMgrs)
+		{
+			if (T* p = dynamic_cast<T*>(mgr))
+			{
+				return p;
+			}
+		}
+		return nullptr;
+	}
+
 
 	template<class F, class... Args>
 	auto CEngine::threadJoin(F&& f, Args&&... args)//->std::future<typename std::result_of<F(Args...)>::type>

@@ -76,6 +76,9 @@
     <Filter Include="Core\Resource\Material">
       <UniqueIdentifier>{5412f102-e136-41d6-bd38-6fc88341c9a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Mgr">
+      <UniqueIdentifier>{8b5a998f-7c27-41d2-9a1a-81b80492a4b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -254,6 +257,15 @@
     </ClCompile>
     <ClCompile Include="DX12PipelineState.cpp">
       <Filter>Core\Devices\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Core\Resource\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialMgr.cpp">
+      <Filter>Core\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr.cpp">
+      <Filter>Core\Mgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -490,6 +502,15 @@
     </ClInclude>
     <ClInclude Include="DX12PipelineState.h">
       <Filter>Core\Devices\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Core\Resource\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialMgr.h">
+      <Filter>Core\Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr.h">
+      <Filter>Core\Mgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

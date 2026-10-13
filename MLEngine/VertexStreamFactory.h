@@ -120,9 +120,13 @@ namespace ML
 
 		virtual TArray<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements) override;
 
+		const TArray<D3D12_INPUT_ELEMENT_DESC>& GetInputLayout() const { return mCachedInputLayout; }
+		bool HasInputLayout() const { return mCachedInputLayout.Num() > 0; }
+
 	public:
 		SMeshVertexSchema Schema;
 		uint32 NumVertices = 0;
 		TArray<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews;
+		TArray<D3D12_INPUT_ELEMENT_DESC> mCachedInputLayout;
 	};
 }
