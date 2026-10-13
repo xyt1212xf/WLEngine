@@ -52,6 +52,7 @@ namespace ML
 
 #define DECLARE_GLOBAL_SHADER(ClassName) \
 	public: static const char* StaticShaderName() { return #ClassName; }
+
 #define IMPLEMENT_GLOBAL_SHADER(ClassName, sourceFile, entryPoint, shaderTarget) \
 	static CGlobalShader* _CreateGlobalShader_##ClassName() { return new ClassName(); } \
 	static const bool _RegisteredGlobalShader_##ClassName = []() { \

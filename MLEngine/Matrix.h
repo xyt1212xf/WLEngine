@@ -12,7 +12,7 @@ namespace ML
 	{
 		static const FMatrix44& identity() 
 		{
-			static  FMatrix44 m(	1.0f, 0, 0, 0,
+			static  FMatrix44 m(1.0f, 0, 0, 0,
 								0, 1.0f, 0, 0,
 								0, 0, 1.0f, 0,
 								0, 0, 0, 1.0f);
@@ -79,12 +79,17 @@ namespace ML
 		}
 		static FMatrix44 MakeTranslation(float x, float y, float z)
 		{
+			// 行向量约定: 平移放在第 3 行, 但对角线必须是单位 1。
+			// (之前只填了第 3 行, 漏掉对角线 => 0~2 行全 0, 导致 World 只剩平移行)
 			FMatrix44 matrix;
 			matrix.zero();
+			matrix.m[0][0] = 1.0f;
+			matrix.m[1][1] = 1.0f;
+			matrix.m[2][2] = 1.0f;
 			matrix.m[3][0] = x;
 			matrix.m[3][1] = y;
 			matrix.m[3][2] = z;
-			matrix.m[3][3] = 1;
+			matrix.m[3][3] = 1.0f;
 			return matrix;
 		}
 
@@ -99,6 +104,7 @@ namespace ML
 			matrix.m[0][0] = x;
 			matrix.m[1][1] = y;
 			matrix.m[2][2] = z;
+			matrix.m[3][3] = 1;
 			return matrix;
 		}
 

@@ -1,8 +1,7 @@
 #include "GlobalShader.h"
 namespace ML
 {
-	static bool TryCompileFromSearchPaths(CShader* pShader, const std::string& SourceFile,
-		const std::string& EntryPoint, const std::string& Target)
+	static bool TryCompileFromSearchPaths(CShader* pShader, const std::string& SourceFile, const std::string& EntryPoint, const std::string& Target)
 	{
 		static const char* SearchDirs[] =
 		{

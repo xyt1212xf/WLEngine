@@ -78,14 +78,12 @@ namespace ML
 		{
 			return;
 		}
-
 		CSolidColorVS* pVS = CGlobalShaderMap::GetShader<CSolidColorVS>();
 		CSolidColorPS* pPS = CGlobalShaderMap::GetShader<CSolidColorPS>();
 		if (nullptr == pVS || nullptr == pPS || !pVS->IsValid() || !pPS->IsValid())
 		{
 			return;
 		}
-
 		// Create the solid-color PSO lazily on first use. Input layout comes
 		// from the vertex factory of the first batch.
 		if (nullptr == mpSolidColorPSO)
