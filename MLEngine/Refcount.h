@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 
 namespace ML
 {
-	class CRefcount
+	class MLENGINE_API CRefcount
 	{
 	public:
 		CRefcount();

@@ -10,7 +10,7 @@ namespace ML
 		std::vector<StructInfo*> InheritanceCache; // 运行时缓存：存放所有
 	};
 
-	class CClass : public StructInfo
+	class MLENGINE_API CClass : public StructInfo
 	{
 	public:
 		bool IsChildOfWalk(const StructInfo* Other) const;

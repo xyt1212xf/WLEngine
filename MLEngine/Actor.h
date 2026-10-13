@@ -6,7 +6,7 @@ namespace ML
 {
 	class CSceneComponent;
 	class CComponent;
-	class CActor : public CObject
+	class MLENGINE_API CActor : public CObject
 	{
 	public:
 		CActor();

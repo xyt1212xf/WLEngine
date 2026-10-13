@@ -1,4 +1,4 @@
-#include "Renderer.h"
+﻿#include "Renderer.h"
 #include "MLEngine.h"
 #include "TimerClock.h"
 #include "GraphicPlug.h"
@@ -38,7 +38,7 @@ namespace ML
 				_Flush();
 			}
 			_End();
-			double costTime = time.getTimerSecond();
+			//double costTime = time.getTimerSecond();
 		}
 	}
 

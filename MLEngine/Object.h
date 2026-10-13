@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 #include "Refcount.h"
 #include "Class.h"
@@ -13,7 +13,7 @@ namespace ML
 		bool			bMarked = false;
 	};
 
-	class CObject : public CRefcount
+	class MLENGINE_API CObject : public CRefcount
 	{
 		friend class CGCObjectMgr;
 	public:
