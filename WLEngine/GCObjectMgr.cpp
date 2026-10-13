@@ -1,4 +1,4 @@
-#include "GCObjectMgr.h"
+ï»¿#include "GCObjectMgr.h"
 #include "Object.h"
 #include "DefMemory.h"
 
@@ -30,7 +30,7 @@ namespace WL
 		}
 	}
 
-	// ´Ó¸ù¼¯ÒÆ³ı
+	// ä»æ ¹é›†ç§»é™¤
 	void CGCObjectMgr::RemoveFromRoot(CObject* Obj)
 	{
 		if (Obj)
@@ -58,12 +58,12 @@ namespace WL
 		auto It = HandleToOffset.find(Handle);
 		if (It == HandleToOffset.end()) 
 		{
-			return nullptr;  // ¾ä±ú²»´æÔÚ»òÒÑ±»»ØÊÕ
+			return nullptr;  // å¥æŸ„ä¸å­˜åœ¨æˆ–å·²è¢«å›æ”¶
 		}
-		UINT32 Offset = It->second;
+		size_t Offset = It->second;
 		if (Offset >= PoolUsed) 
 		{
-			return nullptr;  // Æ«ÒÆÔ½½ç£¨²»Ó¦¸Ã·¢Éú£©
+			return nullptr;  // åç§»è¶Šç•Œï¼ˆä¸åº”è¯¥å‘ç”Ÿï¼‰
 		}
 		return reinterpret_cast<FObjectHeader*>(MemoryPool + Offset);
 	}
@@ -75,7 +75,7 @@ namespace WL
 		{
 			return nullptr;
 		}
-		// ÑéÖ¤Í·²¿µÄ SelfHandle ÊÇ·ñÆ¥Åä£¨·ÀÖ¹ÄÚ´æËğ»µ£©
+		// éªŒè¯å¤´éƒ¨çš„ SelfHandle æ˜¯å¦åŒ¹é…ï¼ˆé˜²æ­¢å†…å­˜æŸåï¼‰
 		if (Header->SelfHandle != Handle) 
 		{
 			return nullptr;
@@ -92,7 +92,7 @@ namespace WL
 		}
 		Header->bMarked = true;
 
-		// Í¨¹ıÒıÓÃ±í±éÀúÒıÓÃ
+		// é€šè¿‡å¼•ç”¨è¡¨éå†å¼•ç”¨
 		for (ObjectHandle Ref : RefTable.GetReferences(Header->SelfHandle)) 
 		{
 			MarkRecursive(Ref);
@@ -101,14 +101,14 @@ namespace WL
 
 	void CGCObjectMgr::MarkPhase() 
 	{
-		// ÏÈÇå³ıËùÓĞ¶ÔÏóµÄ±ê¼Ç
+		// å…ˆæ¸…é™¤æ‰€æœ‰å¯¹è±¡çš„æ ‡è®°
 		for (auto& [Handle, Offset] : HandleToOffset) 
 		{
 			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + Offset);
 			Header->bMarked = false;
 		}
 
-		// ´Ó¸ù¼¯¿ªÊ¼±ê¼Ç
+		// ä»æ ¹é›†å¼€å§‹æ ‡è®°
 		for (ObjectHandle Root : RootSet) 
 		{
 			MarkRecursive(Root);
@@ -122,7 +122,7 @@ namespace WL
 		size_t NewOffset = 0;
 		size_t NewRowIndex = 0;
 
-		// ±éÀúµ±Ç°ËùÓĞ¶ÔÏó£¨°´¾ä±úÅÅĞòÒÔ±£Ö¤È·¶¨ĞÔ£©
+		// éå†å½“å‰æ‰€æœ‰å¯¹è±¡ï¼ˆæŒ‰å¥æŸ„æ’åºä»¥ä¿è¯ç¡®å®šæ€§ï¼‰
 		std::vector<ObjectHandle> SortedHandles;
 		for (const auto& [Handle, _] : HandleToOffset) 
 		{
@@ -135,14 +135,14 @@ namespace WL
 			{
 				if (Header->bMarked)
 				{
-					// ´æ»î¶ÔÏó£º¼ÇÂ¼ÒÆ¶¯¼Æ»®
+					// å­˜æ´»å¯¹è±¡ï¼šè®°å½•ç§»åŠ¨è®¡åˆ’
 					MovePlan.emplace_back(HandleToOffset[Handle], NewOffset);
 					HandleToNewRowIndex[Handle] = NewRowIndex++;
 					NewOffset += Header->ObjectSize + ObjectHeadSize;
 				}
 				else
 				{
-					// ËÀÍö¶ÔÏó£ºÇåÀí
+					// æ­»äº¡å¯¹è±¡ï¼šæ¸…ç†
 					RefTable.FreeRow(Header->SelfHandle);	
 					CObject* Obj = reinterpret_cast<CObject*>(MemoryPool + HandleToOffset[Handle] + ObjectHeadSize);
 					Obj->~CObject();
@@ -151,14 +151,14 @@ namespace WL
 			}
 		}
 
-		// 2. Ñ¹ËõÒıÓÃ±í
+		// 2. å‹ç¼©å¼•ç”¨è¡¨
 		RefTable.Compact(AliveHandles, HandleToNewRowIndex,
 			[this](ObjectHandle Handle) -> UINT32 {
 				FObjectHeader* Header = GetHeader(Handle);
 				return Header ? Header->SelfHandle : INVALID_HANDLE;
 			});
 
-		// 3. ÒÆ¶¯´æ»î¶ÔÏóµ½ĞÂÎ»ÖÃ
+		// 3. ç§»åŠ¨å­˜æ´»å¯¹è±¡åˆ°æ–°ä½ç½®
 		std::unordered_map<ObjectHandle, size_t> NewHandleToOffset;
 		for (auto& [OldOff, NewOff] : MovePlan) 
 		{
@@ -168,13 +168,13 @@ namespace WL
 				memmove(MemoryPool + NewOff, MemoryPool + OldOff, ObjectHeadSize + Header->ObjectSize);
 			}
 
-			// ¸üĞÂ¶ÔÏóÍ·ÖĞµÄÒıÓÃ±íË÷Òı
+			// æ›´æ–°å¯¹è±¡å¤´ä¸­çš„å¼•ç”¨è¡¨ç´¢å¼•
 			FObjectHeader* Header = reinterpret_cast<FObjectHeader*>(MemoryPool + NewOff);
-			// ±£´æĞÂµÄÆ«ÒÆÓ³Éä
+			// ä¿å­˜æ–°çš„åç§»æ˜ å°„
 			NewHandleToOffset[Header->SelfHandle] = NewOff;
 		}
 
-		// 4. Ìæ»»Ó³Éä±í
+		// 4. æ›¿æ¢æ˜ å°„è¡¨
 		HandleToOffset = std::move(NewHandleToOffset);
 		PoolUsed = NewOffset;
 
@@ -227,7 +227,7 @@ namespace WL
 	{
 		std::unordered_map<UINT32, std::vector<ObjectHandle>> NewReferences;
 		NewReferences.reserve(HandleToNewRowIndex.size());
-		// °´ĞÂË÷ÒıË³ĞòÖØ½¨ÒıÓÃ±í
+		// æŒ‰æ–°ç´¢å¼•é¡ºåºé‡å»ºå¼•ç”¨è¡¨
 		for (const auto& [Handle, NewIndex] : HandleToNewRowIndex) 
 		{
 			UINT32 OldIndex = GetOldIndexFunc(Handle);  
@@ -236,7 +236,7 @@ namespace WL
 				std::vector<ObjectHandle> FilteredRefs;
 				for (ObjectHandle Ref : iter->second)
 				{
-					// Ö»±£ÁôÖ¸Ïò´æ»î¶ÔÏóµÄÒıÓÃ
+					// åªä¿ç•™æŒ‡å‘å­˜æ´»å¯¹è±¡çš„å¼•ç”¨
 					if (AliveObjects.count(Ref))
 					{
 						FilteredRefs.emplace_back(Ref);

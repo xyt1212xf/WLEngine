@@ -24,7 +24,7 @@ namespace ML
 
 	extern CWorld* GetWorld();
 
-	class CEngine : public TSingle<CEngine>
+	class MLENGINE_API CEngine : public TSingle<CEngine>
 	{
 	public:
 		CEngine();
@@ -71,7 +71,7 @@ namespace ML
 
 
 	template<typename T>
-	T* ML::CEngine::GetPlugs() const
+	T* CEngine::GetPlugs() const
 	{
 		for (CPlug* plug : mPlugs)
 		{

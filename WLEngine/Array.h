@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Allocator.h"
 #include "UnrealTemplate.h"
 #include "NumericLimits.h"
@@ -74,8 +74,6 @@ namespace WL
 		TAllocatorSizeType_T<AllocatorInstanceType>& ArrayMax
 	)
 	{
-		auto xx = typeid(AllocatorInstanceType).name();
-		int x = Flags;
 		return ReallocGrow1_DoAlloc_Impl<1, AllocatorInstanceType>(ElementSizeAndAlignment & 0xff, ElementSizeAndAlignment >> 8, AllocatorInstance, ArrayMax);
 	}
 
@@ -144,7 +142,6 @@ namespace WL
 		template <typename... ArgsType>
 		FORCEINLINE SizeType Emplace(ArgsType&&... Args)
 		{
-			auto xx = typeid(AllocatorType).name();
 			if (ArrayNum == ArrayMax)
 			{
 				if constexpr (sizeof(ElementType) <= 255 && alignof(ElementType) <= 255) // -V590 

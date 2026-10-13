@@ -1,6 +1,9 @@
 #include "StaticMesh.h"
 #include "MeshAttributes.h"
 #include "VertexStreamFactory.h"
+#include "Material.h"
+#include "MaterialMgr.h"
+#include "MLEngine.h"
 namespace ML
 {
 	CStaticMesh::CStaticMesh()
@@ -79,7 +82,21 @@ namespace ML
 
 	int32 CStaticMesh::AddMaterialSlot(const std::string& Name)
 	{
-		return MaterialSlots.Add(Name);
+		FStaticMaterialSlot Slot;
+		Slot.Name = Name;
+		Slot.Material = GEngine ? GEngine->GetMgr<CMaterialMgr>()->GetDefaultMaterial() : nullptr;
+		return MaterialSlots.Add(Slot);
 	}
 
+	CMaterial* CStaticMesh::GetMaterialForSection(int32 SectionIndex) const
+	{
+		CMaterialMgr* MatMgr = GEngine ? GEngine->GetMgr<CMaterialMgr>() : nullptr;
+		CMaterial* Fallback = MatMgr ? MatMgr->GetDefaultMaterial() : nullptr;
+		if (SectionIndex < 0 || SectionIndex >= MaterialSlots.Num())
+		{
+			return Fallback;
+		}
+		CMaterial* M = MaterialSlots[SectionIndex].Material;
+		return M ? M : Fallback;
+	}
 }

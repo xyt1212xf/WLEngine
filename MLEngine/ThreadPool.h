@@ -60,7 +60,7 @@ namespace ML
 		// synchronization
 		std::mutex mQueueMutex;
 		std::condition_variable mCondition;
-		bool mStop = false;
+		std::atomic<bool> mStop{false};
 	};
 
 	// the constructor just launches some amount of workers
@@ -105,15 +105,14 @@ namespace ML
 			std::bind(std::forward<F>(f), std::forward<Args>(args)...)
 			);
 
+		// don't allow enqueueing after stopping the pool
+		if (mStop)
+		{
+			throw std::runtime_error("enqueue on stopped ThreadPool");
+		}
 		std::future<return_type> res = task->get_future();
 		{
 			std::unique_lock<std::mutex> lock(mQueueMutex);
-
-			// don't allow enqueueing after stopping the pool
-			if (mStop)
-			{
-				throw std::runtime_error("enqueue on stopped ThreadPool");
-			}
 			mTasks.emplace([task]() { (*task)(); });
 		}
 		mCondition.notify_one();
@@ -123,14 +122,13 @@ namespace ML
 	template<class F, class... Args>
 	void CThreadPool::enqueueDetach(F&& f, Args&&... args)
 	{
+		// don't allow enqueueing after stopping the pool
+		if (mStop)
+		{
+			throw std::runtime_error("enqueue on stopped ThreadPool");
+		}
 		{
 			std::unique_lock<std::mutex> lock(mQueueMutex);
-
-			// don't allow enqueueing after stopping the pool
-			if (mStop)
-			{
-				throw std::runtime_error("enqueue on stopped ThreadPool");
-			}
 			auto bound = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
 			mTasks.emplace([bound = std::move(bound)]() { bound(); });
 		}
@@ -139,10 +137,7 @@ namespace ML
 	// the destructor joins all threads
 	inline CThreadPool::~CThreadPool()
 	{
-		{
-			std::unique_lock<std::mutex> lock(mQueueMutex);
-			mStop = true;
-		}
+		mStop = true;	
 		mCondition.notify_all();
 		for (std::thread& worker : mWorkers)
 		{

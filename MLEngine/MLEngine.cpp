@@ -1,5 +1,8 @@
 ﻿#include "MLEngine.h"
 #include "GraphicPlug.h"
+#include "Mgr.h"
+#include "ShaderMgr.h"
+#include "MaterialMgr.h"
 #include "TimerClock.h"
 #include "World.h"
 
@@ -53,6 +56,23 @@ namespace ML
 	{
 		mbRunning = true;
 		mpThreadPools = new CThreadPool();
+
+		// 1) Create all CMgr subsystems. Order matters: ShaderMgr compiles all
+		//    GlobalShaders first, then MaterialMgr (which depends on compiled shaders).
+		CShaderMgr* pShaderMgr   = new CShaderMgr();
+		CMaterialMgr* pMaterialMgr = new CMaterialMgr();
+		mMgrs.Add(pShaderMgr);
+		mMgrs.Add(pMaterialMgr);
+		for (CMgr* Mgr : mMgrs)
+		{
+			if (!Mgr->Init())
+			{
+				OutputDebugStringA(("Engine subsystem init failed: " + std::string(Mgr->GetName()) + "\n").c_str());
+				return false;
+			}
+		}
+
+		// 2) Create and start the graphics plug (which will register DefaultMaterial etc.).
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
 		mPlugs.Add(graphicPlug);
 		if (graphicPlug->Initialise())
@@ -67,7 +87,24 @@ namespace ML
 	{
 		mbRunning = false;
 		SafeDelete(mpThreadPools);
-		return false;
+		SafeDelete(mpWorld);
+		// Tear down plugs first (graphic plug still owns device + DefaultMaterial references).
+		for (CPlug* plug : mPlugs)
+		{
+			SafeDelete(plug);
+		}
+		mPlugs.Empty();
+		// Shutdown subsystems in reverse order.
+		for (int32 i = mMgrs.Num() - 1; i >= 0; --i)
+		{
+			if (mMgrs[i])
+			{
+				mMgrs[i]->Shutdown();
+				SafeDelete(mMgrs[i]);
+			}
+		}
+		mMgrs.Empty();
+		return true;
 	}
 
 

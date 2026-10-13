@@ -25,6 +25,7 @@ namespace ML
 	TArray<D3D12_INPUT_ELEMENT_DESC> CStaticVertexFactory::BuildInputLayout(const std::vector<std::string>& elements)
 	{
 		mCachedVerticesViews.Empty();
+		mCachedInputLayout.Empty();
 		TArray<D3D12_INPUT_ELEMENT_DESC> elems;
 
 		if (elements.size() != 0)
