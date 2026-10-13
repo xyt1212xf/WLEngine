@@ -23,11 +23,19 @@ namespace ML
 		
 		explicit FMatrix44(const float* fStream);
 		FMatrix44(const FMatrix44& m);
-		FMatrix44(FMatrix44&& m);
-		FMatrix44(float f11, float f12, float f13, float f14,
-				 float f21, float f22, float f23, float f24,
-				 float f31, float f32, float f33, float f34,
-				 float f41, float f42, float f43, float f44);
+		FMatrix44(FMatrix44&& m) noexcept;
+
+		constexpr FMatrix44(float f11, float f12, float f13, float f14,
+			float f21, float f22, float f23, float f24,
+			float f31, float f32, float f33, float f34,
+			float f41, float f42, float f43, float f44)
+			: _11(f11), _12(f12), _13(f13), _14(f14)
+			, _21(f21), _22(f22), _23(f23), _24(f24)
+			, _31(f31), _32(f32), _33(f33), _34(f34)
+			, _41(f41), _42(f42), _43(f43), _44(f44)
+		{
+		}
+
 
 		//! Simple operator for directly accessing every element of the matrix.
 		float& operator()(const INT32 row, const INT32 col)
@@ -37,7 +45,6 @@ namespace ML
 
 		static FMatrix44 MakeRotation(const CQuaternion& Quat)
 		{
-			// 四元数 → 旋转矩阵（行主序）
 			float x = Quat.mx;
 			float y = Quat.my;
 			float z = Quat.mz;
@@ -47,8 +54,7 @@ namespace ML
 			float y2 = y * y;
 			float z2 = z * z;
 
-			FMatrix44 M;
-			M.zero();
+			FMatrix44 M = identity();
 
 			M._11 = 1.0f - 2.0f * (y2 + z2);
 			M._12 = 2.0f * (x * y + w * z);
@@ -64,12 +70,6 @@ namespace ML
 			M._32 = 2.0f * (y * z - w * x);
 			M._33 = 1.0f - 2.0f * (x2 + y2);
 			M._34 = 0.0f;
-
-			M._41 = 0.0f;
-			M._42 = 0.0f;
-			M._43 = 0.0f;
-			M._44 = 1.0f;
-
 			return M;
 		}
 
@@ -79,17 +79,11 @@ namespace ML
 		}
 		static FMatrix44 MakeTranslation(float x, float y, float z)
 		{
-			// 行向量约定: 平移放在第 3 行, 但对角线必须是单位 1。
-			// (之前只填了第 3 行, 漏掉对角线 => 0~2 行全 0, 导致 World 只剩平移行)
-			FMatrix44 matrix;
-			matrix.zero();
-			matrix.m[0][0] = 1.0f;
-			matrix.m[1][1] = 1.0f;
-			matrix.m[2][2] = 1.0f;
+			FMatrix44 matrix = identity();
 			matrix.m[3][0] = x;
 			matrix.m[3][1] = y;
 			matrix.m[3][2] = z;
-			matrix.m[3][3] = 1.0f;
+			matrix.m[3][3] = 1;
 			return matrix;
 		}
 
@@ -99,8 +93,7 @@ namespace ML
 		}
 		static FMatrix44 MakeScale(float x, float y, float z)
 		{
-			FMatrix44 matrix;
-			matrix.zero();
+			FMatrix44 matrix = identity();
 			matrix.m[0][0] = x;
 			matrix.m[1][1] = y;
 			matrix.m[2][2] = z;

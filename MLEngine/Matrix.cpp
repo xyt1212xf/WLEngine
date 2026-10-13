@@ -11,19 +11,7 @@ namespace ML
 		memcpy(&_11, &mat, sizeof(FMatrix44));
 	}
 
-	FMatrix44::FMatrix44(float f11, float f12, float f13, float f14,
-					   float f21, float f22, float f23, float f24,
-					   float f31, float f32, float f33, float f34,
-					   float f41, float f42, float f43, float f44)
-	{
-		_11 = f11; _12 = f12; _13 = f13; _14 = f14;
-		_21 = f21; _22 = f22; _23 = f23; _24 = f24;
-		_31 = f31; _32 = f32; _33 = f33; _34 = f34;
-		_41 = f41; _42 = f42; _43 = f43; _44 = f44;
-	}
-
-
-	FMatrix44::FMatrix44(FMatrix44&& mat)
+	FMatrix44::FMatrix44(FMatrix44&& mat)noexcept
 	{
 		memcpy(&_11, &mat, sizeof(FMatrix44));
 	}
