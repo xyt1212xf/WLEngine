@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "SceneComponent.h"
 namespace ML
 {
-	class CPrimitiveComponent : public CSceneComponent
+	class MLENGINE_API CPrimitiveComponent : public CSceneComponent
     {
     public:
         CPrimitiveComponent();

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Vector.h"
 #include "Array.h"
 #include "MeshDescription.h"
@@ -12,7 +12,7 @@ namespace ML
 		UINT32 NumTriangles = 0;   // triangle count of this chunk
 	};
 
-	class CMeshAttributes
+	class MLENGINE_API CMeshAttributes
 	{
 	public:
 		void BakeFromDescription(const FMeshDescription& Desc);

@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "MLEngine.h"
 #include "Message.h"
 namespace ML
 {
-	class CGameApp
+	class MLENGINE_API CGameApp
 	{
 	public:
 		CGameApp();

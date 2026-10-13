@@ -4,7 +4,7 @@
 
 namespace ML
 {
-	class CResourceFactory 
+	class MLENGINE_API CResourceFactory 
 	{
 	public:
 		CResourceFactory();

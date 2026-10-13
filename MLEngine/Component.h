@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "NonCopyable.h"
 
 namespace ML
 {
-	class CComponent : public CNonCopyable
+	class MLENGINE_API CComponent : public CNonCopyable
 	{
 	public:
 		CComponent() = default;

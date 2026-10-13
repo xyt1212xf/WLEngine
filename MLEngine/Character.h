@@ -1,9 +1,9 @@
-
+﻿
 #pragma once
 #include "Actor.h"
 namespace ML
 {
-	class CCharacter : public CActor
+	class MLENGINE_API CCharacter : public CActor
 	{
 	public:
 		CCharacter();

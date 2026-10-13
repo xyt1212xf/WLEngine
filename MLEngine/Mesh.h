@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 //#include "StreamableRenderAsset.h"
 #include "Resource.h"
 #include "RHIbuffer.h"
 namespace ML
 {
 	class CMeshAttributes;
-	class CMesh : public CResource
+	class MLENGINE_API CMesh : public CResource
 	{
 	public:
 		CMesh();

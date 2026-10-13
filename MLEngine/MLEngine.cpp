@@ -1,4 +1,4 @@
-#include "MLEngine.h"
+ï»¿#include "MLEngine.h"
 #include "GraphicPlug.h"
 #include "TimerClock.h"
 #include "World.h"
@@ -95,14 +95,14 @@ namespace ML
 
 		if (mpWorld)
 		{
-			mpWorld->TickLoad();   // ÍÆ½øÒì²½¼ÓÔØ
+			mpWorld->TickLoad();   // æ¨è¿›å¼‚æ­¥åŠ è½½
 
 			if (mpWorld->IsReady())
 			{
-				mpWorld->Tick(deltaSeconds);     // Õı³£ÓÎÏ·Âß¼­
+				mpWorld->Tick(deltaSeconds);     // æ­£å¸¸æ¸¸æˆé€»è¾‘
 			}
 		}
-		double castTime = timeColor.getTimerMilliSec();
+	//	double castTime = timeColor.getTimerMilliSec();
 	//	std::cout<<castTime<<"\n";
 		timeColor.reset();
 	}

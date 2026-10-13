@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 namespace ML
 {
-	class CStreamableRenderAsset : public CObject
+	class MLENGINE_API CStreamableRenderAsset : public CObject
 	{
 	public:
 		CStreamableRenderAsset() = default;

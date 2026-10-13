@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include "DX12Device.h"
 #include "Array.h"
@@ -99,20 +99,20 @@ namespace ML
 		uint32 InstanceStepRate = 0;
 	};
 
-	class CVertexStreamFactory  	
+	class MLENGINE_API CVertexStreamFactory  	
 	{
 	public:
 		CVertexStreamFactory();
 		virtual ~CVertexStreamFactory();
 		
-		// Éú³É InputLayout
+		// ç”Ÿæˆ InputLayout
 		virtual TArray<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements ) = 0;
 
-		// shader ºê£¨UE µÄ ModifyCompilationEnvironment£©
+		// shader å®ï¼ˆUE çš„ ModifyCompilationEnvironmentï¼‰
 		virtual void FillShaderDefines(std::unordered_map<std::string, std::string>& defines) {}
 	};
 
-	class CStaticVertexFactory : public CVertexStreamFactory
+	class MLENGINE_API CStaticVertexFactory : public CVertexStreamFactory
 	{
 	public:
 		CStaticVertexFactory();

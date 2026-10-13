@@ -1,4 +1,4 @@
-#include "SceneComponent.h"
+ï»¿#include "SceneComponent.h"
 namespace ML
 {
 	CSceneComponent::CSceneComponent()
@@ -26,12 +26,12 @@ namespace ML
 
 	FMatrix44 CSceneComponent::GetWorldMatrix() const
 	{
-		// ¹¹Ôì TRS ¾ØÕó
+		// æ„é€  TRS çŸ©é˜µ
 		FMatrix44 TranslationMatrix = FMatrix44::MakeTranslation(Location);
 		FMatrix44 RotationMatrix = FMatrix44::MakeRotation(Rotation);
 		FMatrix44 ScaleMatrix = FMatrix44::MakeScale(Scale);
 
-		// ÊÀ½ç¾ØÕó = Scale * Rotation * Translation£¨×¢ÒâË³Ğò£©
+		// ä¸–ç•ŒçŸ©é˜µ = Scale * Rotation * Translationï¼ˆæ³¨æ„é¡ºåºï¼‰
 		return ScaleMatrix * RotationMatrix * TranslationMatrix;
 	}
 }

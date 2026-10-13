@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include <string>
 #include <map>
 #include <unordered_map>
@@ -26,7 +26,7 @@
 	#define ALIGN_OF(T) __alignof(T)
 	#define ALIGN_TYPE(val) __declspec(align(val))
 	#define INLINE __forceinline
-	#define FORCENOINLINE  __declspec(noinline)   // º˚ WindowsPlatform.h [^20^]
+	#define FORCENOINLINE  __declspec(noinline)   // ËßÅ WindowsPlatform.h [^20^]
 #elif defined(__ARMCC_VERSION)
 	#define ALIGN_OF(T) __alignof__(T)
 	#define ALIGN_TYPE(val) __attribute__((aligned(val)))  // ARMCC supports GNU extension
@@ -167,7 +167,7 @@ namespace ML
 		void* pData = nullptr;
 	};
 	
-	class CNoncopyable
+	class MLENGINE_API CNoncopyable
 	{
 	protected:
 		// ensure the class cannot be constructed directly

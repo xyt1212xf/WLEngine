@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include <chrono>
 #include "Common.h"
 namespace ML
 {
-	class CTimerClock
+	class MLENGINE_API CTimerClock
 	{
 	public:
 		CTimerClock() = default;
@@ -13,13 +13,13 @@ namespace ML
 		void begin();
 
 		void reset();
-		//»ñÈ¡Ãë
+		//è·å–ç§’
 		double getTimerSecond();
 
-		//»ñÈ¡ºÁÃë
+		//è·å–æ¯«ç§’
 		double getTimerMilliSec();
 	
-		//»ñÈ¡Î¢Ãî
+		//è·å–å¾®å¦™
 		INT64 getTimerMicroSec();
 
 	private:

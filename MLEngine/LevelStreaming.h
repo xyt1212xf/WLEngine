@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Refcount.h"
 namespace ML
 {
@@ -15,7 +15,7 @@ namespace ML
 	
 	using FOnLevelLoaded = std::function<void(CLevel*)>;
 	
-	class CLevelStreaming : public CRefcount
+	class MLENGINE_API CLevelStreaming : public CRefcount
     {
     public:	
         CLevelStreaming();
@@ -37,13 +37,13 @@ namespace ML
 
     private:
 		EStreamingState State = EStreamingState::Unloaded;
-		std::string LevelName;     // ¹ØÁªµÄ¹Ø¿¨Ãû
-		std::string FilePath;      // ¹Ø¿¨ÎÄ¼şÂ·¾¶
-		CLevel* Level = nullptr;   // ¼ÓÔØÍê³ÉºóÖ¸ÏòÊµ¼ÊµÄ Level
+		std::string LevelName;     // å…³è”çš„å…³å¡å
+		std::string FilePath;      // å…³å¡æ–‡ä»¶è·¯å¾„
+		CLevel* Level = nullptr;   // åŠ è½½å®ŒæˆåæŒ‡å‘å®é™…çš„ Level
 		float mLoadDistance = 1000.f;
 
 		FOnLevelLoaded OnLoaded;
-		// ¼ÓÔØÇëÇó
+		// åŠ è½½è¯·æ±‚
 		bool bShouldBeLoaded = false;
 		bool bShouldBeVisible = false;
     };

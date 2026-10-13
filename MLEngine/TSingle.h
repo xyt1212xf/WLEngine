@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 namespace ML
 {
@@ -44,7 +44,7 @@ namespace ML
 #endif // DEBUG
 			return mpSingle;
 		}
-		static Type getSingle()
+		static Type& getSingle()
 		{
 #ifdef DEBUG
 			if (nullptr == mpSingle)

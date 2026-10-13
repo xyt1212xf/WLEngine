@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 #include "Refcount.h"
 namespace ML
@@ -36,7 +36,7 @@ namespace ML
 	//};
 
 
-	class CResource : public CRefcount
+	class MLENGINE_API CResource : public CRefcount
 	{
 		friend class CResourceMgr;
 		friend class CResourceFactory;

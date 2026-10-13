@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 namespace ML
 {
-	class CActorComponent : public CComponent
+	class MLENGINE_API CActorComponent : public CComponent
     {
     public:
         CActorComponent();

@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 #include "Vector.h"
 #include "MeshDescription.h"
 
 namespace ML
 {
-	class CStaticMeshDescription : public CObject
+	class MLENGINE_API CStaticMeshDescription : public CObject
 	{
 	public:
 		CStaticMeshDescription() = default;

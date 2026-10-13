@@ -4,7 +4,7 @@
 
 namespace ML
 {
-	class CQuaternion
+	class MLENGINE_API CQuaternion
 	{
 	public:
 		CQuaternion() = default;

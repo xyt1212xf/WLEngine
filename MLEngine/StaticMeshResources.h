@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector.h"
 #include "RHIbuffer.h"
 #include "MeshAttributes.h"
@@ -6,34 +6,34 @@
 
 namespace ML
 {
-	// FStaticMeshLODResources£ºÒ»¸ö LOD ºæ±ººóµÄäÖÈ¾Êı¾İ¡£
-	// UE5 ¶Ô±ê£ºFStaticMeshLODResources£¨StaticMeshResources.h£©¡£
+	// FStaticMeshLODResourcesï¼šä¸€ä¸ª LOD çƒ˜ç„™åçš„æ¸²æŸ“æ•°æ®ã€‚
+	// UE5 å¯¹æ ‡ï¼šFStaticMeshLODResourcesï¼ˆStaticMeshResources.hï¼‰ã€‚
 	//
-	// ³ÖÓĞ£º
-	//   - per-stream ¶¥µã»º³å£¨Óë CStaticVertexFactory µÄ SDataStreamUnit ¶ÔÓ¦£©
-	//   - Ë÷Òı»º³å
-	//   - Sections£¨°´²ÄÖÊ·Ö¶Î£¬¶¨ÒåÔÚ MeshAttributes.h£©
-	//   - °üÎ§Çò£¨ÌŞ³ıÓÃ£©
+	// æŒæœ‰ï¼š
+	//   - per-stream é¡¶ç‚¹ç¼“å†²ï¼ˆä¸ CStaticVertexFactory çš„ SDataStreamUnit å¯¹åº”ï¼‰
+	//   - ç´¢å¼•ç¼“å†²
+	//   - Sectionsï¼ˆæŒ‰æè´¨åˆ†æ®µï¼Œå®šä¹‰åœ¨ MeshAttributes.hï¼‰
+	//   - åŒ…å›´çƒï¼ˆå‰”é™¤ç”¨ï¼‰
 	//
-	// ×¢Òâ£ºFStaticMeshSection ¶¨ÒåÔÚ MeshAttributes.h£¨ºæ±ºÊä³ö¶Ë£©£¬
-	// ÕâÀïÖ±½Ó¸´ÓÃ£¬±ÜÃâÁ½´¦¶¨ÒåÆ¯ÒÆ¡£
+	// æ³¨æ„ï¼šFStaticMeshSection å®šä¹‰åœ¨ MeshAttributes.hï¼ˆçƒ˜ç„™è¾“å‡ºç«¯ï¼‰ï¼Œ
+	// è¿™é‡Œç›´æ¥å¤ç”¨ï¼Œé¿å…ä¸¤å¤„å®šä¹‰æ¼‚ç§»ã€‚
 	class CStaticVertexFactory;
 
-	class CStaticMeshLODResources
+	class MLENGINE_API CStaticMeshLODResources
 	{
 	public:
 		CStaticMeshLODResources() = default;
 		~CStaticMeshLODResources();
 
-		// ´Óºæ±º½á¹û(CMeshAttributes Æ½ÆÌÊı¾İ£©´´½¨äÖÈ¾×ÊÔ´¡£
-		// µ±Ç°½×¶Î£º¿½±´ CPU ²àÔªÊı¾İ(Sections/ÊıÁ¿/°üÎ§Çò)£¬
-		// VB/IB µÄ GPU ÉÏ´«Áôµ½ P1 ½ÓÍ¨ CDX12RHIbuffer ´´½¨ºóÊµÏÖ¡£
+		// ä»çƒ˜ç„™ç»“æœ(CMeshAttributes å¹³é“ºæ•°æ®ï¼‰åˆ›å»ºæ¸²æŸ“èµ„æºã€‚
+		// å½“å‰é˜¶æ®µï¼šæ‹·è´ CPU ä¾§å…ƒæ•°æ®(Sections/æ•°é‡/åŒ…å›´çƒ)ï¼Œ
+		// VB/IB çš„ GPU ä¸Šä¼ ç•™åˆ° P1 æ¥é€š CDX12RHIbuffer åˆ›å»ºåå®ç°ã€‚
 		void InitResources(const CMeshAttributes& Attrs);
 
-		// ÊÍ·ÅÈ«²¿×ÊÔ´¡£
+		// é‡Šæ”¾å…¨éƒ¨èµ„æºã€‚
 		void ReleaseResources();
 
-		// ·ÃÎÊÆ÷
+		// è®¿é—®å™¨
 		const TArray<FStaticMeshSection>& GetSections() const { return Sections; }
 		UINT32 GetNumVertices() const { return NumVertices; }
 		UINT32 GetNumIndices()  const { return NumIndices; }
@@ -41,15 +41,15 @@ namespace ML
 		const Vec3F& GetBoundsOrigin() const { return BoundsOrigin; }
 		float        GetBoundsRadius() const { return BoundsRadius; }
 
-		// ¶¥µãÊı¾İÁ÷(per-stream£¬Óë VertexStreamFactory ¶ÔÆë)
+		// é¡¶ç‚¹æ•°æ®æµ(per-streamï¼Œä¸ VertexStreamFactory å¯¹é½)
 		CRHIBuffer* PositionBuffer = nullptr;
-		CRHIBuffer* TangentBuffer  = nullptr;   // tangent + UV ´ò°üÁ÷£¨P1£©
+		CRHIBuffer* TangentBuffer  = nullptr;   // tangent + UV æ‰“åŒ…æµï¼ˆP1ï¼‰
 		CRHIBuffer* ColorBuffer    = nullptr;
 		CRHIBuffer* IndexBuffer    = nullptr;
 
 		TArray<FStaticMeshSection> Sections;
 
-		// °üÎ§Çò(UE µÄ FBoxSphereBounds ¼ò»¯Îª Ô­µã + °ë¾¶)
+		// åŒ…å›´çƒ(UE çš„ FBoxSphereBounds ç®€åŒ–ä¸º åŸç‚¹ + åŠå¾„)
 		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
 		float BoundsRadius = 0.0f;
 

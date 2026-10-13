@@ -73,6 +73,9 @@
     <Filter Include="Core\Draw\Shader">
       <UniqueIdentifier>{20bd518b-3072-48a4-b8f4-5d2cec209659}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Resource\Material">
+      <UniqueIdentifier>{5412f102-e136-41d6-bd38-6fc88341c9a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <queue>
@@ -13,7 +13,7 @@
 
 namespace ML
 {
-	class CThreadPool 
+	class MLENGINE_API CThreadPool 
 	{
 	public:
 		static void setThreadName(const std::string& szName, UINT32 unThreadID )

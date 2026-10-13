@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 namespace ML
 {
-	class CNonCopyable
+	class MLENGINE_API CNonCopyable
 	{
 	protected:
 		CNonCopyable() = default;

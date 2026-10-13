@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MeshComponent.h"
 #include "Matrix.h"
 #include "Quaternion.h"
@@ -7,7 +7,7 @@ namespace ML
 {
 	class CStaticMesh;
 	struct FMeshBatch;
-	class CStaticMeshComponent : public CMeshComponent
+	class MLENGINE_API CStaticMeshComponent : public CMeshComponent
 	{
 	public:
 		CStaticMeshComponent();

@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "Refcount.h"
 namespace ML
 {
-	class CWorldPartition : public CRefcount
+	class MLENGINE_API CWorldPartition : public CRefcount
     {
     public:
         CWorldPartition();

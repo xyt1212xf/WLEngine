@@ -3,7 +3,7 @@
 #include "ResourceFactory.h"
 namespace ML
 {
-	class CResourceMgr
+	class MLENGINE_API CResourceMgr
 	{
 	public:
 		CResourceMgr();

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Refcount.h"
 #include "Array.h"
 
@@ -7,7 +7,7 @@ namespace ML
 	class CActor;
 	class CResource;
 	class AWorldSettings;
-	class CLevel : public CRefcount
+	class MLENGINE_API CLevel : public CRefcount
 	{
 	public:
 		CLevel();
@@ -16,16 +16,16 @@ namespace ML
 		virtual bool Load(const std::string& FilePath);
 		virtual void Unload();
 
-		// Actor ¹ÜÀí
+		// Actor ç®¡ç†
 		void AddActor(CActor* Actor);
 		void RemoveActor(CActor* Actor);
 		const TArray<CActor*>& GetActors() const { return Actors; }
 
-		// ×ÊÔ´¹ÜÀí
+		// èµ„æºç®¡ç†
 		void RegisterResources();
 		void ReleaseResources();
 
-		// ×´Ì¬
+		// çŠ¶æ€
 		bool IsLoaded() const { return bLoaded; }
 		bool IsVisible() const { return bVisible; }
 
@@ -35,7 +35,7 @@ namespace ML
 		std::string Name = "";
 		bool bLoaded = false;
 		bool bVisible = false;
-		AWorldSettings* WorldSettings;  // ¹Ø¿¨¹æÔò	
+		AWorldSettings* WorldSettings;  // å…³å¡è§„åˆ™	
 		TArray<CActor*> Actors;
 		TArray<CResource*> Resources;
 	};

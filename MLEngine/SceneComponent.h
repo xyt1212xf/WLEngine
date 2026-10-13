@@ -6,7 +6,7 @@
 
 namespace ML
 {
-	class CSceneComponent : public CActorComponent
+	class MLENGINE_API CSceneComponent : public CActorComponent
     {
     public:
         CSceneComponent();
@@ -15,7 +15,7 @@ namespace ML
 		void SetRotation(const CQuaternion& InRotation);
 		void SetScale(const Vec3F& InScale);
 		const Vec3F& GetLocation() const { return Location; }
-		CQuaternion GetRotation() const { return Rotation; }
+		const CQuaternion& GetRotation() const { return Rotation; }
 		const Vec3F& GetScale() const { return Scale; }
 		FMatrix44 GetWorldMatrix() const;
 

@@ -12,7 +12,7 @@
 // 保证根签名只有这一处定义
 #define SOLID_COLOR_ROOT_SIG \
 	"RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ), " \
-	"RootConstants( num32BitConstants=16, b0 )"
+	"RootConstants( b0, num32BitConstants=16 )"
 
 // C++ 侧 FMatrix44 是行主序存储、行向量约定(点 * 矩阵),
 // 因此这里声明 row_major, 上传前不需要转置

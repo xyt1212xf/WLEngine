@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+#include "Common.h"
+
 namespace ML
 {
 	enum  RendererType
@@ -20,7 +22,7 @@ namespace ML
 
 	class CPipelineState;
 
-	class CRenderer
+	class MLENGINE_API CRenderer
 	{
 		friend class CGraphicPlug;
 	public:

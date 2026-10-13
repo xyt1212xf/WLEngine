@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Mesh.h"
 #include "Array.h"
 #include "StaticMeshDescription.h"
@@ -6,7 +6,7 @@
 namespace ML
 {
 	class CStaticVertexFactory;
-	class CStaticMesh : public CMesh
+	class MLENGINE_API CStaticMesh : public CMesh
 	{
 	public:
 		CStaticMesh();

@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include "PrimitiveComponent.h"
 namespace ML
 {
-	class CMeshComponent : public CPrimitiveComponent
+	class MLENGINE_API CMeshComponent : public CPrimitiveComponent
     {
     public:
         CMeshComponent();

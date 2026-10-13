@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Resource.h"
 #include "Array.h"
 
@@ -23,7 +23,7 @@ namespace ML
 
 	using FOnSceneLoaded = std::function<void(class CWorld*)>;
 
-	class CWorld : public CResource
+	class MLENGINE_API CWorld : public CResource
 	{
         friend class CEngine;
 		friend class CRenderer;
@@ -34,11 +34,11 @@ namespace ML
 		CWorld(std::string&& name) noexcept;
 		virtual ~CWorld();
 	
-		// Òì²½¼ÓÔØ
+		// å¼‚æ­¥åŠ è½½
 		void LoadAsync( const std::string& FilePath, FOnSceneLoaded OnLoaded = nullptr);
 
 
-		// Ö÷¹Ø¿¨
+		// ä¸»å…³å¡
 		CLevel* GetPersistentLevel() const { return PersistentLevel; }
 
 		void Update(float DeltaTime);
@@ -60,7 +60,7 @@ namespace ML
 	private:
 		void CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches);
 
-		// Ö÷Ïß³ÌÀïµ÷ÓÃ
+		// ä¸»çº¿ç¨‹é‡Œè°ƒç”¨
 		void TickLoad();
 
 		void Tick(float deltaSeconds);

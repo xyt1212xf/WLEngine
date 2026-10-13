@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 
 //#include <iostream>
 #include "Common.h"
 #include "Foundation.h"
 namespace ML
 {
-	class CWinPlatform 
+	class MLENGINE_API CWinPlatform 
 	{
 	public:
 		CWinPlatform();
