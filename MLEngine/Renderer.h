@@ -37,7 +37,6 @@ namespace ML
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
-		// Solid-color pipeline for the first bring-up (created lazily in _Flush).
-		CPipelineState*	mpSolidColorPSO = nullptr;
+		// PSOs are no longer owned by the renderer: each CMaterial builds its own in InitRHI; renderer is read-only.
 	};
 }

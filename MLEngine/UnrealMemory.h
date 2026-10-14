@@ -87,30 +87,25 @@ namespace ML
 // * @param	Elements	The address of the first memory location to construct at.
 // * @param	Count		The number of elements to destruct.
 // */
-//	template <
-//		typename ElementType,
-//		typename SizeType
-//		UE_REQUIRES(sizeof(ElementType) > 0 && TIsZeroConstructType<ElementType>::Value) // the sizeof here should improve the error messages we get when we try to call this function with incomplete types
-//	>
-//	FORCEINLINE void DefaultConstructItems(void* Address, SizeType Count)
-//	{
-//		FMemory::Memset(Address, 0, sizeof(ElementType) * Count);
-//	}
-//	template <
-//		typename ElementType,
-//		typename SizeType
-//		UE_REQUIRES(sizeof(ElementType) > 0 && !TIsZeroConstructType<ElementType>::Value) // the sizeof here should improve the error messages we get when we try to call this function with incomplete types
-//	>
-//	FORCENOINLINE void DefaultConstructItems(void* Address, SizeType Count)
-//	{
-//		ElementType* Element = (ElementType*)Address;
-//		while (Count)
-//		{
-//			::new ((void*)Element) ElementType;
-//			++Element;
-//			--Count;
-//		}
-//	}
+	template <typename ElementType, typename SizeType>
+	FORCEINLINE void DefaultConstructItems(void* Address, SizeType Count)
+	{
+		if constexpr (std::is_scalar_v<ElementType>)
+		{
+			// Scalar/POD fast path: zero-initialize via memset.
+			std::memset(Address, 0, sizeof(ElementType) * Count);
+		}
+		else
+		{
+			ElementType* Element = (ElementType*)Address;
+			while (Count)
+			{
+				::new ((void*)Element) ElementType;
+				++Element;
+				--Count;
+			}
+		}
+	}
 
 	template <typename DestinationElementType, typename SourceElementType, typename SizeType>
 	FORCEINLINE void RelocateConstructItems(void* Dest, SourceElementType* Source, SizeType Count)

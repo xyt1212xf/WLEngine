@@ -1,4 +1,4 @@
-#include "VertexStreamFactory.h"
+﻿#include "VertexStreamFactory.h"
 namespace ML
 {
 
@@ -22,16 +22,16 @@ namespace ML
 
 	}
 
-	TArray<D3D12_INPUT_ELEMENT_DESC> CStaticVertexFactory::BuildInputLayout(const std::vector<std::string>& elements)
+	std::vector<D3D12_INPUT_ELEMENT_DESC> CStaticVertexFactory::BuildInputLayout(const std::vector<std::string>& elements)
 	{
-		mCachedVerticesViews.Empty();
-		mCachedInputLayout.Empty();
-		TArray<D3D12_INPUT_ELEMENT_DESC> elems;
+		mCachedVerticesViews.clear();
+		mCachedInputLayout.clear();
+		std::vector<D3D12_INPUT_ELEMENT_DESC> elems;
 
 		if (elements.size() != 0)
 		{
 			uint32 ai = 0;
-			auto Add = [&](const char* sem, uint32 idx, SDataStreamUnit& c)
+			auto Add = [&](const char* sem, uint32 idx, FDataStreamUnit& c)
 				{
 					c.bValid = true;
 					D3D12_INPUT_ELEMENT_DESC e = {};
@@ -42,14 +42,15 @@ namespace ML
 					e.AlignedByteOffset = c.Offset;
 					e.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 					e.InstanceDataStepRate = 0;
-					elems.Add(e);
-
-					D3D12_VERTEX_BUFFER_VIEW v = {};
-					v.BufferLocation = c.Buffer->GetGPUVirtualAddress() + c.Offset;
-					v.SizeInBytes = c.Stride * NumVertices;
-					v.StrideInBytes = c.Stride;
-					mCachedVerticesViews.Add(v);
-					
+					elems.push_back(e);
+					if (c.GpuBuffer)
+					{
+						D3D12_VERTEX_BUFFER_VIEW v = {};
+						v.BufferLocation = c.GpuBuffer->GetGPUVirtualAddress() + c.Offset;
+						v.SizeInBytes = c.Stride * NumVertices;
+						v.StrideInBytes = c.Stride;
+						mCachedVerticesViews.push_back(v);
+					}
 					ai++;
 				};
 
@@ -89,6 +90,8 @@ namespace ML
 				}
 			}
 		}
+		// Also cache the layout as a member so GetInputLayout() can return it.
+		mCachedInputLayout = elems;
 		return elems;
 	}
 }

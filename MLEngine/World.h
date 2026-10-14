@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Resource.h"
-#include "Array.h"
 
 namespace ML
 {
@@ -55,10 +54,10 @@ namespace ML
 		CLevelStreaming* AddStreamingLevel(const std::string& LevelName, const std::string& FilePath);
 		void RemoveStreamingLevel(const std::string& LevelName);
 		CLevelStreaming* GetStreamingLevel(const std::string& LevelName) const;
-		const TArray<CLevelStreaming*>& GetStreamingLevels() const { return StreamingLevels; }
+		const std::vector<CLevelStreaming*>& GetStreamingLevels() const { return StreamingLevels; }
 
 	private:
-		void CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches);
+		void CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches);
 
 		// 主线程里调用
 		void TickLoad();
@@ -78,9 +77,9 @@ namespace ML
 
 		CGameMode* GameMode = nullptr;
 		CLevel* PersistentLevel = nullptr;
-		TArray<CLevelStreaming*> StreamingLevels;
+		std::vector<CLevelStreaming*> StreamingLevels;
 		EWorldLoadState LoadState = EWorldLoadState::Idle;
 		FOnSceneLoaded OnLoadedFunc;
-		TArray<CActor*>	ParseActors;
+		std::vector<CActor*>	ParseActors;
 	};
 }

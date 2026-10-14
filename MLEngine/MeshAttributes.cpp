@@ -1,16 +1,16 @@
-#include "MeshAttributes.h"
+﻿#include "MeshAttributes.h"
 namespace ML
 {
 
 	void CMeshAttributes::BakeFromDescription(const FMeshDescription& Desc)
 	{
-		Positions.Empty();
-		Normals.Empty();
-		Tangents.Empty();
-		UVs.Empty();
-		Colors.Empty();
-		Indices.Empty();
-		Sections.Empty();
+		Positions.clear();
+		Normals.clear();
+		Tangents.clear();
+		UVs.clear();
+		Colors.clear();
+		Indices.clear();
+		Sections.clear();
 
 		// Reject invalid topology: every triangle must reference valid vertex
 		// instances and an assigned material slot (see FMeshDescription::Validate).
@@ -25,11 +25,11 @@ namespace ML
 			const FMeshVertexInstance& VI = Desc.VertexInstances[i];
 			const FMeshVertex& V = Desc.Vertices[VI.VertexID];
 
-			Positions.Add(V.Position);
-			Normals.Add(VI.Normal);
-			Tangents.Add(VI.Tangent);
-			UVs.Add(VI.UV0);
-			Colors.Add(VI.Color);
+			Positions.push_back(V.Position);
+			Normals.push_back(VI.Normal);
+			Tangents.push_back(VI.Tangent);
+			UVs.push_back(VI.UV0);
+			Colors.push_back(VI.Color);
 		}
 
 		const int32 NumPG = Desc.NumPolygonGroups();
@@ -41,16 +41,16 @@ namespace ML
 
 			FStaticMeshSection Section;
 			Section.MaterialIndex = (PG.MaterialIndex != INDEX_NONE) ? PG.MaterialIndex : 0;
-			Section.FirstIndex = (UINT32)Indices.Num();
+			Section.FirstIndex = (UINT32)Indices.size();
 
 			for (int32 t = 0; t < NumTri; ++t)
 			{
 				const FMeshTriangle& Tri = Desc.Triangles[t];
 				if (Tri.PolygonGroupID == g)
 				{
-					Indices.Add(Tri.VertexInstanceID[0]);
-					Indices.Add(Tri.VertexInstanceID[1]);
-					Indices.Add(Tri.VertexInstanceID[2]);
+					Indices.push_back(Tri.VertexInstanceID[0]);
+					Indices.push_back(Tri.VertexInstanceID[1]);
+					Indices.push_back(Tri.VertexInstanceID[2]);
 					++Section.NumTriangles;
 				}
 			}
@@ -59,20 +59,20 @@ namespace ML
 			// sections and useless draw calls.
 			if (Section.NumTriangles > 0)
 			{
-				Sections.Add(Section);
+				Sections.push_back(Section);
 			}
 		}
 	}
 
 	bool CMeshAttributes::IsEmpty() const
 	{
-		return Positions.IsEmpty() && Indices.IsEmpty();
+		return Positions.empty() && Indices.empty();
 	}
 
 	bool CMeshAttributes::IsValid() const
 	{
 		return !IsEmpty()
-			&& !Sections.IsEmpty()
-			&& (Indices.Num() % 3) == 0;
+			&& !Sections.empty()
+			&& (Indices.size() % 3) == 0;
 	}
 }

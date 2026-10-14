@@ -1,4 +1,4 @@
-#include "StaticMeshDescription.h"
+﻿#include "StaticMeshDescription.h"
 
 namespace ML
 {
@@ -23,7 +23,7 @@ namespace ML
 			V.Position.x = Center.x + ((Corner & 1) ? +HalfExtents.x : -HalfExtents.x);
 			V.Position.y = Center.y + ((Corner & 2) ? +HalfExtents.y : -HalfExtents.y);
 			V.Position.z = Center.z + ((Corner & 4) ? +HalfExtents.z : -HalfExtents.z);
-			Desc.Vertices.Add(V);
+			Desc.Vertices.push_back(V);
 		}
 
 		// -------------------------------------------------------------------
@@ -32,7 +32,8 @@ namespace ML
 		FMeshPolygonGroup PG;
 		PG.Name = "Cube";
 		PG.MaterialIndex = 0;
-		const INT32 GroupID = Desc.PolygonGroups.Add(PG);
+		Desc.PolygonGroups.push_back(PG);
+		const INT32 GroupID = (INT32)Desc.PolygonGroups.size() - 1;
 
 		// -------------------------------------------------------------------
 		// Faces: 6 quads, each defined by 4 corner indices (CCW when viewed
@@ -86,7 +87,8 @@ namespace ML
 				Instance.VertexID = Face.Corners[k];
 				Instance.Normal   = Face.Normal;
 				Instance.UV0      = UVCorners[k];
-				VI[k] = (UINT32)Desc.VertexInstances.Add(Instance);
+				VI[k] = (UINT32)Desc.VertexInstances.size();
+				Desc.VertexInstances.push_back(Instance);
 			}
 
 			// Split the quad into 2 CCW triangles: (0,1,2) and (0,2,3).
@@ -95,14 +97,14 @@ namespace ML
 			TriA.VertexInstanceID[1] = VI[1];
 			TriA.VertexInstanceID[2] = VI[2];
 			TriA.PolygonGroupID = GroupID;
-			Desc.Triangles.Add(TriA);
+			Desc.Triangles.push_back(TriA);
 
 			FMeshTriangle TriB;
 			TriB.VertexInstanceID[0] = VI[0];
 			TriB.VertexInstanceID[1] = VI[2];
 			TriB.VertexInstanceID[2] = VI[3];
 			TriB.PolygonGroupID = GroupID;
-			Desc.Triangles.Add(TriB);
+			Desc.Triangles.push_back(TriB);
 		}
 	}
 

@@ -308,9 +308,6 @@
     <ClInclude Include="Foundation.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Array.h">
-      <Filter>Core\TemplateLib</Filter>
-    </ClInclude>
     <ClInclude Include="TSingle.h">
       <Filter>Common</Filter>
     </ClInclude>

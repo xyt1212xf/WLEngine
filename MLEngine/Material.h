@@ -1,8 +1,7 @@
-#pragma once
+﻿#pragma once
 #include "Resource.h"
 #include "Common.h"
 #include <d3d12.h>
-#include "Array.h"
 
 namespace ML
 {

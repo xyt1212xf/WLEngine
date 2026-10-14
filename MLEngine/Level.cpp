@@ -1,4 +1,4 @@
-#include "Level.h"
+﻿#include "Level.h"
 #include "WorldSet.h"
 
 namespace ML
@@ -27,13 +27,17 @@ namespace ML
 	{
 		if (Actor)
 		{
-			Actors.Add(Actor);
+			Actors.push_back(Actor);
 		}
 	}
 
 	void CLevel::RemoveActor(CActor* Actor)
 	{
-		Actors.Remove(Actor);
+		auto item = std::find(Actors.begin(), Actors.end(), Actor);
+		if (item != Actors.end())
+		{
+			Actors.erase(item);
+		}
 	}
 
 	void CLevel::RegisterResources()

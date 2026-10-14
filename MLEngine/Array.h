@@ -1,4 +1,5 @@
-#pragma once
+﻿#pragma once
+
 //#include "Allocator.h"
 #include "UnrealTemplate.h"
 #include "NumericLimits.h"
@@ -112,10 +113,10 @@ namespace ML
 	}
 
 	template<typename InElementType, typename InAllocatorType>
-	class TArray
+	class std::vector
 	{
 		template <typename OtherInElementType, typename OtherAllocator>
-		friend class TArray;
+		friend class std::vector;
 	public:
 		using SizeType = typename InAllocatorType::SizeType;
 		using ElementType = InElementType;
@@ -127,10 +128,65 @@ namespace ML
 			typename AllocatorType::ForAnyElementType>;
 
 	public:
-		TArray()
+		std::vector()
 		: ArrayNum(0)
 		, ArrayMax(AllocatorInstance.GetInitialCapacity())
 		{
+		}
+
+		// ==================== Copy / Move semantics ====================
+		// Without these, the compiler-synthesized copy/assign would shallow-copy
+		// AllocatorInstance, leading to double-free on the heap pointer (Data) and
+		// a use-after-free on every read of GetData() after one array is destroyed.
+
+		// Copy constructor: deep copy.
+		std::vector(const std::vector& Other)
+			: ArrayNum(0)
+			, ArrayMax(AllocatorInstance.GetInitialCapacity())
+		{
+			if (Other.Num() > 0)
+			{
+				CopyToEmpty(Other.GetData(), Other.Num(), 0);
+			}
+		}
+
+		// Move constructor: transfer ownership of the heap buffer.
+		std::vector(std::vector&& Other) noexcept
+			: ArrayNum(Other.ArrayNum)
+			, ArrayMax(Other.ArrayMax)
+		{
+			AllocatorInstance.MoveToEmpty(Other.AllocatorInstance);
+			Other.ArrayNum = 0;
+			Other.ArrayMax = 0;
+		}
+
+		// Copy assignment: empty self, then deep copy.
+		std::vector& operator=(const std::vector& Other)
+		{
+			if (this != &Other)
+			{
+				Empty(0);
+				if (Other.Num() > 0)
+				{
+					CopyToEmpty(Other.GetData(), Other.Num(), 0);
+				}
+			}
+			return *this;
+		}
+
+		// Move assignment: empty self, then steal other's buffer.
+		std::vector& operator=(std::vector&& Other) noexcept
+		{
+			if (this != &Other)
+			{
+				Empty(0);
+				AllocatorInstance.MoveToEmpty(Other.AllocatorInstance);
+				ArrayNum = Other.ArrayNum;
+				ArrayMax = Other.ArrayMax;
+				Other.ArrayNum = 0;
+				Other.ArrayMax = 0;
+			}
+			return *this;
 		}
 
 		[[nodiscard]] FORCEINLINE SizeType Num() const
@@ -286,7 +342,7 @@ namespace ML
 		/**
 		 * Initializer list constructor
 		*/
-		[[nodiscard]] TArray(std::initializer_list<InElementType> InitList)
+		[[nodiscard]] std::vector(std::initializer_list<InElementType> InitList)
 		{
 			// This is not strictly legal, as std::initializer_list's iterators are not guaranteed to be pointers, but
 			// this appears to be the case on all of our implementations.  Also, if it's not true on a new implementation,
@@ -412,6 +468,51 @@ namespace ML
 		template <typename OtherElementType, typename OtherSizeType>
 		void CopyToEmpty(const OtherElementType* OtherData, OtherSizeType OtherNum, SizeType PrevMax)
 		{
+			// Pre: this array is in an "empty" state (ArrayNum == 0, no live elements).
+			// Post: this array holds a deep copy of [OtherData, OtherData + OtherNum).
+			if (OtherNum == 0)
+			{
+				return;
+			}
+			const SizeType NewMax = static_cast<SizeType>(OtherNum);
+
+			// ResizeAllocation(0, NewMax, ...) handles Data == nullptr by mallocing fresh memory.
+			// Realloc(NULL, N) is well-defined as malloc(N).
+			AllocatorInstance.ResizeAllocation(0, NewMax, sizeof(ElementType));
+			ArrayMax = NewMax;
+
+			ElementType* Dest = GetData();
+
+			if constexpr (std::is_same_v<OtherElementType, ElementType>)
+			{
+				if constexpr (std::is_trivially_copyable_v<ElementType>)
+				{
+					// Fast path: POD / trivially copyable, e.g. D3D12_INPUT_ELEMENT_DESC.
+					// bitwise copy via placement-new + assignment.
+					for (SizeType i = 0; i < NewMax; ++i)
+					{
+						::new (static_cast<void*>(Dest + i)) ElementType();
+						Dest[i] = OtherData[i];
+					}
+				}
+				else
+				{
+					// Same type, non-trivial: copy-construct each element.
+					for (SizeType i = 0; i < NewMax; ++i)
+					{
+						::new (static_cast<void*>(Dest + i)) ElementType(OtherData[i]);
+					}
+				}
+			}
+			else
+			{
+				// Different element types: convert via ElementType(OtherElementType).
+				for (SizeType i = 0; i < NewMax; ++i)
+				{
+					::new (static_cast<void*>(Dest + i)) ElementType(OtherData[i]);
+				}
+			}
+			ArrayNum = NewMax;
 		}
 	protected:
 		SizeType             ArrayNum = 0;

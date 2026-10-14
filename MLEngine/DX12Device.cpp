@@ -1,4 +1,4 @@
-#include "DX12Device.h"
+ï»¿#include "DX12Device.h"
 #include "MLEngine.h"
 
 #pragma comment(lib, "dxgi.lib")
@@ -13,7 +13,7 @@ namespace ML
 	{
 		for (INT32 i = 0; i < FrameCount; ++i)
 		{
-			mFenceValues.Add(0);
+			mFenceValues.push_back(0);
 		}
 	}
 
@@ -60,7 +60,7 @@ namespace ML
 				{
 					if (SUCCEEDED(D3D12CreateDevice(hardwareAdapter, level,IID_PPV_ARGS(&mpDevice))))
 					{
-						// ³É¹¦´´½¨£¬device Ö§³Ö¸Ã Feature Level
+						// æˆåŠŸåˆ›å»ºï¼Œdevice æ”¯æŒè¯¥ Feature Level
 						break;
 					}
 				}
@@ -299,7 +299,7 @@ namespace ML
 		// swap the back and front buffers
 		mSwapChain->Present(0, 0);
 
-		// ¼ÇÂ¼µ±Ç°Ö¡µÄ fence Öµ
+		// è®°å½•å½“å‰å¸§çš„ fence å€¼
 		mFenceValues[mFrameIndex] = mFenceValue;
 		mCommandQueue->Signal(mFence, mFenceValue);
 		mFenceValue++;
@@ -324,10 +324,10 @@ namespace ML
 		ID3D12CommandList* lists[] = { UploadList };
 		mCommandQueue->ExecuteCommandLists(1, lists);
 		mCommandQueue->Signal(mFence, mFenceValue);
-		mFence->SetEventOnCompletion(mFenceValue, mFenceEvent);  // CPU ×èÈûµÈ¿½±´Íê³É
+		mFence->SetEventOnCompletion(mFenceValue, mFenceEvent);  // CPU é˜»å¡ç­‰æ‹·è´å®Œæˆ
 		WaitForSingleObject(mFenceEvent, INFINITE);
 		mFenceValue++;
-		UploadList->Release();      // ÓÃÍê¼´Æú£¨»ò×ö³É³ÉÔ±¸´ÓÃ£©
+		UploadList->Release();      // ç”¨å®Œå³å¼ƒï¼ˆæˆ–åšæˆæˆå‘˜å¤ç”¨ï¼‰
 	}
 
 	bool CDX12RHIDevice::_InitDepthBuffer()

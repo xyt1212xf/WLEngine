@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Component.h"
 #include "DX12Device.h"
-#include "Array.h"
 
 namespace ML
 {
@@ -31,9 +30,9 @@ namespace ML
 		PackedNormal, 
 	};
 
-	struct SDataStreamUnit
+	struct FDataStreamUnit
 	{
-		ID3D12Resource* Buffer = nullptr; // GPU buffer
+		ID3D12Resource* GpuBuffer = nullptr; // GPU buffer
 		uint32 Slot = 0;                  // input slot
 		uint32 Offset = 0;               // byte offset in vertex / buffer
 		uint32 Stride = 0;               // per-vertex stride
@@ -41,16 +40,16 @@ namespace ML
 		bool bValid = false;
 	};
 
-	struct SMeshVertexSchema
+	struct FMeshVertexSchema
 	{
-		SDataStreamUnit Position;
-		SDataStreamUnit Normal;
-		SDataStreamUnit Tangent;
-		SDataStreamUnit UV0;
-		SDataStreamUnit UV1;
-		SDataStreamUnit UV2;
-		SDataStreamUnit UV3;
-		SDataStreamUnit Color;
+		FDataStreamUnit Position;
+		FDataStreamUnit Normal;
+		FDataStreamUnit Tangent;
+		FDataStreamUnit UV0;
+		FDataStreamUnit UV1;
+		FDataStreamUnit UV2;
+		FDataStreamUnit UV3;
+		FDataStreamUnit Color;
 
 		bool HasNormal()  const { return Normal.bValid; }
 		bool HasTangent()  const { return Tangent.bValid; }
@@ -106,7 +105,7 @@ namespace ML
 		virtual ~CVertexStreamFactory();
 		
 		// 生成 InputLayout
-		virtual TArray<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements ) = 0;
+		virtual std::vector<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements ) = 0;
 
 		// shader 宏（UE 的 ModifyCompilationEnvironment）
 		virtual void FillShaderDefines(std::unordered_map<std::string, std::string>& defines) {}
@@ -118,15 +117,15 @@ namespace ML
 		CStaticVertexFactory();
 		virtual ~CStaticVertexFactory();
 
-		virtual TArray<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements) override;
+		virtual std::vector<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements) override;
 
-		const TArray<D3D12_INPUT_ELEMENT_DESC>& GetInputLayout() const { return mCachedInputLayout; }
-		bool HasInputLayout() const { return mCachedInputLayout.Num() > 0; }
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayout() const { return mCachedInputLayout; }
+		bool HasInputLayout() const { return mCachedInputLayout.size() > 0; }
 
 	public:
-		SMeshVertexSchema Schema;
+		FMeshVertexSchema Schema;
 		uint32 NumVertices = 0;
-		TArray<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews;
-		TArray<D3D12_INPUT_ELEMENT_DESC> mCachedInputLayout;
+		std::vector<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> mCachedInputLayout;
 	};
 }

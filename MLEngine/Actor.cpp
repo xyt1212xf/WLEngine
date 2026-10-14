@@ -1,4 +1,4 @@
-#include "Actor.h"
+﻿#include "Actor.h"
 #include "SceneComponent.h"
 namespace ML
 {
@@ -10,11 +10,11 @@ namespace ML
 
 	CActor::~CActor()
 	{
-		for (int32 i = 0; i < Components.Num(); ++i)
+		for (int32 i = 0; i < Components.size(); ++i)
 		{
 			delete Components[i];
 		}
-		Components.Empty();
+		Components.clear();
 	}
 
 	void CActor::SetActorLocation(const Vec3F& Pos)

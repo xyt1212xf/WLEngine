@@ -1,4 +1,4 @@
-#include "StaticMeshResources.h"
+ï»¿#include "StaticMeshResources.h"
 #include "MathLib.h"
 #include "VertexStreamFactory.h"
 #include "DX12RHIbuffer.h"
@@ -23,20 +23,20 @@ namespace ML
 			return;
 		}
 
-		const TArray<FStaticMeshSection>& SrcSections = Attrs.GetSections();
-		for (int32 i = 0; i < SrcSections.Num(); ++i)
+		const std::vector<FStaticMeshSection>& SrcSections = Attrs.GetSections();
+		for (int32 i = 0; i < SrcSections.size(); ++i)
 		{
-			Sections.Add(SrcSections[i]);
+			Sections.push_back(SrcSections[i]);
 		}
 		NumVertices = Attrs.GetNumVertices();
 		NumIndices = Attrs.GetNumIndices();
 
-		const TArray<Vec3F>& Positions = Attrs.GetPositions();
-		if (Positions.Num() > 0)
+		const std::vector<Vec3F>& Positions = Attrs.GetPositions();
+		if (Positions.size() > 0)
 		{
 			Vec3F Min = Positions[0];
 			Vec3F Max = Positions[0];
-			for (int32 i = 1; i < Positions.Num(); ++i)
+			for (int32 i = 1; i < Positions.size(); ++i)
 			{
 				const Vec3F& P = Positions[i];
 				Min.x = (P.x < Min.x) ? P.x : Min.x;
@@ -52,7 +52,7 @@ namespace ML
 				(Min.z + Max.z) * 0.5f);
 
 			float RadiusSq = 0.0f;
-			for (int32 i = 0; i < Positions.Num(); ++i)
+			for (int32 i = 0; i < Positions.size(); ++i)
 			{
 				const Vec3F& P = Positions[i];
 				const float dx = P.x - BoundsOrigin.x;
@@ -69,64 +69,77 @@ namespace ML
 			PositionBuffer = new CRHIBuffer();
 			PositionBuffer->Create(
 				EBufferType::Vertex,
-				Positions.Num() * sizeof(Vec3F),
+				(UINT32)Positions.size() * sizeof(Vec3F),
 				sizeof(Vec3F),
-				Positions.GetData()
+				Positions.data()
 			);
 
 		}
-		const TArray<uint32>& Indices = Attrs.GetIndices();
-		if (Indices.Num() > 0)
+		const std::vector<uint32>& Indices = Attrs.GetIndices();
+		if (Indices.size() > 0)
 		{
 			IndexBuffer = new CRHIBuffer();
 			IndexBuffer->Create(
 				EBufferType::Index,
-				Indices.Num() * sizeof(uint32),
+				(UINT32)Indices.size() * sizeof(uint32),
 				sizeof(uint32),
-				Indices.GetData()
+				Indices.data()
 			);
 		}
 
-		// Èç¹ûÓÐÇÐÏß
-		const TArray<Vec4F>& Tangents = Attrs.GetTangents();
-		if (Tangents.Num() > 0)
+		// å¦‚æžœæœ‰UV
+		const std::vector<Vec2F>& UV = Attrs.GetUVs();
+		if (UV.size() > 0)
+		{
+			UVBuffer = new CRHIBuffer();
+			UVBuffer->Create(
+				EBufferType::Vertex,
+				(UINT32)UV.size() * sizeof(Vec2F),
+				sizeof(Vec2F),
+				UV.data()
+			);
+		}
+
+		// å¦‚æžœæœ‰åˆ‡çº¿
+		const std::vector<Vec4F>& Tangents = Attrs.GetTangents();
+		if (Tangents.size() > 0)
 		{
 			TangentBuffer = new CRHIBuffer();
 			TangentBuffer->Create(
 				EBufferType::Vertex,
-				Tangents.Num() * sizeof(Vec4F),
+				(UINT32)Tangents.size() * sizeof(Vec4F),
 				sizeof(Vec4F),
-				Tangents.GetData()
+				Tangents.data()
 			);
 		}
 
-		// Èç¹ûÓÐÑÕÉ«
-		const TArray<Vec4F>& Colors = Attrs.GetColors();
-		if (Colors.Num() > 0)
+		// å¦‚æžœæœ‰é¢œè‰²
+		const std::vector<Vec4F>& Colors = Attrs.GetColors();
+		if (Colors.size() > 0)
 		{
 			ColorBuffer = new CRHIBuffer();
 			ColorBuffer->Create(
 				EBufferType::Vertex,
-				Colors.Num() * sizeof(Vec4F),
+				(UINT32)Colors.size() * sizeof(Vec4F),
 				sizeof(Vec4F),
-				Colors.GetData()
+				Colors.data()
 			);
 		}
 
-		// Ìî³ä¶¥µã¹¤³§µÄÁ÷²¼¾Ö(SDataStreamUnit), ÔÙ¹¹½¨ InputLayout¡£
-		// BuildInputLayout »áÍ¬Ê±»º´æ VB ÊÓÍ¼(mCachedVerticesViews),
-		// äÖÈ¾Ê± IASetVertexBuffers Ö±½ÓÓÃ¡£
+		// å¡«å……é¡¶ç‚¹å·¥åŽ‚çš„æµå¸ƒå±€(SDataStreamUnit), å†æž„å»º InputLayoutã€‚
+		// BuildInputLayout ä¼šåŒæ—¶ç¼“å­˜ VB è§†å›¾(mCachedVerticesViews),
+		// æ¸²æŸ“æ—¶ IASetVertexBuffers ç›´æŽ¥ç”¨ã€‚
 		if (VertexFactory)
 		{
 			VertexFactory->NumVertices = NumVertices;
-			auto FillStream = [](SDataStreamUnit& Unit, ID3D12Resource* Buffer, uint32 Slot, uint32 Stride, DXGI_FORMAT Format)
+			auto FillStream = [](FDataStreamUnit& Unit, ID3D12Resource* Buffer, uint32 Slot, uint32 Stride, DXGI_FORMAT Format)
 				{
-					Unit.Buffer	= Buffer;
-					Unit.Slot	= Slot;
-					Unit.Offset	= 0;
-					Unit.Stride	= Stride;
-					Unit.Format	= Format;
-					Unit.bValid	= (Buffer != nullptr);
+					Unit.GpuBuffer	= Buffer;
+					Unit.Slot		= Slot;
+					Unit.Offset		= 0;
+					Unit.Stride		= Stride;
+					Unit.Format		= Format;
+					Unit.bValid		= (Buffer != nullptr);
 				};
 			FillStream(VertexFactory->Schema.Position,
 				PositionBuffer ? PositionBuffer->GetResource() : nullptr,
@@ -138,6 +151,9 @@ namespace ML
 			std::vector<std::string> Elements;
 			if (PositionBuffer)	{ Elements.push_back("POSITION"); }
 			if (ColorBuffer)	{ Elements.push_back("COLOR"); }
+			if (UVBuffer)		{ Elements.push_back("TEXCOORD"); }
+			if (TangentBuffer)	{ Elements.push_back("TANGENT"); }
+			
 			if (!Elements.empty())
 			{
 				VertexFactory->BuildInputLayout(Elements);
@@ -152,7 +168,7 @@ namespace ML
 		ColorBuffer = nullptr;
 		IndexBuffer = nullptr;
 
-		Sections.Empty();
+		Sections.clear();
 		NumVertices = 0;
 		NumIndices = 0;
 		BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);

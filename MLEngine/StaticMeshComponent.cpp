@@ -32,5 +32,7 @@ namespace ML
 		OutBatch.SectionIndex = 0;
 		OutBatch.Element.FirstIndex = Section.FirstIndex;
 		OutBatch.Element.NumIndices = Section.NumTriangles * 3;
+		// Resolve this section's material from the mesh's material slot; the renderer no longer deals with names.
+		OutBatch.Material = StaticMesh->GetMaterialForSection(OutBatch.SectionIndex);
 	}
 }

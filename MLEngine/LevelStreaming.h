@@ -28,6 +28,10 @@ namespace ML
 		EStreamingState GetState() const { return State; }
 		CLevel* GetLevel() const { return Level; }
 		std::string GetLevelName() const { return LevelName; }
+		// Allows std::find on a std::vector<CLevelStreaming*> with a std::string key:
+		//     std::find(vec.begin(), vec.end(), std::string("Foo"))
+		// dereferences to CLevelStreaming&, so this member == takes effect.
+		bool operator==(const std::string& OtherLevelName) const { return LevelName == OtherLevelName; }
 		void SetLoadDistance(float Distance ) { mLoadDistance = Distance;}
 		float GetLoadDistance() const {return mLoadDistance;}
 		bool IsLoaded() 

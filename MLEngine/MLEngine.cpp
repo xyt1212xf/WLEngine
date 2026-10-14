@@ -47,7 +47,6 @@ namespace ML
 		{
 			SafeDelete(plug);
 		}
-		mPlugs.Empty();
 		GEngine = nullptr;
 //		_CrtDumpMemoryLeaks();
 	}
@@ -61,8 +60,8 @@ namespace ML
 		//    GlobalShaders first, then MaterialMgr (which depends on compiled shaders).
 		CShaderMgr* pShaderMgr   = new CShaderMgr();
 		CMaterialMgr* pMaterialMgr = new CMaterialMgr();
-		mMgrs.Add(pShaderMgr);
-		mMgrs.Add(pMaterialMgr);
+		mMgrs.push_back(pShaderMgr);
+		mMgrs.push_back(pMaterialMgr);
 		for (CMgr* Mgr : mMgrs)
 		{
 			if (!Mgr->Init())
@@ -74,7 +73,7 @@ namespace ML
 
 		// 2) Create and start the graphics plug (which will register DefaultMaterial etc.).
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
-		mPlugs.Add(graphicPlug);
+		mPlugs.push_back(graphicPlug);
 		if (graphicPlug->Initialise())
 		{
 			mpWorld = new CWorld();
@@ -93,9 +92,9 @@ namespace ML
 		{
 			SafeDelete(plug);
 		}
-		mPlugs.Empty();
+		mPlugs.clear();
 		// Shutdown subsystems in reverse order.
-		for (int32 i = mMgrs.Num() - 1; i >= 0; --i)
+		for (int32 i = (int32)mMgrs.size() - 1; i >= 0; --i)
 		{
 			if (mMgrs[i])
 			{
@@ -103,7 +102,7 @@ namespace ML
 				SafeDelete(mMgrs[i]);
 			}
 		}
-		mMgrs.Empty();
+		mMgrs.clear();
 		return true;
 	}
 

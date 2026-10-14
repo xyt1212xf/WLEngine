@@ -4,7 +4,6 @@
 #include "ThreadPool.h"
 #include "Message.h"
 #include "TSingle.h"
-#include "Array.h"
 
 namespace ML
 {
@@ -61,8 +60,8 @@ namespace ML
 
 	private:
 		CWorld* mpWorld = nullptr;	
-		TArray<CPlug*> mPlugs;
-		TArray<CMgr*> mMgrs;
+		std::vector<CPlug*> mPlugs;
+		std::vector<CMgr*> mMgrs;
 		CWinPlatform mPlatform;
 		CThreadPool* mpThreadPools = nullptr;
 		bool mbRunning = false;
@@ -95,7 +94,6 @@ namespace ML
 		}
 		return nullptr;
 	}
-
 
 	template<class F, class... Args>
 	auto CEngine::threadJoin(F&& f, Args&&... args)//->std::future<typename std::result_of<F(Args...)>::type>

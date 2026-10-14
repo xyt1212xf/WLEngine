@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
+#include "Common.h"
 #include "Object.h"
-#include "Array.h"
 #include "SceneComponent.h"
 namespace ML
 {
@@ -20,11 +20,11 @@ namespace ML
 		T* AddComponent()
 		{
 			T* Comp = new T();
-			Components.Add(Comp);
-			// ±àÒëÆÚÌáÎÊ£ºT ÊÇ²»ÊÇ CSceneComponent µÄ×ÓÀà
+			Components.push_back(Comp);
+			// ç¼–è¯‘æœŸæé—®ï¼šT æ˜¯ä¸æ˜¯ CSceneComponent çš„å­ç±»
 			if constexpr (std::is_convertible_v<T*, CSceneComponent*>)
 			{
-				// Ö»ÓĞ×ÓÀà²Å»áÉú³ÉÕâ¶Î´úÂë£»ÇÒ Comp ´ËÊ±ÒşÊ½×ª³É CSceneComponent*
+				// åªæœ‰å­ç±»æ‰ä¼šç”Ÿæˆè¿™æ®µä»£ç ï¼›ä¸” Comp æ­¤æ—¶éšå¼è½¬æˆ CSceneComponent*
 				if (nullptr == RootComponent) 
 				{
 					RootComponent = Comp; 
@@ -33,7 +33,7 @@ namespace ML
 			return Comp;
 		}
 
-		const TArray<CComponent*>& GetComponents() const { return Components; }
+		const std::vector<CComponent*>& GetComponents() const { return Components; }
 		
 		void SetActorTickEnabled(bool b) { bCanTick = b; }
 		bool CanTick() const { return bCanTick; }
@@ -43,6 +43,6 @@ namespace ML
 
 	private:
 		CSceneComponent* RootComponent = nullptr;
-		TArray<CComponent*> Components;
+		std::vector<CComponent*> Components;
 	};
 }

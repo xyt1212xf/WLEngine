@@ -1,9 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include "MeshVertex.h"
 #include "MeshVertexInstance.h"
 #include "MeshTriangle.h"
 #include "MeshPolygonGroup.h"
-#include "Array.h"
 namespace ML
 {
 	struct FMeshDescription
@@ -14,17 +13,17 @@ namespace ML
 		bool IsEmpty() const;
 		bool Validate() const;
 
-		// ÊıÁ¿²éÑ¯£¨Óë UE ±£³ÖÒ»ÖÂ£©¡£
-		// FDefaultAllocator µÄ SizeType ÊÇ INT32£¬Num() Ö±½Ó·µ»Ø INT32£¬ÎŞĞè×ª»»¡£
-		int32 NumVertices()        const { return Vertices.Num(); }
-		int32 NumVertexInstances() const { return VertexInstances.Num(); }
-		int32 NumTriangles()       const { return Triangles.Num(); }
-		int32 NumPolygonGroups()   const { return PolygonGroups.Num(); }
+		// æ•°é‡æŸ¥è¯¢ï¼ˆä¸ UE ä¿æŒä¸€è‡´ï¼‰ã€‚
+		// FDefaultAllocator çš„ SizeType æ˜¯ INT32ï¼ŒNum() ç›´æ¥è¿”å› INT32ï¼Œæ— éœ€è½¬æ¢ã€‚
+		int32 NumVertices()        const { return (int32)Vertices.size(); }
+		int32 NumVertexInstances() const { return (int32)VertexInstances.size(); }
+		int32 NumTriangles()       const { return (int32)Triangles.size(); }
+		int32 NumPolygonGroups()   const { return (int32)PolygonGroups.size(); }
 
 		
-		TArray<FMeshVertex>         Vertices;         // Î»ÖÃÊı×é£¨È¥ÖØºóµÄ"Âß¼­¶¥µã"£©
-		TArray<FMeshVertexInstance> VertexInstances;  // Ã¿¸ö½ÇµãÒ»·İÊôĞÔ£¨·¨Ïß/UV/ÑÕÉ«£©
-		TArray<FMeshTriangle>       Triangles;        // Èı½ÇĞÎÁĞ±í
-		TArray<FMeshPolygonGroup>   PolygonGroups;    // ²ÄÖÊ²Û·Ö×é
+		std::vector<FMeshVertex>         Vertices;         // ä½ç½®æ•°ç»„ï¼ˆå»é‡åçš„"é€»è¾‘é¡¶ç‚¹"ï¼‰
+		std::vector<FMeshVertexInstance> VertexInstances;  // æ¯ä¸ªè§’ç‚¹ä¸€ä»½å±æ€§ï¼ˆæ³•çº¿/UV/é¢œè‰²ï¼‰
+		std::vector<FMeshTriangle>       Triangles;        // ä¸‰è§’å½¢åˆ—è¡¨
+		std::vector<FMeshPolygonGroup>   PolygonGroups;    // æè´¨æ§½åˆ†ç»„
 	};
 }

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-  <Type Name="ML::TArray&lt;*&gt;">
+  <Type Name="ML::std::vector&lt;*&gt;">
     <DisplayString>{{ ArrayNum={ArrayNum} ArrayMax={ArrayMax} }}</DisplayString>
     <Expand>
       <Item Name="ArrayNum">ArrayNum</Item>

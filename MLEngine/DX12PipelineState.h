@@ -1,7 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 #include "Refcount.h"
-#include "Array.h"
 #include <d3d12.h>
 
 namespace ML
@@ -14,7 +13,7 @@ namespace ML
 		virtual ~CDX12PipelineState();
 
 		bool Create(CShader* pVS, CShader* pPS,
-					const TArray<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
+					const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 					DXGI_FORMAT DepthFormat);
 		void Release();
 

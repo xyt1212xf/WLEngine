@@ -1,4 +1,4 @@
-#include "Material.h"
+﻿#include "Material.h"
 #include "Shader.h"
 #include "GlobalShader.h"
 #include "ShaderMgr.h"
@@ -45,7 +45,7 @@ namespace ML
 			OutputDebugStringA("CMaterial::InitRHI: VertexFactory is null or has no input layout\n");
 			return false;
 		}
-		const TArray<D3D12_INPUT_ELEMENT_DESC>& InputLayout = InVertexFactory->GetInputLayout();
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout = InVertexFactory->GetInputLayout();
 
 		// 2) Get compiled shaders via the engine's CShaderMgr (a lookup, not a new).
 		//    Timing: CEngine::Initialise has already Init'd the ShaderMgr by now.

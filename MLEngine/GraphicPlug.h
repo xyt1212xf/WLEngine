@@ -1,9 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "Plug.h"
 namespace ML
 {
 	class CRHIDevice;
 	class CRenderer;
+	class CMaterial;
+	class CStaticVertexFactory;
 	class MLENGINE_API CGraphicPlug : public CPlug
 	{
 	public:
@@ -16,8 +18,13 @@ namespace ML
 		virtual void Start() override final;
 		CRHIDevice* GetDevice();
 
+		CMaterial* GetDefaultMaterial() const { return mpDefaultMaterial; }
+		CStaticVertexFactory* GetDefaultVertexFactory() const { return mpDefaultVertexFactory; }
+
 	private:
 		CRHIDevice*	mpDeviceBase = nullptr;
 		CRenderer*		mpRenderer = nullptr;
+		CMaterial*		mpDefaultMaterial = nullptr;
+		CStaticVertexFactory* mpDefaultVertexFactory = nullptr;
 	};
 }

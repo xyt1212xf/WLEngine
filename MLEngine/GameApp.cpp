@@ -1,11 +1,10 @@
-#include <math.h>
+﻿#include <math.h>
 #include "GameApp.h"
 //#include "tinyxml.h"
 #include "World.h"
 //#include "MathLib.h"
 //#include "Malloc.h"
 //#include "TimerClock.h"
-#include "Array.h"
 #include "StaticMesh.h"
 
 //#ifdef _DEBUG
@@ -15,9 +14,7 @@ namespace ML
 {
 	CGameApp::CGameApp()
 	{
-		TArray<int32> a;
-		a.Add(3);
-		a.Remove(3);
+
 	}
 
 	CGameApp::~CGameApp()

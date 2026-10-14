@@ -1,4 +1,4 @@
-#include "DX12PipelineState.h"
+﻿#include "DX12PipelineState.h"
 #include "Shader.h"
 #include "DX12Shader.h"
 #include "Device.h"
@@ -13,12 +13,12 @@ namespace ML
 	}
 
 	bool CDX12PipelineState::Create(CShader* pVS, CShader* pPS,
-		const TArray<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 		DXGI_FORMAT DepthFormat)
 	{
 		Release();
 
-		CRHIDevice* pRHIDevice = GEngine->GetPlugs<CGraphicPlug>()->GetDevice();
+		CDX12RHIDevice* pRHIDevice = GEngine->GetPlugs<CGraphicPlug>()->GetDevice();
 		ID3D12Device* pDevice = pRHIDevice ? pRHIDevice->GetDevice() : nullptr;
 		if (nullptr == pDevice || nullptr == pVS || nullptr == pPS)
 		{
@@ -47,7 +47,7 @@ namespace ML
 		PSODesc.VS				= pVS->GetShaderByteCode();
 		PSODesc.PS				= pPS->GetShaderByteCode();
 
-		PSODesc.InputLayout = { InputLayout.GetData(), (UINT)InputLayout.Num() };
+		PSODesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
 
 		PSODesc.RasterizerState.FillMode				= D3D12_FILL_MODE_SOLID;
 		PSODesc.RasterizerState.CullMode				= D3D12_CULL_MODE_BACK;

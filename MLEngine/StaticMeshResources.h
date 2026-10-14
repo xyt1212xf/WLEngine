@@ -2,7 +2,6 @@
 #include "Vector.h"
 #include "RHIbuffer.h"
 #include "MeshAttributes.h"
-#include "Array.h"
 
 namespace ML
 {
@@ -34,7 +33,7 @@ namespace ML
 		void ReleaseResources();
 
 		// 访问器
-		const TArray<FStaticMeshSection>& GetSections() const { return Sections; }
+		const std::vector<FStaticMeshSection>& GetSections() const { return Sections; }
 		UINT32 GetNumVertices() const { return NumVertices; }
 		UINT32 GetNumIndices()  const { return NumIndices; }
 
@@ -43,11 +42,12 @@ namespace ML
 
 		// 顶点数据流(per-stream，与 VertexStreamFactory 对齐)
 		CRHIBuffer* PositionBuffer = nullptr;
+		CRHIBuffer* UVBuffer	   = nullptr;
 		CRHIBuffer* TangentBuffer  = nullptr;   // tangent + UV 打包流（P1）
 		CRHIBuffer* ColorBuffer    = nullptr;
 		CRHIBuffer* IndexBuffer    = nullptr;
 
-		TArray<FStaticMeshSection> Sections;
+		std::vector<FStaticMeshSection> Sections;
 
 		// 包围球(UE 的 FBoxSphereBounds 简化为 原点 + 半径)
 		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);

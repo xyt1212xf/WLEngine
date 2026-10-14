@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Refcount.h"
-#include "Array.h"
 
 namespace ML
 {
@@ -19,7 +18,7 @@ namespace ML
 		// Actor 管理
 		void AddActor(CActor* Actor);
 		void RemoveActor(CActor* Actor);
-		const TArray<CActor*>& GetActors() const { return Actors; }
+		const std::vector<CActor*>& GetActors() const { return Actors; }
 
 		// 资源管理
 		void RegisterResources();
@@ -36,7 +35,7 @@ namespace ML
 		bool bLoaded = false;
 		bool bVisible = false;
 		AWorldSettings* WorldSettings;  // 关卡规则	
-		TArray<CActor*> Actors;
-		TArray<CResource*> Resources;
+		std::vector<CActor*> Actors;
+		std::vector<CResource*> Resources;
 	};
 }

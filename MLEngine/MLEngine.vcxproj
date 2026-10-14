@@ -86,7 +86,6 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="ActorComponent.h" />
     <ClInclude Include="AllowShrinking.h" />
-    <ClInclude Include="Array.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
     <ClInclude Include="ClassType.h" />

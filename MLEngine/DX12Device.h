@@ -1,9 +1,8 @@
-#pragma once 
+﻿#pragma once 
 #include <d3d12.h>
 #include "d3dx12.h"
 #include <dxgi1_6.h>
 #include "Common.h"
-#include "Array.h"
 #include "Refcount.h"
 
 namespace ML
@@ -44,7 +43,7 @@ namespace ML
 		D3D12_RECT mScissorRect;
 
 		// Synchronization objects.
-		TArray<UINT64> mFenceValues; 
+		std::vector<UINT64> mFenceValues; 
 		UINT32 mFrameIndex : 1;
 		HANDLE mFenceEvent;
 		ID3D12Fence* mFence = nullptr;

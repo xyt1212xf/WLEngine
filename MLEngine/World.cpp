@@ -1,4 +1,4 @@
-#include "World.h"
+ï»¿#include "World.h"
 #include "LevelStreaming.h"
 #include "GameMode.h"
 #include "MLEngine.h"
@@ -37,12 +37,12 @@ namespace ML
 			{
 				ParseFile();
 				BuildActors();
-				// GPU ÉÏ´«±ØĞëÖ÷Ïß³Ì×ö£¬ËùÒÔÕâÀïÖ»±ê¼Ç
+				// GPU ä¸Šä¼ å¿…é¡»ä¸»çº¿ç¨‹åšï¼Œæ‰€ä»¥è¿™é‡Œåªæ ‡è®°
 				LoadState = EWorldLoadState::UploadingGPU;
 			});
 	}
 
-	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, TArray<FMeshBatch>& OutBatches)
+	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches)
 	{
 		// Iterate the persistent level: actor -> component -> visible static meshes.
 		// (UE: FScene from FPrimitiveSceneProxy registration; simplified here.)
@@ -68,7 +68,7 @@ namespace ML
 				// GetMeshBatch leaves LOD null when the mesh is not built yet.
 				if (Batch.LOD)
 				{
-					OutBatches.Add(Batch);
+					OutBatches.push_back(Batch);
 				}
 			}
 		}
@@ -99,7 +99,7 @@ namespace ML
 				{
 					Actor->Tick(deltaSeconds);
 
-					// Ë³´ø Tick ×é¼ş
+					// é¡ºå¸¦ Tick ç»„ä»¶
 					for (CComponent* Comp : Actor->GetComponents())
 					{
 						Comp->tick(deltaSeconds);
@@ -127,18 +127,19 @@ namespace ML
 	{
 		CLevelStreaming* LevelStreaming = new CLevelStreaming();
         //LevelStreaming->Initialise(LevelName, FilePath);
-        StreamingLevels.Add(LevelStreaming);
+        StreamingLevels.push_back(LevelStreaming);
         return LevelStreaming;
 	}
 
 	void CWorld::RemoveStreamingLevel(const std::string& LevelName)
 	{
-		for (CLevelStreaming* LevelSteam : StreamingLevels)
+		for (auto iter = StreamingLevels.begin(); iter != StreamingLevels.end(); ++iter)
 		{
-			if (LevelSteam->GetLevelName() == LevelName)
+			if ((*iter)->GetLevelName() == LevelName)
 			{
-				StreamingLevels.Remove(LevelSteam);
-			}
+				StreamingLevels.erase(iter);
+				break;
+			}		
 		}
 	}
 
@@ -156,8 +157,8 @@ namespace ML
 
 	void CWorld::ParseFile()
 	{
-		// P0 ½×¶Î£ºÓ²±àÂëÉú³ÉÒ»¸ö Cube£¨ºóĞø P2 ÓÉ ParseFile ¶Á¹Ø¿¨ÎÄ¼şÌæ´ú£©
-		// ×¢Òâ£ºmesh ±ØĞëÓÉ¶Ñ¶ÔÏó³ÖÓĞ£¨×é¼şÒıÓÃËü£©£¬²»ÄÜÊÇÕ»ÉÏ¾Ö²¿±äÁ¿
+		// P0 é˜¶æ®µï¼šç¡¬ç¼–ç ç”Ÿæˆä¸€ä¸ª Cubeï¼ˆåç»­ P2 ç”± ParseFile è¯»å…³å¡æ–‡ä»¶æ›¿ä»£ï¼‰
+		// æ³¨æ„ï¼šmesh å¿…é¡»ç”±å †å¯¹è±¡æŒæœ‰ï¼ˆç»„ä»¶å¼•ç”¨å®ƒï¼‰ï¼Œä¸èƒ½æ˜¯æ ˆä¸Šå±€éƒ¨å˜é‡
 		CStaticMesh* CubeMesh = new CStaticMesh();
 		CubeMesh->AddMaterialSlot("Default");
 		CubeMesh->GetSourceModel(CubeMesh->AddSourceModel())->CreateCube(Vec3F(0, 0, 0), Vec3F(1, 1, 1));
@@ -167,9 +168,9 @@ namespace ML
 		CStaticMeshComponent* MeshComp = CubeActor->AddComponent<CStaticMeshComponent>();
 		MeshComp->SetStaticMesh(CubeMesh);
 		MeshComp->SetVisible(true);
-		MeshComp->SetLocation(Vec3F(0, 0, 3.f));   // ·Åµ½Ä¬ÈÏÏà»úÇ°·½
+		MeshComp->SetLocation(Vec3F(0, 0, 3.f));   // æ”¾åˆ°é»˜è®¤ç›¸æœºå‰æ–¹
 
-		ParseActors.Add(CubeActor);
+		ParseActors.push_back(CubeActor);
 	}
 
 	void CWorld::BuildActors()
@@ -182,7 +183,7 @@ namespace ML
 		{
 			PersistentLevel->AddActor(Actor);
 		}	
-		ParseActors.Empty();
+		ParseActors.clear();
 	}
 
 	void CWorld::InitActorsForPlay()

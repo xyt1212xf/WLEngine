@@ -1,20 +1,20 @@
-#include "MeshDescription.h"
+ï»¿#include "MeshDescription.h"
 namespace ML
 {
 	void FMeshDescription::Empty()
 	{
-		Triangles.Empty();
-		VertexInstances.Empty();
-		Vertices.Empty();
-		PolygonGroups.Empty();
+		Triangles.clear();
+		VertexInstances.clear();
+		Vertices.clear();
+		PolygonGroups.clear();
 	}
 
 	bool FMeshDescription::IsEmpty() const
 	{
-		return Vertices.IsEmpty()
-			&& VertexInstances.IsEmpty()
-			&& Triangles.IsEmpty()
-			&& PolygonGroups.IsEmpty();
+		return Vertices.empty()
+			&& VertexInstances.empty()
+			&& Triangles.empty()
+			&& PolygonGroups.empty();
 	}
 
 	bool FMeshDescription::Validate() const
@@ -23,7 +23,7 @@ namespace ML
 		const int32 NumV = NumVertices();
 		const int32 NumPG = NumPolygonGroups();
 
-		// PolygonGroups ÖÁÉÙÒªÓĞÒ»¸ö£¬·ñÔòäÖÈ¾Ê±Ã»ÓĞ Section ¿ÉÓÃ¡£
+		// PolygonGroups è‡³å°‘è¦æœ‰ä¸€ä¸ªï¼Œå¦åˆ™æ¸²æŸ“æ—¶æ²¡æœ‰ Section å¯ç”¨ã€‚
 		if (NumPG == 0)
 		{
 			return false;

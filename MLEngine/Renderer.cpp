@@ -7,8 +7,8 @@
 #include "MeshBatch.h"
 #include "ViewMatrices.h"
 #include "MathLib.h"
-#include "GlobalShader.h"
-#include "SolidColorShader.h"
+#include "Material.h"
+#include "MaterialMgr.h"
 #include "PipelineState.h"
 #include "VertexStreamFactory.h"
 #include "RHIbuffer.h"
@@ -24,7 +24,6 @@ namespace ML
 
 	CRenderer::~CRenderer()
 	{
-		SafeDelete(mpSolidColorPSO);
 	}
 
 	void CRenderer::_Draw()
@@ -69,62 +68,63 @@ namespace ML
 		const Vec3F LookAt(0.0f, 0.0f, 1.0f);
 		const Vec3F Up(0.0f, 1.0f, 0.0f);
 		Math::buildMatrixLookAtLH(&View, &Eye, &LookAt, &Up);
-		Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 100.0f);
+		Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 5000.0f);
 		FViewMatrices ViewMatrices(View, Proj);
 
-		TArray<FMeshBatch> Batches;
+		// 3) Collect all batches to draw (each already carries its Material*).
+		std::vector<FMeshBatch> Batches;
 		pWorld->CollectVisibleMeshes(ViewMatrices, Batches);
-		if (Batches.IsEmpty() || nullptr == Batches[0].VertexFactory)
+		if (Batches.empty())
 		{
 			return;
 		}
-		CSolidColorVS* pVS = CGlobalShaderMap::GetShader<CSolidColorVS>();
-		CSolidColorPS* pPS = CGlobalShaderMap::GetShader<CSolidColorPS>();
-		if (nullptr == pVS || nullptr == pPS || !pVS->IsValid() || !pPS->IsValid())
-		{
-			return;
-		}
-		// Create the solid-color PSO lazily on first use. Input layout comes
-		// from the vertex factory of the first batch.
-		if (nullptr == mpSolidColorPSO)
-		{
-			TArray<D3D12_INPUT_ELEMENT_DESC> InputLayout =
-				Batches[0].VertexFactory->BuildInputLayout({ "POSITION", "COLOR" });
-			mpSolidColorPSO = new CPipelineState();
-			if (!mpSolidColorPSO->Create(pVS, pPS, InputLayout, DXGI_FORMAT_D32_FLOAT))
-			{
-				SafeDelete(mpSolidColorPSO);
-				return;
-			}
-		}
 
-		// Bind pipeline state once per frame.
-		pCmd->SetGraphicsRootSignature(mpSolidColorPSO->GetRootSignature());
-		pCmd->SetPipelineState(mpSolidColorPSO->GetPipelineState());
-		pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		// 4) Bucket by material: batches sharing a material merge into one PSO bind.
+		//    Simplified P0: set the PSO once for the first valid material; later
+		//    batches only switch when the Material changes.
+		//    UE counterpart: FMeshPassProcessor::BuildMeshDrawCommands.
+		CPipelineState* CurrentPSO = nullptr;
+		ID3D12RootSignature* CurrentRS = nullptr;
 
-		for (int32 i = 0; i < Batches.Num(); ++i)
+		for (int32 i = 0; i < Batches.size(); ++i)
 		{
 			const FMeshBatch& Batch = Batches[i];
-			if (nullptr == Batch.LOD || nullptr == Batch.LOD->IndexBuffer || nullptr == Batch.VertexFactory)
+			if (nullptr == Batch.LOD
+				|| nullptr == Batch.LOD->IndexBuffer
+				|| nullptr == Batch.VertexFactory
+				|| nullptr == Batch.Material
+				|| nullptr == Batch.Material->GetPipelineState())
 			{
 				continue;
 			}
 
-			const TArray<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
-			if (VBViews.IsEmpty())
+			const std::vector<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
+			if (VBViews.empty())
 			{
 				continue;
 			}
 
-			// Row-vector convention: clip = pos * (World * View * Proj).
+			CPipelineState* PSO = Batch.Material->GetPipelineState();
+
+			// Switch PSO / RootSignature (only when the material changes).
+			if (PSO != CurrentPSO)
+			{
+				CurrentPSO = PSO;
+				CurrentRS  = PSO->GetRootSignature();
+				pCmd->SetGraphicsRootSignature(CurrentRS);
+				pCmd->SetPipelineState(PSO->GetPipelineState());
+				pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			}
+
+			// Compute MVP and bind it to root constant slot 0 (16 floats).
+			// Row-vector: clip = pos * (World * View * Proj).
 			FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewMatrix * ViewMatrices.ProjMatrix;
-
-			pCmd->IASetVertexBuffers(0, VBViews.Num(), VBViews.GetData());
-			const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView(); 
-			pCmd->IASetIndexBuffer(&IndexBufferView);
-			// Root constant slot 0: 16 floats = the 4x4 MVP matrix.
 			pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
+
+			// Geometry.
+			pCmd->IASetVertexBuffers(0, VBViews.size(), VBViews.data());
+			const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
+			pCmd->IASetIndexBuffer(&IndexBufferView);
 			pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1,
 				Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
 		}
@@ -132,7 +132,7 @@ namespace ML
 
 	void CRenderer::_End()
 	{
-		mpGraphicPlug->GetDevice()->EndDraw();	
+		mpGraphicPlug->GetDevice()->EndDraw();
 	}
 
 }
