@@ -122,7 +122,7 @@ namespace ML
 			pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
 
 			// Geometry.
-			pCmd->IASetVertexBuffers(0, VBViews.size(), VBViews.data());
+			pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
 			const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
 			pCmd->IASetIndexBuffer(&IndexBufferView);
 			pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1,

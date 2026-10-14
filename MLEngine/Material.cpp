@@ -34,18 +34,40 @@ namespace ML
 		PSName = InPSName;
 	}
 
+	void CMaterial::SetDefaultInputLayout(std::initializer_list<D3D12_INPUT_ELEMENT_DESC> Elements)
+	{
+		mDefaultInputLayout.assign(Elements.begin(), Elements.end());
+	}
+
+	void CMaterial::SetDefaultInputLayout(std::vector<D3D12_INPUT_ELEMENT_DESC>&& Elements)
+	{
+		mDefaultInputLayout = std::move(Elements);
+	}
+
 	bool CMaterial::InitRHI(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat)
 	{
 		ReleaseRHI();
 
-		// 1) InputLayout comes from the VertexFactory; material knows no semantics.
+		// 1) Layout resolution:
+		//    priority 1: VertexFactory's layout (mesh-driven path)
+		//    priority 2: material's own mDefaultInputLayout (fallback for Default Material at boot)
 		//    UE counterpart: FGraphicsPipelineStateInitializer merges layout at assembly time.
-		if (nullptr == InVertexFactory || !InVertexFactory->HasInputLayout())
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = nullptr;
+		if (InVertexFactory && InVertexFactory->HasInputLayout())
 		{
-			OutputDebugStringA("CMaterial::InitRHI: VertexFactory is null or has no input layout\n");
+			LayoutPtr = &InVertexFactory->GetInputLayout();
+		}
+		else if (!mDefaultInputLayout.empty())
+		{
+			LayoutPtr = &mDefaultInputLayout;
+		}
+
+		if (nullptr == LayoutPtr)
+		{
+			OutputDebugStringA("CMaterial::InitRHI: neither VertexFactory layout nor DefaultInputLayout available\n");
 			return false;
 		}
-		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout = InVertexFactory->GetInputLayout();
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout = *LayoutPtr;
 
 		// 2) Get compiled shaders via the engine's CShaderMgr (a lookup, not a new).
 		//    Timing: CEngine::Initialise has already Init'd the ShaderMgr by now.

@@ -1,8 +1,9 @@
 ﻿#include "StaticMeshResources.h"
 #include "MathLib.h"
 #include "VertexStreamFactory.h"
-#include "DX12RHIbuffer.h"
-
+#include "RHIbuffer.h"
+#include "GraphicPlug.h"
+#include "MLEngine.h"
 
 namespace ML
 {
@@ -15,8 +16,9 @@ namespace ML
 	{
 		ReleaseResources();
 
+		// Each LOD owns its own CStaticVertexFactory (owner semantics; deleted in ReleaseResources).
+		// Decoupled from CGraphicPlug's default VF - mesh layout is fully independent.
 		VertexFactory = new CStaticVertexFactory();
-	//	VertexFactory->BuildInputLayout();
 
 		if (!Attrs.IsValid())
 		{
@@ -141,9 +143,12 @@ namespace ML
 					Unit.Format		= Format;
 					Unit.bValid		= (Buffer != nullptr);
 				};
-			FillStream(VertexFactory->Schema.Position,
-				PositionBuffer ? PositionBuffer->GetResource() : nullptr,
-				0, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+			if (VertexFactory->Schema.Position.bValid)
+			{
+				FillStream(VertexFactory->Schema.Position,
+					PositionBuffer ? PositionBuffer->GetResource() : nullptr,
+					0, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+			}
 			FillStream(VertexFactory->Schema.Color,
 				ColorBuffer ? ColorBuffer->GetResource() : nullptr,
 				1, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);

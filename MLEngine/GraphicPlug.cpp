@@ -5,7 +5,6 @@
 #include "TimerClock.h"
 #include "RHIbuffer.h"
 #include "GlobalShader.h"
-#include "VertexStreamFactory.h"
 #include "MaterialMgr.h"
 #include "Material.h"
 #include "SolidColorShader.h"
@@ -36,24 +35,21 @@ namespace ML
 				// Compile all registered global shaders once the device is ready.
 				CGlobalShaderMap::InitGlobalShaders();
 				mpRenderer = new CRenderer(this);
-				mpDefaultVertexFactory = new CStaticVertexFactory();
-				mpDefaultVertexFactory->NumVertices = 1; // layout derivation needs no real vertex count
-				mpDefaultVertexFactory->Schema.Position.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-				mpDefaultVertexFactory->Schema.Position.Slot = 0;
-				mpDefaultVertexFactory->Schema.Color.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-				mpDefaultVertexFactory->Schema.Color.Slot = 1;
-				// Buffer fields are only needed when rendering via mCachedVerticesViews;
-				// for layout-only use they can stay null here.
-				// The actual VB binding is provided by the mesh's own VertexFactory at _Flush time.
-				std::vector<std::string> Elements = { "POSITION", "COLOR" };
-				mpDefaultVertexFactory->BuildInputLayout(Elements);
 
 				mpDefaultMaterial = new CMaterial();
 				mpDefaultMaterial->SetShaders(CSolidColorVS::StaticShaderName(), CSolidColorPS::StaticShaderName());
-				if (!mpDefaultMaterial->InitRHI(mpDefaultVertexFactory, DXGI_FORMAT_D32_FLOAT))
+				// Default Material's fallback layout (POSITION slot 0, COLOR slot 1).
+				// Matches the attribute set expected by CSolidColorVS / CSolidColorPS.
+				// P0: hand-written. P1: derive from shader reflection.
+				mpDefaultMaterial->SetDefaultInputLayout({
+					D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+					D3D12_INPUT_ELEMENT_DESC{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+				});
+				// InitRHI's first argument is the per-mesh VF; pass nullptr here so the material
+				// uses its own mDefaultInputLayout (boot-time path - no mesh loaded yet).
+				if (!mpDefaultMaterial->InitRHI(nullptr, DXGI_FORMAT_D32_FLOAT))
 				{
 					SafeDelete(mpDefaultMaterial);
-					SafeDelete(mpDefaultVertexFactory);
 					return false;
 				}
 
@@ -77,7 +73,6 @@ namespace ML
 		SafeDelete(mpRenderer);
 		SafeDelete(mpDeviceBase);
 		SafeDelete(mpDefaultMaterial);
-		SafeDelete(mpDefaultVertexFactory);
 		SafeDelete(mpDeviceBase);
 		return true;
 	}

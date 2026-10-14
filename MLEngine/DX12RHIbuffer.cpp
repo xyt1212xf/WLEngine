@@ -1,4 +1,4 @@
-#include "DX12RHIbuffer.h"
+О╩©#include "DX12RHIbuffer.h"
 #include "GraphicPlug.h"
 #include "MLEngine.h"
 #include "DX12Device.h"
@@ -19,7 +19,6 @@ namespace ML
 	bool CDX12RHIBuffer::Create(EBufferType InType, uint32 InSize, uint32 InStride, const void* InitData)
 	{
 		Release();
-
 		Type = InType;
 		Size = InSize;
 		Stride = InStride;
@@ -27,7 +26,7 @@ namespace ML
 
 		if (ID3D12Device* Device = pRHIDevice->GetDevice())
 		{
-			// 1. ╢╢╫╗д╛хо╤явйт╢ё╗GPU ©и╤аё╘
+			// 1. Е┬⌡Е╩╨И╩≤Х╝╓Е═├Х╣└Ф╨░О╪┬GPU Е▐╞Х╞╩О╪┴
 			D3D12_HEAP_PROPERTIES HeapProps = {};
 			HeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -44,7 +43,7 @@ namespace ML
 			ResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 			ResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-			// спЁУй╪йЩ╬щй╠ё╛д╛хо╤яох╢╕сз COPY_DEST в╢л╛ё╛©╫╠╢мЙЁи╨Стыфауов╙╩╩╣╫ GENERIC_READ
+			// Ф°┴Е┬²Е╖▀Ф∙╟Ф█╝Ф≈╤О╪▄И╩≤Х╝╓Е═├Е┘┬Е╓└Д╨▌ COPY_DEST Г┼╤Ф─│О╪▄Ф▀╥Х╢²Е╝▄Ф┬░Е░▌Е├█Е╠▐И °Х╫╛Ф█╒Е┬╟ GENERIC_READ
 			D3D12_RESOURCE_STATES InitialState = (InitData != nullptr)
 				? D3D12_RESOURCE_STATE_COPY_DEST
 				: D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -62,7 +61,7 @@ namespace ML
 			{
 				return false;
 			}
-			// 2. хГ╧ШспЁУй╪йЩ╬щё╛╢╢╫╗ио╢╚╤я╡╒©╫╠╢
+			// 2. Е╕┌Ф·°Ф°┴Е┬²Е╖▀Ф∙╟Ф█╝О╪▄Е┬⌡Е╩╨Д╦┼Д╪═Е═├Е╧╤Ф▀╥Х╢²
 			if (InitData != nullptr)
 			{
 				D3D12_HEAP_PROPERTIES UploadHeapProps = {};
@@ -95,7 +94,7 @@ namespace ML
 					return false;
 				}
 
-				// 3. сЁиД╡╒©╫╠╢йЩ╬щ
+				// 3. Ф≤═Е╟└Е╧╤Ф▀╥Х╢²Ф∙╟Ф█╝
 				hr = UploadBuffer->Map(0, nullptr, &MappedData);
 				if (FAILED(hr))
 				{
@@ -107,8 +106,8 @@ namespace ML
 				UploadBuffer->Unmap(0, nullptr);
 				MappedData = nullptr;
 
-				// 4. ╢сио╢╚╤я©╫╠╢╣╫д╛хо╤яё╨сцв╗сц╣даый╠ command list б╪жфё╛
-				//    а╒©ллА╫╩ж╢пп╡╒╣х╢Щ GPU мЙЁиё╗жВДжх╬ cmd list ╢кй╠╢╕сз closed в╢л╛ё╛╡╩дэ╦╢сцё╘
+				// 4. Д╩▌Д╦┼Д╪═Е═├Ф▀╥Х╢²Е┬╟И╩≤Х╝╓Е═├О╪ Г■╗Д╦⌠Г■╗Г └Д╦╢Ф≈╤ command list Е╫∙Е┬╤О╪▄
+				//    Г╚▀Е┬╩Ф▐░Д╨╓Ф┴╖Х║▄Е╧╤Г╜┴Е╬┘ GPU Е╝▄Ф┬░О╪┬Д╦╩Ф╦╡Ф÷⌠ cmd list Ф╜╓Ф≈╤Е╓└Д╨▌ closed Г┼╤Ф─│О╪▄Д╦█Х┐╫Е╓█Г■╗О╪┴
 				ID3D12CommandAllocator* UploadAllocator = nullptr;
 				ID3D12GraphicsCommandList* UploadList = nullptr;
 
@@ -122,7 +121,7 @@ namespace ML
 
 				UploadList->CopyBufferRegion(Resource, 0, UploadBuffer, 0, Size);
 
-				// 5. вйт╢фауоё╨д╛хо╤я╢с COPY_DEST ╣╫ GENERIC_READ
+				// 5. Х╣└Ф╨░Е╠▐И °О╪ И╩≤Х╝╓Е═├Д╩▌ COPY_DEST Е┬╟ GENERIC_READ
 				D3D12_RESOURCE_BARRIER Barrier = {};
 				Barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 				Barrier.Transition.pResource = Resource;
@@ -132,12 +131,12 @@ namespace ML
 
 				UploadList->ResourceBarrier(1, &Barrier);
 
-				// дз╡©╩А Close / Execute / Signal / вХхШ╣х╢Щ fenceё╛╡╒йм╥е UploadList
+				// Е├┘И┐╗Д╪  Close / Execute / Signal / И≤╩Е║·Г╜┴Е╬┘ fenceО╪▄Е╧╤И┤┼Ф■╬ UploadList
 				pRHIDevice->ExecuteUploadAndWait(UploadList);
 
 				UploadAllocator->Release();
 
-				// GPU ©╫╠╢рях╥хомЙЁиё╛ио╢╚╤я©ирта╒╪╢йм╥е
+				// GPU Ф▀╥Х╢²Е╥╡Г║╝Х╝╓Е╝▄Ф┬░О╪▄Д╦┼Д╪═Е═├Е▐╞Д╩╔Г╚▀Е█ЁИ┤┼Ф■╬
 				SafeRelease(UploadBuffer);
 			}
 		}

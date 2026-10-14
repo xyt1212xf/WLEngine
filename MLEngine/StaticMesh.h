@@ -28,7 +28,7 @@ namespace ML
 		// Baked render data per LOD (null until Build() has been called).
 		CStaticVertexFactory* GetVertexFactory(int32 LODIndex) const;
 		CStaticMeshLODResources* GetRenderData(int32 LODIndex) const;
-		int32 GetNumLODs() const { return RenderData.size(); }
+		int32 GetNumLODs() const { return (int32)RenderData.size(); }
 
 		int32 AddMaterialSlot(const std::string& Name);
 		int32 GetNumMaterialSlots() const { return (int32)MaterialSlots.size(); }

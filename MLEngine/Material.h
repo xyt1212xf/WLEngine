@@ -34,11 +34,26 @@ namespace ML
 		virtual ~CMaterial();
 
 		// Sets the VS/PS this material uses (looked up by CGlobalShader name in GlobalShaderMap).
-		// Call order: SetShaders(...) -> InitRHI(VF, Depth) -> then it is usable.
+		// Call order: SetShaders(...) -> [SetDefaultInputLayout(...)] -> InitRHI(VF, Depth) -> then it is usable.
 		void SetShaders(const std::string& InVSName, const std::string& InPSName);
 
-		// Creates the PSO. Layout comes from the VertexFactory; material holds no semantic concept.
-		// Must be called after the RHI device is ready and InVertexFactory has run BuildInputLayout.
+		// Sets a fallback InputLayout the material owns. Used when InitRHI is called without
+		// a VertexFactory (or with a VF that has no layout yet) - the typical case is the
+		// engine's Default Material at boot time, before any mesh has been loaded.
+		// P0: caller passes a hand-written element list. P1: can be derived from shader reflection.
+		// Calling this multiple times replaces the previous layout.
+		void SetDefaultInputLayout(std::initializer_list<D3D12_INPUT_ELEMENT_DESC> Elements);
+		void SetDefaultInputLayout(std::vector<D3D12_INPUT_ELEMENT_DESC>&& Elements);
+
+		// Read-only accessors.
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetDefaultInputLayout() const { return mDefaultInputLayout; }
+		bool HasDefaultInputLayout() const { return !mDefaultInputLayout.empty(); }
+
+		// Creates the PSO. Layout resolution order:
+		//   1. InVertexFactory's layout (if VF exists and HasInputLayout())
+		//   2. Material's own mDefaultInputLayout (fallback)
+		//   3. nullptr -> return false
+		// Must be called after the RHI device is ready.
 		bool InitRHI(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat);
 
 		// Releases RHI resources.
@@ -57,5 +72,9 @@ namespace ML
 		CShader*      VertexShader = nullptr;   // lifetime not owned (managed by CGlobalShaderMap)
 		CShader*      PixelShader  = nullptr;
 		CPipelineState* PipelineState = nullptr; // owned
+
+		// Fallback layout used when no VertexFactory is supplied (e.g. engine init time).
+		// Does not own any GPU resources - consumed once during InitRHI to build the PSO.
+		std::vector<D3D12_INPUT_ELEMENT_DESC> mDefaultInputLayout;
 	};
 }

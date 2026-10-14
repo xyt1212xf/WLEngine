@@ -14,7 +14,7 @@ namespace ML
 	{
 		for (int32 i = 0; i < SourceModels.size(); ++i)
 		{
-			delete SourceModels[i];
+			SafeDelete(SourceModels[i]);
 		}
 		SourceModels.clear();
 	}
@@ -39,7 +39,7 @@ namespace ML
 	{
 		for (int32 i = 0; i < RenderData.size(); ++i)
 		{
-			delete RenderData[i];
+			SafeDelete(RenderData[i]);
 		}
 		RenderData.clear();
 		for (int32 i = 0; i < SourceModels.size(); ++i)
@@ -87,7 +87,7 @@ namespace ML
 		Slot.Name = Name;
 		Slot.Material = GEngine ? GEngine->GetMgr<CMaterialMgr>()->GetDefaultMaterial() : nullptr;
 		MaterialSlots.push_back(Slot);
-		return MaterialSlots.size();
+		return (int32)MaterialSlots.size() - 1;
 	}
 
 	CMaterial* CStaticMesh::GetMaterialForSection(int32 SectionIndex) const
