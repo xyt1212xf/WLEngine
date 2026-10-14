@@ -143,16 +143,18 @@ namespace ML
 					Unit.Format		= Format;
 					Unit.bValid		= (Buffer != nullptr);
 				};
-			if (VertexFactory->Schema.Position.bValid)
+			if (PositionBuffer)
 			{
 				FillStream(VertexFactory->Schema.Position,
 					PositionBuffer ? PositionBuffer->GetResource() : nullptr,
 					0, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 			}
-			FillStream(VertexFactory->Schema.Color,
-				ColorBuffer ? ColorBuffer->GetResource() : nullptr,
-				1, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
-
+			if (ColorBuffer)
+			{
+				FillStream(VertexFactory->Schema.Color,
+					ColorBuffer ? ColorBuffer->GetResource() : nullptr,
+					1, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+			}
 			std::vector<std::string> Elements;
 			if (PositionBuffer)	{ Elements.push_back("POSITION"); }
 			if (ColorBuffer)	{ Elements.push_back("COLOR"); }

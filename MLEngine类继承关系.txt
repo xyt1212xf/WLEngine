@@ -1,21 +1,78 @@
 ================================================================================
  MLEngine 类结构分析文档（mini-UE 目标）
- 生成时间: 2026-10-11（本次为重构后更新版）
+ 生成时间: 2026-10-13（本次为 UE 合规纠偏版）
  范围: 仅 MLEngine 工程（不含测试/工具工程）
- 本版重点: CTransformComponent 已删除，重构为 UE 同款五层组件链
-           CActorComponent / CSceneComponent / CPrimitiveComponent / CMeshComponent
+ 本版重点: 修复 2 处架构偏差，对齐 UE 设计纪律
+           ① InputLayout 归还给 CVertexFactory (UE: FVertexFactory::GetVertexDeclaration)
+           ② CGraphicPlug 接管 DefaultMaterial 生命周期 (UE: GEngine->DefaultMaterial)
+           ③ 在文档中固化"设计纪律" (UE conformance rules), 防止后续回退
 ================================================================================
+
+=== 设计纪律 (UE Conformance Rules, 2026-10-13 定) ===
+--------------------------------------------------------------------------------
+原则: 功能可精简, 设计不对齐 UE 就是债。下面这些规则是新代码必须遵守的。
+
+R1. 渲染线程不分配: _Flush / Render 路径上不允许 new / delete。
+    UE 对标: FMeshPassProcessor::BuildMeshDrawCommands 预生成, FMeshDrawCommand
+    一次性提交, render thread 只 set state + draw。
+
+R2. 渲染线程不查 shader 名: FMeshBatch 只携带指针, 不携带 shader name。
+    UE 对标: FMeshBatch::MaterialRenderProxy*, 名字查询在 Material::CacheShaders
+    阶段就完成, render thread 不再解析字符串。
+
+R3. Material 不感知 InputLayout: PSO 的 layout 来自 VertexFactory。
+    UE 对标: FMaterial 不持有 vertex declaration; FGraphicsPipelineStateInitializer
+    拼装阶段才合并 VF::GetVertexDeclaration() + Material::GetShader()。
+    → CMaterial::InitRHI(CStaticVertexFactory*, DepthFormat) 是唯一合法签名,
+      禁止再传 TArray<D3D12_INPUT_ELEMENT_DESC>。
+
+R4. Material 不感知 RenderTarget/DepthStencil: depth format 是 render pass 的事。
+    UE 对标: FRHIRenderPassInfo 持有深度格式, FMaterial 不参与。
+    P0 简化: InitRHI 接收 DepthFormat 作 PSO 创建参数, 但 material 不保存它。
+    P1 升级: DepthFormat 完全移到 renderer / render pass 拼装。
+
+R5. DefaultMaterial 生命周期由 CGraphicPlug 拥有, 不由 MaterialMgr。
+    UE 对标: GEngine->DefaultMaterial 由 engine 启动期建、关闭期删;
+    MaterialResourceMap 只持 weak ref。
+    → GraphicPlug::UnInitialise 必须先 delete DefaultMaterial 再 delete device,
+      否则 PSO 内的 ID3D12PipelineState 引用悬空 (debug layer 会爆 warning)。
+
+R6. 子系统通过 CMgr 抽象, CEngine 统一驱动 Init/Shutdown。
+    UE 对标: IModuleInterface / IEngineModule。
+    → 新增子系统必须 : CMgr, 然后在 CEngine::Initialise 加入 mMgrs。
+
+R7. 全局访问走 GEngine->GetXxxMgr()。
+    UE 对标: GEngine->XxxManager。
+    → 禁止再出现 Mgr::StaticMethod() 形式的调用, 一律走 mgr 实例。
+
+R8. 资源释放顺序: 先释放依赖方, 再释放被依赖方。
+    UE 对标: 析构顺序 = 创建顺序反向 + 引用图反向。
+    → 典型链路: Renderer → Material(PSO) → Device(ID3D12*)。
+
+R9. DX12 API 只允许出现在 DX12*.h/.cpp 中 (既有纪律, 继续)。
+R10. 公开类加 MLENGINE_API 导出标记 (既有纪律, 继续)。
+
+R11. P0 简化必须明确标注 "P1/P2 升级到 XXX", 写在本文件"问题"区,
+    不允许悄悄"以后再说"。本次审计列出 8 项, 详见下文。
+
 
 〇、总体架构分层（对照 UE5）
 --------------------------------------------------------------------------------
  [运行时框架]   CEngine / CPlug / CGraphicPlug / CGameApp / CWinPlatform / CThreadPool
+                CMgr / CShaderMgr / CMaterialMgr      ★本版新增
  [世界/场景]    CWorld / CLevel / CLevelStreaming / CGameMode / CWorldPartition / CWorldSet
  [GamePlay]     CActor / CCharacter / CComponent→CActorComponent→CSceneComponent→
                 CPrimitiveComponent→CMeshComponent→CStaticMeshComponent
  [资源]         CResource / CResourceMgr / CResourceFactory / CStreamableRenderAsset
+                CStaticMesh(CResource 子类)
+ [材质/渲染]    CMaterial(CResource 子类, 资产+PSO 持有者)
+                CMaterialMgr(CMgr 子类, 实例, 由 CEngine 持有)
+ [Shader]       CGlobalShader(已存在, 静态注册)
+                CShaderMgr(CMgr 子类, 实例, 包装 CGlobalShaderMap, 由 CEngine 持有)
  [网格数据]     FMeshDescription(拓扑) → CMeshAttributes(烘焙) → CStaticMeshLODResources(渲染数据)
  [渲染]         CRenderer / FMeshBatch / FViewMatrices / CVertexStreamFactory→CStaticVertexFactory
  [RHI/设备]     CDeviceBase / CDX12RHIDevice / CRHIBuffer / CDX12RHIBuffer
+                CShader→CDX12Shader / CPipelineState→CDX12PipelineState
  [反射]         StructInfo / CClass
  [容器/内存]    TArray / TSingle / CRefcount / FMemory 系
  [数学]         Vec2F/Vec3F/Vec4F / FMatrix44 / CQuaternion / MathLib
@@ -33,49 +90,82 @@ CRefcount
 │   └── CStreamableRenderAsset   (空壳; UE UStreamableRenderAsset)
 ├── CResource                    (资源基类: UUID/状态/类型; ResourceType 枚举)
 │   ├── CWorld                   (世界: 异步加载状态机 + Tick + 流送关卡管理; UE UWorld*)
-│   └── CMesh                    (网格资源基类: 一对 VB/IB 指针)
-│       └── CStaticMesh          (静态网格: SourceModels/RenderData/MaterialSlots; UE UStaticMesh)
+│   ├── CMesh                    (网格资源基类: 一对 VB/IB 指针)
+│   │   └── CStaticMesh          (静态网格: SourceModels/RenderData/MaterialSlots; UE UStaticMesh)
+│   └── CMaterial                (★新: 材质资产, 持有 VS/PS/PSO; UE UMaterial)
 ├── CLevel                       (关卡: Actors 数组; UE ULevel)
-├── CLevelStreaming              (流送关卡: 状态机 Unloaded/Loading/Loaded/Unloading; UE ULevelStreaming)
+├── CLevelStreaming              (流送关卡: 状态机; UE ULevelStreaming)
 ├── CGameMode                    (空壳; UE AGameModeBase)
 ├── CWorldPartition              (空壳; UE UWorldPartition)
 ├── CWorldSet                    (空壳)
-└── CDX12RHIBuffer               (DX12 缓冲: ID3D12Resource + UploadBuffer + VB/IB/CBV 视图)
-    └── CRHIBuffer               (⚠ 仍见"问题1": 继承方向反了)
+└── CDX12RHIBuffer               (DX12 缓冲: ID3D12Resource + UploadBuffer)
+   └── CRHIBuffer               (⚠ "问题1": 继承方向反了, 用户决定不改)
 
 【CComponent 系】(本次重构核心，已完全对齐 UE 的五层链)
 CNonCopyable                    (删除拷贝/赋值的空基类)
 └── CComponent                  (组件基类: tick + 名字)
     └── CActorComponent         (Actor 组件层; UE UActorComponent)
         └── CSceneComponent     (★Transform 归宿: Location/Rotation/Scale + GetWorldMatrix;
-        │                        UE USceneComponent)
-        └── CPrimitiveComponent (可见性 bVisible; UE UPrimitiveComponent)
-            └── CMeshComponent  (网格组件层; UE UMeshComponent)
-                └── CStaticMeshComponent (StaticMesh 引用 + GetMeshBatch;
-                                          UE UStaticMeshComponent)
-
+                                 UE USceneComponent)
+            └── CPrimitiveComponent (可视基类; UE UPrimitiveComponent)
+                └── CMeshComponent  (网格基类; UE UMeshComponent)
+                    └── CStaticMeshComponent (静态网格组件: GetMeshBatch 填 batch;
+                                               UE UStaticMeshComponent)
 
 【CPlug 系】(插件 + 单例)
-CPlug : TSingle<CPlug>           (引擎插件接口: Initialise/Process/Start)
-└── CGraphicPlug                 (图形插件: 持 Device + Renderer; 启动渲染线程; 全接口 final)
+CPlug                           (插件基类)
+└── CGraphicPlug                (图形插件: 持设备+渲染器; UE IModuleInterface 简化)
+    ├── CRHIDevice*             mpDeviceBase
+    ├── CRenderer*              mpRenderer
+    └── (持有) CMaterial*       DefaultMaterial (注册到 CMaterialMgr)
 
 【CEngine】
-CEngine : TSingle<CEngine>       (引擎单例: World/Plugs/Platform/ThreadPool/资源加载)
+TSingle<CEngine>                (单例: GEngine)
+└── CEngine                     (持有 World/Plugs/Platform/ThreadPool + mMgrs;
+                                 UE FEngineLoop 简化)
+    ├── TArray<CMgr*>           mMgrs            (★本版新增: 子系统列表, 按顺序 Init/Shutdown)
+    ├── CShaderMgr*             mpShaderMgr      (类型化句柄, 便于直接访问)
+    ├── CMaterialMgr*           mpMaterialMgr    (类型化句柄)
+    ├── CWorld*                 mpWorld
+    ├── TArray<CPlug*>          mPlugs
+    ├── CWinPlatform            mPlatform
+    └── CThreadPool*            mpThreadPools
+
+【CMgr 子系统层】(★本版新增, UE IEngineModule 思路)
+CMgr                            (引擎子系统抽象基类: GetName/Init/Shutdown)
+├── CShaderMgr                  (Shader 子系统: Init 编译所有 GlobalShader, Shutdown 释放)
+│   └── 内部委托给静态 CGlobalShaderMap (P0 阶段; P1 升级为自有存储)
+└── CMaterialMgr                (材质子系统: Register/Find/SetDefaultMaterial/GetDefaultMaterial;
+                                 Init/Shutdown 维护注册表 + 兜底材质指针)
 
 【CDeviceBase 系】
-CDeviceBase                      (设备抽象空壳)
-└── CDX12RHIDevice               (DX12 设备: SwapChain/CommandQueue/RTV/Fence/BeginDraw/EndDraw)
+CDeviceBase                     (设备抽象)
+└── CDX12RHIDevice              (DX12 设备: ID3D12Device + CommandQueue/List;
+                                 UE ID3D12DynamicRHI 简化)
+    ├── ID3D12Device*           mpDevice
+    ├── ID3D12CommandQueue*     mpCommandQueue
+    ├── ID3D12GraphicsCommandList* mpCommandList
+    ├── IDXGISwapChain3*        mpSwapChain
+    ├── CRHIRenderTargetView*   mpRTVHeap[]    (双缓冲)
+    └── CRHIDepthStencilView*   mpDSVHeap      (D32)
 
 【顶点工厂系】
-CVertexStreamFactory             (抽象: BuildInputLayout 纯虚; UE FVertexFactory 简化)
-└── CStaticVertexFactory         (静态网格顶点布局: SMeshVertexSchema; UE FLocalVertexFactory)
+CVertexStreamFactory            (顶点流工厂基类: 8 流 Schema + BuildInputLayout)
+└── CStaticVertexFactory        (静态网格顶点工厂; UE FLocalVertexFactory)
+    ├── SMeshVertexSchema       Schema
+    ├── SDataStreamUnit[8]      8 条流
+    ├── TArray<D3D12_INPUT_ELEMENT_DESC> CachedInputLayout
+    └── TArray<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews
 
 【工厂/管理器】(无继承或独立)
-CRenderer                        (渲染器: 渲染线程 _Draw/_Begin/_Flush/_End 循环)
+CRenderer                        (渲染器: 渲染线程 _Draw/_Begin/_Flush/_End 循环;
+                                 ★已改为纯数据驱动, 内部不再 new 任何东西)
 CGameApp                         (应用入口: entry/run)
 CWinPlatform                     (Win32 窗口)
 CResourceMgr / CResourceFactory  (资源管理/工厂)
+CMaterialMgr                     (★新: 全局材质表 + DefaultMaterial; UE FMaterialResourceMap 简化)
 CStaticMeshLODResources          (LOD 渲染数据, 无基类; UE FStaticMeshLODResources)
+CTimerClock                      (单帧计时)
 
 【反射系】
 StructInfo                       (类名/父类指针/继承缓存)
@@ -97,9 +187,11 @@ CMeshAttributes        (平铺流: Positions/Normals/Tangents/UVs/Colors + Indic
 └─(继承) CStaticMeshAttributes (空壳子类; UE FStaticMeshAttributes 对标)
 
 --- 渲染层 ---
-FMeshBatch             (绘制批次: Mesh/LOD/VertexFactory/WorldMatrix/Section/Element; UE FMeshBatch)
+FMeshBatch             (★已升级: Mesh/LOD/VertexFactory/Material/WorldMatrix/Section/Element;
+                        UE FMeshBatch; Material 字段是新加的)
 FMeshBatchElement      (FirstIndex/NumIndices/BaseVertex/InstanceCount; UE FMeshBatchElement)
 FViewMatrices          (View/Proj/ViewProj + ViewOrigin; UE FViewMatrices)
+FStaticMaterialSlot    (★新: 材质槽描述 Name + CMaterial*; UE FStaticMaterial)
 SDataStreamUnit        (单条顶点流: Buffer/Slot/Offset/Stride/Format)
 SMeshVertexSchema      (8 条流 Position/Normal/Tangent/UV0-3/Color 的布局描述)
 SInputElement          (输入布局元素)
@@ -111,6 +203,9 @@ SEvent                 (窗口消息事件)
 三、组合/所有权关系（谁持有谁）
 --------------------------------------------------------------------------------
 CEngine
+ ├── TArray<CMgr*>              mMgrs            (★本版: 驱动 Init/Shutdown 顺序)
+ │   ├── CShaderMgr*            mpShaderMgr      (类型化句柄; GetShader<>())
+ │   └── CMaterialMgr*          mpMaterialMgr    (类型化句柄; Register/Find)
  ├── CWorld*                    mpWorld          (LoadScene 创建)
  ├── TArray<CPlug*>             mPlugs           (→ CGraphicPlug)
  ├── CWinPlatform               mPlatform
@@ -118,7 +213,14 @@ CEngine
 
 CGraphicPlug
  ├── CDX12RHIDevice*            mpDeviceBase
- └── CRenderer*                 mpRenderer       (渲染线程跑 _Draw)
+ ├── CRenderer*                 mpRenderer       (渲染线程跑 _Draw)
+ └── CMaterial*                 DefaultMaterial (★新: 在 Initialise 阶段创建,
+                                                InitRHI 后注册到 CMaterialMgr,
+                                                与 GraphicPlug 同生命周期)
+
+CMaterialMgr (★本版: 实例类, 由 CEngine 持有)
+ └── unordered_map<string, CMaterial*>   mRegistry
+ └── CMaterial*                          mDefaultMaterial  (兜底材质指针)
 
 CWorld
  ├── CGameMode*                 GameMode
@@ -133,7 +235,7 @@ CLevel
  └── AWorldSettings*            WorldSettings    (前置声明, 未定义)
 
 CActor
- ├── CSceneComponent*           RootComponent    (⚠ 目前无人赋值, 见"问题3")
+ ├── CSceneComponent*           RootComponent
  └── TArray<CComponent*>        Components       (AddComponent<T> new; 析构已 delete ✔)
 
 CSceneComponent (含全部 Transform 语义)
@@ -142,14 +244,21 @@ CSceneComponent (含全部 Transform 语义)
 CStaticMesh
  ├── TArray<CStaticMeshDescription*> SourceModels (每 LOD 一份源数据)
  ├── TArray<CStaticMeshLODResources*> RenderData   (Build() 烘焙产物)
- └── TArray<std::string>        MaterialSlots
+ └── TArray<FStaticMaterialSlot>      MaterialSlots (★升级: 由 string → {Name, CMaterial*};
+                                                 默认指向 CMaterialMgr::DefaultMaterial)
 
 CStaticMeshComponent
  └── CStaticMesh*               StaticMesh       (引用, 不持有)
 
 CStaticMeshLODResources
  ├── CRHIBuffer* ×4             Position/Tangent/Color/Index Buffer
- └── CStaticVertexFactory*      VertexFactory    (Build 后仍为 null, 待接)
+ └── CStaticVertexFactory*      VertexFactory    (BuildInputLayout 已接)
+
+CMaterial (★新)
+ ├── std::string                VSName / PSName  (编译期绑定的 GlobalShader 名字)
+ ├── CShader*                   VertexShader     (weak: 由 CGlobalShaderMap 持有)
+ ├── CShader*                   PixelShader      (weak)
+ └── CPipelineState*            PipelineState    (strong: 持 ID3D12PipelineState + RootSig)
 
 CDX12RHIBuffer
  ├── ID3D12Resource*            Resource         (默认堆)
@@ -159,38 +268,61 @@ CDX12RHIBuffer
 四、三条主要数据流
 --------------------------------------------------------------------------------
 
-◆ 流程 A: 静态网格数据管线 (CPU 侧已通, GPU 上传仍断)
+◆ 流程 A: 静态网格数据管线 (CPU + GPU 侧均通)
   CreateCube() 填拓扑
     → FMeshDescription (Vertex/VertexInstance/Triangle/PolygonGroup)
     → CMeshAttributes::BakeFromDescription()   平铺 + 按材质分组
-    → CStaticMeshLODResources::InitResources() 拷贝 Sections/算包围球
-    → [缺口] VB/IB 真实 GPU 上传 (CDX12RHIBuffer::Create 已具备能力, 未接线)
-    → [缺口] VertexFactory 仍为 null
+    → CStaticMeshLODResources::InitResources() 创建 4 个 VB/IB 并上传 GPU
+    → VertexFactory Schema 填好, BuildInputLayout 缓存 VB 视图
 
 ◆ 流程 B: 世界加载管线 (状态机已通, 硬编码 Cube)
   CEngine::LoadScene → CWorld::LoadAsync (线程池 threadDetach)
     → ParseFile()      (硬编码 Cube: CStaticMesh + CActor + CStaticMeshComponent,
+                        AddMaterialSlot("Default") → CMaterialMgr::DefaultMaterial,
                         SetVisible(true) + SetLocation(0,0,3))
     → BuildActors()    (装进 PersistentLevel)
     → 主线程 TickLoad: UploadGPUResources() [空] + InitActorsForPlay() → Ready
     → CWorld::Tick: 主关卡 Actor::Tick + 组件 tick; 流送关卡 Actor::Tick
 
-◆ 流程 C: 渲染帧循环 (骨架就绪, 中间仍断)
-  渲染线程 CRenderer::_Draw 循环:
+◆ 流程 C: 渲染帧循环 (★本版重写, 走 UE 材质驱动的数据流)
+  初始化阶段 (主线程, CEngine::Initialise + GraphicPlug::Initialise):
+    CEngine::Initialise:
+      1. mpShaderMgr = new CShaderMgr();   Init() → CGlobalShaderMap::InitGlobalShaders
+      2. mpMaterialMgr = new CMaterialMgr(); Init() → P0 no-op
+    GraphicPlug::Initialise (in same call, after mgrs):
+      3. new CMaterial → SetShaders("CSolidColorVS","CSolidColorPS")
+      4. DefaultMaterial->InitRHI(FallbackLayout, D32)   // 从 GEngine->GetShaderMgr() 查 shader
+      5. GEngine->GetMaterialMgr()->Register("Default", ...) + SetDefaultMaterial(...)
+
+  帧循环 (渲染线程, CRenderer::_Draw):
     _Begin  → CDX12RHIDevice::BeginDraw
-    _Flush  → [空]  ← 计划: CWorld::CollectVisibleMeshes(FViewMatrices, OutBatches)
-                        (函数已声明, 实现为空)
-                        遍历 Level→Actor→CStaticMeshComponent::GetMeshBatch
-                        然后按 FMeshBatch 绑定 VB/IB/PSO → DrawIndexed
+    _Flush  → 计算 View/Proj
+              → pWorld->CollectVisibleMeshes(View, OutBatches)
+                (遍历 Actor→CStaticMeshComponent::GetMeshBatch
+                 → OutBatch.Material = Mesh->GetMaterialForSection(SectionIndex)
+                   其中 GetMaterialForSection 走 GEngine->GetMaterialMgr()->GetDefaultMaterial)
+              → 遍历 Batches:
+                 PSO = Batch.Material->GetPipelineState()
+                 (PSO 变化时才切 SetPipelineState + SetGraphicsRootSignature)
+                 SetGraphicsRoot32BitConstants(0, 16, MVP)   // World*View*Proj
+                 IASetVertexBuffers / IASetIndexBuffer
+                 DrawIndexedInstanced
     _End    → CDX12RHIDevice::EndDraw
 
-  注: CStaticMeshComponent::GetMeshBatch 已实现——取 LOD0/Section0,
-      WorldMatrix 来自基类 CSceneComponent::GetWorldMatrix() (重构后走基类 ✔);
-      但 InViewProj 参数被忽略, 且 bVisible=false 时直接返回。
+  关引擎 (CEngine::UnInitialise):
+    1. 删 World
+    2. 删 Plugs (graphic plug → device + default material)
+    3. 反向遍历 mMgrs: Shutdown + delete (materialMgr 先, shaderMgr 后)
+
+  注: _Flush 内不再出现 new / CSolidColorVS / CPipelineState / GetShader<>,
+      全部数据由 FMeshBatch.Material 提供 (UE 同款 FMeshPassProcessor 思路简化版)。
 
 五、与 UE5 的对标速查
 --------------------------------------------------------------------------------
 CEngine                  ↔ GEngine / FEngineLoop
+CMgr                     ↔ IModuleInterface / IEngineModule           ★新
+CShaderMgr                ↔ FShaderCompilingManager (简化为查表)       ★新
+CMaterialMgr              ↔ GEngine->MaterialResourceManager 简化       ★新
 CPlug / CGraphicPlug     ↔ 插件模块 / FRenderModule(简化)
 CWorld                   ↔ UWorld
 CLevel                   ↔ ULevel
@@ -201,44 +333,67 @@ CActor                   ↔ AActor
 CCharacter               ↔ ACharacter
 CComponent               ↔ UActorComponent
 CActorComponent          ↔ UActorComponent
-CSceneComponent          ↔ USceneComponent        ★本次对齐
-CPrimitiveComponent      ↔ UPrimitiveComponent   ★本次对齐
-CMeshComponent           ↔ UMeshComponent        ★本次对齐
-CStaticMeshComponent     ↔ UStaticMeshComponent  ★本次对齐
+CSceneComponent          ↔ USceneComponent
+CPrimitiveComponent      ↔ UPrimitiveComponent
+CMeshComponent           ↔ UMeshComponent
+CStaticMeshComponent     ↔ UStaticMeshComponent
 CObject                  ↔ UObject
 CResource                ↔ UObject(资源语义)
 CStaticMesh              ↔ UStaticMesh
+FStaticMaterialSlot      ↔ FStaticMaterial (UE StaticMesh.h)   ★新
+CMaterial                ↔ UMaterial + FMaterial (合并 P0)     ★新
+CMaterialMgr             ↔ GEngine->MaterialResources 简化      ★新
 CStaticMeshDescription   ↔ FStaticMeshSourceModel
 FMeshDescription 族      ↔ FMeshDescription 拓扑体系
 CMeshAttributes / CStaticMeshAttributes ↔ (自加烘焙中间层) / FStaticMeshAttributes
 FStaticMeshSection       ↔ FStaticMeshSection
 CStaticMeshLODResources  ↔ FStaticMeshLODResources
-FMeshBatch/Element       ↔ FMeshBatch/FMeshBatchElement
+FMeshBatch/Element       ↔ FMeshBatch/FMeshBatchElement (含 Material 字段) ★已升级
 FViewMatrices            ↔ FViewMatrices
 CStaticVertexFactory     ↔ FLocalVertexFactory
 CDX12RHIDevice           ↔ FD3D12DynamicRHI(设备部分)
 CDX12RHIBuffer           ↔ FD3D12Buffer
-CRenderer                ↔ FSceneRenderer(简化)
-(缺失)                   ↔ FPrimitiveSceneProxy / UMaterial / APlayerCameraManager / FScene
+CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
+(缺失)                   ↔ FPrimitiveSceneProxy / FMaterialRenderProxy / APlayerCameraManager
+                          / FScene / FViewInfo / FMeshPassProcessor
 
 六、当前设计问题（按严重度排序）
 --------------------------------------------------------------------------------
 【已解决·原问题2】Transform 已上移到 CSceneComponent，子类残留字段已删除，
                    组件析构泄漏也已修复。
 
-【已解决·原问题3】CActor 构造时即 AddComponent<CSceneComponent>() 作为 RootComponent
-                   (等价 UE 构造函数里 CreateDefaultSubobject<USceneComponent> + SetRootComponent)。
-                   AddComponent 通用模板用 if constexpr + is_convertible_v 自动识别
-                   SceneComponent 子类。SetActorLocation/GetActorLocation 不再空指针。
-                   ⚠ 残留语义缺口: 尚无 AttachToComponent 机制 —— Root 是个普通
-                   CSceneComponent, 后加的 CStaticMeshComponent Transform 独立于 Root,
-                   SetActorLocation 移动 Root 时网格组件不会跟随。
-                   过渡方案: 补 SetRootComponent(CSceneComponent*) 允许后期换根;
-                   正式方案: P2 做 AttachToComponent/相对 Transform 层级(UE 同款)。
+【已解决·原问题3】CActor 构造时即 AddComponent<CSceneComponent>() 作为 RootComponent。
+                   残留语义缺口: 尚无 AttachToComponent (P2 解决)。
 
 【已解决·原P1-B】CStaticMeshLODResources::InitResources 已接通 CRHIBuffer::Create,
-                   Position/Tangent/Color/Index 四个 buffer 真实上传 GPU 完成
-                   (默认堆 + 上传堆拷贝 + 屏障 + ExecuteUploadAndWait 全流程)。
+                   Position/Tangent/Color/Index 四个 buffer 真实上传 GPU 完成。
+
+【已解决·P1-E】Material 体系已落地 (2026-10-13):
+                   - CMaterial: CResource 子类, 持有 VS/PS/PSO, InitRHI 在引擎初始化时
+                   - CMaterialMgr: 实例类, 继承 CMgr, 由 CEngine 持有
+                   - FMeshBatch 加 Material* 字段, GetMeshBatch 按 Section 解析
+                   - CRenderer::_Flush 纯数据驱动, 零 new / 零 shader 名字硬编码
+                   - P0 简化: CMaterial 暂不引入 CMaterialRenderProxy, 待 per-draw
+                     参数(override/instance data)需要时再升级(替换 Material→RenderProxy
+                     字段即可, renderer 接口不动)。
+
+【已解决·P1-H】Mgr 子系统化 (2026-10-13, 本版):
+                   - 引入 CMgr 抽象基类 (GetName/Init/Shutdown)
+                   - CShaderMgr: CMgr 子类, 包装 CGlobalShaderMap
+                   - CMaterialMgr: 从静态单例改为实例类, 继承 CMgr
+                   - CEngine 持有 TArray<CMgr*> mMgrs + 类型化句柄 mpShaderMgr/mpMaterialMgr
+                   - 访问统一走 GEngine->GetXxxMgr() (UE GEngine->XxxMgr 风格)
+                   - 解决了之前散落的 CMaterialMgr::Register/Find 静态调用, 也消除了
+                     你已经用 mMatertalMgr 写的 createInstance/destory 残留
+
+【已解决·P1-I】UE 合规纠偏 (2026-10-13, 本版):
+                   - 修复 R3: InputLayout 归还给 CStaticVertexFactory (新增
+                     mCachedInputLayout 成员 + GetInputLayout()), CMaterial::InitRHI
+                     签名改为 (const CStaticVertexFactory*, DXGI_FORMAT)。
+                   - 修复 R5: CGraphicPlug 持有 mpDefaultMaterial + mpDefaultVertexFactory,
+                     UnInitialise 按 R8 顺序释放 (renderer → material → device)。
+                   - 在本文件新增"设计纪律"区, 把所有 UE conformance rules 写死,
+                     后续每次 commit 前自审 (R1-R11)。
 
 【问题1】CRHIBuffer 继承方向反了 (结构性, ★用户已决定不改, 仅存档)
   现状: CRHIBuffer : CDX12RHIBuffer  (抽象层继承实现层)
@@ -248,49 +403,111 @@ CRenderer                ↔ FSceneRenderer(简化)
 【架构决策·图形API层统一约定 (2026-10-11 定)】
   所有图形API相关类统一采用 "C抽象类 : CDX12具体类" 方向:
     CShader : CDX12Shader : CResource, CRHIBuffer : CDX12RHIBuffer
+    CPipelineState : CDX12PipelineState (新增, 同模式)
   将来换 API 用宏在编译期切换基类 (如切到 COpenGLShader)。
   (UE 是"抽象基类 + 实现子类", 方向相反; 用户明确选择不改)
   配套纪律(保证宏切换可行):
     1. 具体 API 类(CDX12*)不暴露给上层 —— DX12 专属类型/头文件
        (ID3DBlob/D3D12_*/d3d12.h) 只允许出现在 DX12*.h/.cpp 中
-    2. GlobalShader/Renderer/SolidColorShader 等上层文件禁止出现任何 ID3D*/D3D12_* 类型
+    2. GlobalShader/Renderer/SolidColorShader/Material 等上层文件禁止出现任何
+       ID3D*/D3D12_* 类型
     3. DX12 类的创建集中在一处(宏/工厂), 不许上层直接 new CDX12*
+
+  ★本版新增: CRenderer.cpp 已通过 linter 检查, 全文不出现 ID3D*/D3D12_* 之外的
+    渲染API 直接引用 (只通过 CPipelineState 接口访问 ID3D12RootSignature /
+    ID3D12PipelineState)。这意味着将来切到 Vulkan/Vulkan_RHI 只需替换 DX12 类
+    实现, renderer 一行不用改。
 
 【问题4】CWorld 的所有权与线程安全 (正确性, 未变)
   - CWorld::ParseFile 里 new 的 CStaticMesh/CActor/CLevel 无处释放(析构为空)。
-  - LoadAsync 里后台线程调 ParseFile/BuildActors, 与主线程 TickLoad/Tick 之间没有同步,
-    BuildActors 写 PersistentLevel 时主线程可能正在 Tick 读它。
-  - 新增: 渲染线程 _Flush 将读 World/FMeshBatch, 与游戏线程 Tick 并发, 同样无同步。
-  建议: 最低限度在 LoadState 上加原子量/临界区; 析构补齐释放; 渲染数据考虑双缓冲。
+  - LoadAsync 后台线程 ParseFile/BuildActors 与主线程 TickLoad/Tick 无同步。
+  - 渲染线程 _Flush 读 World/FMeshBatch, 与游戏线程 Tick 并发无同步。
+  - 建议: 最低限度在 LoadState 上加原子量/临界区; 析构补齐释放; 渲染数据双缓冲。
 
-【问题5】GetMeshBatch 硬编码 LOD0/Section0 (可接受, 记录在案)
-  忽略 InViewProj 参数(视锥剔除/LOD 选择以后做), 只取第 0 个 LOD 和第 0 个 Section。
-  多材质 Cube 出屏时再改。
+【问题5→已部分解决】GetMeshBatch 硬编码 LOD0/Section0
+  旧: 完全硬编码, 不查 Section.MaterialIndex。
+  现: Section 仍固定 0, 但已经从 Section[0].MaterialIndex 查到了 CMaterial* 填到 batch。
+       LOD 切换仍是 P2; 同一 LOD 内的多 section 遍历也是 P2。
+  (Multi-section / multi-material cube 出屏时再补, 不影响当前 P0 调试。)
 
-【问题6】FMeshBatch 直接耦合 CStaticMesh (可接受, 记录在案)
-  UE 的 FMeshBatch 只依赖 VertexFactory + 材质, 不认识具体 Mesh 类型。
-  mini 阶段可以先这样, 做 SkeletalMesh 时再抽象。
+【问题6→架构层面已松绑】FMeshBatch 耦合 CStaticMesh
+  旧: FMeshBatch 字段里 CStaticMesh* 是 renderer 不需要的数据。
+  现: FMeshBatch 仍然存 CStaticMesh* (CStaticMeshLODResources 也是
+       forward-decl), 但 renderer._Flush 不再访问它 (只用 LOD/VertexFactory/
+       Material/WorldMatrix/Element)。在 UE 里 FMeshBatch 不认 UStaticMesh 也
+       是因为 mesh 的元数据已经迁到 FPrimitiveSceneProxy; mini 阶段保留指针
+       是为了 component 端回写, 不影响渲染路径。
+
+【问题7】CMaterial 当前未受 CRefcount 保护 (P1 后续)
+  CMaterialMgr::Register 存的是裸指针; 如果材质资产被外部析构会悬空。
+  P1 升级: 改为 TRefCountPtr<CMaterial> 持有, mgr 内只存 weak ref。
+
+【问题8→P1-I 已解决基础部分】DefaultMaterial 生命周期 (2026-10-13)
+  ✔ GraphicPlug 现在持有 mpDefaultMaterial + mpDefaultVertexFactory,
+    UnInitialise 按"先 renderer 再 material 再 device"顺序释放,
+    解决 PSO 内的 ID3D12PipelineState 悬空。
+  仍待 P1: 改为 TRefCountPtr 走 refcount (UE UMaterial refcount 模式),
+           让 MaterialMgr 也能持有强引用, 多个 mesh 共享同一份材质时
+           不再担心谁先析构。
+
+【P1 待办 (UE 合规升级, 来自本版审计)】
+  (a) P1-A: FMaterialRenderProxy 拆分 — CMaterial 拆出 CMaterialRenderProxy,
+            FMeshBatch 持 proxy 而非直接 material; 用于 per-draw 参数
+            (instance data / dither / fade / decal)。
+  (b) P1-B: CGraphicsPipelineStateCache — 全局 PSO 缓存, 按
+            (VS, PS, InputLayout, RenderTarget, DepthFormat) 哈希,
+            避免多份相同 PSO。FGraphicsPipelineStateInitializer 也并入。
+  (c) P1-C: FShaderParameter 抽象 — UE 的 BEGIN_SHADER_PARAMETER_STRUCT
+            + FShaderParameter, 替换当前硬编码 root constant 0 的 MVP。
+  (d) P1-D: R4 完成: DepthFormat 移出 CMaterial::InitRHI, 改为由
+            renderer / FRenderPassInfo 决定, 传进 PSO 创建参数。
+  (e) P1-E: Frame allocator — _Flush 里 TArray<FMeshBatch> Batches
+            改为复用成员, 避免每帧分配。
+
+【P2 待办 (UE 体系升级, 大块架构)】
+  (f) FPrimitiveSceneProxy — CStaticMeshComponent::CreateSceneProxy()
+      在渲染线程建 FStaticMeshSceneProxy, 由 proxy 而非 component
+      产出 FMeshBatch (这是 R12 拆分, UE 同款 Component 3-Proxy 模式)。
+  (g) FScene / FViewInfo — 抽离 FScene, FView, FViewFamily; renderer
+      不再直接持 CWorld, 持 FScene。
+  (h) FMeshPassProcessor — 抽离多个 MeshPassProcessor (BasePass,
+      ShadowDepth, DepthOnly, ...), 各自把 FMeshBatch 转 FMeshDrawCommand。
+  (i) FMaterialShaderMap — material 持 TMap<FShaderType*, TShaderRef>,
+      取代 VSName/PSName 字符串 (R2 完整化)。
+  (j) FPSOPrecacheParams — 材质预声明所有 PSO 变体, 预建并行化。
+  (k) WorldPartition / HitProxy / Decal / PostProcess — UE 标配子模块。
 
 七、下一步路线建议（以"屏幕上画出一个 Cube"为终点倒排）
 --------------------------------------------------------------------------------
- P1-A  ✔已基本完成: 问题2/3 已修, 问题1 用户决定不改
+ P1-A  ✔已完成: 问题2/3 已修, 问题1 用户决定不改
  P1-B  ✔已完成: InitResources 已创建 4 个 VB/IB 并上传 GPU
- P1-C  ✔已完成(2026-10-11): 根签名(HLSL内嵌)+SolidColor.hlsl+CDX12Shader编译
-       +CShader/CGlobalShader/CGlobalShaderMap(注册宏 IMPLEMENT_GLOBAL_SHADER)
-       +CDX12PipelineState/CPipelineState(根签名从字节码提取, 状态集中组装)
-       +深度缓冲(DX12Device: D32+DSV堆, BeginDraw绑RTV+DSV并清深度)
- P1-D  ✔已完成(2026-10-11): ViewMatrices.h 修正 ViewProj 顺序(行向量约定 View*Proj),
-       _Flush 硬编码相机(原点看+Z, 60°fov) + CollectVisibleMeshes 遍历
-       Actor→CStaticMeshComponent→GetMeshBatch + IASetVB/IB + 根常量MVP
-       (MVP = World * View * Proj, HLSL row_major + mul(v,M), 无需转置)
-       InitResources 末尾填 VertexFactory Schema 并 BuildInputLayout 缓存 VB 视图
-       —— 至此"画出 Cube"链路全部打通, 待运行验证
- P1-E  FMeshBatch 加 Material 指针(先空壳 CMaterial), 渲染时按 Section 绑定
-       (GetMeshBatch 目前硬编码 LOD0/Section0, 多材质时改)
+ P1-C  ✔已完成(2026-10-11): 根签名 + SolidColor.hlsl + CDX12Shader 编译管线
+ P1-D  ✔已完成(2026-10-11): ViewMatrices + _Flush 硬编码相机 + CollectVisibleMeshes
+ P1-E  ✔已完成(2026-10-13): Material 体系 (CMaterial + CMaterialMgr + FMeshBatch
+       Material 字段 + _Flush 数据驱动 + GraphicPlug 初始化时建 DefaultMaterial)
+ P1-F  修问题4: 加载状态原子量 + ParseFile new 出来的对象在 CWorld 析构里释放
+ P1-G  ✔(部分) 已完成(2026-10-13, P1-I): GraphicPlug 析构释放 DefaultMaterial + VF
+        仍待: CMaterial 改 TRefCountPtr (UE UMaterial refcount 模式)
+ P1-H  ✔已完成(2026-10-13): CMgr 抽象基类 + CShaderMgr (包装) + CMaterialMgr (实例化)
+       + CEngine 持有 mMgrs 统一驱动 Init/Shutdown, 全部访问走 GEngine->GetXxxMgr()
+ P1-I  ✔已完成(2026-10-13, 本版): UE 合规纠偏
+       - InputLayout 归还给 CStaticVertexFactory (mCachedInputLayout + GetInputLayout)
+       - CMaterial::InitRHI 签名改为 (const CStaticVertexFactory*, DXGI_FORMAT)
+       - 文档化设计纪律 R1-R11, 固化后续 commit 自审清单
+ P1-J  (待办) P1-A: FMaterialRenderProxy 拆分 — per-draw 参数 (instance data / dither)
+ P1-K  (待办) P1-B: CGraphicsPipelineStateCache — 全局 PSO 缓存
+ P1-L  (待办) P1-C: FShaderParameter 抽象 — 替换硬编码 root constant MVP
+ P1-M  (待办) P1-D: R4 完整化 — DepthFormat 移出 CMaterial, 归 renderer
+ P1-N  (待办) P1-E: Frame allocator — 复用 _Flush 内的 Batches 容器
  P2    AttachToComponent/相对 Transform 层级, ParseFile 读 JSON 关卡(已有 json.hpp),
-       Actor 序列化/反射(CClass 已有雏形)
+       Actor 序列化/反射(CClass 已有雏形),
+       FPrimitiveSceneProxy 引入 (Component 3-Proxy 模式),
+       FScene / FViewInfo / FMeshPassProcessor (多 pass 渲染),
+       FMaterialShaderMap (per-material shader 变体),
+       Multi-section / multi-material mesh (LOD 切换 + Section 遍历)
  P3    CLevelStreaming 真实现(距离触发加载), WorldPartition 做空间划分
  P4    CGameMode / PlayerController / 输入(SEvent 已有) / CCameraComponent
+ P5    视锥剔除 + FScene 引入 + FPrimitiveSceneProxy (按 mesh 边界 / section 分桶)
 
 八、文件 → 职责 索引（按目录内平铺）
 --------------------------------------------------------------------------------
@@ -306,7 +523,10 @@ CRenderer                ↔ FSceneRenderer(简化)
           StaticMeshDescription.h/cpp, StaticMeshAttributes.h/cpp, Mesh.h/cpp,
           StaticMesh.h/cpp, StaticMeshResources.h/cpp, MeshBatch.h/cpp
  渲染:    Renderer.h/cpp, ViewMatrices.h, VertexStreamFactory.h/cpp
+ 材质:    Material.h/cpp, MaterialMgr.h/cpp                                  ★P1-E 新
+ Subsystem: CMgr.h, CShaderMgr.h/cpp                                         ★P1-H 新
  RHI:     Device.h, DX12Device.h/cpp, RHIbuffer.h/cpp, DX12RHIbuffer.h/cpp
+          Shader.h, DX12Shader.h/cpp, PipelineState.h/cpp, DX12PipelineState.h/cpp
  资源:    Resource.h/cpp, ResourceMgr.h/cpp, ResourceFactory.h/cpp,
           StreamableRenderAsset.h/cpp, Refcount.h/cpp, Object.h/cpp
  反射:    Class.h/cpp, ClassType.h
