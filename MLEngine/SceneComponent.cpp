@@ -26,12 +26,16 @@ namespace ML
 
 	FMatrix44 CSceneComponent::GetWorldMatrix() const
 	{
-		// 构造 TRS 矩阵
+		// 本地 TRS（行向量约定：p * M，故顺序 Scale→Rotation→Translation）
 		FMatrix44 TranslationMatrix = FMatrix44::MakeTranslation(Location);
 		FMatrix44 RotationMatrix = FMatrix44::MakeRotation(Rotation);
 		FMatrix44 ScaleMatrix = FMatrix44::MakeScale(Scale);
+		FMatrix44 LocalMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 
-		// 世界矩阵 = Scale * Rotation * Translation（注意顺序）
-		return ScaleMatrix * RotationMatrix * TranslationMatrix;
+		// UE: 世界变换 = 相对变换 ∘ 父级世界变换。没有父级时（root）就是它自己。
+		// 这样 AActor::SetActorTransform（只写 root）才能传导到挂在 root 下的组件。
+		return (nullptr != AttachParent)
+			? (LocalMatrix * AttachParent->GetWorldMatrix())
+			: LocalMatrix;
 	}
 }

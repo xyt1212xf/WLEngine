@@ -5,6 +5,7 @@
 #include "MaterialMgr.h"
 #include "TimerClock.h"
 #include "World.h"
+#include "ScriptPlug.h"
 
 //#include "GameController.h"
 //#include "SceneController.h"
@@ -71,6 +72,15 @@ namespace ML
 			}
 		}
 
+		CScriptPlug* scriptPlug = new CScriptPlug();
+		if (scriptPlug->Initialise())
+		{
+			mPlugs.push_back(scriptPlug);
+		}
+		else
+		{
+			SafeDelete(scriptPlug);
+		}
 		// 2) Create and start the graphics plug (which will register DefaultMaterial etc.).
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
 		mPlugs.push_back(graphicPlug);
@@ -79,6 +89,7 @@ namespace ML
 			mpWorld = new CWorld();
 			return true;
 		}
+		
 		return false;
 	}
 

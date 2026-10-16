@@ -87,6 +87,19 @@ namespace ML
 				Instance.VertexID = Face.Corners[k];
 				Instance.Normal   = Face.Normal;
 				Instance.UV0      = UVCorners[k];
+
+				// Vertex color: encode the corner octant into RGB (bit0 = +X,
+				// bit1 = +Y, bit2 = +Z) so each face gets a 4-corner color
+				// gradient and COLOR interpolation becomes visible.
+				// Without this the instance keeps its default (1,1,1,1) and the
+				// whole cube renders flat white.
+				const INT32 Corner = Face.Corners[k];
+				Instance.Color = Vec4F(
+					(Corner & 1) ? 1.0f : 0.0f,   // R: +X side
+					(Corner & 2) ? 1.0f : 0.0f,   // G: +Y side
+					(Corner & 4) ? 1.0f : 0.0f,   // B: +Z side
+					1.0f);
+
 				VI[k] = (UINT32)Desc.VertexInstances.size();
 				Desc.VertexInstances.push_back(Instance);
 			}

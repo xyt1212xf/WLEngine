@@ -65,6 +65,7 @@
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="RHIbuffer.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
+    <ClCompile Include="ScriptPlug.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="RHIbuffer.h" />
     <ClInclude Include="SceneComponent.h" />
+    <ClInclude Include="ScriptPlug.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="SolidColorShader.h" />

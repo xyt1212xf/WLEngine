@@ -224,15 +224,18 @@ CMaterialMgr (★本版: 实例类, 由 CEngine 持有)
 
 CWorld
  ├── CGameMode*                 GameMode
- ├── CLevel*                    PersistentLevel  (BuildActors 创建)
+ ├── CLevel*                    PersistentLevel  (LoadPersistentLevel 创建/持有)
  ├── TArray<CLevelStreaming*>   StreamingLevels  (AddStreamingLevel)
- ├── TArray<CActor*>            ParseActors      (解析期临时)
  └── 加载状态机 EWorldLoadState: Idle→Parsing→BuildingActors→UploadingGPU→Ready
+                                                 (失败终态: Failed)
 
 CLevel
- ├── TArray<CActor*>            Actors           (AddActor)
+ ├── TArray<CActor*>            Actors           (AddActor, 由 Load 直接填充)
  ├── TArray<CResource*>         Resources
- └── AWorldSettings*            WorldSettings    (前置声明, 未定义)
+ ├── AWorldSettings*            WorldSettings    (前置声明, 未定义)
+ ├── bool                       bLoaded          (Load/Unload 维护)
+ └── Load(FilePath, OutStreamingLevels?)
+                             (★UE ULevel::Serialize; 独立沙箱 lua_State, 读完即关)
 
 CActor
  ├── CSceneComponent*           RootComponent
@@ -275,14 +278,19 @@ CDX12RHIBuffer
     → CStaticMeshLODResources::InitResources() 创建 4 个 VB/IB 并上传 GPU
     → VertexFactory Schema 填好, BuildInputLayout 缓存 VB 视图
 
-◆ 流程 B: 世界加载管线 (状态机已通, 硬编码 Cube)
+◆ 流程 B: 世界加载管线 (状态机已通, Lua 关卡文件驱动)
   CEngine::LoadScene → CWorld::LoadAsync (线程池 threadDetach)
-    → ParseFile()      (硬编码 Cube: CStaticMesh + CActor + CStaticMeshComponent,
-                        AddMaterialSlot("Default") → CMaterialMgr::DefaultMaterial,
-                        SetVisible(true) + SetLocation(0,0,3))
-    → BuildActors()    (装进 PersistentLevel)
+    → LoadPersistentLevel()   (UE UWorld: 只负责持有 map 包里的 ULevel)
+       ├─ 创建 CLevel, 以 level 名给 World 命名
+       └─ CLevel::Load(FilePath, &StreamingDescs)   ★UE ULevel::Serialize
+            独立沙箱 lua_State (base/table/math/string) dofile 关卡文件
+            → Name / Actors[] (CActor + CStaticMeshComponent + CStaticMesh)
+            → StreamingLevels[] 回传给 CWorld (那是 UWorld 的数据)
+            读完即 lua_close, 不接触 CScriptPlug 的游戏逻辑 VM
+    → 登记 StreamingLevels → 状态 UploadingGPU
     → 主线程 TickLoad: UploadGPUResources() [空] + InitActorsForPlay() → Ready
     → CWorld::Tick: 主关卡 Actor::Tick + 组件 tick; 流送关卡 Actor::Tick
+  关卡文件格式: Run/Resource/Level/DefaultLevel.me (Lua table 字面量)
 
 ◆ 流程 C: 渲染帧循环 (★本版重写, 走 UE 材质驱动的数据流)
   初始化阶段 (主线程, CEngine::Initialise + GraphicPlug::Initialise):
@@ -354,6 +362,10 @@ CStaticVertexFactory     ↔ FLocalVertexFactory
 CDX12RHIDevice           ↔ FD3D12DynamicRHI(设备部分)
 CDX12RHIBuffer           ↔ FD3D12Buffer
 CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
+CWorld::LoadPersistentLevel ↔ UWorld 加载 map package 并持有 ULevel      ★新
+CLevel::Load             ↔ ULevel::Serialize                            ★新
+DefaultLevel.me (.me)    ↔ .umap / .uasset 的 Lua 文本形式              ★新
+FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     ★新
 (缺失)                   ↔ FPrimitiveSceneProxy / FMaterialRenderProxy / APlayerCameraManager
                           / FScene / FViewInfo / FMeshPassProcessor
 
@@ -419,8 +431,8 @@ CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
     实现, renderer 一行不用改。
 
 【问题4】CWorld 的所有权与线程安全 (正确性, 未变)
-  - CWorld::ParseFile 里 new 的 CStaticMesh/CActor/CLevel 无处释放(析构为空)。
-  - LoadAsync 后台线程 ParseFile/BuildActors 与主线程 TickLoad/Tick 无同步。
+  - CLevel::Load 里 new 的 CStaticMesh/CActor 无处释放(CActor/CLevel 析构为空)。
+  - LoadAsync 后台线程 CLevel::Load 与主线程 TickLoad/Tick 无同步。
   - 渲染线程 _Flush 读 World/FMeshBatch, 与游戏线程 Tick 并发无同步。
   - 建议: 最低限度在 LoadState 上加原子量/临界区; 析构补齐释放; 渲染数据双缓冲。
 
@@ -485,7 +497,7 @@ CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
  P1-D  ✔已完成(2026-10-11): ViewMatrices + _Flush 硬编码相机 + CollectVisibleMeshes
  P1-E  ✔已完成(2026-10-13): Material 体系 (CMaterial + CMaterialMgr + FMeshBatch
        Material 字段 + _Flush 数据驱动 + GraphicPlug 初始化时建 DefaultMaterial)
- P1-F  修问题4: 加载状态原子量 + ParseFile new 出来的对象在 CWorld 析构里释放
+ P1-F  修问题4: 加载状态原子量 + CLevel::Load new 出来的对象在 CLevel 析构里释放
  P1-G  ✔(部分) 已完成(2026-10-13, P1-I): GraphicPlug 析构释放 DefaultMaterial + VF
         仍待: CMaterial 改 TRefCountPtr (UE UMaterial refcount 模式)
  P1-H  ✔已完成(2026-10-13): CMgr 抽象基类 + CShaderMgr (包装) + CMaterialMgr (实例化)
@@ -499,7 +511,15 @@ CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
  P1-L  (待办) P1-C: FShaderParameter 抽象 — 替换硬编码 root constant MVP
  P1-M  (待办) P1-D: R4 完整化 — DepthFormat 移出 CMaterial, 归 renderer
  P1-N  (待办) P1-E: Frame allocator — 复用 _Flush 内的 Batches 容器
- P2    AttachToComponent/相对 Transform 层级, ParseFile 读 JSON 关卡(已有 json.hpp),
+ P1-O  ✔已完成(2026-10-16, 本版): 关卡加载 UE 归位 (替代蓝图的 Lua 关卡格式)
+       - 解析权从 CWorld::ParseFile 移到 CLevel::Load (ULevel::Serialize),
+         删掉 ParseActors 中间缓冲与 CWorld::BuildActors
+       - CWorld::LoadPersistentLevel 只持有 level + 登记 StreamingLevels
+         (StreamingLevels 是 UWorld 数据, 经 FStreamingLevelDesc 出参回传)
+       - 关卡文件 Run/Resource/Level/DefaultLevel.me: Lua table 字面量,
+         沙箱 lua_State (base/table/math/string), 不接触 CScriptPlug 的 VM
+       - 失败终态 EWorldLoadState::Failed, 不再被 UploadingGPU 覆盖
+ P2    AttachToComponent/相对 Transform 层级, CLevel::Load 支持 JSON 关卡(已有 json.hpp),
        Actor 序列化/反射(CClass 已有雏形),
        FPrimitiveSceneProxy 引入 (Component 3-Proxy 模式),
        FScene / FViewInfo / FMeshPassProcessor (多 pass 渲染),
@@ -514,7 +534,8 @@ CRenderer                ↔ FSceneRenderer(简化) — _Flush 已数据驱动
  运行时:  MLEngine.h/cpp, Plug.h, GraphicPlug.h/cpp, GameApp.h/cpp, Win.h/cpp,
           ThreadPool.h, TimerClock.h/cpp, Message.h
  世界:    World.h/cpp, Level.h/cpp, LevelStreaming.h/cpp, GameMode.h/cpp,
-          WorldPartition.h/cpp, WorldSet.h/cpp
+          WorldPartition.h/cpp, WorldSet.h/cpp        ★P1-O: 解析权 World→Level
+ 关卡数据: Run/Resource/Level/DefaultLevel.me (Lua table 字面量)   ★P1-O 新
  GamePlay: Actor.h/cpp, Character.h/cpp, Component.h/cpp,
           ActorComponent.h/cpp, SceneComponent.h/cpp, PrimitiveComponent.h/cpp,
           MeshComponent.h/cpp, StaticMeshComponent.h/cpp

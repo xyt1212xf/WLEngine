@@ -17,7 +17,7 @@ namespace ML
 
 	CMaterial::~CMaterial()
 	{
-		ReleaseRHI();
+		ReleasePSO();
 	}
 
 	bool CMaterial::initialise()
@@ -44,9 +44,9 @@ namespace ML
 		mDefaultInputLayout = std::move(Elements);
 	}
 
-	bool CMaterial::InitRHI(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat)
+	bool CMaterial::InitPSO(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat)
 	{
-		ReleaseRHI();
+		ReleasePSO();
 
 		// 1) Layout resolution:
 		//    priority 1: VertexFactory's layout (mesh-driven path)
@@ -95,7 +95,7 @@ namespace ML
 		return true;
 	}
 
-	void CMaterial::ReleaseRHI()
+	void CMaterial::ReleasePSO()
 	{
 		SafeDelete(PipelineState);
 		VertexShader = nullptr;

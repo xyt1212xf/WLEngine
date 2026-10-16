@@ -1,4 +1,4 @@
-#include "Quaternion.h"
+﻿#include "Quaternion.h"
 #include "Foundation.h"
 namespace ML
 {
@@ -17,7 +17,7 @@ namespace ML
 	{
 		mx *= s;
 		my *= s;
-		my *= s;
+		mz *= s;
 		mw *= s;
 		return *this;
 	}

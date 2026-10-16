@@ -17,12 +17,22 @@ namespace ML
 		const Vec3F& GetLocation() const { return Location; }
 		const CQuaternion& GetRotation() const { return Rotation; }
 		const Vec3F& GetScale() const { return Scale; }
+
+		// UE: USceneComponent::SetupAttachment / K2_AttachToComponent.
+		// Location/Rotation/Scale here are RELATIVE to AttachParent
+		// (UE: RelativeLocation / RelativeRotation / RelativeScale3D);
+		// GetWorldMatrix() composes them with every ancestor up to the root.
+		void AttachToComponent(CSceneComponent* InParent) { AttachParent = InParent; }
+		CSceneComponent* GetAttachParent() const { return AttachParent; }
+
+		// UE: USceneComponent::GetComponentTransform()
 		FMatrix44 GetWorldMatrix() const;
 
 	protected:
 		Vec3F       Location;
 		CQuaternion Rotation = CQuaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		Vec3F       Scale = Vec3F(1, 1, 1);
+		CSceneComponent* AttachParent = nullptr;
 
     };
 }

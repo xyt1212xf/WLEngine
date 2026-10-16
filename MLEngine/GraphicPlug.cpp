@@ -47,7 +47,7 @@ namespace ML
 				});
 				// InitRHI's first argument is the per-mesh VF; pass nullptr here so the material
 				// uses its own mDefaultInputLayout (boot-time path - no mesh loaded yet).
-				if (!mpDefaultMaterial->InitRHI(nullptr, DXGI_FORMAT_D32_FLOAT))
+				if (!mpDefaultMaterial->InitPSO(nullptr, DXGI_FORMAT_D32_FLOAT))
 				{
 					SafeDelete(mpDefaultMaterial);
 					return false;

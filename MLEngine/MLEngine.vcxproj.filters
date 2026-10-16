@@ -79,6 +79,9 @@
     <Filter Include="Core\Mgr">
       <UniqueIdentifier>{8b5a998f-7c27-41d2-9a1a-81b80492a4b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Plugs\Script">
+      <UniqueIdentifier>{9f585512-51ac-4ab9-a404-8b4e6d350606}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -266,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="ShaderMgr.cpp">
       <Filter>Core\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptPlug.cpp">
+      <Filter>Core\Plugs\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -508,6 +514,9 @@
     </ClInclude>
     <ClInclude Include="ShaderMgr.h">
       <Filter>Core\Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptPlug.h">
+      <Filter>Core\Plugs\Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

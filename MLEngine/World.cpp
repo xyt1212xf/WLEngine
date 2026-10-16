@@ -9,7 +9,6 @@
 #include "StaticMesh.h"
 #include "StaticMeshComponent.h"
 
-
 namespace ML
 {
 	CWorld::CWorld(const std::string& name)
@@ -35,11 +34,56 @@ namespace ML
 		LoadState = EWorldLoadState::Parsing;
 		GEngine->threadDetach([this]()
 			{
-				ParseFile();
-				BuildActors();
+				LoadPersistentLevel();
 				// GPU 上传必须主线程做，所以这里只标记
-				LoadState = EWorldLoadState::UploadingGPU;
+				if (LoadState != EWorldLoadState::Failed)
+				{
+					LoadState = EWorldLoadState::UploadingGPU;
+				}
 			});
+	}
+
+	// UE counterpart: UWorld loads the map package and takes ownership of the
+	// resulting ULevel. Deserializing the actors themselves is CLevel's job
+	// (ULevel::Serialize); the world only picks up what belongs to it - here,
+	// the streaming level declarations and the world name.
+	void CWorld::LoadPersistentLevel()
+	{
+		if (PendingFilePath.empty())
+		{
+			OutputDebugStringA("CWorld::LoadPersistentLevel: PendingFilePath is empty\n");
+			LoadState = EWorldLoadState::Failed;
+			return;
+		}
+
+		if (nullptr == PersistentLevel)
+		{
+			PersistentLevel = new CLevel();
+		}
+
+		// Streaming levels are UWorld data, but they are declared in the same map
+		// package, so CLevel::Load hands them back instead of storing them.
+		std::vector<FStreamingLevelDesc> StreamingDescs;
+		if (!PersistentLevel->Load(PendingFilePath, &StreamingDescs))
+		{
+			OutputDebugStringA(("CWorld::LoadPersistentLevel: failed to load " + PendingFilePath + "\n").c_str());
+			LoadState = EWorldLoadState::Failed;
+			return;
+		}
+
+		// UE: the world is named after the map it was loaded from.
+		if (!PersistentLevel->GetName().empty())
+		{
+			Name = PersistentLevel->GetName();
+		}
+
+		LoadState = EWorldLoadState::BuildingActors;
+
+		// UE: UWorld::StreamingLevels (ULevelStreaming) - registered, not loaded here.
+		for (const FStreamingLevelDesc& Desc : StreamingDescs)
+		{
+			AddStreamingLevel(Desc.Name, Desc.Path);
+		}
 	}
 
 	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches)
@@ -153,37 +197,6 @@ namespace ML
 			}
 		}
 		return nullptr;
-	}
-
-	void CWorld::ParseFile()
-	{
-		// P0 阶段：硬编码生成一个 Cube（后续 P2 由 ParseFile 读关卡文件替代）
-		// 注意：mesh 必须由堆对象持有（组件引用它），不能是栈上局部变量
-		CStaticMesh* CubeMesh = new CStaticMesh();
-		CubeMesh->AddMaterialSlot("Default");
-		CubeMesh->GetSourceModel(CubeMesh->AddSourceModel())->CreateCube(Vec3F(0, 0, 0), Vec3F(1, 1, 1));
-		CubeMesh->Build();
-
-		CActor* CubeActor = new CActor();
-		CStaticMeshComponent* MeshComp = CubeActor->AddComponent<CStaticMeshComponent>();
-		MeshComp->SetStaticMesh(CubeMesh);
-		MeshComp->SetVisible(true);
-		MeshComp->SetLocation(Vec3F(0, 0, 3.f));   // 放到默认相机前方
-
-		ParseActors.push_back(CubeActor);
-	}
-
-	void CWorld::BuildActors()
-	{
-		if (!PersistentLevel)
-		{
-			PersistentLevel = new CLevel();
-		}
-		for (CActor* Actor : ParseActors)
-		{
-			PersistentLevel->AddActor(Actor);
-		}	
-		ParseActors.clear();
 	}
 
 	void CWorld::InitActorsForPlay()

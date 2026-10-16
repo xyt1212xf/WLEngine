@@ -1,0 +1,81 @@
+--================================================================================
+-- DefaultLevel.me  —  关卡数据（对标 UE 的 ULevel 序列化内容）
+--
+-- 这个文件只描述"场景里有什么、在哪、用什么材质"，
+-- 逻辑写在 Run/Script/actor/*.lua，通过 Script 字段挂到 Actor 上
+-- （对标 UE 里 AActor 通过 UClass* 指向一个 Blueprint 类）。
+--
+-- 加载方式：CLevel::Load（对标 ULevel::Serialize）在一个独立的、只开了
+-- base/table/math/string 的 lua_State 里 dofile 本文件，取返回的 table，
+-- 读完即 lua_close。它不接触 CScriptPlug 的游戏逻辑 VM。
+-- CWorld::LoadPersistentLevel 只负责持有这个 level 并登记 StreamingLevels。
+--
+-- 约定：
+--   * Rotation 一律写 Euler 度（编辑器习惯，对标 UE 的 FRotator），
+--     内部转成四元数存储（对标 FTransform::Rotation）。
+--   * 材质属于 mesh 资产；组件上的 OverrideMaterials 才是覆盖（对标 UE 的
+--     UMeshComponent::OverrideMaterials）。留空则用 mesh 自己的材质槽。
+--   * Mesh.Source = "Procedural" 是 P0 权宜（还没有 .ma 资产导入器）；
+--     UE 的正确形态是 Source = "Asset" + Path 指向一个 mesh 资产。
+--================================================================================
+
+return {
+    Name = "DefaultLevel",
+
+    Actors = {
+        {
+            Name   = "Cube_01",
+            Label  = "测试立方体",
+            Script = "actor/CubeActor",     -- 逻辑类（对标 AActor 的 UClass*）
+            Tags   = { "Prop", "Static" },  -- 对标 AActor::Tags
+            Tick   = false,                 -- 对标 AActor::bCanEverTick / SetActorTickEnabled
+
+            -- 对标 AActor::SetActorTransform
+            -- 注意：bring-up 阶段的相机硬编码在原点、朝 +Z 看（Renderer::_Flush），
+            -- 所以 Location.z 必须为正在相机前方，写负数会跑到镜头背后。
+            Transform = {
+                Location = { 0, 0, 5 },
+                Rotation = { 0, 0, 0 },     -- Euler 度
+                Scale    = { 1, 1, 1 },
+            },
+
+            Components = {
+                {
+                    Type    = "StaticMesh",
+                    Visible = true,         -- 对标 USceneComponent::bVisible
+
+                    Mesh = {
+                        Source      = "Procedural",
+                        Shape       = "Cube",
+                        Center      = { 0, 0, 0 },
+                        HalfExtents = { 1, 1, 1 },
+                    },
+
+                    -- 对标 UMeshComponent::OverrideMaterials，按材质槽下标覆盖
+                    OverrideMaterials = { "Default" },
+
+                    -- 对标 USceneComponent::RelativeLocation/Rotation/Scale3D
+                    -- RelativeTransform = { Location = {0,0,0}, Rotation = {0,0,0}, Scale = {1,1,1} },
+                },
+            },
+        },
+
+        -- 资产形态示例（等 .ma 导入器接进来后启用）
+        -- {
+        --     Name = "Chair_01",
+        --     Transform = { Location = { 5, 0, 2 } },
+        --     Components = {
+        --         {
+        --             Type    = "StaticMesh",
+        --             Visible = true,
+        --             Mesh = { Source = "Asset", Path = "Resource/Mesh/Chair.ma" },
+        --         },
+        --     },
+        -- },
+    },
+
+    -- 对标 UWorld::StreamingLevels (ULevelStreaming)：这里只登记，不加载
+    StreamingLevels = {
+        -- { Name = "SubLevel", Path = "Resource/Level/SubLevel.me" },
+    },
+}

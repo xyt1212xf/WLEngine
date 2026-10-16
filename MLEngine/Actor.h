@@ -10,11 +10,36 @@ namespace ML
 	{
 	public:
 		CActor();
+		CActor(const std::string& InName);
 		virtual ~CActor();
 		virtual void Tick(float DeltaSeconds) {};
 		void SetActorLocation(const Vec3F& Pos);
 		const Vec3F& GetActorLocation() const;
 		void BeginPlay();
+
+		// ---- UE: AActor ----
+		// UE: AActor::GetRootComponent(). The root is created by the ctor as a
+		// plain CSceneComponent, exactly like AActor's default RootComponent.
+		CSceneComponent* GetRootComponent() const { return RootComponent; }
+
+		// UE: AActor::SetActorTransform(const FTransform&).
+		// The level file stores Rotation as Euler degrees (editor-style, like
+		// FRotator); memory keeps a quaternion, like FTransform::Rotation.
+		void SetActorTransform(const Vec3F& InLocation, const CQuaternion& InRotation, const Vec3F& InScale);
+
+		// UE: AActor::Tags (TArray<FName>)
+		void AddTag(const std::string& InTag);
+		const std::vector<std::string>& GetTags() const { return Tags; }
+
+		// UE: AActor::GetActorLabel() - editor display name, distinct from the
+		// internal object name (UE keeps them separate too).
+		void SetActorLabel(const std::string& InLabel);
+		const std::string& GetActorLabel() const { return Label; }
+
+		// Lua class path. Stands in for the UClass* UE resolves through
+		// AActor::GetClass(); the behaviour itself lives in Run/Script/actor/*.lua.
+		void SetLuaClass(const std::string& InClass);
+		const std::string& GetLuaClass() const { return LuaClass; }
 
 		template<class T>
 		T* AddComponent()
@@ -28,7 +53,14 @@ namespace ML
 				if (nullptr == RootComponent) 
 				{
 					RootComponent = Comp; 
-				}	
+				}
+				else
+				{
+					// UE: 非 root 的 scene component 挂到 root 下，否则
+					// AActor::SetActorTransform（只写 root）传不到它身上，
+					// 组件会永远停在原点。
+					Comp->AttachToComponent(RootComponent);
+				}
 			}
 			return Comp;
 		}
@@ -44,5 +76,8 @@ namespace ML
 	private:
 		CSceneComponent* RootComponent = nullptr;
 		std::vector<CComponent*> Components;
+		std::vector<std::string> Tags;
+		std::string Label = "";
+		std::string LuaClass = "";
 	};
 }

@@ -54,10 +54,10 @@ namespace ML
 		//   2. Material's own mDefaultInputLayout (fallback)
 		//   3. nullptr -> return false
 		// Must be called after the RHI device is ready.
-		bool InitRHI(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat);
+		bool InitPSO(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat);
 
-		// Releases RHI resources.
-		void ReleaseRHI();
+		// Releases PSO resources.
+		void ReleasePSO();
 
 		// Read-only access for the render thread.
 		CPipelineState* GetPipelineState() const { return PipelineState; }

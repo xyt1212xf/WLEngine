@@ -62,7 +62,8 @@ namespace ML
 	{
 		GEngine->Start();
 	
-		loadScene("Test");
+		// 关卡文件路径（相对工作目录 Run/）
+		loadScene("Resource/Level/DefaultLevel.me");
 		static UINT32 nNowTime = GetTickCount();
 		MSG msg = { 0 };
 

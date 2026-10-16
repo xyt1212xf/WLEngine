@@ -64,8 +64,9 @@ namespace ML
 
 		void Tick(float deltaSeconds);
 
-		void ParseFile();
-		void BuildActors();
+		// UE: UWorld loads the map package and owns the resulting ULevel.
+		// Deserializing the actors themselves is CLevel::Load (ULevel::Serialize).
+		void LoadPersistentLevel();
 		void InitActorsForPlay();
 		void UploadGPUResources();
 
@@ -80,6 +81,5 @@ namespace ML
 		std::vector<CLevelStreaming*> StreamingLevels;
 		EWorldLoadState LoadState = EWorldLoadState::Idle;
 		FOnSceneLoaded OnLoadedFunc;
-		std::vector<CActor*>	ParseActors;
 	};
 }

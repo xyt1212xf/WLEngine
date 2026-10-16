@@ -133,6 +133,7 @@ namespace ML
 		// 渲染时 IASetVertexBuffers 直接用。
 		if (VertexFactory)
 		{
+			uint32 NextSlot = 0;
 			VertexFactory->NumVertices = NumVertices;
 			auto FillStream = [](FDataStreamUnit& Unit, ID3D12Resource* Buffer, uint32 Slot, uint32 Stride, DXGI_FORMAT Format)
 				{
@@ -143,23 +144,35 @@ namespace ML
 					Unit.Format		= Format;
 					Unit.bValid		= (Buffer != nullptr);
 				};
+			std::vector<std::string> Elements;
 			if (PositionBuffer)
 			{
 				FillStream(VertexFactory->Schema.Position,
 					PositionBuffer ? PositionBuffer->GetResource() : nullptr,
-					0, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+					NextSlot++, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+				Elements.push_back("POSITION");
 			}
 			if (ColorBuffer)
 			{
 				FillStream(VertexFactory->Schema.Color,
 					ColorBuffer ? ColorBuffer->GetResource() : nullptr,
-					1, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+					NextSlot++, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+				Elements.push_back("COLOR");
 			}
-			std::vector<std::string> Elements;
-			if (PositionBuffer)	{ Elements.push_back("POSITION"); }
-			if (ColorBuffer)	{ Elements.push_back("COLOR"); }
-			if (UVBuffer)		{ Elements.push_back("TEXCOORD"); }
-			if (TangentBuffer)	{ Elements.push_back("TANGENT"); }
+			if (UVBuffer)
+			{
+				FillStream(VertexFactory->Schema.UV0,
+					UVBuffer ? UVBuffer->GetResource() : nullptr,
+					NextSlot++, sizeof(Vec2F), DXGI_FORMAT_R32G32_FLOAT);
+				Elements.push_back("TEXCOORD");
+			}
+			if (TangentBuffer)
+			{
+				FillStream(VertexFactory->Schema.Tangent,
+					TangentBuffer ? TangentBuffer->GetResource() : nullptr,
+					NextSlot++, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+				Elements.push_back("TANGENT");
+			}
 			
 			if (!Elements.empty())
 			{
@@ -170,11 +183,11 @@ namespace ML
 
 	void CStaticMeshLODResources::ReleaseResources()
 	{
-		PositionBuffer = nullptr;
-		TangentBuffer = nullptr;
-		ColorBuffer = nullptr;
-		IndexBuffer = nullptr;
-
+		SafeDelete(PositionBuffer);
+		SafeDelete(UVBuffer);
+		SafeDelete(TangentBuffer);
+		SafeDelete(ColorBuffer);
+		SafeDelete(IndexBuffer);
 		Sections.clear();
 		NumVertices = 0;
 		NumIndices = 0;
