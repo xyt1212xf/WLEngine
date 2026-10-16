@@ -25,12 +25,23 @@ namespace ML
 
 	void CActor::SetActorLocation(const Vec3F& Pos)
 	{
+		// 三个 Transform 接口统一判空：RootComponent 由构造函数保证非空，
+		// 但定位类接口不该在退化情况下直接崩。
+		if (nullptr == RootComponent)
+		{
+			return;
+		}
 		RootComponent->SetLocation(Pos);
 	}
 
 
 	const Vec3F& CActor::GetActorLocation() const
 	{
+		if (nullptr == RootComponent)
+		{
+			static const Vec3F Zero(0.0f, 0.0f, 0.0f);
+			return Zero;
+		}
 		return RootComponent->GetLocation();
 	}
 

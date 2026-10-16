@@ -44,8 +44,23 @@ namespace ML
 		template<class T>
 		T* AddComponent()
 		{
+			// T 必须能隐式转成 CComponent*（这正是下面 push_back 唯一的要求）。
+			// 用 is_convertible 而不是 is_base_of：私有/歧义继承时它也成立，
+			// 会在 push_back 处炸出几百行模板噪声，不如在这里给一句人话。
+			static_assert(std::is_convertible_v<T*, CComponent*>,
+				"AddComponent<T>: T must derive publicly and unambiguously from CComponent");
+
 			T* Comp = new T();
+			// 无条件入列：非 scene 组件（CActorComponent 子类）同样属于这个 Actor，
+			// 同样被 Tick、同样被析构接管。
 			Components.push_back(Comp);
+
+			// UE: UActorComponent::Owner。组件据此回调自己的 Actor。
+			if constexpr (std::is_convertible_v<T*, CActorComponent*>)
+			{
+				Comp->SetOwner(this);
+			}
+
 			// 编译期提问：T 是不是 CSceneComponent 的子类
 			if constexpr (std::is_convertible_v<T*, CSceneComponent*>)
 			{
