@@ -68,6 +68,9 @@ namespace ML
 			if (!Mgr->Init())
 			{
 				OutputDebugStringA(("Engine subsystem init failed: " + std::string(Mgr->GetName()) + "\n").c_str());
+				SafeDelete(pShaderMgr);
+				SafeDelete(pMaterialMgr);
+				mMgrs.clear();
 				return false;
 			}
 		}
@@ -80,6 +83,7 @@ namespace ML
 		else
 		{
 			SafeDelete(scriptPlug);
+			return false;
 		}
 		// 2) Create and start the graphics plug (which will register DefaultMaterial etc.).
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
@@ -88,6 +92,11 @@ namespace ML
 		{
 			mpWorld = new CWorld();
 			return true;
+		}
+		else
+		{
+			SafeDelete(graphicPlug);
+            return false;
 		}
 		
 		return false;

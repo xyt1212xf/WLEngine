@@ -119,7 +119,7 @@ namespace ML
 		// CStaticMeshDescription, until the .ma asset importer exists.
 		CStaticMesh* LoadMesh(lua_State* L, int MeshIdx)
 		{
-			std::string Source;
+			std::string Source = "";
 			if (TryGetField(L, MeshIdx, "Source"))
 			{
 				Source = lua_tostring(L, -1);
@@ -295,25 +295,25 @@ namespace ML
 					if (lua_istable(L, -1))
 					{
 						const int CompIdx = lua_absindex(L, -1);
-						CComponent* Comp = ParseComponent(L, CompIdx, Actor);
-						if (nullptr == Comp)
+						if (CComponent* Comp = ParseComponent(L, CompIdx, Actor))
 						{
-							lua_pop(L, 1);
-							continue;
+							// UE: USceneComponent::RelativeLocation / RelativeRotation / RelativeScale3D
+							CSceneComponent* SceneComp = dynamic_cast<CSceneComponent*>(Comp);
+							if (nullptr != SceneComp && TryGetField(L, CompIdx, "RelativeTransform"))
+							{
+								Vec3F RL;
+								CQuaternion RR;
+								Vec3F RS;
+								ReadTransform(L, -1, RL, RR, RS);
+								lua_pop(L, 1);
+								SceneComp->SetLocation(RL);
+								SceneComp->SetRotation(RR);
+								SceneComp->SetScale(RS);
+							}
 						}
-
-						// UE: USceneComponent::RelativeLocation / RelativeRotation / RelativeScale3D
-						CSceneComponent* SceneComp = dynamic_cast<CSceneComponent*>(Comp);
-						if (nullptr != SceneComp && TryGetField(L, CompIdx, "RelativeTransform"))
+						else
 						{
-							Vec3F RL;
-							CQuaternion RR;
-							Vec3F RS;
-							ReadTransform(L, -1, RL, RR, RS);
 							lua_pop(L, 1);
-							SceneComp->SetLocation(RL);
-							SceneComp->SetRotation(RR);
-							SceneComp->SetScale(RS);
 						}
 					}
 					lua_pop(L, 1);
