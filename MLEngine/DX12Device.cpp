@@ -8,19 +8,46 @@
 
 namespace ML
 {
-    static const UINT32 FrameCount = 2;
 	CDX12RHIDevice::CDX12RHIDevice()
+	: mFenceValues(FrameCount, 0)
 	{
-		for (INT32 i = 0; i < FrameCount; ++i)
-		{
-			mFenceValues.push_back(0);
-		}
 	}
 
 	CDX12RHIDevice::~CDX12RHIDevice()
 	{
+		// Tear down in reverse creation order; every ID3D12* must go before the device.
 		SafeRelease(mDepthStencil);
 		SafeRelease(mDsvHeap);
+		SafeRelease(mCommandList);
+		for (ID3D12CommandAllocator*& Allocator : mCommandAllocators)
+		{
+			SafeRelease(Allocator);
+		}
+		mCommandAllocators.clear();
+		for (ID3D12Resource*& RenderTarget : mRenderTargets)
+		{
+			SafeRelease(RenderTarget);
+		}
+		mRenderTargets.clear();
+		SafeRelease(mRtvHeap);
+		SafeRelease(mSwapChain);
+		SafeRelease(mCommandQueue);
+
+		if (mFenceEvent != nullptr)
+		{
+			CloseHandle(mFenceEvent);
+			mFenceEvent = nullptr;
+		}
+		SafeRelease(mFence);
+
+		if (mUploadFenceEvent != nullptr)
+		{
+			CloseHandle(mUploadFenceEvent);
+			mUploadFenceEvent = nullptr;
+		}
+		SafeRelease(mUploadFence);
+
+		SafeRelease(mpDevice);
 	}
 
 	bool CDX12RHIDevice::initDevice(HWND hWnd)
@@ -139,19 +166,39 @@ namespace ML
 						rtvHandle.Offset(1, mRtvDescriptorSize);
 					}
 				}
-				hr = mpDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator));
-				if (hr != S_OK)
+				// One allocator per frame in flight (see mCommandAllocators in the header).
+				mCommandAllocators.assign(FrameCount, nullptr);
+				for (UINT32 i = 0; i < FrameCount; ++i)
 				{
-					break;
+					if (FAILED(mpDevice->CreateCommandAllocator(
+						D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocators[i]))))
+					{
+						// Any single failure aborts device creation: BeginDraw would
+						// otherwise Reset() a nullptr allocator.
+						return false;
+					}
 				}
+
 				// Depth buffer (needed by the 3D pipeline PSO).
 				if (!_InitDepthBuffer())
 				{
 					break;
 				}
 			}
-			// Create the command list.
-			mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator, nullptr, IID_PPV_ARGS(&mCommandList));
+			// Everything below assumes a live device and a full allocator set. If the
+			// factory block above bailed out early, mpDevice is still null - fail cleanly
+			// instead of dereferencing it.
+			if (nullptr == mpDevice || mCommandAllocators.size() != FrameCount)
+			{
+				break;
+			}
+
+			// Create the command list, bound to the current frame's allocator.
+			if (FAILED(mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+				mCommandAllocators[mFrameIndex], nullptr, IID_PPV_ARGS(&mCommandList))))
+			{
+				break;
+			}
 
 			// Command lists are created in the recording state, but there is nothing
 			// to record yet. The main loop expects it to be closed, so close it now.
@@ -166,6 +213,22 @@ namespace ML
 				if (mFenceEvent == nullptr)
 				{
 					HRESULT_FROM_WIN32(GetLastError());
+					break;
+				}
+
+				// Upload path gets its own fence + event (see header comment).
+				if (FAILED(mpDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mUploadFence))))
+				{
+					CloseHandle(mFenceEvent);
+					mFenceEvent = nullptr;
+					break;
+				}
+				mUploadFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+				if (mUploadFenceEvent == nullptr)
+				{
+					HRESULT_FROM_WIN32(GetLastError());
+					CloseHandle(mFenceEvent);
+					mFenceEvent = nullptr;
 					break;
 				}
 			}
@@ -247,14 +310,23 @@ namespace ML
 
 	void CDX12RHIDevice::BeginDraw()
 	{
+		// Flip-model: ask the swap chain which back buffer is ours this frame
+		// instead of tracking the index by hand.
+		mFrameIndex = mSwapChain->GetCurrentBackBufferIndex();
+
+		// Wait only for the frame slot we are about to overwrite - NOT for the
+		// previous frame. With one allocator per frame the GPU may stay a frame
+		// behind while the CPU records ahead, so this rarely blocks.
 		_WaitCommandQueue();
+
 		// Reuse the memory associated with command recording.
 		// We can only reset when the associated command lists have finished execution on the GPU.
-		mCommandAllocator->Reset();
+		ID3D12CommandAllocator* Allocator = mCommandAllocators[mFrameIndex];
+		Allocator->Reset();
 
 		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 		// Reusing the command list reuses memory.
-		mCommandList->Reset(mCommandAllocator, nullptr);
+		mCommandList->Reset(Allocator, nullptr);
 
 		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			mRenderTargets[mFrameIndex],
@@ -299,12 +371,11 @@ namespace ML
 		// swap the back and front buffers
 		mSwapChain->Present(0, 0);
 
-		// 记录当前帧的 fence 值
-		mFenceValues[mFrameIndex] = mFenceValue;
-		mCommandQueue->Signal(mFence, mFenceValue);
-		mFenceValue++;
-
-		++mFrameIndex;
+		// Stamp this frame slot with the fence value the GPU will reach when it is
+		// done. BeginDraw waits on it when this slot comes round again.
+		const UINT64 FenceForThisFrame = mFenceValue++;
+		mCommandQueue->Signal(mFence, FenceForThisFrame);
+		mFenceValues[mFrameIndex] = FenceForThisFrame;
 	}
 
 
@@ -322,11 +393,15 @@ namespace ML
 	{
 		UploadList->Close();
 		ID3D12CommandList* lists[] = { UploadList };
-		mCommandQueue->ExecuteCommandLists(1, lists);
-		mCommandQueue->Signal(mFence, mFenceValue);
-		mFence->SetEventOnCompletion(mFenceValue, mFenceEvent);  // CPU 阻塞等拷贝完成
-		WaitForSingleObject(mFenceEvent, INFINITE);
-		mFenceValue++;
+		mCommandQueue->ExecuteCommandLists(1, lists);   // the queue is free-threaded
+
+		// Own fence + own event: several loading threads may upload at once, and the
+		// render thread is signalling the frame fence on the same queue concurrently.
+		const UINT64 FenceToWait = mUploadFenceValue.fetch_add(1) + 1;
+		mCommandQueue->Signal(mUploadFence, FenceToWait);
+		mUploadFence->SetEventOnCompletion(FenceToWait, mUploadFenceEvent);  // CPU 阻塞等拷贝完成
+		WaitForSingleObject(mUploadFenceEvent, INFINITE);
+
 		UploadList->Release();      // 用完即弃（或做成成员复用）
 	}
 
@@ -382,8 +457,9 @@ namespace ML
 
 	void CDX12RHIDevice::_WaitCommandQueue()
 	{
-		UINT32 waitIndex = ((mFrameIndex + 1) & 0x01);
-		const UINT64 fenceToWait = mFenceValues[waitIndex];
+		// Wait for the frame slot we are about to record into (not the previous frame).
+		// No hardcoded & 0x01 - works for any FrameCount.
+		const UINT64 fenceToWait = mFenceValues[mFrameIndex];
 
 		if (fenceToWait > 0 && mFence->GetCompletedValue() < fenceToWait)
 		{

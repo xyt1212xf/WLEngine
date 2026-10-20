@@ -86,19 +86,18 @@ namespace ML
 			return false;
 		}
 		// 2) Create and start the graphics plug (which will register DefaultMaterial etc.).
+		//    Only push into mPlugs once Initialise() succeeded - otherwise mPlugs would
+		//    keep a dangling pointer and ~CEngine would double-delete it.
 		CGraphicPlug* graphicPlug = new CGraphicPlug();
-		mPlugs.push_back(graphicPlug);
 		if (graphicPlug->Initialise())
 		{
+			mPlugs.push_back(graphicPlug);
+			graphicPlug->InitialiseDefaultMaterial();
 			mpWorld = new CWorld();
 			return true;
 		}
-		else
-		{
-			SafeDelete(graphicPlug);
-            return false;
-		}
-		
+
+		SafeDelete(graphicPlug);
 		return false;
 	}
 
