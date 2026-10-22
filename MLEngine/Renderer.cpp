@@ -16,10 +16,17 @@
 
 namespace ML
 {
+	// 可见批次的初始预留容量，省掉最初几次 2 倍扩容。
+	// 只有本文件的构造函数用到，故放在 cpp —— 头文件只描述类接口，
+	// 不暴露这种实现细节（改它也只需重编这一个 TU）。
+	// constexpr 在命名空间作用域隐含 const，具备内部链接，不会跨 TU 冲突。
+	constexpr uint32 InitialBatchReserve = 256;
+
 	CRenderer::CRenderer(CGraphicPlug* plug)
 	: mpGraphicPlug(plug)
 	{
-
+		// 一次性预留，之后每帧只 clear() 不再重新分配。
+		mVisibleBatches.reserve(InitialBatchReserve);
 	}
 
 	CRenderer::~CRenderer()
@@ -72,9 +79,10 @@ namespace ML
 		FViewMatrices ViewMatrices(View, Proj);
 
 		// 3) Collect all batches to draw (each already carries its Material*).
-		std::vector<FMeshBatch> Batches;
-		pWorld->CollectVisibleMeshes(ViewMatrices, Batches);
-		if (Batches.empty())
+		//    复用成员缓冲区：clear() 只归零 size，capacity 保留。
+		mVisibleBatches.clear();
+		pWorld->CollectVisibleMeshes(ViewMatrices, mVisibleBatches);
+		if (mVisibleBatches.empty())
 		{
 			return;
 		}
@@ -86,9 +94,9 @@ namespace ML
 		CPipelineState* CurrentPSO = nullptr;
 		ID3D12RootSignature* CurrentRS = nullptr;
 
-		for (int32 i = 0; i < Batches.size(); ++i)
+		for (int32 i = 0; i < mVisibleBatches.size(); ++i)
 		{
-			const FMeshBatch& Batch = Batches[i];
+			const FMeshBatch& Batch = mVisibleBatches[i];
 			if (nullptr == Batch.LOD
 				|| nullptr == Batch.LOD->IndexBuffer
 				|| nullptr == Batch.VertexFactory
