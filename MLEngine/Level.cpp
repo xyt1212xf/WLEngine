@@ -373,10 +373,10 @@ namespace ML
 
 		const int LevelIdx = lua_absindex(L, -1);
 
-		// UE: ULevel name
+		// UE: ULevel name (stored on CObject, which owns the name for every object)
 		if (TryGetField(L, LevelIdx, "Name"))
 		{
-			Name = lua_tostring(L, -1);
+			SetName(lua_tostring(L, -1));
 			lua_pop(L, 1);
 		}
 
@@ -446,7 +446,6 @@ namespace ML
 			SafeDelete(Actor);
 		}
 		Actors.clear();
-		Resources.clear();
 		bLoaded = false;
 	}
 
@@ -465,16 +464,6 @@ namespace ML
 		{
 			Actors.erase(item);
 		}
-	}
-
-	void CLevel::RegisterResources()
-	{
-
-	}
-
-	void CLevel::ReleaseResources()
-	{
-
 	}
 
 }

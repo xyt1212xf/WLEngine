@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Resource.h"
+#include "Object.h"
 #include "Common.h"
 #include <d3d12.h>
 
@@ -10,9 +10,13 @@ namespace ML
 	class CPipelineState;
 	class CStaticVertexFactory;
 
-	// Engine material asset (CResource subclass).
+	// Engine material asset (CObject subclass).
 	// UE counterpart: UMaterial + FMaterial (merged in P0: no per-draw parameter
 	// variants, no separate RenderProxy).
+	//
+	// UE: UMaterialInterface : UObject - materials are NOT UStreamableRenderAsset.
+	// They have no LOD/mip payload to drop, so they must not sit on the streaming
+	// facet. Naming/registry is handled by CMaterialMgr, not by the base class.
 	//
 	// Design discipline (same as UE):
 	//   1. Material knows nothing about InputLayout - the VertexFactory provides it.
@@ -27,7 +31,7 @@ namespace ML
 	//      FMaterialShaderMap, this becomes TMap<FShaderType*, TShaderRef>);
 	//      P0 keeps VSName/PSName to interface with IMPLEMENT_GLOBAL_SHADER
 	//      registration.
-	class MLENGINE_API CMaterial : public CResource
+	class MLENGINE_API CMaterial : public CObject
 	{
 	public:
 		CMaterial();
@@ -64,7 +68,10 @@ namespace ML
 		CShader* GetVertexShader() const { return VertexShader; }
 		CShader* GetPixelShader()  const { return PixelShader; }
 
-		virtual bool initialise() override;
+		// Asset-level load hook. Not overriding a base-class virtual any more:
+	// CObject has no initialise() (UE: UObject::PostLoad lives on the asset
+	// type that needs it, not on UObject).
+	virtual bool initialise();
 
 	private:
 		std::string   VSName;

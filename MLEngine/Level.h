@@ -1,12 +1,11 @@
 ﻿#pragma once
-#include "Refcount.h"
+#include "Object.h"
 #include <string>
 #include <vector>
 
 namespace ML
 {
 	class CActor;
-	class CResource;
 	class AWorldSettings;
 
 	// UE: one entry of UWorld::StreamingLevels (ULevelStreaming).
@@ -19,7 +18,7 @@ namespace ML
 		std::string Path;
 	};
 
-	class MLENGINE_API CLevel : public CRefcount
+	class MLENGINE_API CLevel : public CObject
 	{
 	public:
 		CLevel();
@@ -36,22 +35,17 @@ namespace ML
 		void RemoveActor(CActor* Actor);
 		const std::vector<CActor*>& GetActors() const { return Actors; }
 
-		// 资源管理
-		void RegisterResources();
-		void ReleaseResources();
-
 		// 状态
 		bool IsLoaded() const { return bLoaded; }
 		bool IsVisible() const { return bVisible; }
 
-		std::string GetName() const { return Name; }
-
 	protected:
-		std::string Name = "";
 		bool bLoaded = false;
 		bool bVisible = false;
 		AWorldSettings* WorldSettings;  // 关卡规则	
 		std::vector<CActor*> Actors;
-		std::vector<CResource*> Resources;
+		// UE: ULevel holds no asset array - referenced assets live in the
+		// package/asset registry, not on the level. The old CResource* vector
+		// was never populated, so it was removed rather than retyped.
 	};
 }

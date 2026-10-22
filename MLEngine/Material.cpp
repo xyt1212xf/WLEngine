@@ -11,8 +11,6 @@ namespace ML
 {
 	CMaterial::CMaterial()
 	{
-		sResType = ResourceType::Material;
-		mTypeName = "Material";
 	}
 
 	CMaterial::~CMaterial()
@@ -24,7 +22,6 @@ namespace ML
 	{
 		// Asset-level initialise stays empty: real GPU resources are created in InitRHI.
 		// Just push status to loaded here.
-		mStatus = ResourceStatus::loaded;
 		return true;
 	}
 

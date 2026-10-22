@@ -1,11 +1,13 @@
 ﻿#pragma once
-//#include "StreamableRenderAsset.h"
-#include "Resource.h"
+#include "StreamableRenderAsset.h"
 #include "RHIbuffer.h"
 namespace ML
 {
 	class CMeshAttributes;
-	class MLENGINE_API CMesh : public CResource
+
+	// UE: UStaticMesh : UStreamableRenderAsset : UObject.
+	// Meshes stream per-LOD, so they take the streaming facet; materials do not.
+	class MLENGINE_API CMesh : public CStreamableRenderAsset
 	{
 	public:
 		CMesh();

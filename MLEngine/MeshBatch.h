@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NumericLimits.h"
 #include "Matrix.h"
 namespace ML
@@ -25,7 +25,7 @@ namespace ML
 		CStaticMesh* Mesh = nullptr;
 		CStaticMeshLODResources* LOD = nullptr;
 		CStaticVertexFactory* VertexFactory = nullptr;
-		CMaterial* Material = nullptr;  // resolved from Section by Component::GetMeshBatch
+		CMaterial* Material = nullptr;  // 由 FPrimitiveSceneProxy 构造时解析（override 优先）
 
 		FMatrix44	WorldMatrix;
 		uint32		SectionIndex = 0;

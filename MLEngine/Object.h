@@ -21,8 +21,12 @@ namespace ML
 		CObject(const std::string& InName);
 		CObject(std::string&& InName) noexcept;
 		const std::string& GetName() const;
-		
-	private:
+		void SetName(const std::string& InName)
+		{
+			Name = InName;
+		}
+
+	protected:
 		std::string Name = "";
 	};
 	inline INT32 ObjectHeadSize = sizeof(FObjectHeader);
