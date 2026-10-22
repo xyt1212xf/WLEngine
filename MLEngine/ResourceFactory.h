@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Resource.h"
+#include "StreamableRenderAsset.h"
 
 namespace ML
 {
@@ -16,7 +16,7 @@ namespace ML
 		bool LoadResource(const std::string& resourceName);
 
 	private:
-		CResource* createResource(ResourceType type);
+		CStreamableRenderAsset* createResource(ResourceType type);
 	};
 
 	template<typename T>

@@ -19,9 +19,9 @@ namespace ML
 		return true;
 	}
 
-	CResource* CResourceFactory::createResource(ResourceType type)
+	CStreamableRenderAsset* CResourceFactory::createResource(ResourceType type)
 	{
-		CResource* pResource = nullptr;
+		CStreamableRenderAsset* pResource = nullptr;
 		switch (type)
 		{
 		case ResourceType::Mesh:

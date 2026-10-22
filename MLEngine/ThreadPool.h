@@ -74,6 +74,7 @@ namespace ML
 				{
 					for (;;)
 					{
+						CThreadPool::setThreadName("WorkerThread", GetCurrentThreadId());
 						std::function<void()> task;
 						{
 							std::unique_lock<std::mutex> lock(this->mQueueMutex);
