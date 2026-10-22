@@ -54,7 +54,7 @@ namespace ML
 
 	bool CEngine::Initialise(const SWindowConfig& config)
 	{
-		mbRunning = true;
+		mbRunning.store(true, std::memory_order_release);
 		mpThreadPools = new CThreadPool();
 
 		// 1) Create all CMgr subsystems. Order matters: ShaderMgr compiles all
@@ -103,7 +103,15 @@ namespace ML
 
 	bool CEngine::UnInitialise()
 	{
-		mbRunning = false;
+		// 停机顺序不能乱：
+		//   1) mbRunning = false —— 渲染线程（跑在线程池 worker 上）的
+		//      while(GEngine->IsRun()) 循环会在当前帧结束后退出。
+		//   2) 销毁线程池 —— ~CThreadPool 置 mStop 并 join 全部 worker，
+		//      这一步会一直阻塞到渲染线程把当前帧跑完并真正退出。
+		//   3) 之后才轮到 mpWorld —— 此时已经没有任何线程在读它持有的
+		//      FScene / 渲染命令队列，删除是安全的。
+		// 也就是说"等待渲染线程"这件事由线程池的 join 负责，不需要额外的忙等。
+		mbRunning.store(false, std::memory_order_release);
 		SafeDelete(mpThreadPools);
 		SafeDelete(mpWorld);
 		// Tear down plugs first (graphic plug still owns device + DefaultMaterial references).
@@ -164,7 +172,7 @@ namespace ML
 
 	bool CEngine::IsRun()
 	{
-		return mbRunning;
+		return mbRunning.load(std::memory_order_relaxed);
 	}
 
 	bool CEngine::LoadScene(const std::string& name)

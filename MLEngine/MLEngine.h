@@ -64,7 +64,10 @@ namespace ML
 		std::vector<CMgr*> mMgrs;
 		CWinPlatform mPlatform;
 		CThreadPool* mpThreadPools = nullptr;
-		bool mbRunning = false;
+
+		// 渲染线程（跑在 CThreadPool 的 worker 上）每帧读它来决定是否继续循环。
+		// 停机顺序依赖这个标志，所以它必须是原子的：主线程写、渲染线程读。
+		std::atomic<bool> mbRunning{ false };
 	};
 	inline CEngine* GEngine = nullptr;
 
