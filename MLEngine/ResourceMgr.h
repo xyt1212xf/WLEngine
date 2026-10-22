@@ -18,7 +18,7 @@ namespace ML
 			return nullptr;
 			//try
 			//{
-			//	CResource* pResource = mpFactory->createResource(type);
+			//	CStreamableRenderAsset* pResource = mpFactory->createResource(type);
 			//	T* p = dynamic_cast<T*>(pResource);
 			//	if (p != nullptr)
 			//	{

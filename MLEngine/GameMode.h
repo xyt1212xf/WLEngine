@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Refcount.h"
+#include "Object.h"
 namespace ML
 {
-	class MLENGINE_API CGameMode : public CRefcount
+	class MLENGINE_API CGameMode : public CObject 
 	{
 	public:
 		CGameMode();

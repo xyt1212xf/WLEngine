@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Refcount.h"
+#include "Object.h"
 namespace ML
 {
-	class MLENGINE_API CWorldPartition : public CRefcount
+	class MLENGINE_API CWorldPartition : public CObject
     {
     public:
         CWorldPartition();

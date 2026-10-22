@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "Refcount.h"
+#include "Object.h"
+
 namespace ML
 {
-	class MLENGINE_API CWorldSet : public CRefcount
+	class MLENGINE_API CWorldSet : public CObject
 	{
 
 	};

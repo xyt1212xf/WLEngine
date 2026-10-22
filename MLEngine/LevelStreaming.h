@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Refcount.h"
+#include "Object.h"
 namespace ML
 {
 	enum class EStreamingState : uint8
@@ -15,7 +15,7 @@ namespace ML
 	
 	using FOnLevelLoaded = std::function<void(CLevel*)>;
 	
-	class MLENGINE_API CLevelStreaming : public CRefcount
+	class MLENGINE_API CLevelStreaming : public CObject
     {
     public:	
         CLevelStreaming();

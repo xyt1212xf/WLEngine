@@ -1,10 +1,14 @@
 #pragma once
 #include <d3d12.h>
-#include "Resource.h"
+#include "Object.h"
 
 namespace ML
 { 
-	class CDX12Shader : public CResource
+	// Known deviation: UE's FShader is NOT a UObject (shaders live in
+	// FShaderMap / FShaderCodeLibrary, outside the object system). P0 keeps
+	// CDX12Shader as a CObject so it shares the engine's name/lifetime
+	// handling; revisit when the shader map moves to FShader ownership.
+	class CDX12Shader : public CObject
 	{
 	public:
 		CDX12Shader();
