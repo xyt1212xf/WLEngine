@@ -1,11 +1,14 @@
 ================================================================================
  MLEngine 类结构分析文档（mini-UE 目标）
  生成时间: 2026-10-13（本次为 UE 合规纠偏版）
+ 最后更新: 2026-10-25（P1-R: 注册多态化 + 加载状态原子量 + 资产身份字段族移除）
  范围: 仅 MLEngine 工程（不含测试/工具工程）
  本版重点: 修复 2 处架构偏差，对齐 UE 设计纪律
            ① InputLayout 归还给 CVertexFactory (UE: FVertexFactory::GetVertexDeclaration)
            ② CGraphicPlug 接管 DefaultMaterial 生命周期 (UE: GEngine->DefaultMaterial)
            ③ 在文档中固化"设计纪律" (UE conformance rules), 防止后续回退
+           ★P1-R 追加: 移除资产类型标签/UUID 字段族(UE 无之, 身份即 UClass*),
+             组件注册改多态分发(引擎不认识具体组件类型)
 ================================================================================
 
 === 设计纪律 (UE Conformance Rules, 2026-10-13 定) ===
@@ -61,11 +64,13 @@ R11. P0 简化必须明确标注 "P1/P2 升级到 XXX", 写在本文件"问题"�
  [运行时框架]   CEngine / CPlug / CGraphicPlug / CGameApp / CWinPlatform / CThreadPool
                 CMgr / CShaderMgr / CMaterialMgr      ★本版新增
  [世界/场景]    CWorld / CLevel / CLevelStreaming / CGameMode / CWorldPartition / CWorldSet
+ [渲染场景]     FScene / FPrimitiveSceneProxy / FRenderCommandQueue   ★P1-Q 新增
+                (渲染线程侧镜像; 与 [世界/场景] 的游戏线程数据严格分离)
  [GamePlay]     CActor / CCharacter / CComponent→CActorComponent→CSceneComponent→
                 CPrimitiveComponent→CMeshComponent→CStaticMeshComponent
- [资源]         CResource / CResourceMgr / CResourceFactory / CStreamableRenderAsset
-                CStaticMesh(CResource 子类)
- [材质/渲染]    CMaterial(CResource 子类, 资产+PSO 持有者)
+ [资源]         CStreamableRenderAsset(纯切面, 无字段) / CMesh / CStaticMesh
+                ★P1-R: 类型标签/UUID 字段族与 ResourceFactory/ResourceMgr 空壳已删
+ [材质/渲染]    CMaterial(CObject 子类, 资产+PSO 持有者)                       ★P1-R 改
                 CMaterialMgr(CMgr 子类, 实例, 由 CEngine 持有)
  [Shader]       CGlobalShader(已存在, 静态注册)
                 CShaderMgr(CMgr 子类, 实例, 包装 CGlobalShaderMap, 由 CEngine 持有)
@@ -82,36 +87,48 @@ R11. P0 简化必须明确标注 "P1/P2 升级到 XXX", 写在本文件"问题"�
 
 【CRefcount 系】(引用计数根)
 CRefcount
-├── CObject                      (对象基类: Name; UE UObject 对标)
+├── CObject                      (对象基类: Name/SetName; UE UObject 对标)
 │   ├── CActor                   (演员: RootComponent + Components + Tick/BeginPlay)
 │   │   │                          SetActorLocation 已改为驱动 RootComponent (UE 同款)
 │   │   └── CCharacter           (角色空壳; UE ACharacter)
 │   ├── CStaticMeshDescription   (LOD 源数据: 持 FMeshDescription; UE FStaticMeshSourceModel)
-│   └── CStreamableRenderAsset   (空壳; UE UStreamableRenderAsset)
-├── CResource                    (资源基类: UUID/状态/类型; ResourceType 枚举)
-│   ├── CWorld                   (世界: 异步加载状态机 + Tick + 流送关卡管理; UE UWorld*)
-│   ├── CMesh                    (网格资源基类: 一对 VB/IB 指针)
-│   │   └── CStaticMesh          (静态网格: SourceModels/RenderData/MaterialSlots; UE UStaticMesh)
-│   └── CMaterial                (★新: 材质资产, 持有 VS/PS/PSO; UE UMaterial)
-├── CLevel                       (关卡: Actors 数组; UE ULevel)
-├── CLevelStreaming              (流送关卡: 状态机; UE ULevelStreaming)
-├── CGameMode                    (空壳; UE AGameModeBase)
-├── CWorldPartition              (空壳; UE UWorldPartition)
-├── CWorldSet                    (空壳)
+│   ├── CWorld                   (世界: 异步加载状态机(★P1-R: atomic) + Tick + 流送
+│   │                             关卡管理; UE UWorld*)
+│   ├── CLevel                   (关卡: Actors 数组; UE ULevel)
+│   ├── CLevelStreaming          (流送关卡: 状态机; UE ULevelStreaming)
+│   ├── CGameMode                (空壳; UE AGameModeBase)
+│   ├── CWorldPartition          (空壳; UE UWorldPartition)
+│   ├── CWorldSet                (空壳)
+│   ├── CMaterial                (材质资产, 持有 VS/PS/PSO; UE UMaterialInterface)
+│   │                             ★P1-R: 从 CResource 改挂 CObject
+│   ├── CDX12Shader              (已知偏离: UE FShader 非 UObject, P0 暂挂对象系统)
+│   └── CStreamableRenderAsset   (纯切面, 无任何字段; UE UStreamableRenderAsset)
+│                                 ★P1-R: 身份即类本身(UE 无类型标签, IsA<T> 判型)
+│       └── CMesh                (网格资源基类: 一对 VB/IB 指针)
+│           └── CStaticMesh      (静态网格: SourceModels/RenderData/MaterialSlots; UE UStaticMesh)
 └── CDX12RHIBuffer               (DX12 缓冲: ID3D12Resource + UploadBuffer)
    └── CRHIBuffer               (⚠ "问题1": 继承方向反了, 用户决定不改)
 
 【CComponent 系】(本次重构核心，已完全对齐 UE 的五层链)
 CNonCopyable                    (删除拷贝/赋值的空基类)
-└── CComponent                  (组件基类: tick + 名字; UE UActorComponent 的"组件"语义)
+└── CComponent                  (组件基类: tick + 名字 + RegisterComponentWithWorld
+                                 虚注册入口★P1-R; UE UActorComponent 的"组件"语义)
     └── CActorComponent         (Actor 组件层; ★P1-P: GetOwner()/SetOwner() 反向指针
                                  (friend CActor, 裸指针不参与所有权); UE UActorComponent::Owner)
         └── CSceneComponent     (★Transform 归宿: Location/Rotation/Scale + AttachParent
-                                 + GetWorldMatrix(逐级乘父级); UE USceneComponent)
-            └── CPrimitiveComponent (可视基类; UE UPrimitiveComponent)
+                                 + GetWorldMatrix(逐级乘父级)
+                                 + RenderProxyId(0=未注册) + PushSceneCommand
+                                 + MarkRenderTransformDirty (改 Transform 即投递渲染命令);
+                                 UE USceneComponent)
+            └── CPrimitiveComponent (可视基类: bVisible + SetVisible 投递可见性;
+                                 ★P1-R 新: CreateSceneProxy() 上提为虚函数(基类返
+                                 nullptr) + RegisterComponentWithWorld() 覆写
+                                 (建 proxy 后投递 AddPrimitive);
+                                 UE UPrimitiveComponent)
                 └── CMeshComponent  (网格基类; UE UMeshComponent)
-                    └── CStaticMeshComponent (静态网格组件: GetMeshBatch 填 batch;
-                                               UE UStaticMeshComponent)
+                    └── CStaticMeshComponent (★P1-Q 改: CreateSceneProxy() override
+                                 取代 GetMeshBatch(); 一次性快照给渲染线程;
+                                 UE UStaticMeshComponent)
 
 【CPlug 系】(插件 + 单例)
 CPlug                           (插件基类)
@@ -163,7 +180,8 @@ CRenderer                        (渲染器: 渲染线程 _Draw/_Begin/_Flush/_E
                                  ★已改为纯数据驱动, 内部不再 new 任何东西)
 CGameApp                         (应用入口: entry/run)
 CWinPlatform                     (Win32 窗口)
-CResourceMgr / CResourceFactory  (资源管理/工厂)
+CResourceMgr / CResourceFactory  (★P1-R 已删: 无调用方的空壳, 随类型标签字段族移除;
+                                 WLEngine 旧工程里的同名类不受影响)
 CMaterialMgr                     (★新: 全局材质表 + DefaultMaterial; UE FMaterialResourceMap 简化)
 CStaticMeshLODResources          (LOD 渲染数据, 无基类; UE FStaticMeshLODResources)
 CTimerClock                      (单帧计时)
@@ -227,12 +245,26 @@ CWorld
  ├── CGameMode*                 GameMode
  ├── CLevel*                    PersistentLevel  (LoadPersistentLevel 创建/持有)
  ├── TArray<CLevelStreaming*>   StreamingLevels  (AddStreamingLevel)
+ ├── FScene                     Scene            (★P1-Q 新: 渲染线程侧的图元集合)
+ ├── FRenderCommandQueue        RenderCommands   (★P1-Q 新: 游戏线程→渲染线程)
  └── 加载状态机 EWorldLoadState: Idle→Parsing→BuildingActors→UploadingGPU→Ready
                                                  (失败终态: Failed)
 
+FScene / FPrimitiveSceneProxy / FRenderCommandQueue  (★P1-Q 新, Scene.h)
+ ├── FPrimitiveSceneProxy  渲染线程侧的组件镜像; 游戏线程一次性快照构造,
+ │                         之后只有渲染线程读写。快照: WorldMatrix / Mesh /
+ │                         LOD / VertexFactory / Material(构造时已解析) / Element
+ │                         → GetMeshBatch() 展开成绘制批次
+ ├── FScene                Proxies(vector, 遍历顺序稳定) + IndexById(O(1) 查 id)
+ │                         AddPrimitive(按 id 幂等) / RemovePrimitive /
+ │                         SetTransform / SetVisibility / Release
+ └── FRenderCommandQueue  Enqueue(持锁 push) + Drain(swap 后**在锁外**执行,
+                          游戏线程只在交换瞬间被阻塞)
+
 CLevel
  ├── TArray<CActor*>            Actors           (AddActor, 由 Load 直接填充)
- ├── TArray<CResource*>         Resources
+ │                              ★P1-R: 原 TArray<CResource*> Resources 已删
+ │                              (UE ULevel 不持资产数组; 该函数从未被填充)
  ├── AWorldSettings*            WorldSettings    (前置声明, 未定义)
  ├── bool                       bLoaded          (Load/Unload 维护)
  └── Load(FilePath, OutStreamingLevels?)
@@ -313,10 +345,13 @@ CDX12RHIBuffer
   帧循环 (渲染线程, CRenderer::_Draw):
     _Begin  → CDX12RHIDevice::BeginDraw
     _Flush  → 计算 View/Proj
-              → pWorld->CollectVisibleMeshes(View, OutBatches)
-                (遍历 Actor→CStaticMeshComponent::GetMeshBatch
-                 → OutBatch.Material = Mesh->GetMaterialForSection(SectionIndex)
-                   其中 GetMaterialForSection 走 GEngine->GetMaterialMgr()->GetDefaultMaterial)
+              → pWorld->CollectVisibleMeshes(View, OutBatches)     ★P1-Q 改
+                1) RenderCommands.Drain(Scene)  —— 帧首执行游戏线程投递的命令
+                   (AddPrimitive / SetTransform / SetVisibility)
+                2) Scene.CollectVisibleMeshes(View, OutBatches)
+                   —— 遍历 FPrimitiveSceneProxy → GetMeshBatch()
+                渲染线程从此只碰 FScene / FPrimitiveSceneProxy,
+                不再读 PersistentLevel 里的 CActor / CComponent。
               → 遍历 Batches:
                  PSO = Batch.Material->GetPipelineState()
                  (PSO 变化时才切 SetPipelineState + SetGraphicsRootSignature)
@@ -325,10 +360,29 @@ CDX12RHIBuffer
                  DrawIndexedInstanced
     _End    → CDX12RHIDevice::EndDraw
 
-  关引擎 (CEngine::UnInitialise):
-    1. 删 World
-    2. 删 Plugs (graphic plug → device + default material)
-    3. 反向遍历 mMgrs: Shutdown + delete (materialMgr 先, shaderMgr 后)
+  注册/更新路径 (游戏线程 → 渲染线程)                        ★P1-Q 新
+    InitActorsForPlay (主线程 TickLoad):
+      Actor->BeginPlay()  →  每个 CStaticMeshComponent::CreateSceneProxy()
+                             (先 AllocateSceneProxyId 拿到 id, 保证随后投递的
+                              SetTransform 一定排在 AddPrimitive 之后 —— 命令 FIFO)
+                          →  EnqueueRenderCommand(Scene.AddPrimitive(Proxy))
+    CSceneComponent::SetLocation/Rotation/Scale
+                          →  MarkRenderTransformDirty()
+                             (世界矩阵在**游戏线程**算好后按值捕获, 渲染线程
+                              拿到的是快照, 不会读到写了一半的矩阵)
+    CPrimitiveComponent::SetVisible
+                          →  投递 Scene.SetVisibility(Id, ...)
+    RenderProxyId == 0 (未注册) 或 GEngine 不存在时命令直接丢弃,
+    这覆盖了构造期和 worker 线程 CLevel::Load 期间改 Transform 的情况。
+
+  关引擎 (CEngine::UnInitialise):                            ★P1-Q 改
+    1. mbRunning = false (atomic)
+    2. 删线程池 —— ~CThreadPool 置 mStop 并 join 全部 worker,
+       这一步会阻塞到渲染线程的 while(IsRun()) 循环真正退出。
+       "等渲染线程"由 join 负责, 不需要额外忙等。
+    3. 删 World —— 此时已无线程读它的 FScene, CWorld 析构里 Scene.Release()
+    4. 删 Plugs (graphic plug → device + default material)
+    5. 反向遍历 mMgrs: Shutdown + delete (materialMgr 先, shaderMgr 后)
 
   注: _Flush 内不再出现 new / CSolidColorVS / CPipelineState / GetShader<>,
       全部数据由 FMeshBatch.Material 提供 (UE 同款 FMeshPassProcessor 思路简化版)。
@@ -348,13 +402,14 @@ CWorldPartition          ↔ UWorldPartition
 CActor                   ↔ AActor
 CCharacter               ↔ ACharacter
 CComponent               ↔ UActorComponent (组件语义: tick + 名字)
+                         RegisterComponentWithWorld ↔ 同名虚函数            ★P1-R 新
 CActorComponent          ↔ UActorComponent (归属层: Owner/GetOwner)          ★P1-P 新
 CSceneComponent          ↔ USceneComponent (Transform + AttachParent)       ★P1-P 改
-CPrimitiveComponent      ↔ UPrimitiveComponent
+CPrimitiveComponent      ↔ UPrimitiveComponent (CreateSceneProxy 虚函数)    ★P1-R 改
 CMeshComponent           ↔ UMeshComponent
 CStaticMeshComponent     ↔ UStaticMeshComponent
 CObject                  ↔ UObject
-CResource                ↔ UObject(资源语义)
+CStreamableRenderAsset   ↔ UStreamableRenderAsset (纯切面, 无成员)      ★P1-R 改
 CStaticMesh              ↔ UStaticMesh
 FStaticMaterialSlot      ↔ FStaticMaterial (UE StaticMesh.h)   ★新
 CMaterial                ↔ UMaterial + FMaterial (合并 P0)     ★新
@@ -374,8 +429,12 @@ CWorld::LoadPersistentLevel ↔ UWorld 加载 map package 并持有 ULevel      
 CLevel::Load             ↔ ULevel::Serialize                            ★新
 DefaultLevel.me (.me)    ↔ .umap / .uasset 的 Lua 文本形式              ★新
 FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     ★新
-(缺失)                   ↔ FPrimitiveSceneProxy / FMaterialRenderProxy / APlayerCameraManager
-                          / FScene / FViewInfo / FMeshPassProcessor
+FPrimitiveSceneProxy     ↔ FPrimitiveSceneProxy (渲染线程镜像)              ★P1-Q 新
+FScene                   ↔ FScene (渲染线程拥有的场景状态)                  ★P1-Q 新
+FRenderCommandQueue      ↔ ENQUEUE_RENDER_COMMAND / FRenderCommandFence     ★P1-Q 新
+AllocateSceneProxyId     ↔ FPrimitiveSceneId / 图元 id 分配                 ★P1-Q 新
+(缺失)                   ↔ FMaterialRenderProxy / APlayerCameraManager
+                          / FViewInfo / FMeshPassProcessor
 
 六、当前设计问题（按严重度排序）
 --------------------------------------------------------------------------------
@@ -396,7 +455,7 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
                    Position/Tangent/Color/Index 四个 buffer 真实上传 GPU 完成。
 
 【已解决·P1-E】Material 体系已落地 (2026-10-13):
-                   - CMaterial: CResource 子类, 持有 VS/PS/PSO, InitRHI 在引擎初始化时
+                   - CMaterial: ★P1-R 改 CObject 子类, 持有 VS/PS/PSO, InitRHI 在引擎初始化时
                    - CMaterialMgr: 实例类, 继承 CMgr, 由 CEngine 持有
                    - FMeshBatch 加 Material* 字段, GetMeshBatch 按 Section 解析
                    - CRenderer::_Flush 纯数据驱动, 零 new / 零 shader 名字硬编码
@@ -429,7 +488,8 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
 
 【架构决策·图形API层统一约定 (2026-10-11 定)】
   所有图形API相关类统一采用 "C抽象类 : CDX12具体类" 方向:
-    CShader : CDX12Shader : CResource, CRHIBuffer : CDX12RHIBuffer
+    CShader : CDX12Shader : CObject, CRHIBuffer : CDX12RHIBuffer
+    (★P1-R: CDX12Shader 由 CResource 改挂 CObject, 标注为已知偏离)
     CPipelineState : CDX12PipelineState (新增, 同模式)
   将来换 API 用宏在编译期切换基类 (如切到 COpenGLShader)。
   (UE 是"抽象基类 + 实现子类", 方向相反; 用户明确选择不改)
@@ -445,15 +505,36 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
     ID3D12PipelineState)。这意味着将来切到 Vulkan/Vulkan_RHI 只需替换 DX12 类
     实现, renderer 一行不用改。
 
-【问题4】CWorld 的所有权与线程安全 (正确性, 未变)
+【问题4】CWorld 的所有权与线程安全 (正确性, ★P1-Q 已解决一半)
   - CLevel::Load 里 new 的 CStaticMesh/CActor 无处释放(CActor/CLevel 析构为空)。
+    ↑ 这条仍未解决 (P1-F 后半)。
   - LoadAsync 后台线程 CLevel::Load 与主线程 TickLoad/Tick 无同步。
-  - 渲染线程 _Flush 读 World/FMeshBatch, 与游戏线程 Tick 并发无同步。
-  - 建议: 最低限度在 LoadState 上加原子量/临界区; 析构补齐释放; 渲染数据双缓冲。
+    ★P1-R 已修(2026-10-25): LoadState 改 std::atomic<EWorldLoadState>;
+    worker 的 store 兼作"发布", 主线程 TickLoad 读到 UploadingGPU 时
+    PersistentLevel/Actors 必然已可见, InitActorsForPlay 无需加锁。
+  - ✔已解决: "渲染线程 _Flush 读 World/FMeshBatch, 与游戏线程 Tick 并发无同步"
+    —— FScene + FPrimitiveSceneProxy + FRenderCommandQueue 已落地, 渲染线程
+    现在只读 FScene, 不再遍历游戏线程所有的 CActor / CComponent。
+  - ★P1-Q 引入的新缺口 (按严重度):
+    (1) ✔已修(组件级): ~CPrimitiveComponent 已投递 RemovePrimitive(id),
+        组件销毁会注销自己的 proxy。仍待: 关卡卸载/重载的成批注销接线 ——
+        ★P1-R 已新增 FScene::RemovePrimitives(批量注销, 标记-压缩实现,
+        保持遍历顺序稳定; 注意不能"边删边查", erase 后下标整体失效),
+        供"卸关卡一条命令注销全部 proxy"用, 调用方待接。
+    (2) 仍待: CreateSceneProxy() 每次调用都分配新 id —— AddPrimitive 只按 id
+        幂等, 新 id 意味着旧 proxy 永远泄漏。关卡重载时需与 (1) 的批量注销
+        配合才能堵住。
+    (3) SetStaticMesh / SetOverrideMaterial 之后没有 MarkRenderStateDirty,
+        proxy 里的材质是建 proxy 那一刻定死的, 改了不生效。UE 有这个。
+    (4) 渲染线程的 drain 时机隐式依赖 _Flush 里 IsReady() 的提前 return,
+        加载期间命令会短暂堆积(量极小, 无害)。
 
 【问题5→已部分解决】GetMeshBatch 硬编码 LOD0/Section0
   旧: 完全硬编码, 不查 Section.MaterialIndex。
   现: Section 仍固定 0, 但已经从 Section[0].MaterialIndex 查到了 CMaterial* 填到 batch。
+       ★P1-Q: 这段已搬到 FPrimitiveSceneProxy 构造里 —— 材质在建 proxy 那一刻
+       一次性解析(override 优先), 渲染线程不再需要知道 override 规则。
+       代价: 之后改 SetOverrideMaterial 不会同步到 proxy(见问题4-(3))。
        LOD 切换仍是 P2; 同一 LOD 内的多 section 遍历也是 P2。
   (Multi-section / multi-material cube 出屏时再补, 不影响当前 P0 调试。)
 
@@ -492,11 +573,16 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
             改为复用成员, 避免每帧分配。
 
 【P2 待办 (UE 体系升级, 大块架构)】
-  (f) FPrimitiveSceneProxy — CStaticMeshComponent::CreateSceneProxy()
-      在渲染线程建 FStaticMeshSceneProxy, 由 proxy 而非 component
-      产出 FMeshBatch (这是 R12 拆分, UE 同款 Component 3-Proxy 模式)。
-  (g) FScene / FViewInfo — 抽离 FScene, FView, FViewFamily; renderer
-      不再直接持 CWorld, 持 FScene。
+  (f) ✔已完成(2026-10-22, P1-Q): FPrimitiveSceneProxy —
+      CStaticMeshComponent::CreateSceneProxy() 建 proxy, 由 proxy 而非
+      component 产出 FMeshBatch (R12 拆分, Component 3-Proxy 模式)。
+      注意: 与 UE 略有差异 —— UE 的 proxy 在**渲染线程**构造, 这里是
+      游戏线程一次性快照后把所有权交给渲染线程, 因为 mini 阶段
+      CStaticMesh 还没有 UStaticMesh 那样的引用计数保活。
+  (g) ✔(部分) 已完成(2026-10-22, P1-Q): FScene 已抽离, CWorld 持有 FScene;
+      renderer 经 CWorld::CollectVisibleMeshes 间接访问它。
+      仍待: FView / FViewFamily (目前 ViewMatrices 在 _Flush 里硬编码算),
+      renderer 直接持 FScene 而非 CWorld。
   (h) FMeshPassProcessor — 抽离多个 MeshPassProcessor (BasePass,
       ShadowDepth, DepthOnly, ...), 各自把 FMeshBatch 转 FMeshDrawCommand。
   (i) FMaterialShaderMap — material 持 TMap<FShaderType*, TShaderRef>,
@@ -512,7 +598,8 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
  P1-D  ✔已完成(2026-10-11): ViewMatrices + _Flush 硬编码相机 + CollectVisibleMeshes
  P1-E  ✔已完成(2026-10-13): Material 体系 (CMaterial + CMaterialMgr + FMeshBatch
        Material 字段 + _Flush 数据驱动 + GraphicPlug 初始化时建 DefaultMaterial)
- P1-F  修问题4: 加载状态原子量 + CLevel::Load new 出来的对象在 CLevel 析构里释放
+ P1-F  ✔(部分) 已完成(2026-10-25, P1-R): 加载状态原子量已修
+       仍待: CLevel::Load new 出来的对象在 CLevel 析构里释放 (问题4 第 1 条)
  P1-G  ✔(部分) 已完成(2026-10-13, P1-I): GraphicPlug 析构释放 DefaultMaterial + VF
         仍待: CMaterial 改 TRefCountPtr (UE UMaterial refcount 模式)
  P1-H  ✔已完成(2026-10-13): CMgr 抽象基类 + CShaderMgr (包装) + CMaterialMgr (实例化)
@@ -541,16 +628,43 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
        - AddComponent<T> 自动把非 root 的 scene 组件挂到 RootComponent
        - RootComponent 判空统一 (SetActorLocation/GetActorLocation/SetActorTransform)
        - AddComponent<T> 加 static_assert(is_convertible<T*, CComponent*>)
+ P1-Q  ✔已完成(2026-10-22, 本版): Component 3-Proxy + FScene + 渲染命令队列
+       - 新增 Scene.h/cpp: FPrimitiveSceneProxy / FScene / FRenderCommandQueue
+         / AllocateSceneProxyId (对标 UE 三件套)
+       - CWorld 持 FScene + FRenderCommandQueue; CollectVisibleMeshes 改成
+         "先 Drain 再收集", 渲染线程不再读 CActor / CComponent
+       - CStaticMeshComponent::GetMeshBatch → CreateSceneProxy (一次性快照)
+       - SetLocation/Rotation/Scale → MarkRenderTransformDirty (世界矩阵在
+         游戏线程算好按值投递); SetVisible → 投递 SetVisibility
+       - RenderProxyId == 0 (未注册) 时命令丢弃, 覆盖构造期/加载期
+       - mbRunning 改 atomic; UnInitialise 停机顺序: 标志→线程池 join→删 World
+       - 遗留 (见问题4): 重复建 proxy 泄漏 / 材质改了不同步
+ P1-R  ✔已完成(2026-10-25, 本版): 注册多态化 + 加载状态原子量 + 资产身份字段族移除
+       - CComponent 加虚注册入口 RegisterComponentWithWorld(CWorld*)
+         (UE: UActorComponent 同名虚函数; 挂 CComponent 是因为它是 Actor
+         组件列表的元素类型)。CPrimitiveComponent 覆写: 调 CreateSceneProxy()
+         后投递 AddPrimitive。
+       - CreateSceneProxy() 从 CStaticMeshComponent 上提为 CPrimitiveComponent
+         的虚函数 (基类返 nullptr)。CWorld::InitActorsForPlay 删掉
+         dynamic_cast<CStaticMeshComponent*> 扫描, 改成纯多态分发 ——
+         引擎不再认识具体组件类型, 新增可绘制组件时 CWorld 一行不用改
+       - LoadState 改 std::atomic<EWorldLoadState> (修问题4 的线程安全项)
+       - FScene::RemovePrimitives 批量注销: 标记-压缩实现, 保序;
+         修掉初版"边删边查用陈旧下标"(会删错对象/越界) 的问题
+       - 删除 ResourceType/ResourceStatus/sResType/mTypeName/mUUID 字段族
+         (UE 无类型标签: 身份即类本身, 运行时 IsA<T> 判型);
+         连同无调用方的 CResourceFactory/CResourceMgr 空壳一并移除;
+         CStreamableRenderAsset 回归"纯切面"(无任何成员)
  P2    AttachToComponent 任意层级 + Detach + RemoveComponent + 环检测,
        CLevel::Load 支持 JSON 关卡(已有 json.hpp),
        Actor 序列化/反射(CClass 已有雏形),
-       FPrimitiveSceneProxy 引入 (Component 3-Proxy 模式),
-       FScene / FViewInfo / FMeshPassProcessor (多 pass 渲染),
+       FView / FViewFamily / FViewInfo, FMeshPassProcessor (多 pass 渲染),
        FMaterialShaderMap (per-material shader 变体),
        Multi-section / multi-material mesh (LOD 切换 + Section 遍历)
  P3    CLevelStreaming 真实现(距离触发加载), WorldPartition 做空间划分
  P4    CGameMode / PlayerController / 输入(SEvent 已有) / CCameraComponent
- P5    视锥剔除 + FScene 引入 + FPrimitiveSceneProxy (按 mesh 边界 / section 分桶)
+ P5    视锥剔除 (FScene::CollectVisibleMeshes 里的 View 参数已备好, 目前 (void) 丢弃;
+       按 LOD Bounds 做剔除 + 按材质聚类减少 PSO 切换)
 
 八、文件 → 职责 索引（按目录内平铺）
 --------------------------------------------------------------------------------
@@ -568,12 +682,13 @@ FStreamingLevelDesc      ↔ ULevelStreaming 的声明项                     �
           StaticMeshDescription.h/cpp, StaticMeshAttributes.h/cpp, Mesh.h/cpp,
           StaticMesh.h/cpp, StaticMeshResources.h/cpp, MeshBatch.h/cpp
  渲染:    Renderer.h/cpp, ViewMatrices.h, VertexStreamFactory.h/cpp
+ 场景:    Scene.h/cpp (FPrimitiveSceneProxy / FScene / FRenderCommandQueue)  ★P1-Q 新
  材质:    Material.h/cpp, MaterialMgr.h/cpp                                  ★P1-E 新
  Subsystem: CMgr.h, CShaderMgr.h/cpp                                         ★P1-H 新
  RHI:     Device.h, DX12Device.h/cpp, RHIbuffer.h/cpp, DX12RHIbuffer.h/cpp
           Shader.h, DX12Shader.h/cpp, PipelineState.h/cpp, DX12PipelineState.h/cpp
- 资源:    Resource.h/cpp, ResourceMgr.h/cpp, ResourceFactory.h/cpp,
-          StreamableRenderAsset.h/cpp, Refcount.h/cpp, Object.h/cpp
+ 资源:    StreamableRenderAsset.h/cpp(纯切面, 无成员), Refcount.h/cpp, Object.h/cpp
+          ★P1-R: Resource.h/cpp, ResourceMgr, ResourceFactory 均已删(无调用方空壳)
  反射:    Class.h/cpp, ClassType.h
  容器/内存: Array.h, ContainersFwd.h, ContainerAllocationPolicies.h/cpp,
           MemoryBase.h/cpp, MallocAnsi.h/cpp, UnrealMemory.h/cpp, UnrealTemplate.h,

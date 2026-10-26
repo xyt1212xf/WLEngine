@@ -638,9 +638,6 @@
     <ClInclude Include="Win.h">
       <Filter>Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="EntityFactory.h">
       <Filter>Entity</Filter>
     </ClInclude>
@@ -1221,9 +1218,6 @@
     </ClCompile>
     <ClCompile Include="Win.cpp">
       <Filter>Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="EntityFactory.cpp">
       <Filter>Entity</Filter>

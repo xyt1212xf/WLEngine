@@ -1,7 +1,6 @@
-#include "StaticMeshComponent.h"
+﻿#include "StaticMeshComponent.h"
 #include "StaticMeshResources.h"
-#include "ViewMatrices.h"
-#include "MeshBatch.h"
+#include "Scene.h"
 #include "StaticMesh.h"
 namespace ML
 {
@@ -16,28 +15,22 @@ namespace ML
 
 	}
 
-	void CStaticMeshComponent::GetMeshBatch(FMeshBatch& OutBatch, const FMatrix44& InViewProj) const
+	FPrimitiveSceneProxy* CStaticMeshComponent::CreateSceneProxy()
 	{
-		if (!StaticMesh || !bVisible)
+		// 网格没烘好（LOD / VertexFactory 为空）时不注册；proxy 内部也会
+		// 再判一次，这里提前挡掉只是为了不白分配一个 id。
+		if (nullptr == StaticMesh
+			|| nullptr == StaticMesh->GetRenderData(0)
+			|| nullptr == StaticMesh->GetVertexFactory(0))
 		{
-			return;
+			return nullptr;
 		}
-		CStaticMeshLODResources* LOD = StaticMesh->GetRenderData(0);
-		const FStaticMeshSection& Section = LOD->Sections[0];
 
-		OutBatch.Mesh = StaticMesh;
-		OutBatch.LOD = LOD;
-		OutBatch.VertexFactory = StaticMesh->GetVertexFactory(0);
-		OutBatch.WorldMatrix = GetWorldMatrix();
-		OutBatch.SectionIndex = 0;
-		OutBatch.Element.FirstIndex = Section.FirstIndex;
-		OutBatch.Element.NumIndices = Section.NumTriangles * 3;
-		// UE: the component's OverrideMaterials wins; otherwise fall back to the
-		// mesh asset's own material slot. The renderer never deals with names.
-		OutBatch.Material = GetOverrideMaterial(OutBatch.SectionIndex);
-		if (nullptr == OutBatch.Material)
-		{
-			OutBatch.Material = StaticMesh->GetMaterialForSection(OutBatch.SectionIndex);
-		}
+		// id 必须在游戏线程这边先拿到：渲染命令是 FIFO 的，保证随后投递的
+		// SetTransform / SetVisibility 一定排在 AddPrimitive 之后。
+		RenderProxyId = AllocateSceneProxyId();
+
+		// 快照发生在游戏线程；返回后这份数据的所有权归渲染线程的 FScene。
+		return new FPrimitiveSceneProxy(RenderProxyId, this);
 	}
 }

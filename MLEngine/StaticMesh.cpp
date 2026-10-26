@@ -8,6 +8,9 @@ namespace ML
 {
 	CStaticMesh::CStaticMesh()
 	{
+		// UE: no type tag - the class IS the type (UClass*). See
+		// CStreamableRenderAsset header for why the old tag/UUID fields
+		// were removed.
 	}
 
 	CStaticMesh::~CStaticMesh()
@@ -81,10 +84,10 @@ namespace ML
 		return RenderData[LODIndex];
 	}
 
-	int32 CStaticMesh::AddMaterialSlot(const std::string& Name)
+	int32 CStaticMesh::AddMaterialSlot(const std::string& InName)
 	{
 		FStaticMaterialSlot Slot;
-		Slot.Name = Name;
+		Slot.Name = InName;
 		Slot.Material = GEngine ? GEngine->GetMgr<CMaterialMgr>()->GetDefaultMaterial() : nullptr;
 		MaterialSlots.push_back(Slot);
 		return (int32)MaterialSlots.size() - 1;

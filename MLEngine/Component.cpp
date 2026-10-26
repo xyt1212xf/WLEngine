@@ -1,4 +1,4 @@
-#include "Component.h"
+﻿#include "Component.h"
 
 namespace ML
 {
@@ -17,5 +17,10 @@ namespace ML
 		mComponentName = szName;
 	}
 
+	void CComponent::RegisterComponentWithWorld([[maybe_unused]] CWorld* InWorld)
+	{
+		// UE: UActorComponent::RegisterComponentWithWorld, base behaviour.
+		// Pure logic components have no scene state to register - nothing to do.
+	}
 
 }

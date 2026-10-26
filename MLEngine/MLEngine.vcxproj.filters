@@ -135,15 +135,6 @@
     <ClCompile Include="Class.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Core\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceFactory.cpp">
-      <Filter>Core\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceMgr.cpp">
-      <Filter>Core\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="VertexStreamFactory.cpp">
       <Filter>Core\Factory\Graphic</Filter>
     </ClCompile>
@@ -373,15 +364,6 @@
     </ClInclude>
     <ClInclude Include="Class.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Core\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceFactory.h">
-      <Filter>Core\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceMgr.h">
-      <Filter>Core\Resource</Filter>
     </ClInclude>
     <ClInclude Include="VertexStreamFactory.h">
       <Filter>Core\Factory\Graphic</Filter>

@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "Resource.h"
+#include "Object.h"
+#include "Scene.h"
+#include <atomic>
 
 namespace ML
 {
@@ -22,7 +24,7 @@ namespace ML
 
 	using FOnSceneLoaded = std::function<void(class CWorld*)>;
 
-	class MLENGINE_API CWorld : public CResource
+	class MLENGINE_API CWorld : public CObject
 	{
         friend class CEngine;
 		friend class CRenderer;
@@ -49,7 +51,16 @@ namespace ML
 		bool IsLoaded() const { return bLoaded; }
 		bool IsVisible() const { return bVisible; }
 
-		std::string GetName() const { return Name; }
+		// UE: UWorld is a plain UObject - it carries no asset/streaming payload,
+		// so it must not sit on CStreamableRenderAsset. Name comes from CObject.
+
+		// ---- 游戏线程 → 渲染线程 ----
+		// UE: ENQUEUE_RENDER_COMMAND。组件改 Transform / 可见性时走这里，
+		// 渲染线程在帧首（CollectVisibleMeshes）统一 drain 并执行。
+		void EnqueueRenderCommand(std::function<void(FScene&)> InCommand)
+		{
+			RenderCommands.Enqueue(std::move(InCommand));
+		}
 
 		CLevelStreaming* AddStreamingLevel(const std::string& LevelName, const std::string& FilePath);
 		void RemoveStreamingLevel(const std::string& LevelName);
@@ -72,14 +83,25 @@ namespace ML
 
 	private:
 		std::string PendingFilePath = "";
-		std::string Name = "";
 		bool bLoaded = false;
 		bool bVisible = false;
 
 		CGameMode* GameMode = nullptr;
 		CLevel* PersistentLevel = nullptr;
 		std::vector<CLevelStreaming*> StreamingLevels;
-		EWorldLoadState LoadState = EWorldLoadState::Idle;
+
+		// UE: 异步加载状态标志。worker 线程（LoadAsync）写、主线程每帧读
+		// （TickLoad / IsReady），必须是原子量。
+		// worker 的 seq_cst store 同时也是"发布"：它建好的 PersistentLevel /
+		// Actors 向量对主线程 TickLoad 里匹配的 load 可见，
+		// InitActorsForPlay 走 Actor 列表不需要再加锁。
+		std::atomic<EWorldLoadState> LoadState = EWorldLoadState::Idle;
 		FOnSceneLoaded OnLoadedFunc;
+
+		// ---- 渲染线程侧的场景镜像 ----
+		// UE: UWorld 对应一个 FScene。渲染线程只读这两个成员，
+		// 绝不去碰 PersistentLevel 里的 CActor / CComponent。
+		FScene				Scene;
+		FRenderCommandQueue	RenderCommands;
 	};
 }

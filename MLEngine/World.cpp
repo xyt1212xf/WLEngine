@@ -6,8 +6,6 @@
 #include "MeshBatch.h"
 #include "Level.h"
 #include "Actor.h"
-#include "StaticMesh.h"
-#include "StaticMeshComponent.h"
 
 namespace ML
 {
@@ -23,7 +21,8 @@ namespace ML
 
 	CWorld::~CWorld()
 	{
-
+		// 只有在确认渲染线程已经停帧之后才会走到这里（见 CEngine::UnInitialise）。
+		Scene.Release();
 	}
 
 
@@ -72,9 +71,10 @@ namespace ML
 		}
 
 		// UE: the world is named after the map it was loaded from.
+		// Name lives on CObject, so it goes through SetName.
 		if (!PersistentLevel->GetName().empty())
 		{
-			Name = PersistentLevel->GetName();
+			SetName(PersistentLevel->GetName());
 		}
 
 		LoadState = EWorldLoadState::BuildingActors;
@@ -88,34 +88,16 @@ namespace ML
 
 	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches)
 	{
-		// Iterate the persistent level: actor -> component -> visible static meshes.
-		// (UE: FScene from FPrimitiveSceneProxy registration; simplified here.)
-		if (nullptr == PersistentLevel)
-		{
-			return;
-		}
-		for (CActor* Actor : PersistentLevel->GetActors())
-		{
-			if (nullptr == Actor)
-			{
-				continue;
-			}
-			for (CComponent* Comp : Actor->GetComponents())
-			{
-				CStaticMeshComponent* MeshComp = dynamic_cast<CStaticMeshComponent*>(Comp);
-				if (nullptr == MeshComp || !MeshComp->IsVisible())
-				{
-					continue;
-				}
-				FMeshBatch Batch;
-				MeshComp->GetMeshBatch(Batch, View.ViewProjMatrix);
-				// GetMeshBatch leaves LOD null when the mesh is not built yet.
-				if (Batch.LOD)
-				{
-					OutBatches.push_back(Batch);
-				}
-			}
-		}
+		// 渲染线程。顺序很关键：
+		//   1) 先把游戏线程投递过来的更新（Add / SetTransform / SetVisibility）
+		//      应用到场景镜像上 —— 对应 UE 渲染线程帧首执行渲染命令队列；
+		//   2) 再从镜像里收集批次。
+		//
+		// 这样渲染线程全程只碰 FScene / FPrimitiveSceneProxy，不再读
+		// PersistentLevel 里的 CActor / CComponent（它们归游戏线程所有，
+		// 主线程 Tick 会改它们的 Transform、也会增删容器元素）。
+		RenderCommands.Drain(Scene);
+		Scene.CollectVisibleMeshes(View, OutBatches);
 	}
 
 	void CWorld::TickLoad()
@@ -207,7 +189,25 @@ namespace ML
 		}
 		for (CActor* Actor : PersistentLevel->GetActors())
 		{
+			if (nullptr == Actor)
+			{
+				continue;
+			}
+
+			// BeginPlay 可能改 Transform —— 此时组件还没注册（RenderProxyId == 0），
+			// 那些改动会被直接丢弃；紧接着下面创建的 proxy 会带上最终值，不会丢。
 			Actor->BeginPlay();
+
+			// UE: AActor::RegisterAllComponents → UActorComponent::RegisterComponentWithWorld。
+			// 纯多态分发：CWorld 不认识任何具体组件类型 —— 以后新增可绘制组件
+			// 只需覆写 CreateSceneProxy，这里一行不用改。
+			for (CComponent* Comp : Actor->GetComponents())
+			{
+				if (Comp)
+				{
+					Comp->RegisterComponentWithWorld(this);
+				}
+			}
 		}
 	}
 
