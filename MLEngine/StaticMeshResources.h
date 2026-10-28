@@ -42,6 +42,7 @@ namespace ML
 
 		// 顶点数据流(per-stream，与 VertexStreamFactory 对齐)
 		CRHIBuffer* PositionBuffer = nullptr;
+		CRHIBuffer* NormalBuffer   = nullptr;   // per-vertex 法线(float3)
 		CRHIBuffer* UVBuffer	   = nullptr;
 		CRHIBuffer* TangentBuffer  = nullptr;   // tangent + UV 打包流（P1）
 		CRHIBuffer* ColorBuffer    = nullptr;

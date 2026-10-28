@@ -89,6 +89,18 @@ namespace ML
 			);
 		}
 
+		// 如果有法线
+		const std::vector<Vec3F>& Normals = Attrs.GetNormals();
+		if (Normals.size() > 0)
+		{
+			NormalBuffer = new CRHIBuffer();
+			NormalBuffer->Create(
+				EBufferType::Vertex,
+				(UINT32)Normals.size() * sizeof(Vec3F),
+				sizeof(Vec3F),
+				Normals.data()
+			);
+		}
 		// 如果有UV
 		const std::vector<Vec2F>& UV = Attrs.GetUVs();
 		if (UV.size() > 0)
@@ -152,6 +164,13 @@ namespace ML
 					NextSlot++, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 				Elements.push_back("POSITION");
 			}
+			if (NormalBuffer)
+			{
+				FillStream(VertexFactory->Schema.Normal,
+					NormalBuffer ? NormalBuffer->GetResource() : nullptr,
+					NextSlot++, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
+				Elements.push_back("NORMAL");
+			}
 			if (ColorBuffer)
 			{
 				FillStream(VertexFactory->Schema.Color,
@@ -184,6 +203,7 @@ namespace ML
 	void CStaticMeshLODResources::ReleaseResources()
 	{
 		SafeDelete(PositionBuffer);
+		SafeDelete(NormalBuffer);
 		SafeDelete(UVBuffer);
 		SafeDelete(TangentBuffer);
 		SafeDelete(ColorBuffer);

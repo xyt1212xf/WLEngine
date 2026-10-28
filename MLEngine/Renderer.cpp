@@ -80,6 +80,10 @@ namespace ML
 		Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 5000.0f);
 		FViewMatrices ViewMatrices(View, Proj);
 
+		// Draw mode: a view-family-level override (UE: FSceneViewFamily::EngineShowFlags).
+		// Folded into the material's PSO cache key so wireframe and solid get distinct PSOs.
+		const bool bWireframe = mViewFamily.IsWireframe();
+
 		// 3) Collect all batches to draw (each already carries its Material*).
 		//    复用成员缓冲区：clear() 只归零 size，capacity 保留。
 		mVisibleBatches.clear();
@@ -109,7 +113,7 @@ namespace ML
 
 			// The PSO depends on the mesh's vertex layout, so it is resolved per
 			// batch and built on first use.
-			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory);
+			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
 			if (nullptr == PSO)
 			{
 				continue;

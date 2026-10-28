@@ -276,6 +276,12 @@
     <ClCompile Include="ScriptPlug.cpp">
       <Filter>Core\Plugs\Script</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Core\Plugs\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneViewFamily.cpp">
+      <Filter>Core\Plugs\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -526,6 +532,12 @@
     </ClInclude>
     <ClInclude Include="ScriptPlug.h">
       <Filter>Core\Plugs\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Core\Plugs\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneViewFamily.h">
+      <Filter>Core\Plugs\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

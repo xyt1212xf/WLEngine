@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Common.h"
 #include "MeshBatch.h"
+#include "SceneViewFamily.h"
 
 namespace ML
 {
@@ -29,7 +30,14 @@ namespace ML
 	public:
 		CRenderer(CGraphicPlug* plug);
 		virtual ~CRenderer();
-		
+
+		// Draw-mode control. UE: the draw mode lives on FSceneViewFamily
+		// (a view-family-level override), never on the material or primitive.
+		// Switching it recomputes the family's FEngineShowFlags, which the PSO
+		// build reads to pick FillMode.
+		void SetViewMode(EViewModeIndex InMode) { mViewFamily.SetViewMode(InMode); }
+		EViewModeIndex GetViewMode() const { return mViewFamily.GetViewMode(); }
+
 	private:
 		void _Draw();
 		bool _Begin();
@@ -38,6 +46,9 @@ namespace ML
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
+		// UE: FSceneViewFamily — owns the per-frame draw-mode show flags that
+		// every PSO built by the materials inherits. Defaults to Lit (solid).
+		FSceneViewFamily mViewFamily;
 		// PSOs are no longer owned by the renderer: each CMaterial builds its own in InitRHI; renderer is read-only.
 
 		// 每帧可见批次。做成成员而不是局部变量：

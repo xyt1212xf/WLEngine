@@ -14,7 +14,8 @@ namespace ML
 
 	bool CDX12PipelineState::Create(CShader* pVS, CShader* pPS,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
-		DXGI_FORMAT DepthFormat)
+		DXGI_FORMAT DepthFormat,
+		bool bWireframe)
 	{
 		Release();
 
@@ -49,7 +50,9 @@ namespace ML
 
 		PSODesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
 
-		PSODesc.RasterizerState.FillMode				= D3D12_FILL_MODE_SOLID;
+		// UE: the fill mode is part of the PSO, driven by the view family's
+		// EngineShowFlags.Wireframe (a draw-mode override, not a material property).
+		PSODesc.RasterizerState.FillMode				= bWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
 		PSODesc.RasterizerState.CullMode				= D3D12_CULL_MODE_BACK;
 		PSODesc.RasterizerState.FrontCounterClockwise	= TRUE;
 		PSODesc.RasterizerState.DepthClipEnable			= TRUE;

@@ -14,7 +14,8 @@ namespace ML
 
 		bool Create(CShader* pVS, CShader* pPS,
 					const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
-					DXGI_FORMAT DepthFormat);
+					DXGI_FORMAT DepthFormat,
+					bool bWireframe = false);
 		void Release();
 
 		ID3D12RootSignature* GetRootSignature() const { return mpRootSignature; }

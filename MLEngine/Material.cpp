@@ -106,7 +106,7 @@ namespace ML
 		return nullptr;
 	}
 
-	CPipelineState* CMaterial::GetPipelineState(const CStaticVertexFactory* InVertexFactory)
+	CPipelineState* CMaterial::GetPipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)
@@ -114,7 +114,11 @@ namespace ML
 			return nullptr;
 		}
 
-		const uint64 Key = HashInputLayout(*LayoutPtr);
+		const uint64 LayoutKey = HashInputLayout(*LayoutPtr);
+		// Fold the draw mode into the cache key: a wireframe PSO must not collide
+		// with its solid twin (same layout). The low-bit avalanche constant keeps
+		// the two keys distinct without disturbing the layout hash's own bits.
+		const uint64 Key = LayoutKey ^ (bWireframe ? 0x9E3779B97F4A7C15ull : 0ull);
 
 		{
 			std::lock_guard<std::mutex> Lock(mPSOMutex);
@@ -128,7 +132,7 @@ namespace ML
 		// Build outside the lock: compiling/baking a PSO touches the device and may
 		// take a while; blocking the renderer's first-frame lookup on a peer's
 		// creation would serialize startup for no reason.
-		CPipelineState* PSO = CreatePipelineState(InVertexFactory);
+		CPipelineState* PSO = CreatePipelineState(InVertexFactory, bWireframe);
 		if (nullptr == PSO)
 		{
 			return nullptr;
@@ -154,7 +158,7 @@ namespace ML
 		return PSO;
 	}
 
-	CPipelineState* CMaterial::CreatePipelineState(const CStaticVertexFactory* InVertexFactory)
+	CPipelineState* CMaterial::CreatePipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)
@@ -182,7 +186,7 @@ namespace ML
 
 		// Create the PSO. This is where a material creates GPU resources.
 		CPipelineState* PSO = new CPipelineState();
-		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat))
+		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, bWireframe))
 		{
 			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + VSName + " / " + PSName + "\n").c_str());
 			SafeDelete(PSO);

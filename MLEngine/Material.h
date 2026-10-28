@@ -5,6 +5,20 @@
 
 namespace ML
 {
+	// UE: UMaterial::BlendMode (EMaterialBlendMode).
+	// Drives the PSO blend state + depth-write mask, and (later) which render
+	// list the primitive lands in (opaque vs translucent). A bool could not
+	// express BLEND_Masked: masked reads alpha like a transparent material but
+	// still writes depth and sorts with the opaque pass, so it is NOT "translucent".
+	enum class EBlendMode : uint8
+	{
+		BLEND_Opaque = 0,   // no blending, writes depth
+		BLEND_Masked,       // alpha-test cutout, no blending, writes depth
+		BLEND_Translucent,  // alpha blending, no depth write
+		BLEND_Additive,     // src + dst, no depth write
+		BLEND_Modulate,     // src * dst, no depth write
+	};
+
 	class CShader;
 	class CGlobalShader;
 	class CPipelineState;
@@ -96,7 +110,10 @@ namespace ML
 		//   2. Material's own mDefaultInputLayout (fallback: boot-time DefaultMaterial)
 		//   3. nullptr -> return nullptr
 		// Thread-safe: called by the renderer for every draw, first call builds.
-		CPipelineState* GetPipelineState(const CStaticVertexFactory* InVertexFactory);
+			// bWireframe folds into the cache key so a wireframe PSO is never confused
+		// with its solid twin (same layout). UE bakes the fill mode into the full
+		// PSO hash, not the layout hash.
+		CPipelineState* GetPipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe = false);
 
 		// Drops every cached PSO (releases the GPU objects behind them).
 		void ReleasePipelineStates();
@@ -104,6 +121,21 @@ namespace ML
 		// Read-only access for the render thread.
 		CShader* GetVertexShader() const { return VertexShader; }
 		CShader* GetPixelShader()  const { return PixelShader; }
+
+		// Blend mode (UE: UMaterial::BlendMode). Sets how the PSO blends and
+		// which render list the owning primitive goes to. Set before the first
+		// GetPipelineState() so the built PSO carries the right blend state.
+		void SetBlendMode(EBlendMode InMode) { BlendMode = InMode; }
+		EBlendMode GetBlendMode() const { return BlendMode; }
+
+		// UE: UMaterial::IsTransparent(). Masked is NOT translucent: it sorts and
+		// writes depth with the opaque pass, only its pixels are alpha-tested.
+		bool IsTranslucent() const
+		{
+			return BlendMode == EBlendMode::BLEND_Translucent
+				|| BlendMode == EBlendMode::BLEND_Additive
+				|| BlendMode == EBlendMode::BLEND_Modulate;
+		}
 
 		// Asset-level load hook. Not overriding a base-class virtual any more:
 	// CObject has no initialise() (UE: UObject::PostLoad lives on the asset
@@ -125,12 +157,15 @@ namespace ML
 		// Does not own any GPU resources - consumed once during PSO creation to build it.
 		std::vector<D3D12_INPUT_ELEMENT_DESC> mDefaultInputLayout;
 
+		// Blend mode: opaque by default, matching UE's BLEND_Opaque material default.
+		EBlendMode BlendMode = EBlendMode::BLEND_Opaque;
+
 		// Pipeline states owned by this material, one per distinct input layout.
 		// See GetPipelineState() for why the key is the layout and not the VF.
 		std::unordered_map<uint64, CPipelineState*>	mPSOCache;
 		std::mutex									mPSOMutex;
 
-		CPipelineState* CreatePipelineState(const CStaticVertexFactory* InVertexFactory);
+		CPipelineState* CreatePipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe);
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* SelectInputLayout(const CStaticVertexFactory* InVertexFactory) const;
 	};
 }
