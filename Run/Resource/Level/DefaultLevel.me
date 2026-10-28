@@ -15,12 +15,27 @@
 --     内部转成四元数存储（对标 FTransform::Rotation）。
 --   * 材质属于 mesh 资产；组件上的 OverrideMaterials 才是覆盖（对标 UE 的
 --     UMeshComponent::OverrideMaterials）。留空则用 mesh 自己的材质槽。
+--   * OverrideMaterials 里的名字先在关卡自己声明的 Materials 表里找，
+--     找不到再去全局材质注册表（CGraphicPlug 建的 "Default"）。
+--     材质目前不是独立资产文件，所以谁声明谁拥有（关卡卸载时释放）。
 --   * Mesh.Source = "Procedural" 是 P0 权宜（还没有 .ma 资产导入器）；
 --     UE 的正确形态是 Source = "Asset" + Path 指向一个 mesh 资产。
 --================================================================================
 
 return {
     Name = "DefaultLevel",
+
+    -- 内联材质（对标 UE 里 level package 对材质资产的引用列表）。
+    -- VS / PS 是全局 shader 名（对标材质的 FShaderMap / shader permutation）；
+    -- Texture 是 base color 贴图路径，由 CTextureMgr 按路径缓存并持有。
+    Materials = {
+        {
+            Name    = "BlackMat",
+            VS      = "CTexturedVS",
+            PS      = "CTexturedPS",
+            Texture = "Resource/Texture/black.png",
+        },
+    },
 
     Actors = {
         {
@@ -51,8 +66,9 @@ return {
                         HalfExtents = { 1, 1, 1 },
                     },
 
-                    -- 对标 UMeshComponent::OverrideMaterials，按材质槽下标覆盖
-                    OverrideMaterials = { "Default" },
+                    -- 对标 UMeshComponent::OverrideMaterials，按材质槽下标覆盖。
+                    -- "BlackMat" 在上面 Materials 表里声明：Textured 着色器 + black.png。
+                    OverrideMaterials = { "BlackMat" },
 
                     -- 对标 USceneComponent::RelativeLocation/Rotation/Scale3D
                     -- RelativeTransform = { Location = {0,0,0}, Rotation = {0,0,0}, Scale = {1,1,1} },

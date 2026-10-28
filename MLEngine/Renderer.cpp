@@ -13,6 +13,8 @@
 #include "VertexStreamFactory.h"
 #include "RHIbuffer.h"
 #include "StaticMeshResources.h"
+#include "Texture2D.h"
+#include "RHItexture.h"
 
 namespace ML
 {
@@ -100,8 +102,23 @@ namespace ML
 			if (nullptr == Batch.LOD
 				|| nullptr == Batch.LOD->IndexBuffer
 				|| nullptr == Batch.VertexFactory
-				|| nullptr == Batch.Material
-				|| nullptr == Batch.Material->GetPipelineState())
+				|| nullptr == Batch.Material)
+			{
+				continue;
+			}
+
+			// The PSO depends on the mesh's vertex layout, so it is resolved per
+			// batch and built on first use.
+			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory);
+			if (nullptr == PSO)
+			{
+				continue;
+			}
+
+			// A material whose shaders sample the base-color texture but whose
+			// asset is missing is skipped rather than drawn with an undefined
+			// descriptor - see CMaterial::EnableBaseColorTexture.
+			if (Batch.Material->UsesBaseColorTexture() && !Batch.Material->HasBaseColorTexture())
 			{
 				continue;
 			}
@@ -111,8 +128,6 @@ namespace ML
 			{
 				continue;
 			}
-
-			CPipelineState* PSO = Batch.Material->GetPipelineState();
 
 			// Switch PSO / RootSignature (only when the material changes).
 			if (PSO != CurrentPSO)
@@ -128,6 +143,22 @@ namespace ML
 			// Row-vector: clip = pos * (World * View * Proj).
 			FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewMatrix * ViewMatrices.ProjMatrix;
 			pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
+
+			// Per-material textures (root slots 1 = SRV, 2 = sampler).
+			// UE: FMeshPassProcessor writes these into the FMeshDrawCommand's
+			// shader bindings; here they are pushed per draw instead. Materials
+			// that do not sample a texture leave their root signature alone.
+			if (Batch.Material->HasBaseColorTexture())
+			{
+				ID3D12DescriptorHeap* Heaps[2] =
+				{
+					pRHIDevice->GetSrvHeap(),
+					pRHIDevice->GetSamplerHeap()
+				};
+				pCmd->SetDescriptorHeaps(2, Heaps);
+				pCmd->SetGraphicsRootDescriptorTable(1, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
+				pCmd->SetGraphicsRootDescriptorTable(2, pRHIDevice->GetStaticSamplerGPUHandle());
+			}
 
 			// Geometry.
 			pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());

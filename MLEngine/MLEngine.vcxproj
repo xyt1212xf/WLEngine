@@ -28,6 +28,7 @@
     <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="DX12PipelineState.cpp" />
     <ClCompile Include="DX12RHIbuffer.cpp" />
+    <ClCompile Include="DX12RHItexture.cpp" />
     <ClCompile Include="DX12Shader.cpp" />
     <ClCompile Include="Foundation.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -73,6 +74,9 @@
     <ClCompile Include="StaticMeshDescription.cpp" />
     <ClCompile Include="StaticMeshResources.cpp" />
     <ClCompile Include="StreamableRenderAsset.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TextureMgr.cpp" />
+    <ClCompile Include="TexturedShader.cpp" />
     <ClCompile Include="TimerClock.cpp" />
     <ClCompile Include="UnrealMemory.cpp" />
     <ClCompile Include="VertexStreamFactory.cpp" />
@@ -97,6 +101,7 @@
     <ClInclude Include="DX12Device.h" />
     <ClInclude Include="DX12PipelineState.h" />
     <ClInclude Include="DX12RHIbuffer.h" />
+    <ClInclude Include="DX12RHItexture.h" />
     <ClInclude Include="DX12Shader.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Foundation.h" />
@@ -137,6 +142,7 @@
     <ClInclude Include="Refcount.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RHIbuffer.h" />
+    <ClInclude Include="RHItexture.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="ScriptPlug.h" />
@@ -151,6 +157,9 @@
     <ClInclude Include="StreamableRenderAsset.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="TimerClock.h" />
+    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="TextureMgr.h" />
+    <ClInclude Include="TexturedShader.h" />
     <ClInclude Include="TSingle.h" />
     <ClInclude Include="UnrealMemory.h" />
     <ClInclude Include="UnrealTemplate.h" />

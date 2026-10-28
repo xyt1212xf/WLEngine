@@ -9,6 +9,7 @@ namespace ML
 	class CGlobalShader;
 	class CPipelineState;
 	class CStaticVertexFactory;
+	class CTexture2D;
 
 	// Engine material asset (CObject subclass).
 	// UE counterpart: UMaterial + FMaterial (merged in P0: no per-draw parameter
@@ -25,8 +26,11 @@ namespace ML
 	//      is the renderer's / render pass's business. In P0 InitRHI takes a
 	//      DepthFormat parameter, but only as a PSO creation argument; the material
 	//      does not store it.
-	//   3. Materials are never created/destroyed on the _Flush path - that only
-	//      happens during engine Init / Shutdown.
+	//   3. Materials are never created/destroyed on the _Flush path - with one
+	//      deliberate exception: the PSO for a given (Material, VertexFactory)
+	//      pair is built the first time a draw asks for it (see
+	//      GetPipelineState). What it does mean is that no CMaterial instance
+	//      itself is ever new'd/deleted during rendering.
 	//   4. Material does not store shader name strings (in P2, once upgraded to
 	//      FMaterialShaderMap, this becomes TMap<FShaderType*, TShaderRef>);
 	//      P0 keeps VSName/PSName to interface with IMPLEMENT_GLOBAL_SHADER
@@ -38,10 +42,11 @@ namespace ML
 		virtual ~CMaterial();
 
 		// Sets the VS/PS this material uses (looked up by CGlobalShader name in GlobalShaderMap).
-		// Call order: SetShaders(...) -> [SetDefaultInputLayout(...)] -> InitRHI(VF, Depth) -> then it is usable.
+		// Set before the first GetPipelineState() call: the PSO is built from whatever
+		// shader names are current at that moment.
 		void SetShaders(const std::string& InVSName, const std::string& InPSName);
 
-		// Sets a fallback InputLayout the material owns. Used when InitRHI is called without
+		// Sets a fallback InputLayout the material owns. Used when a PSO is built without
 		// a VertexFactory (or with a VF that has no layout yet) - the typical case is the
 		// engine's Default Material at boot time, before any mesh has been loaded.
 		// P0: caller passes a hand-written element list. P1: can be derived from shader reflection.
@@ -53,18 +58,50 @@ namespace ML
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetDefaultInputLayout() const { return mDefaultInputLayout; }
 		bool HasDefaultInputLayout() const { return !mDefaultInputLayout.empty(); }
 
-		// Creates the PSO. Layout resolution order:
-		//   1. InVertexFactory's layout (if VF exists and HasInputLayout())
-		//   2. Material's own mDefaultInputLayout (fallback)
-		//   3. nullptr -> return false
-		// Must be called after the RHI device is ready.
-		bool InitPSO(const CStaticVertexFactory* InVertexFactory, DXGI_FORMAT DepthFormat);
+		// Declares whether this material's shaders sample the base-color texture
+		// (root parameter 1/2 of the textured root signature).
+		//
+		// Why it has to be stated instead of derived: nothing here can look at a
+		// compiled shader and see whether it reads t0 (no PSO reflection yet),
+		// and binding a descriptor table into a root signature that does not have
+		// one is an API error - while NOT binding into one that does have it makes
+		// the shader read an undefined descriptor. So the material says which it is,
+		// and the renderer can then turn "texture missing" into "skip the draw"
+		// instead of undefined pixels.
+		// UE derives this from the compiled material's uniform expressions.
+		void EnableBaseColorTexture(bool bInUses) { bUsesBaseColorTexture = bInUses; }
+		bool UsesBaseColorTexture() const { return bUsesBaseColorTexture; }
 
-		// Releases PSO resources.
-		void ReleasePSO();
+		// Base-color texture parameter.
+		// UE: UTexture* parameter of a UMaterialInterface; the renderer reads it
+		// off the FMaterialRenderProxy. P0: one slot, no per-instance override
+		// (no render proxy yet - see the MeshBatch comment).
+		void SetBaseColorTexture(CTexture2D* InTexture);
+		CTexture2D* GetBaseColorTexture() const { return BaseColorTexture; }
+
+		// True when there is something to bind: a texture pointer alone is not
+		// enough, the asset must have finished its GPU upload.
+		bool HasBaseColorTexture() const;
+
+		// Returns the PSO matching this VertexFactory, building it on first use.
+		//
+		// UE: the PSO is the product of (Material, VertexFactory, RenderTarget,
+		// pass), which is why UE holds a cache keyed by that tuple instead of one
+		// PSO per material. Keying by INPUT LAYOUT here gets most of that for
+		// free: two meshes with identical layouts share one PSO, and a mesh whose
+		// layout differs (e.g. no color stream) gets its own.
+		//
+		// Layout resolution order inside:
+		//   1. InVertexFactory's layout (if VF exists and HasInputLayout())
+		//   2. Material's own mDefaultInputLayout (fallback: boot-time DefaultMaterial)
+		//   3. nullptr -> return nullptr
+		// Thread-safe: called by the renderer for every draw, first call builds.
+		CPipelineState* GetPipelineState(const CStaticVertexFactory* InVertexFactory);
+
+		// Drops every cached PSO (releases the GPU objects behind them).
+		void ReleasePipelineStates();
 
 		// Read-only access for the render thread.
-		CPipelineState* GetPipelineState() const { return PipelineState; }
 		CShader* GetVertexShader() const { return VertexShader; }
 		CShader* GetPixelShader()  const { return PixelShader; }
 
@@ -78,10 +115,22 @@ namespace ML
 		std::string   PSName;
 		CShader*      VertexShader = nullptr;   // lifetime not owned (managed by CGlobalShaderMap)
 		CShader*      PixelShader  = nullptr;
-		CPipelineState* PipelineState = nullptr; // owned
+
+		// Base-color texture. Not owned: textures belong to CTextureMgr (shared
+		// assets), materials only reference them.
+		CTexture2D*   BaseColorTexture = nullptr;
+		bool          bUsesBaseColorTexture = false;
 
 		// Fallback layout used when no VertexFactory is supplied (e.g. engine init time).
-		// Does not own any GPU resources - consumed once during InitRHI to build the PSO.
+		// Does not own any GPU resources - consumed once during PSO creation to build it.
 		std::vector<D3D12_INPUT_ELEMENT_DESC> mDefaultInputLayout;
+
+		// Pipeline states owned by this material, one per distinct input layout.
+		// See GetPipelineState() for why the key is the layout and not the VF.
+		std::unordered_map<uint64, CPipelineState*>	mPSOCache;
+		std::mutex									mPSOMutex;
+
+		CPipelineState* CreatePipelineState(const CStaticVertexFactory* InVertexFactory);
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>* SelectInputLayout(const CStaticVertexFactory* InVertexFactory) const;
 	};
 }

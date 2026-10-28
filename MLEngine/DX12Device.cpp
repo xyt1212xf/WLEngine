@@ -16,6 +16,8 @@ namespace ML
 	CDX12RHIDevice::~CDX12RHIDevice()
 	{
 		// Tear down in reverse creation order; every ID3D12* must go before the device.
+		SafeRelease(mSamplerHeap);
+		SafeRelease(mSrvHeap);
 		SafeRelease(mDepthStencil);
 		SafeRelease(mDsvHeap);
 		SafeRelease(mCommandList);
@@ -181,6 +183,13 @@ namespace ML
 
 				// Depth buffer (needed by the 3D pipeline PSO).
 				if (!_InitDepthBuffer())
+				{
+					break;
+				}
+
+				// Shader-visible CBV/SRV/UAV + sampler heaps (needed by any draw
+				// that samples a texture).
+				if (!_InitShaderVisibleHeaps())
 				{
 					break;
 				}
@@ -453,6 +462,102 @@ namespace ML
 
 		mpDevice->CreateDepthStencilView(mDepthStencil, nullptr, mDsvHeap->GetCPUDescriptorHandleForHeapStart());
 		return true;
+	}
+
+	bool CDX12RHIDevice::_InitShaderVisibleHeaps()
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC SrvHeapDesc = {};
+		SrvHeapDesc.NumDescriptors = MaxSRVDescriptors;
+		SrvHeapDesc.Type  = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		SrvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		if (FAILED(mpDevice->CreateDescriptorHeap(&SrvHeapDesc, IID_PPV_ARGS(&mSrvHeap))))
+		{
+			return false;
+		}
+		mCbvSrvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+		D3D12_DESCRIPTOR_HEAP_DESC SamplerHeapDesc = {};
+		SamplerHeapDesc.NumDescriptors = 1;
+		SamplerHeapDesc.Type  = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		SamplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		if (FAILED(mpDevice->CreateDescriptorHeap(&SamplerHeapDesc, IID_PPV_ARGS(&mSamplerHeap))))
+		{
+			return false;
+		}
+
+		D3D12_SAMPLER_DESC SamplerDesc = {};
+		SamplerDesc.Filter           = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+		SamplerDesc.AddressU         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		SamplerDesc.AddressV         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		SamplerDesc.AddressW         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		SamplerDesc.MipLODBias       = 0.0f;
+		SamplerDesc.MaxAnisotropy    = 1;
+		SamplerDesc.ComparisonFunc   = D3D12_COMPARISON_FUNC_NEVER;
+		SamplerDesc.BorderColor[0]   = 0.0f;
+		SamplerDesc.BorderColor[1]   = 0.0f;
+		SamplerDesc.BorderColor[2]   = 0.0f;
+		SamplerDesc.BorderColor[3]   = 0.0f;
+		SamplerDesc.MinLOD           = 0.0f;
+		SamplerDesc.MaxLOD           = D3D12_FLOAT32_MAX;
+		mpDevice->CreateSampler(&SamplerDesc, mSamplerHeap->GetCPUDescriptorHandleForHeapStart());
+		return true;
+	}
+
+	bool CDX12RHIDevice::AllocSRV(ID3D12Resource* InResource, const D3D12_SHADER_RESOURCE_VIEW_DESC& Desc, UINT32& OutSlot)
+	{
+		if (nullptr == InResource || nullptr == mSrvHeap)
+		{
+			return false;
+		}
+
+		std::lock_guard<std::mutex> Lock(mSRVMutex);
+
+		UINT32 Slot = 0;
+		if (!mFreeSRVSlots.empty())
+		{
+			Slot = mFreeSRVSlots.back();
+			mFreeSRVSlots.pop_back();
+		}
+		else if (mNextSRVSlot < MaxSRVDescriptors)
+		{
+			Slot = mNextSRVSlot++;
+		}
+		else
+		{
+			return false;
+		}
+
+		// Writing the view allocates nothing - the GPU reads it straight out of
+		// this heap at draw time, so the slot is the whole "resource" here.
+		mpDevice->CreateShaderResourceView(InResource, &Desc, GetSRVCPUHandle(Slot));
+		OutSlot = Slot;
+		return true;
+	}
+
+	void CDX12RHIDevice::FreeSRV(UINT32 Slot)
+	{
+		std::lock_guard<std::mutex> Lock(mSRVMutex);
+		if (Slot < MaxSRVDescriptors)
+		{
+			mFreeSRVSlots.push_back(Slot);
+		}
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetSRVCPUHandle(UINT32 Slot) const
+	{
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE(mSrvHeap->GetCPUDescriptorHandleForHeapStart(),
+			(INT32)Slot, mCbvSrvDescriptorSize);
+	}
+
+	D3D12_GPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetSRVGPUHandle(UINT32 Slot) const
+	{
+		return CD3DX12_GPU_DESCRIPTOR_HANDLE(mSrvHeap->GetGPUDescriptorHandleForHeapStart(),
+			(INT32)Slot, mCbvSrvDescriptorSize);
+	}
+
+	D3D12_GPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetStaticSamplerGPUHandle() const
+	{
+		return mSamplerHeap->GetGPUDescriptorHandleForHeapStart();
 	}
 
 	void CDX12RHIDevice::_WaitCommandQueue()

@@ -3,6 +3,7 @@
 #include "Mgr.h"
 #include "ShaderMgr.h"
 #include "MaterialMgr.h"
+#include "TextureMgr.h"
 #include "TimerClock.h"
 #include "World.h"
 #include "ScriptPlug.h"
@@ -59,10 +60,13 @@ namespace ML
 
 		// 1) Create all CMgr subsystems. Order matters: ShaderMgr compiles all
 		//    GlobalShaders first, then MaterialMgr (which depends on compiled shaders).
+		//    TextureMgr comes last: it only serves requests, it depends on nothing.
 		CShaderMgr* pShaderMgr   = new CShaderMgr();
 		CMaterialMgr* pMaterialMgr = new CMaterialMgr();
+		CTextureMgr* pTextureMgr = new CTextureMgr();
 		mMgrs.push_back(pShaderMgr);
 		mMgrs.push_back(pMaterialMgr);
+		mMgrs.push_back(pTextureMgr);
 		for (CMgr* Mgr : mMgrs)
 		{
 			if (!Mgr->Init())
@@ -70,6 +74,7 @@ namespace ML
 				OutputDebugStringA(("Engine subsystem init failed: " + std::string(Mgr->GetName()) + "\n").c_str());
 				SafeDelete(pShaderMgr);
 				SafeDelete(pMaterialMgr);
+				SafeDelete(pTextureMgr);
 				mMgrs.clear();
 				return false;
 			}

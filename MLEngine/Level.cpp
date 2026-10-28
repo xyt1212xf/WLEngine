@@ -7,6 +7,9 @@
 #include "StaticMesh.h"
 #include "StaticMeshComponent.h"
 #include "MaterialMgr.h"
+#include "Material.h"
+#include "TextureMgr.h"
+#include "Texture2D.h"
 #include "MathLib.h"
 #include "MLEngine.h"
 #include "lua.hpp"
@@ -177,10 +180,79 @@ namespace ML
 			return nullptr;
 		}
 
+		// UE counterpart: the level's REFERENCES to material assets (the import
+		// table of a map package). A real UE material is an asset with its own
+		// file, resolved through the asset registry; until .ma material assets
+		// exist the level declares them inline, so the level also owns them.
+		//
+		// Each entry names a shader pair (a P0 stand-in for the material's
+		// FShaderMap / shader permutation) and at most one base-color texture.
+		void ParseMaterials(lua_State* L, int MaterialsIdx,
+			std::unordered_map<std::string, CMaterial*>& OutMaterials)
+		{
+			const int AbsIdx = lua_absindex(L, MaterialsIdx);
+			const int NumMaterials = (int)lua_rawlen(L, AbsIdx);
+			for (int i = 1; i <= NumMaterials; ++i)
+			{
+				lua_rawgeti(L, AbsIdx, i);
+				const int EntryIdx = lua_absindex(L, -1);
+
+				std::string Name;
+				std::string VSName;
+				std::string PSName;
+				std::string TexturePath;
+
+				if (TryGetField(L, EntryIdx, "Name"))    { Name = lua_tostring(L, -1);     lua_pop(L, 1); }
+				if (TryGetField(L, EntryIdx, "VS"))      { VSName = lua_tostring(L, -1);   lua_pop(L, 1); }
+				if (TryGetField(L, EntryIdx, "PS"))      { PSName = lua_tostring(L, -1);   lua_pop(L, 1); }
+				if (TryGetField(L, EntryIdx, "Texture")) { TexturePath = lua_tostring(L, -1); lua_pop(L, 1); }
+
+				if (Name.empty() || VSName.empty() || PSName.empty())
+				{
+					OutputDebugStringA("CLevel: material entry needs Name / VS / PS\n");
+					lua_pop(L, 1);
+					continue;
+				}
+
+				CMaterial* Material = new CMaterial();
+				Material->SetName(Name);
+				Material->SetShaders(VSName, PSName);
+
+				if (!TexturePath.empty())
+				{
+					// Textures are shared assets owned by CTextureMgr, not by the level.
+					CTextureMgr* TexMgr = GEngine ? GEngine->GetMgr<CTextureMgr>() : nullptr;
+					CTexture2D* Texture = TexMgr ? TexMgr->Load(TexturePath) : nullptr;
+					if (nullptr == Texture)
+					{
+						OutputDebugStringA(("CLevel: failed to load texture \"" + TexturePath
+							+ "\" for material \"" + Name + "\"\n").c_str());
+					}
+					// Enable it even when the load failed: it tells the renderer this
+					// material's shaders sample t0, so the draw is skipped instead of
+					// reading an undefined descriptor.
+					Material->EnableBaseColorTexture(true);
+					Material->SetBaseColorTexture(Texture);
+				}
+
+				auto It = OutMaterials.find(Name);
+				if (It != OutMaterials.end())
+				{
+					SafeDelete(It->second);   // duplicate declaration: last one wins
+				}
+				OutMaterials[Name] = Material;
+				lua_pop(L, 1);
+			}
+		}
+
 		// Creates one component from its level entry and attaches it to Owner.
 		// UE counterpart: NewObject<UStaticMeshComponent>(Actor), driven by the
 		// component class named in the level.
-		CComponent* ParseComponent(lua_State* L, int CompIdx, CActor* Owner)
+		//
+		// InLevelMaterials: materials this same level declared inline. Checked before
+		// CMaterialMgr so a level-local material wins over an engine one of the same name.
+		CComponent* ParseComponent(lua_State* L, int CompIdx, CActor* Owner,
+			const std::unordered_map<std::string, CMaterial*>& InLevelMaterials)
 		{
 			std::string Type;
 			if (TryGetField(L, CompIdx, "Type"))
@@ -218,7 +290,23 @@ namespace ML
 						lua_rawgeti(L, MatIdx, m);
 						const std::string MatName = lua_tostring(L, -1);
 						lua_pop(L, 1);
-						MeshComp->SetOverrideMaterial(m - 1, MatMgr ? MatMgr->Find(MatName) : nullptr);
+
+						CMaterial* Mat = nullptr;
+						auto It = InLevelMaterials.find(MatName);
+						if (It != InLevelMaterials.end())
+						{
+							Mat = It->second;
+						}
+						else if (nullptr != MatMgr)
+						{
+							Mat = MatMgr->Find(MatName);   // engine-provided material
+						}
+						if (nullptr == Mat)
+						{
+							OutputDebugStringA(("CLevel: unknown material \"" + MatName
+								+ "\"; falling back to the mesh's own material slot\n").c_str());
+						}
+						MeshComp->SetOverrideMaterial(m - 1, Mat);
 					}
 					lua_pop(L, 1);
 				}
@@ -231,7 +319,8 @@ namespace ML
 		}
 
 		// UE counterpart: ULevel::Serialize reading one AActor off the archive.
-		CActor* ParseActor(lua_State* L, int ActorIdx)
+		CActor* ParseActor(lua_State* L, int ActorIdx,
+			const std::unordered_map<std::string, CMaterial*>& InLevelMaterials)
 		{
 			std::string ActorName;
 			if (TryGetField(L, ActorIdx, "Name"))
@@ -295,7 +384,7 @@ namespace ML
 					if (lua_istable(L, -1))
 					{
 						const int CompIdx = lua_absindex(L, -1);
-						if (CComponent* Comp = ParseComponent(L, CompIdx, Actor))
+						if (CComponent* Comp = ParseComponent(L, CompIdx, Actor, InLevelMaterials))
 						{
 							// UE: USceneComponent::RelativeLocation / RelativeRotation / RelativeScale3D
 							CSceneComponent* SceneComp = dynamic_cast<CSceneComponent*>(Comp);
@@ -380,6 +469,14 @@ namespace ML
 			lua_pop(L, 1);
 		}
 
+		// Materials declared by this level. Parsed before the actors because
+		// OverrideMaterials entries refer to them by name.
+		if (TryGetField(L, LevelIdx, "Materials"))
+		{
+			ParseMaterials(L, lua_absindex(L, -1), LevelMaterials);
+			lua_pop(L, 1);
+		}
+
 		// UE: ULevel::Actors
 		if (TryGetField(L, LevelIdx, "Actors"))
 		{
@@ -390,7 +487,7 @@ namespace ML
 				lua_rawgeti(L, ActorsIdx, i);
 				if (lua_istable(L, -1))
 				{
-					if (CActor* Actor = ParseActor(L, lua_absindex(L, -1)))
+					if (CActor* Actor = ParseActor(L, lua_absindex(L, -1), LevelMaterials))
 					{
 						AddActor(Actor);
 					}
@@ -446,6 +543,15 @@ namespace ML
 			SafeDelete(Actor);
 		}
 		Actors.clear();
+
+		// Inline materials are owned by this level (no material assets yet), so
+		// they die with it - after the components that referenced them.
+		for (auto& Pair : LevelMaterials)
+		{
+			SafeDelete(Pair.second);
+		}
+		LevelMaterials.clear();
+
 		bLoaded = false;
 	}
 

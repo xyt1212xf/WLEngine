@@ -141,6 +141,12 @@
     <ClCompile Include="StreamableRenderAsset.cpp">
       <Filter>Core\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMgr.cpp">
+      <Filter>Core\Mgr</Filter>
+    </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>GameFrame\Component</Filter>
     </ClCompile>
@@ -181,6 +187,9 @@
       <Filter>Core\Devices</Filter>
     </ClCompile>
     <ClCompile Include="DX12RHIbuffer.cpp">
+      <Filter>Core\Devices\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12RHItexture.cpp">
       <Filter>Core\Devices\DX12</Filter>
     </ClCompile>
     <ClCompile Include="MathLib.cpp">
@@ -244,6 +253,9 @@
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
     <ClCompile Include="SolidColorShader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedShader.cpp">
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
     <ClCompile Include="PipelineState.cpp">
@@ -371,6 +383,12 @@
     <ClInclude Include="StreamableRenderAsset.h">
       <Filter>Core\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMgr.h">
+      <Filter>Core\Mgr</Filter>
+    </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>GameFrame\Component</Filter>
     </ClInclude>
@@ -412,6 +430,12 @@
     </ClInclude>
     <ClInclude Include="DX12RHIbuffer.h">
       <Filter>Core\Devices\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12RHItexture.h">
+      <Filter>Core\Devices\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHItexture.h">
+      <Filter>Core\Devices</Filter>
     </ClInclude>
     <ClInclude Include="MathLib.h">
       <Filter>Core\Math</Filter>
@@ -480,6 +504,9 @@
       <Filter>Core\Draw\Shader</Filter>
     </ClInclude>
     <ClInclude Include="SolidColorShader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedShader.h">
       <Filter>Core\Draw\Shader</Filter>
     </ClInclude>
     <ClInclude Include="PipelineState.h">

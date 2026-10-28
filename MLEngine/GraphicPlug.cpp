@@ -91,9 +91,9 @@ namespace ML
 			D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,     0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			D3D12_INPUT_ELEMENT_DESC{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			});
-		// InitPSO's first argument is the per-mesh VF; pass nullptr here so the material
-		// uses its own mDefaultInputLayout (boot-time path - no mesh loaded yet).
-		if (!mpDefaultMaterial->InitPSO(nullptr, DXGI_FORMAT_D32_FLOAT))
+		// GetPipelineState's argument is the per-mesh VF; pass nullptr here so the
+		// material uses its own mDefaultInputLayout (boot-time path - no mesh yet).
+		if (nullptr == mpDefaultMaterial->GetPipelineState(nullptr))
 		{
 			OutputDebugStringA("CGraphicPlug::Initialise: DefaultMaterial PSO creation failed\n");
 			SafeDelete(mpDefaultMaterial);

@@ -196,3 +196,5 @@ bin-release/
 /MLEngine/x64
 /MLGameApp/x64
 /.vs
+/DirectX-Graphics-Samples-master
+/x64
