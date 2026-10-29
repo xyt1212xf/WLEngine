@@ -77,7 +77,6 @@ namespace ML
 		, ShowFlags(FEngineShowFlags::FromViewMode(InViewMode))
 		{
 		}
-
 		// Renderer / pass-setup access. Mirrors UE's ViewFamily.EngineShowFlags.* reads.
 		FEngineShowFlags GetShowFlags() const { return ShowFlags; }
 
