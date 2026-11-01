@@ -48,6 +48,13 @@ function State:Leave()
 end
 
 function State:OnTick()
+    local enum = self.role.currentStateEnum
+    -- 跳/落状态的位移完全由 Role 的重力系统驱动（水平 vx + 垂直 vy），
+    -- 这里不再做任何位置修改，避免和重力系统重复叠加。
+    if enum == RoleStateEnum.jump or enum == RoleStateEnum.down then
+        return
+    end
+
     local nSpeedX = self.cfg.moveSpeed.x
     local nSpeedY = self.cfg.moveSpeed.y
     if self.entity:isChildXYAxisSwap(100) then
@@ -72,4 +79,12 @@ function State:IsInterrupt()
     else 
         return false
     end
+end
+
+-- 非循环动作播放到最后一帧即视为结束（用于自动切换到下一状态）
+function State:IsAnimationEnd()
+    if self.cfg.isLoop then
+        return false
+    end
+    return self.entity:getCurrentFrame() >= (self.cfg.frameCount - 1)
 end
