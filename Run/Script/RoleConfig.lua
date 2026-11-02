@@ -30,6 +30,18 @@ Roles =
                 beAttacked = 999,	        --被动状态多少帧之前可以打断    
                 moveSpeed = {x=4,y=0},      --移动速度
             },
+			[RoleStateEnum.run]=
+            {
+                id = RoleStateEnum.run,   --状态值
+                name = "前移",			    --名称
+                frameName = "resource/Role/BaWangWan/53_",           --动作起始帧的名称
+                frameCount = 4,
+                speed = 0.26,		        --播放速度
+                isLoop = true,              --是否循环播放动作
+                interrupt = 999,	        --主动状态多少帧之前可以打断
+                beAttacked = 999,	        --被动状态多少帧之前可以打断    
+                moveSpeed = {x=16,y=0},      --移动速度
+            },
             [RoleStateEnum.back]=
             {
                 id = RoleStateEnum.back,    --状态值
