@@ -12,30 +12,34 @@ namespace ML
 		Release();
 	}
 
-	// Builds the root signature in C++ rather than extracting it from embedded shader
-	// bytecode. UE keeps root signatures as engine-side resources; the HLSL only
-	// declares its register bindings (register(b0/t0/s0)). Root parameter order is
-	// fixed to match CRenderer's binding calls:
-	//   [0] MVP 32-bit constants (b0), [1] SRV table (t0), [2] Sampler table (s0).
-	static ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, ERootSignatureType Type)
+	// Builds a root signature in C++ from a descriptor (UE: FRootSignatureDesc ->
+	// FD3D12RootSignature). Root parameter order is fixed to match CRenderer's
+	// binding calls: [0] MVP 32-bit constants (b0), [1] SRV table (t0),
+	// [2] Sampler table (s0). The HLSL only declares register(b0/t0/s0); it never
+	// embeds a root signature.
+	static ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
 	{
 		D3D12_ROOT_PARAMETER Params[3] = {};
 		UINT NumParams = 0;
 
-		// [0] MVP as 16 32-bit root constants bound to b0 (all shader stages).
-		D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
-		MVPParam.ParameterType		= D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-		MVPParam.ShaderVisibility	= D3D12_SHADER_VISIBILITY_ALL;
-		MVPParam.Constants.ShaderRegister		= 0;  // b0
-		MVPParam.Constants.RegisterSpace		= 0;
-		MVPParam.Constants.Num32BitValues	= 16;
-
-		if (Type == ERootSignatureType::Textured)
+		// [0] MVP (or other) as 32-bit root constants bound to b0 (all shader stages).
+		if (Desc.RootConstantCount > 0)
 		{
-			// [1] SRV descriptor table for the base-color texture (t0, pixel-visible).
+			D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
+			MVPParam.ParameterType		= D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+			MVPParam.ShaderVisibility	= D3D12_SHADER_VISIBILITY_ALL;
+			MVPParam.Constants.ShaderRegister		= 0;  // b0
+			MVPParam.Constants.RegisterSpace		= 0;
+			MVPParam.Constants.Num32BitValues		= Desc.RootConstantCount;
+		}
+
+		if (Desc.SRVDescriptorCount > 0)
+		{
+			// [1] One SRV descriptor table covering t0..t(N-1), pixel-visible. N contiguous
+			// SRVs let the shader bind Texture2D gTex[N] : register(t0) (or register(t0..t7)).
 			D3D12_DESCRIPTOR_RANGE SRVRange = {};
 			SRVRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-			SRVRange.NumDescriptors						= 1;
+			SRVRange.NumDescriptors						= Desc.SRVDescriptorCount;
 			SRVRange.BaseShaderRegister					= 0;  // t0
 			SRVRange.RegisterSpace						= 0;
 			SRVRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
@@ -45,11 +49,14 @@ namespace ML
 			SRVParam.ShaderVisibility				= D3D12_SHADER_VISIBILITY_PIXEL;
 			SRVParam.DescriptorTable.NumDescriptorRanges	= 1;
 			SRVParam.DescriptorTable.pDescriptorRanges	= &SRVRange;
+		}
 
-			// [2] Sampler descriptor table for the static sampler (s0, pixel-visible).
+		if (Desc.SamplerDescriptorCount > 0)
+		{
+			// [2] One sampler descriptor table covering s0..s(N-1), pixel-visible.
 			D3D12_DESCRIPTOR_RANGE SamplerRange = {};
 			SamplerRange.RangeType						= D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
-			SamplerRange.NumDescriptors					= 1;
+			SamplerRange.NumDescriptors					= Desc.SamplerDescriptorCount;
 			SamplerRange.BaseShaderRegister				= 0;  // s0
 			SamplerRange.RegisterSpace					= 0;
 			SamplerRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
@@ -61,16 +68,16 @@ namespace ML
 			SamplerParam.DescriptorTable.pDescriptorRanges	= &SamplerRange;
 		}
 
-		D3D12_ROOT_SIGNATURE_DESC Desc = {};
-		Desc.NumParameters		= NumParams;
-		Desc.pParameters		= Params;
-		Desc.NumStaticSamplers	= 0;
-		Desc.pStaticSamplers	= nullptr;
-		Desc.Flags				= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		D3D12_ROOT_SIGNATURE_DESC DescNative = {};
+		DescNative.NumParameters		= NumParams;
+		DescNative.pParameters			= Params;
+		DescNative.NumStaticSamplers	= 0;
+		DescNative.pStaticSamplers		= nullptr;
+		DescNative.Flags				= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 		ID3DBlob* pBlob		= nullptr;
 		ID3DBlob* pError	= nullptr;
-		HRESULT hr = D3D12SerializeRootSignature(&Desc, D3D_ROOT_SIGNATURE_VERSION_1, &pBlob, &pError);
+		HRESULT hr = D3D12SerializeRootSignature(&DescNative, D3D_ROOT_SIGNATURE_VERSION_1, &pBlob, &pError);
 		if (FAILED(hr))
 		{
 			if (pError)
@@ -86,10 +93,72 @@ namespace ML
 		return SUCCEEDED(hr) ? pRootSig : nullptr;
 	}
 
+	FRootSignatureCache& FRootSignatureCache::Get()
+	{
+		static FRootSignatureCache Instance;
+		return Instance;
+	}
+
+	uint64 FRootSignatureCache::Hash(const FRootSignatureDesc& Desc) const
+	{
+		// hash_combine over the three descriptor fields into a 64-bit key. Using the
+		// counts (not just present/absent) so e.g. 1 SRV vs 8 SRVs yield distinct keys.
+		auto Combine = [](uint64 Seed, uint32 Val)
+		{
+			return Seed ^ (static_cast<uint64>(Val) + 0x9E3779B97F4A7C15ULL + (Seed << 6) + (Seed >> 2));
+		};
+		uint64 Key = 0;
+		Key = Combine(Key, Desc.RootConstantCount);
+		Key = Combine(Key, Desc.SRVDescriptorCount);
+		Key = Combine(Key, Desc.SamplerDescriptorCount);
+		return Key;
+	}
+
+	ID3D12RootSignature* FRootSignatureCache::GetOrCreate(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
+	{
+		const uint64 Key = Hash(Desc);
+		{
+			std::lock_guard<std::mutex> Lock(mLock);
+			auto It = mCache.find(Key);
+			if (It != mCache.end())
+			{
+				return It->second;
+			}
+		}
+		// Build outside the lock: serializing a root signature only touches the device.
+		ID3D12RootSignature* pRootSig = BuildRootSignature(pDevice, Desc);
+		if (nullptr == pRootSig)
+		{
+			return nullptr;
+		}
+		std::lock_guard<std::mutex> Lock(mLock);
+		// Another thread may have built the same descriptor while we were outside the lock.
+		auto Emplaced = mCache.emplace(Key, pRootSig);
+		if (!Emplaced.second)
+		{
+			SafeRelease(pRootSig);  // lost the race; keep the winner's copy
+			return Emplaced.first->second;
+		}
+		return pRootSig;
+	}
+
+	void FRootSignatureCache::ReleaseAll()
+	{
+		std::unordered_map<uint64, ID3D12RootSignature*>	TempCache;
+		{
+			std::lock_guard<std::mutex> Lock(mLock);
+			std::swap(TempCache, mCache);
+		}
+		for (auto& Pair : TempCache)
+		{
+			SafeRelease(Pair.second);
+		}
+	}
+
 	bool CDX12PipelineState::Create(CShader* pVS, CShader* pPS,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 		DXGI_FORMAT DepthFormat,
-		ERootSignatureType RootSigType,
+		const FRootSignatureDesc& RootSigDesc,
 		bool bWireframe)
 	{
 		Release();
@@ -101,7 +170,8 @@ namespace ML
 			return false;
 		}
 
-		mpRootSignature = BuildRootSignature(pDevice, RootSigType);
+		// Root signature comes from the cache, keyed by its binding-layout descriptor.
+		mpRootSignature = FRootSignatureCache::Get().GetOrCreate(pDevice, RootSigDesc);
 		if (nullptr == mpRootSignature)
 		{
 			return false;
@@ -149,6 +219,8 @@ namespace ML
 	void CDX12PipelineState::Release()
 	{
 		SafeRelease(mpPipelineState);
-		SafeRelease(mpRootSignature);
+		// mpRootSignature is owned by FRootSignatureCache (shared across every PSO with
+		// the same binding layout), so it is NOT freed here.
+		mpRootSignature = nullptr;
 	}
 }

@@ -186,11 +186,15 @@ namespace ML
 
 		// Create the PSO. This is where a material creates GPU resources.
 		CPipelineState* PSO = new CPipelineState();
-		// The root signature is chosen by the material: a textured material needs the
-		// SRV/Sampler tables, a plain one only the MVP constant (see BuildRootSignature).
-		const ERootSignatureType RootSigType =
-			bUsesBaseColorTexture ? ERootSignatureType::Textured : ERootSignatureType::SolidColor;
-		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, RootSigType, bWireframe))
+		// The root signature is derived from what the material binds (UE: the
+		// FRootSignatureDesc is built from the material's parameter interface), not from
+		// an enum of variants. A textured material adds the SRV/Sampler tables on top of
+		// the shared MVP constant; a plain one keeps just the constant.
+		FRootSignatureDesc RootSigDesc;
+		RootSigDesc.RootConstantCount = 16;   // 4x4 MVP at b0
+		RootSigDesc.SRVDescriptorCount     = bUsesBaseColorTexture ? 1u : 0u;
+		RootSigDesc.SamplerDescriptorCount = bUsesBaseColorTexture ? 1u : 0u;
+		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe))
 		{
 			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + VSName + " / " + PSName + "\n").c_str());
 			SafeDelete(PSO);

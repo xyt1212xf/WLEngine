@@ -1,4 +1,5 @@
 ﻿#include "DX12Device.h"
+#include "DX12PipelineState.h"
 #include "MLEngine.h"
 
 #pragma comment(lib, "dxgi.lib")
@@ -16,6 +17,9 @@ namespace ML
 	CDX12RHIDevice::~CDX12RHIDevice()
 	{
 		// Tear down in reverse creation order; every ID3D12* must go before the device.
+		// Root signatures are device-bound and shared across PSOs: release the cache
+		// first so every cached ID3D12RootSignature is gone before the device itself.
+		FRootSignatureCache::Get().ReleaseAll();
 		SafeRelease(mSamplerHeap);
 		SafeRelease(mSrvHeap);
 		SafeRelease(mDepthStencil);
