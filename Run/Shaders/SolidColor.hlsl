@@ -5,14 +5,10 @@
 //   slot 0: POSITION  float3   (PositionBuffer)
 //   slot 1: COLOR     float4   (ColorBuffer)
 //
-// 根签名: 1 个根常量, 16 个 32bit 常量(4x4 MVP 矩阵)
+// 根签名: 1 个根常量, 16 个 32bit 常量(4x4 MVP 矩阵)。
+// 现在由 C++ 侧定义(见 DX12PipelineState::BuildRootSignature), 不再内嵌进字节码;
+// 本文件只声明寄存器绑定 b0(MVP)。
 //================================================================================
-
-// 根签名内嵌进字节码, C++ 侧用 D3DGetBlobPart 提取后 CreateRootSignature,
-// 保证根签名只有这一处定义
-#define SOLID_COLOR_ROOT_SIG \
-	"RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ), " \
-	"RootConstants( b0, num32BitConstants=16 )"
 
 // C++ 侧 FMatrix44 是行主序存储、行向量约定(点 * 矩阵),
 // 因此这里声明 row_major, 上传前不需要转置
@@ -31,7 +27,6 @@ struct PSIn
 	float4 Color : COLOR;
 };
 
-[RootSignature(SOLID_COLOR_ROOT_SIG)]
 PSIn SolidColorVS(VSIn In)
 {
 	PSIn Out;
@@ -41,7 +36,6 @@ PSIn SolidColorVS(VSIn In)
 	return Out;
 }
 
-[RootSignature(SOLID_COLOR_ROOT_SIG)]
 float4 SolidColorPS(PSIn In) : SV_Target
 {
 	return In.Color;

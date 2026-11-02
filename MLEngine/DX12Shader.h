@@ -14,7 +14,6 @@ namespace ML
 		CDX12Shader();
 		virtual ~CDX12Shader();
 		bool IsValid() const { return mpByteCode != nullptr; }
-		ID3DBlob* ExtractRootSignature() const;
 		bool CompileFromFile(const std::string& FilePath, const std::string& EntryPoint, const std::string& Target);
 
 		// 取编译产物, 填 PSO 的 D3D12_SHADER_BYTECODE 用

@@ -6,21 +6,10 @@
 //   slot 1: COLOR     float4   (ColorBuffer)
 //   slot 2: TEXCOORD0 float2   (UVBuffer)
 //
-// 根签名:
-//   0) RootConstants 16 个 32bit 常量 (b0, 4x4 MVP)
-//   1) DescriptorTable SRV     (t0, pixel) — base color 贴图
-//   2) DescriptorTable Sampler (s0, pixel) — 引擎静态采样器
-//
+// 根签名现在由 C++ 侧定义(见 DX12PipelineState::BuildRootSignature), 不再内嵌进
+// 字节码。本文件只声明寄存器绑定: b0(MVP) / t0(贴图) / s0(采样器)。
 // 与 SolidColor.hlsl 的差异只在 PS：把顶点色乘上贴图采样结果。
-// 之所以要单独一个根签名（而不是复用 1 常量版），是因为多了 SRV / Sampler
-// 两张表；两者互不兼容，各自由自己的 material 绑定。
 //================================================================================
-
-#define ML_TEXTURED_ROOT_SIG \
-	"RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ), " \
-	"RootConstants( num32BitConstants=16, b0 ), " \
-	"DescriptorTable( SRV( t0 ), visibility = SHADER_VISIBILITY_PIXEL ), " \
-	"DescriptorTable( Sampler( s0 ), visibility = SHADER_VISIBILITY_PIXEL )"
 
 // C++ 侧 FMatrix44 是行主序存储、行向量约定(点 * 矩阵), 所以这里 row_major。
 row_major float4x4 g_MVP : register(b0);
@@ -43,7 +32,6 @@ struct PSIn
 	float2 UV    : TEXCOORD0;
 };
 
-[RootSignature(ML_TEXTURED_ROOT_SIG)]
 PSIn TexturedVS(VSIn In)
 {
 	PSIn Out;
@@ -54,7 +42,6 @@ PSIn TexturedVS(VSIn In)
 	return Out;
 }
 
-[RootSignature(ML_TEXTURED_ROOT_SIG)]
 float4 TexturedPS(PSIn In) : SV_Target
 {
 	// 顶点色与贴图相乘：和 UE 里 BaseColor * VertexColor 的做法一致，

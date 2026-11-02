@@ -12,9 +12,84 @@ namespace ML
 		Release();
 	}
 
+	// Builds the root signature in C++ rather than extracting it from embedded shader
+	// bytecode. UE keeps root signatures as engine-side resources; the HLSL only
+	// declares its register bindings (register(b0/t0/s0)). Root parameter order is
+	// fixed to match CRenderer's binding calls:
+	//   [0] MVP 32-bit constants (b0), [1] SRV table (t0), [2] Sampler table (s0).
+	static ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, ERootSignatureType Type)
+	{
+		D3D12_ROOT_PARAMETER Params[3] = {};
+		UINT NumParams = 0;
+
+		// [0] MVP as 16 32-bit root constants bound to b0 (all shader stages).
+		D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
+		MVPParam.ParameterType		= D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+		MVPParam.ShaderVisibility	= D3D12_SHADER_VISIBILITY_ALL;
+		MVPParam.Constants.ShaderRegister		= 0;  // b0
+		MVPParam.Constants.RegisterSpace		= 0;
+		MVPParam.Constants.Num32BitValues	= 16;
+
+		if (Type == ERootSignatureType::Textured)
+		{
+			// [1] SRV descriptor table for the base-color texture (t0, pixel-visible).
+			D3D12_DESCRIPTOR_RANGE SRVRange = {};
+			SRVRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+			SRVRange.NumDescriptors						= 1;
+			SRVRange.BaseShaderRegister					= 0;  // t0
+			SRVRange.RegisterSpace						= 0;
+			SRVRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+			D3D12_ROOT_PARAMETER& SRVParam = Params[NumParams++];
+			SRVParam.ParameterType					= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+			SRVParam.ShaderVisibility				= D3D12_SHADER_VISIBILITY_PIXEL;
+			SRVParam.DescriptorTable.NumDescriptorRanges	= 1;
+			SRVParam.DescriptorTable.pDescriptorRanges	= &SRVRange;
+
+			// [2] Sampler descriptor table for the static sampler (s0, pixel-visible).
+			D3D12_DESCRIPTOR_RANGE SamplerRange = {};
+			SamplerRange.RangeType						= D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
+			SamplerRange.NumDescriptors					= 1;
+			SamplerRange.BaseShaderRegister				= 0;  // s0
+			SamplerRange.RegisterSpace					= 0;
+			SamplerRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+			D3D12_ROOT_PARAMETER& SamplerParam = Params[NumParams++];
+			SamplerParam.ParameterType				= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+			SamplerParam.ShaderVisibility			= D3D12_SHADER_VISIBILITY_PIXEL;
+			SamplerParam.DescriptorTable.NumDescriptorRanges	= 1;
+			SamplerParam.DescriptorTable.pDescriptorRanges	= &SamplerRange;
+		}
+
+		D3D12_ROOT_SIGNATURE_DESC Desc = {};
+		Desc.NumParameters		= NumParams;
+		Desc.pParameters		= Params;
+		Desc.NumStaticSamplers	= 0;
+		Desc.pStaticSamplers	= nullptr;
+		Desc.Flags				= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+		ID3DBlob* pBlob		= nullptr;
+		ID3DBlob* pError	= nullptr;
+		HRESULT hr = D3D12SerializeRootSignature(&Desc, D3D_ROOT_SIGNATURE_VERSION_1, &pBlob, &pError);
+		if (FAILED(hr))
+		{
+			if (pError)
+			{
+				OutputDebugStringA(static_cast<const char*>(pError->GetBufferPointer()));
+				SafeRelease(pError);
+			}
+			return nullptr;
+		}
+		ID3D12RootSignature* pRootSig = nullptr;
+		hr = pDevice->CreateRootSignature(0, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), IID_PPV_ARGS(&pRootSig));
+		SafeRelease(pBlob);
+		return SUCCEEDED(hr) ? pRootSig : nullptr;
+	}
+
 	bool CDX12PipelineState::Create(CShader* pVS, CShader* pPS,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 		DXGI_FORMAT DepthFormat,
+		ERootSignatureType RootSigType,
 		bool bWireframe)
 	{
 		Release();
@@ -26,22 +101,13 @@ namespace ML
 			return false;
 		}
 
-		ID3DBlob* pRootSigBlob = pVS->ExtractRootSignature();
-		if (nullptr == pRootSigBlob)
-		{
-			return false;
-		}
-		HRESULT hr = pDevice->CreateRootSignature(
-			0,
-			pRootSigBlob->GetBufferPointer(),
-			pRootSigBlob->GetBufferSize(),
-			IID_PPV_ARGS(&mpRootSignature));
-		SafeRelease(pRootSigBlob);
-		if (FAILED(hr))
+		mpRootSignature = BuildRootSignature(pDevice, RootSigType);
+		if (nullptr == mpRootSignature)
 		{
 			return false;
 		}
 
+		HRESULT hr;
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC PSODesc = {};
 
 		PSODesc.pRootSignature	= mpRootSignature;

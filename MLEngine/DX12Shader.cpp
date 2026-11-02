@@ -15,21 +15,6 @@ namespace ML
 
 	}
 
-	ID3DBlob* CDX12Shader::ExtractRootSignature() const
-	{
-		if (nullptr == mpByteCode)
-		{
-			return nullptr;
-		}
-		ID3DBlob* pRootSig = nullptr;
-		D3DGetBlobPart( mpByteCode->GetBufferPointer(),
-						mpByteCode->GetBufferSize(),
-						D3D_BLOB_ROOT_SIGNATURE,
-						0,
-						&pRootSig);
-		return pRootSig;
-	}
-
 	D3D12_SHADER_BYTECODE CDX12Shader::GetShaderByteCode() const
 	{
 		D3D12_SHADER_BYTECODE Code = {};
