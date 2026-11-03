@@ -37,6 +37,7 @@
     <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
+    <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialMgr.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="json_fwd.hpp" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelStreaming.h" />
+    <ClInclude Include="LightShader.h" />
     <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialMgr.h" />

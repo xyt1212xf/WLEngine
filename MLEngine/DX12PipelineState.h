@@ -17,6 +17,7 @@ namespace ML
 	struct FRootSignatureDesc
 	{
 		uint32	RootConstantCount       = 0;  // 32-bit root constants at b0 (e.g. 16 for a 4x4 MVP)
+		uint32  LightingConstantCount	= 0; // 新增: 光照 4*float4 = 16
 		uint32	SRVDescriptorCount      = 0;  // SRVs in ONE descriptor table (t0..tN-1), pixel-visible
 		uint32	SamplerDescriptorCount  = 0;  // samplers in ONE descriptor table (s0..sN-1), pixel-visible
 

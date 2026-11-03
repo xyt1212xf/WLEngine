@@ -159,8 +159,7 @@ namespace ML
 				OutputDebugStringA(("CLevel: mesh asset loading not implemented yet: " + Path + "\n").c_str());
 				return nullptr;
 			}
-
-			if ("Procedural" == Source)
+			else if ("Procedural" == Source)
 			{
 				std::string Shape;
 				if (TryGetField(L, MeshIdx, "Shape"))
@@ -168,32 +167,52 @@ namespace ML
 					Shape = lua_tostring(L, -1);
 					lua_pop(L, 1);
 				}
-				if ("Cube" != Shape)
-				{
-					OutputDebugStringA(("CLevel: unsupported procedural shape: " + Shape + "\n").c_str());
-					return nullptr;
-				}
 
+				// 所有 procedural 形状共享：中心点（默认原点）。
 				Vec3F Center(0.0f, 0.0f, 0.0f);
-				Vec3F HalfExtents(1.0f, 1.0f, 1.0f);
 				if (TryGetField(L, MeshIdx, "Center"))
 				{
 					ReadVec3(L, -1, Center);
 					lua_pop(L, 1);
 				}
-				if (TryGetField(L, MeshIdx, "HalfExtents"))
-				{
-					ReadVec3(L, -1, HalfExtents);
-					lua_pop(L, 1);
-				}
 
 				CStaticMesh* Mesh = new CStaticMesh();
 				Mesh->AddMaterialSlot("Default");
-				Mesh->GetSourceModel(Mesh->AddSourceModel())->CreateCube(Center, HalfExtents);
+				CStaticMeshDescription* SrcModel = Mesh->GetSourceModel(Mesh->AddSourceModel());
+
+				if ("Cube" == Shape)
+				{
+					Vec3F HalfExtents(1.0f, 1.0f, 1.0f);
+					if (TryGetField(L, MeshIdx, "HalfExtents"))
+					{
+						ReadVec3(L, -1, HalfExtents);
+						lua_pop(L, 1);
+					}
+					SrcModel->CreateCube(Center, HalfExtents);
+				}
+				else if ("Sphere" == Shape)
+				{
+					// 球体：半径 + 经纬分段（可选，越大越圆）。
+					float Radius = 1.0f;
+					int32 Slices = 24;
+					int32 Stacks = 16;
+					if (TryGetField(L, MeshIdx, "Radius")) { Radius = (float)lua_tonumber(L, -1); lua_pop(L, 1); }
+					if (TryGetField(L, MeshIdx, "Slices")) { Slices = (int32)lua_tonumber(L, -1); lua_pop(L, 1); }
+					if (TryGetField(L, MeshIdx, "Stacks")) { Stacks = (int32)lua_tonumber(L, -1); lua_pop(L, 1); }
+					SrcModel->CreateSphere(Center, Radius, Slices, Stacks);
+				}
+				else
+				{
+					OutputDebugStringA(("CLevel: unsupported procedural shape: " + Shape + "\n").c_str());
+					SafeDelete(Mesh);
+					return nullptr;
+				}
+
 				Mesh->Build();
 				return Mesh;
 			}
-
+			OutputDebugStringA("CLevel: unsupported procedural shape: \n");
+			//OutputDebugStringA(("CLevel: mesh asset is Error" + "\n").c_str());
 			return nullptr;
 		}
 

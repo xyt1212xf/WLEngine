@@ -121,4 +121,125 @@ namespace ML
 		}
 	}
 
+	void CStaticMeshDescription::CreateSphere(Vec3F Center, float Radius, int32 Slices, int32 Stacks)
+	{
+		FMeshDescription& Desc = OwnedMeshDescription;
+		Desc.Empty();
+
+		// 至少 3 段, 否则极点扇面会退化
+		if (Slices < 3)
+		{
+			Slices = 3;
+		}
+		if (Stacks < 3)
+		{
+			Stacks = 3;
+		}
+		// 整球用一个材质槽
+		FMeshPolygonGroup PG;
+		PG.Name = "Sphere";
+		PG.MaterialIndex = 0;
+		Desc.PolygonGroups.push_back(PG);
+		const INT32 GroupID = (INT32)Desc.PolygonGroups.size() - 1;
+
+		// 加一个球面点(顶点 + 对应实例), 返回实例 id。
+		// 法线用球面法线(LocalPos 归一化), 球面上法线随位置平滑过渡。
+		auto AddPoint = [&](const Vec3F& LocalPos, const Vec2F& UV) -> UINT32
+		{
+			FMeshVertex Vtx;
+			Vtx.Position = Center + LocalPos;
+			Desc.Vertices.push_back(Vtx);
+			const UINT32 Vid = (UINT32)Desc.Vertices.size() - 1;
+
+			Vec3F N = LocalPos;
+			const float Len = sqrtf(N.x * N.x + N.y * N.y + N.z * N.z);
+			if (Len > 1e-6f) { N.x /= Len; N.y /= Len; N.z /= Len; }
+			else N = Vec3F(0.0f, 1.0f, 0.0f);
+
+			FMeshVertexInstance Inst;
+			Inst.VertexID = Vid;
+			Inst.Normal = N;
+			Inst.UV0 = UV;
+			Inst.Color = Vec4F(1.0f, 1.0f, 1.0f, 1.0f);
+			Desc.VertexInstances.push_back(Inst);
+			return (UINT32)Desc.VertexInstances.size() - 1;
+		};
+
+		// 顶极点(法线 +Y), 单顶点
+		const UINT32 TopPole = AddPoint(Vec3F(0.0f, Radius, 0.0f), Vec2F(0.5f, 0.0f));
+
+		// 中间环: i = 1 .. Stacks-1, 每环 Slices+1 列(含接缝列)
+		std::vector<std::vector<UINT32>> Rings;
+		Rings.resize(Stacks);
+		for (int32 i = 1; i < Stacks; ++i)
+		{
+			const float V = (float)i / (float)Stacks;
+			const float Phi = V * PI;
+			const float SinPhi = sinf(Phi);
+			const float CosPhi = cosf(Phi);
+			Rings[i].resize(Slices + 1);
+			for (int32 j = 0; j <= Slices; ++j)
+			{
+				const float U = (float)j / (float)Slices;
+				const float Theta = U * 2.0f * PI;
+				Vec3F Local;
+				Local.x = Radius * SinPhi * cosf(Theta);
+				Local.y = Radius * CosPhi;
+				Local.z = Radius * SinPhi * sinf(Theta);
+				Rings[i][j] = AddPoint(Local, Vec2F(U, V));
+			}
+		}
+
+		// 底极点(法线 -Y), 单顶点
+		const UINT32 BottomPole = AddPoint(Vec3F(0.0f, -Radius, 0.0f), Vec2F(0.5f, 1.0f));
+
+		// 顶扇面: (TopPole, Ring1[j+1], Ring1[j])
+		for (int32 j = 0; j < Slices; ++j)
+		{
+			FMeshTriangle T;
+			T.VertexInstanceID[0] = TopPole;
+			T.VertexInstanceID[1] = Rings[1][j + 1];
+			T.VertexInstanceID[2] = Rings[1][j];
+			T.PolygonGroupID = GroupID;
+			Desc.Triangles.push_back(T);
+		}
+
+		// 中间环之间的四边形: T1=(A,C,D) T2=(A,B,C), 外法线 CCW
+		for (int32 i = 1; i < Stacks - 1; ++i)
+		{
+			for (int32 j = 0; j < Slices; ++j)
+			{
+				const UINT32 A = Rings[i][j];
+				const UINT32 B = Rings[i][j + 1];
+				const UINT32 C = Rings[i + 1][j + 1];
+				const UINT32 D = Rings[i + 1][j];
+
+				FMeshTriangle T1;
+				T1.VertexInstanceID[0] = A;
+				T1.VertexInstanceID[1] = C;
+				T1.VertexInstanceID[2] = D;
+				T1.PolygonGroupID = GroupID;
+				Desc.Triangles.push_back(T1);
+
+				FMeshTriangle T2;
+				T2.VertexInstanceID[0] = A;
+				T2.VertexInstanceID[1] = B;
+				T2.VertexInstanceID[2] = C;
+				T2.PolygonGroupID = GroupID;
+				Desc.Triangles.push_back(T2);
+			}
+		}
+
+		// 底扇面: (BottomPole, Ring[Stacks-1][j], Ring[Stacks-1][j+1])
+		for (int32 j = 0; j < Slices; ++j)
+		{
+			FMeshTriangle T;
+			T.VertexInstanceID[0] = BottomPole;
+			T.VertexInstanceID[1] = Rings[Stacks - 1][j];
+			T.VertexInstanceID[2] = Rings[Stacks - 1][j + 1];
+			T.PolygonGroupID = GroupID;
+			Desc.Triangles.push_back(T);
+		}
+	}
+
 }

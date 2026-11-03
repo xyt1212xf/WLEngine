@@ -17,7 +17,7 @@ namespace ML
 	{
 		ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
 		{
-			D3D12_ROOT_PARAMETER Params[3] = {};
+			D3D12_ROOT_PARAMETER Params[4] = {};
 			UINT NumParams = 0;
 
 			// [0] MVP (or other) as 32-bit root constants bound to b0 (all shader stages).
@@ -30,7 +30,15 @@ namespace ML
 				MVPParam.Constants.RegisterSpace = 0;
 				MVPParam.Constants.Num32BitValues = Desc.RootConstantCount;
 			}
-
+			if (Desc.LightingConstantCount > 0)
+			{
+				D3D12_ROOT_PARAMETER& LightParam  = Params[NumParams++];
+				LightParam .ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+				LightParam .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				LightParam .Constants.ShaderRegister = 0;  // b1
+				LightParam .Constants.RegisterSpace = 0;
+				LightParam .Constants.Num32BitValues = Desc.LightingConstantCount;
+			}
 			if (Desc.SRVDescriptorCount > 0)
 			{
 				// [1] One SRV descriptor table covering t0..t(N-1), pixel-visible. N contiguous

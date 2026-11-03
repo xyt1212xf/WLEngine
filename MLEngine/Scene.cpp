@@ -315,9 +315,8 @@ namespace ML
 			}
 
 			// 定位 proxy 实际所在桶（索引过期时退化到两桶按 id 找回）。
-			const EProxyBucket OldTag = It->second.first;
-			std::vector<FPrimitiveSceneProxy*>* pOldVec =
-				(OldTag == EProxyBucket::Translucent) ? &TranslucentProxies : &OpaqueProxies;
+			const EProxyBucket OldBucket = It->second.first;
+			auto pOldVec = (OldBucket == EProxyBucket::Translucent) ? &TranslucentProxies : &OpaqueProxies;
 
 			FPrimitiveSceneProxy* Proxy = nullptr;
 			if (It->second.second < pOldVec->size() &&
@@ -354,16 +353,16 @@ namespace ML
 			// 注意：必须用实际所在桶比较，而非索引里记的旧标签——旧标签可能已因之前的
 			// 透明<->不透明切换而过期为错，否则会漏搬。
 			const bool bTranslucent = (nullptr != Proxy->Material) && Proxy->Material->IsTranslucent();
-			const EProxyBucket NewTag = bTranslucent ? EProxyBucket::Translucent : EProxyBucket::Opaque;
-			const EProxyBucket OldTagActual =
+			const EProxyBucket NewBucket = bTranslucent ? EProxyBucket::Translucent : EProxyBucket::Opaque;
+			const EProxyBucket OldBucketActual =
 				(pOldVec == &TranslucentProxies) ? EProxyBucket::Translucent : EProxyBucket::Opaque;
-			if (NewTag == OldTagActual)
+			if (NewBucket == OldBucketActual)
 			{
 				continue;
 			}
 
 			IndexById.erase(It);   // 只在确定要搬时摘索引（去重）
-			Moves.push_back({ Proxy, NewTag });
+			Moves.push_back({ Proxy, NewBucket });
 		}
 
 		if (Moves.empty())
