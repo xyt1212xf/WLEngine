@@ -115,10 +115,14 @@ namespace ML
 		}
 
 		const uint64 LayoutKey = HashInputLayout(*LayoutPtr);
-		// Fold the draw mode into the cache key: a wireframe PSO must not collide
-		// with its solid twin (same layout). The low-bit avalanche constant keeps
-		// the two keys distinct without disturbing the layout hash's own bits.
-		const uint64 Key = LayoutKey ^ (bWireframe ? 0x9E3779B97F4A7C15ull : 0ull);
+		// Fold the draw mode AND the blend mode into the cache key: a wireframe PSO
+		// must not collide with its solid twin, and an opaque vs translucent PSO
+		// (same vertex layout, different blend state / depth-write mask) must not
+		// share either. The per-field avalanche constants keep the three sources
+		// from colliding.
+		const uint64 Key = LayoutKey
+			^ (bWireframe ? 0x9E3779B97F4A7C15ull : 0ull)
+			^ (static_cast<uint64>(BlendMode) * 0xC2B2AE3D27D4EB4Full);
 
 		{
 			std::lock_guard<std::mutex> Lock(mPSOMutex);
@@ -194,7 +198,7 @@ namespace ML
 		RootSigDesc.RootConstantCount = 16;   // 4x4 MVP at b0
 		RootSigDesc.SRVDescriptorCount     = bUsesBaseColorTexture ? 1u : 0u;
 		RootSigDesc.SamplerDescriptorCount = bUsesBaseColorTexture ? 1u : 0u;
-		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe))
+		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe, BlendMode))
 		{
 			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + VSName + " / " + PSName + "\n").c_str());
 			SafeDelete(PSO);

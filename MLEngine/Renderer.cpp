@@ -24,17 +24,99 @@ namespace ML
 	// constexpr 在命名空间作用域隐含 const，具备内部链接，不会跨 TU 冲突。
 	constexpr uint32 InitialBatchReserve = 256;
 
+
+	// Draws a list of mesh batches that all belong to one pass (opaque or
+	// translucent). UE: the output of one FMeshPassProcessor. The PSO / root
+	// signature switch is amortised - it only re-binds when the Material (and thus
+	// its PSO) actually changes between consecutive batches.
+	namespace
+	{
+		void DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
+			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe)
+		{
+			CPipelineState* CurrentPSO = nullptr;
+			ID3D12RootSignature* CurrentRS = nullptr;
+
+			for (const FMeshBatch& Batch : Batches)
+			{
+				if (nullptr == Batch.LOD
+					|| nullptr == Batch.LOD->IndexBuffer
+					|| nullptr == Batch.VertexFactory
+					|| nullptr == Batch.Material)
+				{
+					continue;
+				}
+
+				// The PSO depends on the mesh's vertex layout + blend mode, so it is
+				// resolved per batch and built on first use.
+				CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
+				if (nullptr == PSO)
+				{
+					continue;
+				}
+
+				// A material whose shaders sample the base-color texture but whose asset
+				// is missing is skipped rather than drawn with an undefined descriptor.
+				if (Batch.Material->UsesBaseColorTexture() && !Batch.Material->HasBaseColorTexture())
+				{
+					continue;
+				}
+
+				const std::vector<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
+				if (VBViews.empty())
+				{
+					continue;
+				}
+
+				// Switch PSO / RootSignature (only when the material changes).
+				if (PSO != CurrentPSO)
+				{
+					CurrentPSO = PSO;
+					CurrentRS = PSO->GetRootSignature();
+					pCmd->SetGraphicsRootSignature(CurrentRS);
+					pCmd->SetPipelineState(PSO->GetPipelineState());
+					pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				}
+
+				// Compute MVP and bind it to root constant slot 0 (16 floats).
+				// Row-vector: clip = pos * (World * View * Proj).
+				FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewProjMatrix;
+				pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
+
+				// Per-material textures (root slots 1 = SRV, 2 = sampler).
+				if (Batch.Material->HasBaseColorTexture())
+				{
+					ID3D12DescriptorHeap* Heaps[2] =
+					{
+						pRHIDevice->GetSrvHeap(),
+						pRHIDevice->GetSamplerHeap()
+					};
+					pCmd->SetDescriptorHeaps(2, Heaps);
+					pCmd->SetGraphicsRootDescriptorTable(1, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
+					pCmd->SetGraphicsRootDescriptorTable(2, pRHIDevice->GetStaticSamplerGPUHandle());
+				}
+
+				// Geometry.
+				pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
+				const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
+				pCmd->IASetIndexBuffer(&IndexBufferView);
+				pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1,
+					Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
+			}
+		}
+	}
+
 	CRenderer::CRenderer(CGraphicPlug* plug)
 	: mpGraphicPlug(plug)
 	{
 		// 一次性预留，之后每帧只 clear() 不再重新分配。
-		mVisibleBatches.reserve(InitialBatchReserve);
+		mOpaqueBatches.reserve(InitialBatchReserve);
+		mTranslucentBatches.reserve(InitialBatchReserve);
 	}
 
 	CRenderer::~CRenderer()
 	{
 	}
-
 	void CRenderer::_Draw()
 	{
 		static CTimerClock time;
@@ -84,93 +166,35 @@ namespace ML
 		// Folded into the material's PSO cache key so wireframe and solid get distinct PSOs.
 		const bool bWireframe = mViewFamily.IsWireframe();
 
-		// 3) Collect all batches to draw (each already carries its Material*).
-		//    复用成员缓冲区：clear() 只归零 size，capacity 保留。
-		mVisibleBatches.clear();
-		pWorld->CollectVisibleMeshes(ViewMatrices, mVisibleBatches);
-		if (mVisibleBatches.empty())
+		// 3) Collect + classify in one pass: CollectVisibleMeshes writes opaque /
+		//    translucent directly (UE: each primitive's relevance decides which
+		//    mesh-pass list it lands in, at gather time). No per-frame scan over a
+		//    combined list here. 复用成员缓冲区：clear() 只归零 size，capacity 保留。
+		mOpaqueBatches.clear();
+		mTranslucentBatches.clear();
+		pWorld->CollectVisibleMeshes(ViewMatrices, mOpaqueBatches, mTranslucentBatches);
+		if (mOpaqueBatches.empty() && mTranslucentBatches.empty())
 		{
 			return;
 		}
 
-		// 4) Bucket by material: batches sharing a material merge into one PSO bind.
-		//    Simplified P0: set the PSO once for the first valid material; later
-		//    batches only switch when the Material changes.
-		//    UE counterpart: FMeshPassProcessor::BuildMeshDrawCommands.
-		CPipelineState* CurrentPSO = nullptr;
-		ID3D12RootSignature* CurrentRS = nullptr;
-
-		for (int32 i = 0; i < mVisibleBatches.size(); ++i)
-		{
-			const FMeshBatch& Batch = mVisibleBatches[i];
-			if (nullptr == Batch.LOD
-				|| nullptr == Batch.LOD->IndexBuffer
-				|| nullptr == Batch.VertexFactory
-				|| nullptr == Batch.Material)
+		// 4) Translucent must be composited far-to-near for correct alpha overlap.
+		//    The bring-up camera is fixed at the origin looking +Z, so the eye is (0,0,0).
+		std::sort(mTranslucentBatches.begin(), mTranslucentBatches.end(),
+			[&Eye](const FMeshBatch& A, const FMeshBatch& B)
 			{
-				continue;
-			}
+				const float ax = A.WorldMatrix.m[3][0] - Eye.x;
+				const float ay = A.WorldMatrix.m[3][1] - Eye.y;
+				const float az = A.WorldMatrix.m[3][2] - Eye.z;
+				const float bx = B.WorldMatrix.m[3][0] - Eye.x;
+				const float by = B.WorldMatrix.m[3][1] - Eye.y;
+				const float bz = B.WorldMatrix.m[3][2] - Eye.z;
+				return (ax * ax + ay * ay + az * az) > (bx * bx + by * by + bz * bz);
+			});
 
-			// The PSO depends on the mesh's vertex layout, so it is resolved per
-			// batch and built on first use.
-			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
-			if (nullptr == PSO)
-			{
-				continue;
-			}
-
-			// A material whose shaders sample the base-color texture but whose
-			// asset is missing is skipped rather than drawn with an undefined
-			// descriptor - see CMaterial::EnableBaseColorTexture.
-			if (Batch.Material->UsesBaseColorTexture() && !Batch.Material->HasBaseColorTexture())
-			{
-				continue;
-			}
-
-			const std::vector<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
-			if (VBViews.empty())
-			{
-				continue;
-			}
-
-			// Switch PSO / RootSignature (only when the material changes).
-			if (PSO != CurrentPSO)
-			{
-				CurrentPSO = PSO;
-				CurrentRS  = PSO->GetRootSignature();
-				pCmd->SetGraphicsRootSignature(CurrentRS);
-				pCmd->SetPipelineState(PSO->GetPipelineState());
-				pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			}
-
-			// Compute MVP and bind it to root constant slot 0 (16 floats).
-			// Row-vector: clip = pos * (World * View * Proj).
-			FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewMatrix * ViewMatrices.ProjMatrix;
-			pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
-
-			// Per-material textures (root slots 1 = SRV, 2 = sampler).
-			// UE: FMeshPassProcessor writes these into the FMeshDrawCommand's
-			// shader bindings; here they are pushed per draw instead. Materials
-			// that do not sample a texture leave their root signature alone.
-			if (Batch.Material->HasBaseColorTexture())
-			{
-				ID3D12DescriptorHeap* Heaps[2] =
-				{
-					pRHIDevice->GetSrvHeap(),
-					pRHIDevice->GetSamplerHeap()
-				};
-				pCmd->SetDescriptorHeaps(2, Heaps);
-				pCmd->SetGraphicsRootDescriptorTable(1, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
-				pCmd->SetGraphicsRootDescriptorTable(2, pRHIDevice->GetStaticSamplerGPUHandle());
-			}
-
-			// Geometry.
-			pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
-			const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
-			pCmd->IASetIndexBuffer(&IndexBufferView);
-			pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1,
-				Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
-		}
+		// Opaque first (writes depth), then translucent (sorted, no depth write).
+		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe);
+		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe);
 	}
 
 	void CRenderer::_End()

@@ -86,18 +86,19 @@ namespace ML
 		}
 	}
 
-	void CWorld::CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches)
+	void CWorld::CollectVisibleMeshes(const FViewMatrices& View,
+		std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent)
 	{
 		// 渲染线程。顺序很关键：
 		//   1) 先把游戏线程投递过来的更新（Add / SetTransform / SetVisibility）
 		//      应用到场景镜像上 —— 对应 UE 渲染线程帧首执行渲染命令队列；
-		//   2) 再从镜像里收集批次。
+		//   2) 再从镜像里收集批次（并在收集时按透明/不透明直接分流）。
 		//
 		// 这样渲染线程全程只碰 FScene / FPrimitiveSceneProxy，不再读
 		// PersistentLevel 里的 CActor / CComponent（它们归游戏线程所有，
 		// 主线程 Tick 会改它们的 Transform、也会增删容器元素）。
 		RenderCommands.Drain(Scene);
-		Scene.CollectVisibleMeshes(View, OutBatches);
+		Scene.CollectVisibleMeshes(View, OutOpaque, OutTranslucent);
 	}
 
 	void CWorld::TickLoad()

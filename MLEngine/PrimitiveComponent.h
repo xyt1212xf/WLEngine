@@ -16,6 +16,12 @@ namespace ML
         void SetVisible(bool bInVisible);
         bool IsVisible() const { return bVisible; }
 
+        // UE: 材质混合模式在运行时切换（如 不透明 <-> 透明）后调用：把场景代理在
+        // Opaque / Translucent 两桶之间搬迁，使其进入正确的渲染列表。仅投递一条
+        // 渲染命令（未注册时什么都不做）。切换混合模式请先改 CMaterial::SetBlendMode，
+        // 再调本函数触发搬迁。
+        void Reclassify();
+
         // UE: UPrimitiveComponent::CreateSceneProxy()。
         // 游戏线程调用：快照一份渲染线程用的可绘制数据，并把自己记到
         // RenderProxyId 上（之后改 Transform / 可见性才知道该更新谁）。

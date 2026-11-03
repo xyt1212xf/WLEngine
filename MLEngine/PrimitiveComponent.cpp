@@ -36,6 +36,19 @@ namespace ML
 			});
 	}
 
+	void CPrimitiveComponent::Reclassify()
+	{
+		if (0 == RenderProxyId)
+		{
+			return;
+		}
+		const uint32 Id = RenderProxyId;
+		PushSceneCommand([Id](FScene& Scene)
+			{
+				Scene.ReclassifyPrimitive(Id);
+			});
+	}
+
 	FPrimitiveSceneProxy* CPrimitiveComponent::CreateSceneProxy()
 	{
 		// UE: UPrimitiveComponent::CreateSceneProxy() —— 基类没有可绘制数据。

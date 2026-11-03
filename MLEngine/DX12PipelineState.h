@@ -1,9 +1,11 @@
 ﻿#pragma once
-#include "Common.h"
-#include "Refcount.h"
 #include <d3d12.h>
 #include <unordered_map>
 #include <mutex>
+#include "Common.h"
+#include "Refcount.h"
+#include "Material.h"   // EBlendMode (full definition). Material.h only forward-declares
+					   // CPipelineState, so including it here does NOT create a cycle.
 
 namespace ML
 {
@@ -48,6 +50,7 @@ namespace ML
 	};
 
 	class CShader;
+
 	class CDX12PipelineState : public CRefcount
 	{
 	public:
@@ -58,7 +61,8 @@ namespace ML
 					const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 					DXGI_FORMAT DepthFormat,
 					const FRootSignatureDesc& RootSigDesc,
-					bool bWireframe = false);
+					bool bWireframe = false,
+					EBlendMode InBlendMode = EBlendMode::BLEND_Opaque);
 		void Release();
 
 		ID3D12RootSignature* GetRootSignature() const { return mpRootSignature; }

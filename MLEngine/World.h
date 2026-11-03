@@ -68,7 +68,8 @@ namespace ML
 		const std::vector<CLevelStreaming*>& GetStreamingLevels() const { return StreamingLevels; }
 
 	private:
-		void CollectVisibleMeshes(const FViewMatrices& View, std::vector<FMeshBatch>& OutBatches);
+		void CollectVisibleMeshes(const FViewMatrices& View,
+			std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent);
 
 		// 主线程里调用
 		void TickLoad();

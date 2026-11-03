@@ -120,6 +120,23 @@ namespace ML
 		// UE counterpart: a level references a static mesh ASSET by path.
 		// The "Procedural" branch is a P0 stand-in that builds the mesh from a
 		// CStaticMeshDescription, until the .ma asset importer exists.
+		// Maps the level's textual Blend field to EBlendMode (UE: UMaterial::BlendMode).
+	// Anything unknown falls back to Opaque so a typo never silently makes an
+	// object translucent.
+		EBlendMode ParseBlendMode(lua_State* L, int EntryIdx)
+		{
+			if (TryGetField(L, EntryIdx, "Blend"))
+			{
+				std::string Blend = lua_tostring(L, -1);
+				lua_pop(L, 1);
+				if ("Translucent" == Blend) return EBlendMode::BLEND_Translucent;
+				if ("Masked"      == Blend) return EBlendMode::BLEND_Masked;
+				if ("Additive"    == Blend) return EBlendMode::BLEND_Additive;
+				if ("Modulate"    == Blend) return EBlendMode::BLEND_Modulate;
+			}
+			return EBlendMode::BLEND_Opaque;
+		}
+
 		CStaticMesh* LoadMesh(lua_State* L, int MeshIdx)
 		{
 			std::string Source = "";
@@ -217,6 +234,9 @@ namespace ML
 				CMaterial* Material = new CMaterial();
 				Material->SetName(Name);
 				Material->SetShaders(VSName, PSName);
+				// Blend mode drives the PSO blend state + which render list the
+				// owning primitive lands in (opaque vs translucent). Default Opaque.
+				Material->SetBlendMode(ParseBlendMode(L, EntryIdx));
 
 				if (!TexturePath.empty())
 				{

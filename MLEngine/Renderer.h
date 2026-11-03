@@ -51,11 +51,10 @@ namespace ML
 		FSceneViewFamily mViewFamily;
 		// PSOs are no longer owned by the renderer: each CMaterial builds its own in InitRHI; renderer is read-only.
 
-		// 每帧可见批次。做成成员而不是局部变量：
-		//   - clear() 保留 capacity，跨帧复用同一块缓冲区，避免每帧重新扩容拷贝
-		//     （UE 同理：FSceneRenderer 持有数组，每帧 Reset 而非重建）
-		//   - 不能用函数内 static：那是跨实例/跨线程共享的可变状态
-		// 渲染线程独占 CRenderer，故无需加锁。
-		std::vector<FMeshBatch> mVisibleBatches;
+		// 每帧可见批次：在收集阶段就按"不透明 / 透明"分流到两个成员缓冲区
+		// （UE: BasePass 列表 vs Translucent pass 列表）。clear() 保留 capacity，
+		// 跨帧复用同一块缓冲区，避免每帧重新扩容拷贝。渲染线程独占 CRenderer，无需加锁。
+		std::vector<FMeshBatch> mOpaqueBatches;
+		std::vector<FMeshBatch> mTranslucentBatches;
 	};
 }

@@ -4,95 +4,147 @@
 #include "Device.h"
 #include "GraphicPlug.h"
 #include "MLEngine.h"
+#include "Material.h"   // EBlendMode (full definition, used by ApplyBlendMode)
 
 namespace ML
 {
+	// Builds a root signature in C++ from a descriptor (UE: FRootSignatureDesc ->
+		// FD3D12RootSignature). Root parameter order is fixed to match CRenderer's
+		// binding calls: [0] MVP 32-bit constants (b0), [1] SRV table (t0),
+		// [2] Sampler table (s0). The HLSL only declares register(b0/t0/s0); it never
+		// embeds a root signature.
+	namespace
+	{
+		ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
+		{
+			D3D12_ROOT_PARAMETER Params[3] = {};
+			UINT NumParams = 0;
+
+			// [0] MVP (or other) as 32-bit root constants bound to b0 (all shader stages).
+			if (Desc.RootConstantCount > 0)
+			{
+				D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
+				MVPParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+				MVPParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+				MVPParam.Constants.ShaderRegister = 0;  // b0
+				MVPParam.Constants.RegisterSpace = 0;
+				MVPParam.Constants.Num32BitValues = Desc.RootConstantCount;
+			}
+
+			if (Desc.SRVDescriptorCount > 0)
+			{
+				// [1] One SRV descriptor table covering t0..t(N-1), pixel-visible. N contiguous
+				// SRVs let the shader bind Texture2D gTex[N] : register(t0) (or register(t0..t7)).
+				D3D12_DESCRIPTOR_RANGE SRVRange = {};
+				SRVRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+				SRVRange.NumDescriptors = Desc.SRVDescriptorCount;
+				SRVRange.BaseShaderRegister = 0;  // t0
+				SRVRange.RegisterSpace = 0;
+				SRVRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+				D3D12_ROOT_PARAMETER& SRVParam = Params[NumParams++];
+				SRVParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+				SRVParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				SRVParam.DescriptorTable.NumDescriptorRanges = 1;
+				SRVParam.DescriptorTable.pDescriptorRanges = &SRVRange;
+			}
+
+			if (Desc.SamplerDescriptorCount > 0)
+			{
+				// [2] One sampler descriptor table covering s0..s(N-1), pixel-visible.
+				D3D12_DESCRIPTOR_RANGE SamplerRange = {};
+				SamplerRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
+				SamplerRange.NumDescriptors = Desc.SamplerDescriptorCount;
+				SamplerRange.BaseShaderRegister = 0;  // s0
+				SamplerRange.RegisterSpace = 0;
+				SamplerRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+				D3D12_ROOT_PARAMETER& SamplerParam = Params[NumParams++];
+				SamplerParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+				SamplerParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				SamplerParam.DescriptorTable.NumDescriptorRanges = 1;
+				SamplerParam.DescriptorTable.pDescriptorRanges = &SamplerRange;
+			}
+
+			D3D12_ROOT_SIGNATURE_DESC DescNative = {};
+			DescNative.NumParameters = NumParams;
+			DescNative.pParameters = Params;
+			DescNative.NumStaticSamplers = 0;
+			DescNative.pStaticSamplers = nullptr;
+			DescNative.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+			ID3DBlob* pBlob = nullptr;
+			ID3DBlob* pError = nullptr;
+			HRESULT hr = D3D12SerializeRootSignature(&DescNative, D3D_ROOT_SIGNATURE_VERSION_1, &pBlob, &pError);
+			if (FAILED(hr))
+			{
+				if (pError)
+				{
+					OutputDebugStringA(static_cast<const char*>(pError->GetBufferPointer()));
+					SafeRelease(pError);
+				}
+				return nullptr;
+			}
+			ID3D12RootSignature* pRootSig = nullptr;
+			hr = pDevice->CreateRootSignature(0, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), IID_PPV_ARGS(&pRootSig));
+			SafeRelease(pBlob);
+			return SUCCEEDED(hr) ? pRootSig : nullptr;
+		}
+
+		// UE: FBlendState / FDepthStencilState derived from UMaterial::BlendMode.
+		// Opaque + Masked: no colour blend, write depth (masked still sorts & writes
+		// depth with the opaque pass). Translucent / Additive / Modulate: blend with
+		// the framebuffer and do NOT write depth - they are drawn after opaque,
+		// back-to-front, by the renderer's translucent pass.
+		void ApplyBlendMode(D3D12_BLEND_DESC& Blend, D3D12_DEPTH_STENCIL_DESC& Depth, EBlendMode Mode)
+		{
+			// Start from opaque defaults.
+			Blend.RenderTarget[0].BlendEnable = FALSE;
+			Blend.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			Blend.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+			Blend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			Blend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+			Blend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+			Blend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			Blend.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+			Depth.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+
+			switch (Mode)
+			{
+			case EBlendMode::BLEND_Translucent:
+				Blend.RenderTarget[0].BlendEnable = TRUE;
+				Blend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				Blend.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+				Blend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+				Blend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+				Depth.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+				break;
+			case EBlendMode::BLEND_Additive:
+				Blend.RenderTarget[0].BlendEnable = TRUE;
+				Blend.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+				Blend.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+				Depth.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+				break;
+			case EBlendMode::BLEND_Modulate:
+				Blend.RenderTarget[0].BlendEnable = TRUE;
+				Blend.RenderTarget[0].SrcBlend = D3D12_BLEND_DEST_COLOR;
+				Blend.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+				Depth.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+				break;
+			case EBlendMode::BLEND_Masked:
+			case EBlendMode::BLEND_Opaque:
+			default:
+				break;  // opaque defaults already applied above
+			}
+		}
+	}
+
 	CDX12PipelineState::~CDX12PipelineState()
 	{
 		Release();
 	}
 
-	// Builds a root signature in C++ from a descriptor (UE: FRootSignatureDesc ->
-	// FD3D12RootSignature). Root parameter order is fixed to match CRenderer's
-	// binding calls: [0] MVP 32-bit constants (b0), [1] SRV table (t0),
-	// [2] Sampler table (s0). The HLSL only declares register(b0/t0/s0); it never
-	// embeds a root signature.
-	static ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
-	{
-		D3D12_ROOT_PARAMETER Params[3] = {};
-		UINT NumParams = 0;
-
-		// [0] MVP (or other) as 32-bit root constants bound to b0 (all shader stages).
-		if (Desc.RootConstantCount > 0)
-		{
-			D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
-			MVPParam.ParameterType		= D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-			MVPParam.ShaderVisibility	= D3D12_SHADER_VISIBILITY_ALL;
-			MVPParam.Constants.ShaderRegister		= 0;  // b0
-			MVPParam.Constants.RegisterSpace		= 0;
-			MVPParam.Constants.Num32BitValues		= Desc.RootConstantCount;
-		}
-
-		if (Desc.SRVDescriptorCount > 0)
-		{
-			// [1] One SRV descriptor table covering t0..t(N-1), pixel-visible. N contiguous
-			// SRVs let the shader bind Texture2D gTex[N] : register(t0) (or register(t0..t7)).
-			D3D12_DESCRIPTOR_RANGE SRVRange = {};
-			SRVRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-			SRVRange.NumDescriptors						= Desc.SRVDescriptorCount;
-			SRVRange.BaseShaderRegister					= 0;  // t0
-			SRVRange.RegisterSpace						= 0;
-			SRVRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-			D3D12_ROOT_PARAMETER& SRVParam = Params[NumParams++];
-			SRVParam.ParameterType					= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-			SRVParam.ShaderVisibility				= D3D12_SHADER_VISIBILITY_PIXEL;
-			SRVParam.DescriptorTable.NumDescriptorRanges	= 1;
-			SRVParam.DescriptorTable.pDescriptorRanges	= &SRVRange;
-		}
-
-		if (Desc.SamplerDescriptorCount > 0)
-		{
-			// [2] One sampler descriptor table covering s0..s(N-1), pixel-visible.
-			D3D12_DESCRIPTOR_RANGE SamplerRange = {};
-			SamplerRange.RangeType						= D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
-			SamplerRange.NumDescriptors					= Desc.SamplerDescriptorCount;
-			SamplerRange.BaseShaderRegister				= 0;  // s0
-			SamplerRange.RegisterSpace					= 0;
-			SamplerRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-			D3D12_ROOT_PARAMETER& SamplerParam = Params[NumParams++];
-			SamplerParam.ParameterType				= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-			SamplerParam.ShaderVisibility			= D3D12_SHADER_VISIBILITY_PIXEL;
-			SamplerParam.DescriptorTable.NumDescriptorRanges	= 1;
-			SamplerParam.DescriptorTable.pDescriptorRanges	= &SamplerRange;
-		}
-
-		D3D12_ROOT_SIGNATURE_DESC DescNative = {};
-		DescNative.NumParameters		= NumParams;
-		DescNative.pParameters			= Params;
-		DescNative.NumStaticSamplers	= 0;
-		DescNative.pStaticSamplers		= nullptr;
-		DescNative.Flags				= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-		ID3DBlob* pBlob		= nullptr;
-		ID3DBlob* pError	= nullptr;
-		HRESULT hr = D3D12SerializeRootSignature(&DescNative, D3D_ROOT_SIGNATURE_VERSION_1, &pBlob, &pError);
-		if (FAILED(hr))
-		{
-			if (pError)
-			{
-				OutputDebugStringA(static_cast<const char*>(pError->GetBufferPointer()));
-				SafeRelease(pError);
-			}
-			return nullptr;
-		}
-		ID3D12RootSignature* pRootSig = nullptr;
-		hr = pDevice->CreateRootSignature(0, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), IID_PPV_ARGS(&pRootSig));
-		SafeRelease(pBlob);
-		return SUCCEEDED(hr) ? pRootSig : nullptr;
-	}
-
+	
 	FRootSignatureCache& FRootSignatureCache::Get()
 	{
 		static FRootSignatureCache Instance;
@@ -159,7 +211,8 @@ namespace ML
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
 		DXGI_FORMAT DepthFormat,
 		const FRootSignatureDesc& RootSigDesc,
-		bool bWireframe)
+		bool bWireframe,
+		EBlendMode InBlendMode)
 	{
 		Release();
 
@@ -193,17 +246,11 @@ namespace ML
 		PSODesc.RasterizerState.FrontCounterClockwise	= TRUE;
 		PSODesc.RasterizerState.DepthClipEnable			= TRUE;
 
-		PSODesc.BlendState.RenderTarget[0].SrcBlend			= D3D12_BLEND_ONE;
-		PSODesc.BlendState.RenderTarget[0].DestBlend		= D3D12_BLEND_ZERO;
-		PSODesc.BlendState.RenderTarget[0].BlendOp			= D3D12_BLEND_OP_ADD;
-		PSODesc.BlendState.RenderTarget[0].SrcBlendAlpha	= D3D12_BLEND_ONE;
-		PSODesc.BlendState.RenderTarget[0].DestBlendAlpha	= D3D12_BLEND_ZERO;
-		PSODesc.BlendState.RenderTarget[0].BlendOpAlpha		= D3D12_BLEND_OP_ADD;
-		PSODesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
 		PSODesc.DepthStencilState.DepthEnable		= TRUE;
-		PSODesc.DepthStencilState.DepthWriteMask	= D3D12_DEPTH_WRITE_MASK_ALL;
 		PSODesc.DepthStencilState.DepthFunc			= D3D12_COMPARISON_FUNC_LESS;
+		// Blend factors + depth-write mask come from the material's BlendMode
+		// (UE: UMaterial::BlendMode -> FBlendState / FDepthStencilState).
+		ApplyBlendMode(PSODesc.BlendState, PSODesc.DepthStencilState, InBlendMode);
 
 		PSODesc.SampleMask				= UINT_MAX;
 		PSODesc.PrimitiveTopologyType	= D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
