@@ -481,29 +481,41 @@ namespace ML
 		mCbvSrvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 		D3D12_DESCRIPTOR_HEAP_DESC SamplerHeapDesc = {};
-		SamplerHeapDesc.NumDescriptors = 1;
-		SamplerHeapDesc.Type  = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		SamplerHeapDesc.NumDescriptors = FRootSignatureDesc::MaxDynamicSamplers;
+		SamplerHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		SamplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		if (FAILED(mpDevice->CreateDescriptorHeap(&SamplerHeapDesc, IID_PPV_ARGS(&mSamplerHeap))))
 		{
 			return false;
 		}
+		mSamplerDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
-		D3D12_SAMPLER_DESC SamplerDesc = {};
-		SamplerDesc.Filter           = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-		SamplerDesc.AddressU         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		SamplerDesc.AddressV         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		SamplerDesc.AddressW         = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		SamplerDesc.MipLODBias       = 0.0f;
-		SamplerDesc.MaxAnisotropy    = 1;
-		SamplerDesc.ComparisonFunc   = D3D12_COMPARISON_FUNC_NEVER;
-		SamplerDesc.BorderColor[0]   = 0.0f;
-		SamplerDesc.BorderColor[1]   = 0.0f;
-		SamplerDesc.BorderColor[2]   = 0.0f;
-		SamplerDesc.BorderColor[3]   = 0.0f;
-		SamplerDesc.MinLOD           = 0.0f;
-		SamplerDesc.MaxLOD           = D3D12_FLOAT32_MAX;
-		mpDevice->CreateSampler(&SamplerDesc, mSamplerHeap->GetCPUDescriptorHandleForHeapStart());
+		struct FSamplerPreset
+		{
+			D3D12_FILTER Filter;
+			D3D12_TEXTURE_ADDRESS_MODE Address;
+
+		};
+		const FSamplerPreset Presets[FRootSignatureDesc::MaxDynamicSamplers] =
+		{
+			{ D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_WRAP  }, // 槽0 → s4
+			{ D3D12_FILTER_MIN_MAG_MIP_POINT,  D3D12_TEXTURE_ADDRESS_MODE_CLAMP }, // 槽1 → s5
+			{ D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_CLAMP }, // 槽2 → s6
+			{ D3D12_FILTER_ANISOTROPIC,        D3D12_TEXTURE_ADDRESS_MODE_WRAP  }, // 槽3 → s7
+		};
+
+		for (UINT32 i = 0; i < FRootSignatureDesc::MaxDynamicSamplers; ++i)
+		{
+			D3D12_SAMPLER_DESC S = {};
+			S.Filter = Presets[i].Filter;
+			S.AddressU = S.AddressV = S.AddressW = Presets[i].Address;
+			S.MipLODBias = 0.0f;
+			S.MaxAnisotropy = (S.Filter == D3D12_FILTER_ANISOTROPIC) ? 4u : 1u;
+			S.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+			S.MinLOD = 0.0f;
+			S.MaxLOD = D3D12_FLOAT32_MAX;
+			mpDevice->CreateSampler(&S, GetSamplerCPUHandle(i));
+		}
 		return true;
 	}
 
@@ -557,6 +569,19 @@ namespace ML
 	{
 		return CD3DX12_GPU_DESCRIPTOR_HANDLE(mSrvHeap->GetGPUDescriptorHandleForHeapStart(),
 			(INT32)Slot, mCbvSrvDescriptorSize);
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetSamplerCPUHandle(UINT32 Slot) const
+	{
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE(mSamplerHeap->GetCPUDescriptorHandleForHeapStart(),
+			(INT32)Slot, mSamplerDescriptorSize);
+	}
+
+	D3D12_GPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetSamplerGPUHandle(UINT32 Slot) const
+	{
+		return CD3DX12_GPU_DESCRIPTOR_HANDLE(mSamplerHeap->GetGPUDescriptorHandleForHeapStart(),
+			(INT32)Slot, mSamplerDescriptorSize);
+
 	}
 
 	D3D12_GPU_DESCRIPTOR_HANDLE CDX12RHIDevice::GetStaticSamplerGPUHandle() const

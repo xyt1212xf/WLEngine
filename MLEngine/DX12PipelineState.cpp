@@ -17,7 +17,9 @@ namespace ML
 	{
 		ID3D12RootSignature* BuildRootSignature(ID3D12Device* pDevice, const FRootSignatureDesc& Desc)
 		{
-			D3D12_ROOT_PARAMETER Params[4] = {};
+			D3D12_ROOT_PARAMETER Params[5] = {};
+			D3D12_DESCRIPTOR_RANGE SRVRange = {};
+			D3D12_DESCRIPTOR_RANGE SamplerRange = {};
 			UINT NumParams = 0;
 
 			// [0] MVP (or other) as 32-bit root constants bound to b0 (all shader stages).
@@ -25,17 +27,26 @@ namespace ML
 			{
 				D3D12_ROOT_PARAMETER& MVPParam = Params[NumParams++];
 				MVPParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-				MVPParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+				MVPParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 				MVPParam.Constants.ShaderRegister = 0;  // b0
 				MVPParam.Constants.RegisterSpace = 0;
 				MVPParam.Constants.Num32BitValues = Desc.RootConstantCount;
+			}
+			if (Desc.WorldConstantCount > 0)
+			{
+				D3D12_ROOT_PARAMETER& WorldParam = Params[NumParams++];
+				WorldParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+				WorldParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+				WorldParam.Constants.ShaderRegister = 1;   // b1
+				WorldParam.Constants.RegisterSpace = 0;
+				WorldParam.Constants.Num32BitValues = Desc.WorldConstantCount;
 			}
 			if (Desc.LightingConstantCount > 0)
 			{
 				D3D12_ROOT_PARAMETER& LightParam  = Params[NumParams++];
 				LightParam .ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 				LightParam .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-				LightParam .Constants.ShaderRegister = 0;  // b1
+				LightParam .Constants.ShaderRegister = 2;  // b2
 				LightParam .Constants.RegisterSpace = 0;
 				LightParam .Constants.Num32BitValues = Desc.LightingConstantCount;
 			}
@@ -43,7 +54,6 @@ namespace ML
 			{
 				// [1] One SRV descriptor table covering t0..t(N-1), pixel-visible. N contiguous
 				// SRVs let the shader bind Texture2D gTex[N] : register(t0) (or register(t0..t7)).
-				D3D12_DESCRIPTOR_RANGE SRVRange = {};
 				SRVRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 				SRVRange.NumDescriptors = Desc.SRVDescriptorCount;
 				SRVRange.BaseShaderRegister = 0;  // t0
@@ -60,10 +70,9 @@ namespace ML
 			if (Desc.SamplerDescriptorCount > 0)
 			{
 				// [2] One sampler descriptor table covering s0..s(N-1), pixel-visible.
-				D3D12_DESCRIPTOR_RANGE SamplerRange = {};
 				SamplerRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
 				SamplerRange.NumDescriptors = Desc.SamplerDescriptorCount;
-				SamplerRange.BaseShaderRegister = 0;  // s0
+				SamplerRange.BaseShaderRegister = FRootSignatureDesc::MaxStaticSamplers;  // s4
 				SamplerRange.RegisterSpace = 0;
 				SamplerRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -74,11 +83,18 @@ namespace ML
 				SamplerParam.DescriptorTable.pDescriptorRanges = &SamplerRange;
 			}
 
+
+			D3D12_STATIC_SAMPLER_DESC StaticSamplerArray[FRootSignatureDesc::MaxStaticSamplers] = {};
+			for (UINT i = 0; i < Desc.StaticSamplerCount && i < FRootSignatureDesc::MaxStaticSamplers; ++i)
+			{
+				StaticSamplerArray[i] = Desc.StaticSamplers[i]; // 直接搬运(已在 Material 里填好)
+			}
+
 			D3D12_ROOT_SIGNATURE_DESC DescNative = {};
 			DescNative.NumParameters = NumParams;
 			DescNative.pParameters = Params;
-			DescNative.NumStaticSamplers = 0;
-			DescNative.pStaticSamplers = nullptr;
+			DescNative.NumStaticSamplers = Desc.StaticSamplerCount;
+			DescNative.pStaticSamplers = (Desc.StaticSamplerCount > 0) ? StaticSamplerArray : nullptr;
 			DescNative.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 			ID3DBlob* pBlob = nullptr;
@@ -161,16 +177,28 @@ namespace ML
 
 	uint64 FRootSignatureCache::Hash(const FRootSignatureDesc& Desc) const
 	{
-		// hash_combine over the three descriptor fields into a 64-bit key. Using the
-		// counts (not just present/absent) so e.g. 1 SRV vs 8 SRVs yield distinct keys.
 		auto Combine = [](uint64 Seed, uint32 Val)
-		{
-			return Seed ^ (static_cast<uint64>(Val) + 0x9E3779B97F4A7C15ULL + (Seed << 6) + (Seed >> 2));
-		};
+			{
+				return Seed ^ (static_cast<uint64>(Val) + 0x9E3779B97F4A7C15ULL + (Seed << 6) + (Seed >> 2));
+			};
 		uint64 Key = 0;
 		Key = Combine(Key, Desc.RootConstantCount);
+		Key = Combine(Key, Desc.WorldConstantCount);
+		Key = Combine(Key, Desc.LightingConstantCount);
 		Key = Combine(Key, Desc.SRVDescriptorCount);
 		Key = Combine(Key, Desc.SamplerDescriptorCount);
+		// 纳入静态采样器,避免不同组合串台
+		Key = Combine(Key, Desc.StaticSamplerCount);
+		for (UINT i = 0; i < Desc.StaticSamplerCount && i < FRootSignatureDesc::MaxStaticSamplers; ++i)
+		{
+			const D3D12_STATIC_SAMPLER_DESC& S = Desc.StaticSamplers[i];
+			Key = Combine(Key, static_cast<uint32>(S.Filter));
+			Key = Combine(Key, static_cast<uint32>(S.AddressU));
+			Key = Combine(Key, static_cast<uint32>(S.AddressV));
+			Key = Combine(Key, static_cast<uint32>(S.AddressW));
+			Key = Combine(Key, S.ShaderRegister);
+			Key = Combine(Key, S.MaxAnisotropy);
+		}
 		return Key;
 	}
 

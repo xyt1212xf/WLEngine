@@ -18,8 +18,12 @@
 --   * OverrideMaterials 里的名字先在关卡自己声明的 Materials 表里找，
 --     找不到再去全局材质注册表（CGraphicPlug 建的 "Default"）。
 --     材质目前不是独立资产文件，所以谁声明谁拥有（关卡卸载时释放）。
---   * Mesh.Source = "Procedural" 是 P0 权宜（还没有 .ma 资产导入器）；
---     UE 的正确形态是 Source = "Asset" + Path 指向一个 mesh 资产。
+--   * Mesh 用 Source 区分"怎么来"，Shape / Path 区分"是什么"：
+--       - Source = "Procedural" : 程序化生成，用 Shape 选形状
+--           Shape = "Cube"   : 立方体（Center + HalfExtents）
+--           Shape = "Sphere" : 球体（Center + Radius + 可选 Slices/Stacks）
+--       - Source = "Asset" : 外部网格资产，用 Path 指向文件（等 FBX 导入器
+--         接进来后，Path 填 .fbx 即可；LoadMesh 里该分支已留好 TODO）。
 --================================================================================
 
 return {
@@ -34,6 +38,19 @@ return {
             VS      = "CTexturedVS",
             PS      = "CTexturedPS",
             Texture = "Resource/Texture/grass_top.png",
+        },
+		{
+            Name    = "AlphaBlackMat",
+            VS      = "CTexturedVS",
+            PS      = "CTexturedPS",
+            Texture = "Resource/Texture/Voxel/line.png",
+            Blend   = "Translucent",   -- 透明材质：渲染器放到透明趟，按距离从远到近画
+        },
+		{
+            Name    = "LightMat",
+            VS      = "CLightVS",
+            PS      = "CLightPS",
+            Texture = "Resource/Texture/dirt01.png",
         },
     },
 
@@ -76,7 +93,71 @@ return {
             },
         },
 
-        -- 资产形态示例（等 .ma 导入器接进来后启用）
+        {
+            Name   = "Cube_02",
+            Label  = "测试立方体2",
+            Script = "actor/CubeActor",
+            Tick   = false,
+
+            -- 第二个 cube：相机朝 +Z，z 必须为正；x 偏移 3 与 Cube_01 并排，
+            -- Y 轴转 45° 让两个 cube 在画面上可区分（旋转走 Actor Transform → 世界矩阵 → MVP）。
+            Transform = {
+                Location = { 3, 0, 5 },
+                Rotation = { 0, 45, 0 },   -- Euler 度
+                Scale    = { 1, 1, 1 },
+            },
+
+            Components = {
+                {
+                    Type    = "StaticMesh",
+                    Visible = true,
+
+                    Mesh = {
+                        Source      = "Procedural",
+                        Shape       = "Cube",
+                        Center      = { 0, 0, 0 },
+                        HalfExtents = { 1, 1, 1 },
+                    },
+
+                    OverrideMaterials = { "AlphaBlackMat" },
+                },
+            },
+        },
+
+        -- Sphere Actor：程序化球体，Shape = "Sphere"
+        {
+            Name   = "Sphere_01",
+            Label  = "测试球体",
+            Script = "actor/SphereActor",
+            Tick   = false,
+
+            Transform = {
+                Location = { -3, 0, 5 },   -- 在 Cube_01 左侧并排，z 必须为正（相机朝 +Z）
+                Rotation = { 0, 0, 0 },
+                Scale    = { 1, 1, 1 },
+            },
+
+            Components = {
+                {
+                    Type    = "StaticMesh",
+                    Visible = true,
+
+                    -- Procedural 球体：Shape 指定形状，Radius / Slices / Stacks 可选
+                    Mesh = {
+                        Source = "Procedural",
+                        Shape  = "Sphere",
+                        Center = { 0, 0, 0 },
+                        Radius = 1.0,    -- 半径，默认 1.0
+                        Slices = 32,     -- 经线分段（可选，默认 24）
+                        Stacks = 24,     -- 纬线分段（可选，默认 16）
+                    },
+
+                    OverrideMaterials = { "LightMat" },
+                },
+            },
+        },
+
+        -- 资产形态示例（等 FBX 导入器接进来后启用）：Path 指向 .fbx
         -- {
         --     Name = "Chair_01",
         --     Transform = { Location = { 5, 0, 2 } },
@@ -84,7 +165,7 @@ return {
         --         {
         --             Type    = "StaticMesh",
         --             Visible = true,
-        --             Mesh = { Source = "Asset", Path = "Resource/Mesh/Chair.ma" },
+        --             Mesh = { Source = "Asset", Path = "Resource/Mesh/Chair.fbx" },
         --         },
         --     },
         -- },

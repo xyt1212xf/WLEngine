@@ -119,8 +119,8 @@ namespace ML
 		void ReleasePipelineStates();
 
 		// Read-only access for the render thread.
-		CShader* GetVertexShader() const { return VertexShader; }
-		CShader* GetPixelShader()  const { return PixelShader; }
+		CShader* GetVertexShader() const { return mVertexShader; }
+		CShader* GetPixelShader()  const { return mPixelShader; }
 
 		// Blend mode (UE: UMaterial::BlendMode). Sets how the PSO blends and
 		// which render list the owning primitive goes to. Set before the first
@@ -138,15 +138,15 @@ namespace ML
 		}
 
 		// Asset-level load hook. Not overriding a base-class virtual any more:
-	// CObject has no initialise() (UE: UObject::PostLoad lives on the asset
-	// type that needs it, not on UObject).
-	virtual bool initialise();
+		// CObject has no initialise() (UE: UObject::PostLoad lives on the asset
+		// type that needs it, not on UObject).
+		virtual bool initialise();
 
 	private:
-		std::string   VSName;
-		std::string   PSName;
-		CShader*      VertexShader = nullptr;   // lifetime not owned (managed by CGlobalShaderMap)
-		CShader*      PixelShader  = nullptr;
+		std::string   mVSName;
+		std::string   mPSName;
+		CShader*      mVertexShader = nullptr;   // lifetime not owned (managed by CGlobalShaderMap)
+		CShader*      mPixelShader  = nullptr;
 
 		// Base-color texture. Not owned: textures belong to CTextureMgr (shared
 		// assets), materials only reference them.

@@ -65,8 +65,8 @@ namespace ML
 
 	void CMaterial::SetShaders(const std::string& InVSName, const std::string& InPSName)
 	{
-		VSName = InVSName;
-		PSName = InPSName;
+		mVSName = InVSName;
+		mPSName = InPSName;
 	}
 
 	void CMaterial::SetDefaultInputLayout(std::initializer_list<D3D12_INPUT_ELEMENT_DESC> Elements)
@@ -153,7 +153,7 @@ namespace ML
 			// surfaces during debugging instead of being silently discarded.
 			OutputDebugStringA(
 				("CMaterial::GetPipelineState: DUPLICATE PSO built for layout key 0x" +
-				std::to_string(Key) + " (VS=" + VSName + " PS=" + PSName + ") - "
+				std::to_string(Key) + " (VS=" + mVSName + " PS=" + mPSName + ") - "
 				"discards the redundant copy. A second call raced the first build.\n").c_str());
 			assert(false && "CMaterial::GetPipelineState: duplicate PSO for an already-cached layout key");
 			SafeDelete(PSO);
@@ -180,30 +180,58 @@ namespace ML
 			OutputDebugStringA("CMaterial::CreatePipelineState: GEngine->GetShaderMgr() is null. Engine not initialised?\n");
 			return nullptr;
 		}
-		VertexShader = ShaderMgr->GetShader(VSName);
-		PixelShader  = ShaderMgr->GetShader(PSName);
-		if (nullptr == VertexShader || nullptr == PixelShader)
+		mVertexShader = ShaderMgr->GetShader(mVSName);
+		mPixelShader  = ShaderMgr->GetShader(mPSName);
+		if (nullptr == mVertexShader || nullptr == mPixelShader)
 		{
-			OutputDebugStringA(("CMaterial::CreatePipelineState: missing shader " + VSName + " / " + PSName + "\n").c_str());
+			OutputDebugStringA(("CMaterial::CreatePipelineState: missing shader " + mVSName + " / " + mPSName + "\n").c_str());
 			return nullptr;
 		}
 
-		// Create the PSO. This is where a material creates GPU resources.
-		CPipelineState* PSO = new CPipelineState();
 		// The root signature is derived from what the material binds (UE: the
 		// FRootSignatureDesc is built from the material's parameter interface), not from
 		// an enum of variants. A textured material adds the SRV/Sampler tables on top of
 		// the shared MVP constant; a plain one keeps just the constant.
 		FRootSignatureDesc RootSigDesc;
 		RootSigDesc.RootConstantCount = 16;   // 4x4 MVP at b0
+		RootSigDesc.WorldConstantCount = 16;   // 4x4 MVP at b0
+		RootSigDesc.LightingConstantCount = 16;   // 4x4 MVP at b0
+
 		RootSigDesc.SRVDescriptorCount     = bUsesBaseColorTexture ? 1u : 0u;
-		RootSigDesc.SamplerDescriptorCount = bUsesBaseColorTexture ? 1u : 0u;
-		if (!PSO->Create(VertexShader, PixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe, BlendMode))
+		RootSigDesc.SamplerDescriptorCount = bUsesBaseColorTexture ? FRootSignatureDesc::MaxDynamicSamplers : 0u;
+
+
+		auto FillStaticSampler = [&](UINT Slot, D3D12_FILTER Filter,
+			D3D12_TEXTURE_ADDRESS_MODE Addr, UINT ShaderReg)
+			{
+				D3D12_STATIC_SAMPLER_DESC& S = RootSigDesc.StaticSamplers[Slot];
+				S.Filter = Filter;
+				S.AddressU = S.AddressV = S.AddressW = Addr;
+				S.MipLODBias = 0.0f;
+				S.MaxAnisotropy = (Filter == D3D12_FILTER_ANISOTROPIC) ? 4u : 1u;
+				S.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS;
+				S.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
+				S.MinLOD = 0.0f; S.MaxLOD = D3D12_FLOAT32_MAX;
+				S.ShaderRegister = ShaderReg;
+				S.RegisterSpace = 0;
+				S.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+			};
+		// s0 必须与 HLSL 的 register(s0) 对应(基色/基纹理采样 = linear wrap)
+		FillStaticSampler(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_WRAP, 0);
+		FillStaticSampler(1, D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 1);
+		FillStaticSampler(2, D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 2);
+		FillStaticSampler(3, D3D12_FILTER_ANISOTROPIC, D3D12_TEXTURE_ADDRESS_MODE_WRAP, 3);
+		RootSigDesc.StaticSamplerCount = 4;
+
+		// Create the PSO. This is where a material creates GPU resources.
+		CPipelineState* PSO = new CPipelineState();
+		if (!PSO->Create(mVertexShader, mPixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe, BlendMode))
 		{
-			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + VSName + " / " + PSName + "\n").c_str());
+			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + mVSName + " / " + mPSName + "\n").c_str());
 			SafeDelete(PSO);
 			return nullptr;
 		}
+
 		return PSO;
 	}
 
@@ -215,7 +243,7 @@ namespace ML
 			SafeDelete(Pair.second);
 		}
 		mPSOCache.clear();
-		VertexShader = nullptr;
-		PixelShader  = nullptr;
+		mVertexShader = nullptr;
+		mPixelShader  = nullptr;
 	}
 }

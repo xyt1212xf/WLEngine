@@ -49,6 +49,9 @@ namespace ML
 		D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUHandle(UINT32 Slot) const;
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(UINT32 Slot) const;
 
+		D3D12_CPU_DESCRIPTOR_HANDLE GetSamplerCPUHandle(UINT32 Slot) const;
+		D3D12_GPU_DESCRIPTOR_HANDLE GetSamplerGPUHandle(UINT32 Slot) const;
+
 		// The heaps themselves, for SetDescriptorHeaps before a draw.
 		ID3D12DescriptorHeap* GetSrvHeap() const { return mSrvHeap; }
 		ID3D12DescriptorHeap* GetSamplerHeap() const { return mSamplerHeap; }
@@ -79,6 +82,7 @@ namespace ML
 		// Shader-visible CBV/SRV/UAV heap + the free list that hands out slots.
 		ID3D12DescriptorHeap* mSrvHeap = nullptr;
 		UINT32 mCbvSrvDescriptorSize = 0;
+		UINT32 mSamplerDescriptorSize  = 0;
 		UINT32 mNextSRVSlot = 0;
 		std::vector<UINT32> mFreeSRVSlots;
 		std::mutex mSRVMutex;

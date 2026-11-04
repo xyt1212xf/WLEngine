@@ -153,9 +153,14 @@ namespace ML
 
 			Vec3F N = LocalPos;
 			const float Len = sqrtf(N.x * N.x + N.y * N.y + N.z * N.z);
-			if (Len > 1e-6f) { N.x /= Len; N.y /= Len; N.z /= Len; }
-			else N = Vec3F(0.0f, 1.0f, 0.0f);
-
+			if (Len > 1e-6f)
+			{
+				N.x /= Len; N.y /= Len; N.z /= Len;
+			}
+			else
+			{
+				N = Vec3F(0.0f, 1.0f, 0.0f);
+			}
 			FMeshVertexInstance Inst;
 			Inst.VertexID = Vid;
 			Inst.Normal = N;
@@ -174,14 +179,14 @@ namespace ML
 		for (int32 i = 1; i < Stacks; ++i)
 		{
 			const float V = (float)i / (float)Stacks;
-			const float Phi = V * PI;
+			const float Phi = V * PI_F;
 			const float SinPhi = sinf(Phi);
 			const float CosPhi = cosf(Phi);
 			Rings[i].resize(Slices + 1);
 			for (int32 j = 0; j <= Slices; ++j)
 			{
 				const float U = (float)j / (float)Slices;
-				const float Theta = U * 2.0f * PI;
+				const float Theta = U * 2.0f * PI_F;
 				Vec3F Local;
 				Local.x = Radius * SinPhi * cosf(Theta);
 				Local.y = Radius * CosPhi;

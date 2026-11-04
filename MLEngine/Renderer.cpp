@@ -15,6 +15,7 @@
 #include "StaticMeshResources.h"
 #include "Texture2D.h"
 #include "RHItexture.h"
+#include "LightShader.h"
 
 namespace ML
 {
@@ -36,6 +37,10 @@ namespace ML
 		{
 			CPipelineState* CurrentPSO = nullptr;
 			ID3D12RootSignature* CurrentRS = nullptr;
+			FLightConstants Light = {};
+			Light.LightDir = { 0.5f, 0.8f, 0.3f, 0.0f };   // 指向光源的方向
+			Light.LightColor = { 1.0f, 1.0f, 1.0f, 0.0f };   // 白色光, 强度 1
+			Light.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
 
 			for (const FMeshBatch& Batch : Batches)
 			{
@@ -82,8 +87,9 @@ namespace ML
 				// Row-vector: clip = pos * (World * View * Proj).
 				FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewProjMatrix;
 				pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
+				pCmd->SetGraphicsRoot32BitConstants(1, 16, &Batch.WorldMatrix, 0);
+				pCmd->SetGraphicsRoot32BitConstants(2, 16, &Light, 0);
 
-				// Per-material textures (root slots 1 = SRV, 2 = sampler).
 				if (Batch.Material->HasBaseColorTexture())
 				{
 					ID3D12DescriptorHeap* Heaps[2] =
@@ -92,16 +98,15 @@ namespace ML
 						pRHIDevice->GetSamplerHeap()
 					};
 					pCmd->SetDescriptorHeaps(2, Heaps);
-					pCmd->SetGraphicsRootDescriptorTable(1, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
-					pCmd->SetGraphicsRootDescriptorTable(2, pRHIDevice->GetStaticSamplerGPUHandle());
+					pCmd->SetGraphicsRootDescriptorTable(3, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
+					pCmd->SetGraphicsRootDescriptorTable(4, pRHIDevice->GetSamplerGPUHandle(0)); // 槽0 = s4
 				}
 
 				// Geometry.
 				pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
 				const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
 				pCmd->IASetIndexBuffer(&IndexBufferView);
-				pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1,
-					Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
+				pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1, Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
 			}
 		}
 	}
