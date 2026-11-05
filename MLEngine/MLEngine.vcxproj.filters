@@ -285,6 +285,9 @@
     <ClCompile Include="LightShader.cpp">
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -544,6 +547,9 @@
     </ClInclude>
     <ClInclude Include="LightShader.h">
       <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

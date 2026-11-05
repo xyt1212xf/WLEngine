@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "DX12RHIbuffer.h"
 
 namespace ML
@@ -8,7 +8,7 @@ namespace ML
 	public:
 		CRHIBuffer() = default;
 		virtual ~CRHIBuffer() = default;
-		uint32 GetSize() const { return Size; }
-		uint32 GetStride() const { return Stride; }
+		uint32 GetSize() const { return mDataSize; }
+		uint32 GetStride() const { return mStride; }
 	};
 }

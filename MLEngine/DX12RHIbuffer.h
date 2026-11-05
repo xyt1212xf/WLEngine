@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Refcount.h"
 #include "Device.h"
 
@@ -26,22 +26,25 @@ namespace ML
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView();
 		D3D12_CONSTANT_BUFFER_VIEW_DESC GetConstantBufferViewDesc();
 
-		ID3D12Resource* GetResource() const { return Resource; }
+		void UpdateData(const void* InData, uint32 InBytes);
+		void* GetMappedData() const { return MappedData; }
+
+		ID3D12Resource* GetResource() const { return mResource; }
 		ID3D12Resource* GetUploadBuffer() const { return UploadBuffer; }
 
 	protected:
-		uint32 Size = 0;
-		uint32 Stride = 0;
+		uint32 mDataSize = 0;
+		uint32 mStride = 0;
 
 	private:
 		D3D12_VERTEX_BUFFER_VIEW VertexView = {};
 		D3D12_INDEX_BUFFER_VIEW IndexView = {};
 		D3D12_CONSTANT_BUFFER_VIEW_DESC ViewDesc = {};
 
-		ID3D12Resource* Resource = nullptr;
+		ID3D12Resource* mResource = nullptr;
 		ID3D12Resource* UploadBuffer = nullptr;
 		void* MappedData = nullptr;
 
-		EBufferType Type = EBufferType::Vertex;
+		EBufferType mType = EBufferType::Vertex;
 	};
 }
