@@ -72,7 +72,7 @@ namespace ML
 				// [2] One sampler descriptor table covering s0..s(N-1), pixel-visible.
 				SamplerRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
 				SamplerRange.NumDescriptors = Desc.SamplerDescriptorCount;
-				SamplerRange.BaseShaderRegister = FRootSignatureDesc::MaxStaticSamplers;  // s4
+				SamplerRange.BaseShaderRegister = FRootSignatureDesc::DynamicSamplerBaseRegister;  // s4
 				SamplerRange.RegisterSpace = 0;
 				SamplerRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
