@@ -10,12 +10,11 @@ namespace ML
 		Release();
 	}
 
-	bool CDX12RHITexture2D::Create(DXGI_FORMAT InFormat, uint32 InWidth, uint32 InHeight,
-		const void* InData, uint32 InDataRowPitch)
+	bool CDX12RHITexture2D::Create(const FTextureRHIInfo& Info, const void* InData, uint32 InDataRowPitch)
 	{
 		Release();
 
-		if (nullptr == InData || 0 == InWidth || 0 == InHeight || DXGI_FORMAT_UNKNOWN == InFormat)
+		if (nullptr == InData || 0 == Info.Width || 0 == Info.Height || DXGI_FORMAT_UNKNOWN == Info.Format)
 		{
 			return false;
 		}
@@ -29,9 +28,9 @@ namespace ML
 			return false;
 		}
 
-		Format = InFormat;
-		Width = InWidth;
-		Height = InHeight;
+		Format = Info.Format;
+		Width = Info.Width;
+		Height = Info.Height;
 
 		// 1) Destination lives in DEFAULT (GPU-only) memory.
 		D3D12_RESOURCE_DESC TexDesc = {};

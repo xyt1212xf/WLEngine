@@ -1,4 +1,4 @@
-#include "Texture2D.h"
+﻿#include "Texture2D.h"
 #include "RHItexture.h"
 #include "MLEngine.h"
 
@@ -99,7 +99,12 @@ namespace ML
 		}
 
 		RHITexture = new CRHITexture2D();
-		if (!RHITexture->Create(DXGI_FORMAT_R8G8B8A8_UNORM, Width, Height, SourceData.data(), Width * 4))
+
+		FTextureRHIInfo TextureInfo;
+		TextureInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		TextureInfo.Width = Width;
+		TextureInfo.Height = Height;
+		if (!RHITexture->Create(TextureInfo, SourceData.data(), Width * 4))
 		{
 			SafeDelete(RHITexture);
 			OutputDebugStringA(("CTexture2D::InitRHI: upload failed for " + SourcePath + "\n").c_str());
