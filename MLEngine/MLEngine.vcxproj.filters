@@ -82,6 +82,9 @@
     <Filter Include="Core\Plugs\Script">
       <UniqueIdentifier>{9f585512-51ac-4ab9-a404-8b4e6d350606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFrame\Object\Lights">
+      <UniqueIdentifier>{714591fd-722c-4e8e-b4cc-3f5b38932888}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -287,6 +290,15 @@
     </ClCompile>
     <ClCompile Include="LightComponent.cpp">
       <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyLight.cpp">
+      <Filter>GameFrame\Object\Lights</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +562,15 @@
     </ClInclude>
     <ClInclude Include="LightComponent.h">
       <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyLight.h">
+      <Filter>GameFrame\Object\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

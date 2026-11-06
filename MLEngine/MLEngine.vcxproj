@@ -25,6 +25,7 @@
     <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="DX12PipelineState.cpp" />
     <ClCompile Include="DX12RHIbuffer.cpp" />
@@ -59,6 +60,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PipelineState.cpp" />
     <ClCompile Include="Plug.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="PrimitiveComponent.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Refcount.cpp" />
@@ -70,6 +72,7 @@
     <ClCompile Include="ScriptPlug.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
+    <ClCompile Include="SkyLight.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
@@ -101,6 +104,7 @@
     <ClInclude Include="ContainersFwd.h" />
     <ClInclude Include="DefineType.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DX12Device.h" />
     <ClInclude Include="DX12PipelineState.h" />
     <ClInclude Include="DX12RHIbuffer.h" />
@@ -142,6 +146,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="PipelineState.h" />
     <ClInclude Include="Plug.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="PrimitiveComponent.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Refcount.h" />
@@ -154,6 +159,7 @@
     <ClInclude Include="ScriptPlug.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
+    <ClInclude Include="SkyLight.h" />
     <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />
