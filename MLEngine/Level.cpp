@@ -393,7 +393,7 @@ namespace ML
 		// UE counterpart: deserializing the root light component's properties
 		//（UE 把这些属性序列化在 Actor 的 ULightComponent 子对象上）。
 		// 对具体灯类型不适用的字段直接忽略。
-		void ParseLight(lua_State* L, int LightIdx, CLightComponent* Light)
+		void ParseLight(lua_State* L, int LightIdx, CLightComponent* LightComponent)
 		{
 			Vec3F Color(1.0f, 1.0f, 1.0f);
 			if (TryGetField(L, LightIdx, "Color"))
@@ -401,16 +401,16 @@ namespace ML
 				ReadVec3(L, -1, Color);
 				lua_pop(L, 1);
 			}
-			Light->SetLightColor(Color);
+			LightComponent->SetLightColor(Color);
 
 			if (TryGetField(L, LightIdx, "Intensity"))
 			{
-				Light->SetIntensity((float)lua_tonumber(L, -1));
+				LightComponent->SetIntensity((float)lua_tonumber(L, -1));
 				lua_pop(L, 1);
 			}
 			if (TryGetField(L, LightIdx, "Visibility"))
 			{
-				Light->SetVisibility(0 != lua_toboolean(L, -1));
+				LightComponent->SetVisibility(0 != lua_toboolean(L, -1));
 				lua_pop(L, 1);
 			}
 			if (TryGetField(L, LightIdx, "Mobility"))
@@ -419,20 +419,20 @@ namespace ML
 				lua_pop(L, 1);
 				if ("Static" == Mobility)
 				{
-					Light->SetMobility(ELightMobility::Static);
+					LightComponent->SetMobility(ELightMobility::Static);
 				}
 				else if ("Stationary" == Mobility)
 				{
-					Light->SetMobility(ELightMobility::Stationary);
+					LightComponent->SetMobility(ELightMobility::Stationary);
 				}
 				else
 				{
-					Light->SetMobility(ELightMobility::Movable);
+					LightComponent->SetMobility(ELightMobility::Movable);
 				}
 			}
 
 			// 点光专有：范围与衰减。
-			if (CPointLightComponent* Point = dynamic_cast<CPointLightComponent*>(Light))
+			if (CPointLightComponent* Point = dynamic_cast<CPointLightComponent*>(LightComponent))
 			{
 				if (TryGetField(L, LightIdx, "AttenuationRadius"))
 				{
