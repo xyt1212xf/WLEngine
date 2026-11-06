@@ -26,6 +26,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ContainerAllocationPolicies.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
+    <ClCompile Include="DirectionalLightComponent.cpp" />
     <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="DX12PipelineState.cpp" />
     <ClCompile Include="DX12RHIbuffer.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="GraphicPlug.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightComponent.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
@@ -61,6 +63,7 @@
     <ClCompile Include="PipelineState.cpp" />
     <ClCompile Include="Plug.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PrimitiveComponent.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Refcount.cpp" />
@@ -73,6 +76,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="SkyLight.cpp" />
+    <ClCompile Include="SkyLightComponent.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
@@ -105,6 +109,7 @@
     <ClInclude Include="DefineType.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="DirectionalLightComponent.h" />
     <ClInclude Include="DX12Device.h" />
     <ClInclude Include="DX12PipelineState.h" />
     <ClInclude Include="DX12RHIbuffer.h" />
@@ -121,6 +126,7 @@
     <ClInclude Include="json_fwd.hpp" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelStreaming.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LightComponent.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="MallocAnsi.h" />
@@ -147,6 +153,7 @@
     <ClInclude Include="PipelineState.h" />
     <ClInclude Include="Plug.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PrimitiveComponent.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Refcount.h" />
@@ -160,6 +167,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="SkyLight.h" />
+    <ClInclude Include="SkyLightComponent.h" />
     <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />
@@ -241,6 +249,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

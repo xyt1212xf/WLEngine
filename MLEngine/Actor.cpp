@@ -94,6 +94,24 @@ namespace ML
 		}
 		RootComponent = InRoot;
 	}
-	
+
+	void CActor::RemoveComponent(CComponent* InComponent)
+	{
+		if (nullptr == InComponent)
+		{
+			return;
+		}
+		auto It = std::find(Components.begin(), Components.end(), InComponent);
+		if (It != Components.end())
+		{
+			Components.erase(It);
+		}
+		if (RootComponent == InComponent)
+		{
+			RootComponent = nullptr;
+		}
+		SafeDelete(InComponent);
+	}
+
 
 }

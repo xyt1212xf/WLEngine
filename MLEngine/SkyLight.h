@@ -1,11 +1,16 @@
 ﻿#pragma once
-#include "Actor.h"
+#include "Light.h"
+
 namespace ML
 {
-	class CSkyLight : public CActor
+	class CSkyLightComponent;
+	class CSkyLight : public CLight
 	{
 	public:
 		explicit CSkyLight(const std::string& InName);
+		CSkyLightComponent* GetSkyLightComponent() const { return SkyLightComponent; }
 
+	private:
+		CSkyLightComponent* SkyLightComponent = nullptr;
 	};
 }

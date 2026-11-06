@@ -70,8 +70,6 @@ namespace ML
 
 		// UE: 世界变换 = 相对变换 ∘ 父级世界变换。没有父级时（root）就是它自己。
 		// 这样 AActor::SetActorTransform（只写 root）才能传导到挂在 root 下的组件。
-		return (nullptr != AttachParent)
-			? (LocalMatrix * AttachParent->GetWorldMatrix())
-			: LocalMatrix;
+		return (nullptr != AttachParent) ? (LocalMatrix * AttachParent->GetWorldMatrix()) : LocalMatrix;
 	}
 }

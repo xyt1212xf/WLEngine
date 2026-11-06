@@ -6,6 +6,12 @@
 #include "MeshComponent.h"
 #include "StaticMesh.h"
 #include "StaticMeshComponent.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SkyLight.h"
+#include "Light.h"
+#include "LightComponent.h"
+#include "PointLightComponent.h"
 #include "MaterialMgr.h"
 #include "Material.h"
 #include "TextureMgr.h"
@@ -357,6 +363,101 @@ namespace ML
 			return nullptr;
 		}
 
+		// UE counterpart: SpawnActor resolving the class named in the level package.
+		// Unknown / missing class falls back to a plain CActor so an old level file
+		// still loads after a class is removed.
+		CActor* SpawnActorByClass(const std::string& ClassName, const std::string& ActorName)
+		{
+			if (ClassName.empty() || "Actor" == ClassName)
+			{
+				return new CActor(ActorName);
+			}
+			if ("DirectionalLight" == ClassName)
+			{
+				return new CDirectionalLight(ActorName);
+			}
+			if ("PointLight" == ClassName)
+			{
+				return new CPointLight(ActorName);
+			}
+			if ("SkyLight" == ClassName)
+			{
+				return new CSkyLight(ActorName);
+			}
+
+			OutputDebugStringA(("CLevel: unknown actor class \"" + ClassName
+				+ "\", falling back to CActor\n").c_str());
+			return new CActor(ActorName);
+		}
+
+		// UE counterpart: deserializing the root light component's properties
+		//（UE 把这些属性序列化在 Actor 的 ULightComponent 子对象上）。
+		// 对具体灯类型不适用的字段直接忽略。
+		void ParseLight(lua_State* L, int LightIdx, CLightComponent* Light)
+		{
+			Vec3F Color(1.0f, 1.0f, 1.0f);
+			if (TryGetField(L, LightIdx, "Color"))
+			{
+				ReadVec3(L, -1, Color);
+				lua_pop(L, 1);
+			}
+			Light->SetLightColor(Color);
+
+			if (TryGetField(L, LightIdx, "Intensity"))
+			{
+				Light->SetIntensity((float)lua_tonumber(L, -1));
+				lua_pop(L, 1);
+			}
+			if (TryGetField(L, LightIdx, "Visibility"))
+			{
+				Light->SetVisibility(0 != lua_toboolean(L, -1));
+				lua_pop(L, 1);
+			}
+			if (TryGetField(L, LightIdx, "Mobility"))
+			{
+				const std::string Mobility = lua_tostring(L, -1);
+				lua_pop(L, 1);
+				if ("Static" == Mobility)
+				{
+					Light->SetMobility(ELightMobility::Static);
+				}
+				else if ("Stationary" == Mobility)
+				{
+					Light->SetMobility(ELightMobility::Stationary);
+				}
+				else
+				{
+					Light->SetMobility(ELightMobility::Movable);
+				}
+			}
+
+			// 点光专有：范围与衰减。
+			if (CPointLightComponent* Point = dynamic_cast<CPointLightComponent*>(Light))
+			{
+				if (TryGetField(L, LightIdx, "AttenuationRadius"))
+				{
+					Point->SetAttenuationRadius((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, LightIdx, "FalloffExponent"))
+				{
+					Point->SetFalloffExponent((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+			}
+
+			// 没有 shadow map，只校验不静默吞掉。
+			if (TryGetField(L, LightIdx, "CastShadows"))
+			{
+				const bool bCastShadows = 0 != lua_toboolean(L, -1);
+				lua_pop(L, 1);
+				if (bCastShadows)
+				{
+					OutputDebugStringA("CLevel: CastShadows is not implemented yet\n");
+				}
+			}
+		}
+
 		// UE counterpart: ULevel::Serialize reading one AActor off the archive.
 		CActor* ParseActor(lua_State* L, int ActorIdx,
 			const std::unordered_map<std::string, CMaterial*>& InLevelMaterials)
@@ -368,7 +469,15 @@ namespace ML
 				lua_pop(L, 1);
 			}
 
-			CActor* Actor = new CActor(ActorName);
+			// UE: the level records each actor's UClass*, SpawnActor then instantiates
+			// it. Here Class names the C++ type; a plain CActor is the fallback.
+			std::string ClassName;
+			if (TryGetField(L, ActorIdx, "Class"))
+			{
+				ClassName = lua_tostring(L, -1);
+				lua_pop(L, 1);
+			}
+			CActor* Actor = SpawnActorByClass(ClassName, ActorName);
 
 			if (TryGetField(L, ActorIdx, "Label"))
 			{
@@ -400,19 +509,8 @@ namespace ML
 				lua_pop(L, 1);
 			}
 
-			// UE: AActor::SetActorTransform()
-			Vec3F Loc;
-			CQuaternion Rot;
-			Vec3F Scl;
-			if (TryGetField(L, ActorIdx, "Transform"))
-			{
-				ReadTransform(L, -1, Loc, Rot, Scl);
-				lua_pop(L, 1);
-			}
-			Actor->SetActorTransform(Loc, Rot, Scl);
-
-			// Components. The root CSceneComponent already exists (created by the
-			// CActor ctor), so these are additional / child components.
+			// 先解析组件：第一个 SceneComponent 自动成根（UE: AActor::AddComponent
+			// 语义），之后 SetActorTransform 才有落点。基类构造不建默认根。
 			if (TryGetField(L, ActorIdx, "Components"))
 			{
 				const int CompsIdx = lua_absindex(L, -1);
@@ -445,6 +543,35 @@ namespace ML
 						}
 					}
 					lua_pop(L, 1);
+				}
+				lua_pop(L, 1);
+			}
+
+			// UE: AActor::SetActorTransform()。必须在组件解析之后调用，
+			// 否则无根 Actor 会静默丢掉 Transform。
+			Vec3F Loc;
+			CQuaternion Rot;
+			Vec3F Scl;
+			if (TryGetField(L, ActorIdx, "Transform"))
+			{
+				ReadTransform(L, -1, Loc, Rot, Scl);
+				lua_pop(L, 1);
+			}
+			Actor->SetActorTransform(Loc, Rot, Scl);
+
+			// 灯 Actor：根组件就是灯组件，Light 表直接作用于根
+			//（UE: 灯属性序列化在 ULightComponent 子对象上）。
+			if (TryGetField(L, ActorIdx, "Light"))
+			{
+				CLightComponent* LightComp = dynamic_cast<CLightComponent*>(Actor->GetRootComponent());
+				if (nullptr != LightComp)
+				{
+					ParseLight(L, lua_absindex(L, -1), LightComp);
+				}
+				else
+				{
+					OutputDebugStringA(("CLevel: actor \"" + ActorName
+						+ "\" has a Light table but its root is not a light component\n").c_str());
 				}
 				lua_pop(L, 1);
 			}

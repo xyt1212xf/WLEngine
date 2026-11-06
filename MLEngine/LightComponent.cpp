@@ -7,4 +7,9 @@ namespace ML
 
 	}
 
+	CLightComponent::~CLightComponent()
+	{
+
+	}
+
 }

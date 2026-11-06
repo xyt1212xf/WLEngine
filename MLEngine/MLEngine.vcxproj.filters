@@ -300,6 +300,18 @@
     <ClCompile Include="SkyLight.cpp">
       <Filter>GameFrame\Object\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="SkyLightComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLightComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLightComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -570,6 +582,18 @@
       <Filter>GameFrame\Object\Lights</Filter>
     </ClInclude>
     <ClInclude Include="SkyLight.h">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyLightComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLightComponent.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
       <Filter>GameFrame\Object\Lights</Filter>
     </ClInclude>
   </ItemGroup>

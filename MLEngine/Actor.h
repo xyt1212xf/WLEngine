@@ -81,7 +81,8 @@ namespace ML
 		bool CanTick() const { return bCanTick; }
 	protected:
 		void SetRootComponent(CSceneComponent* InRoot);
-		
+		void RemoveComponent(CComponent* InComponent);
+	
 	private:
 		void InitializeDefaults();
 
