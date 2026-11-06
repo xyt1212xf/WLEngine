@@ -51,8 +51,6 @@ namespace ML
 				"AddComponent<T>: T must derive publicly and unambiguously from CComponent");
 
 			T* Comp = new T();
-			// 无条件入列：非 scene 组件（CActorComponent 子类）同样属于这个 Actor，
-			// 同样被 Tick、同样被析构接管。
 			Components.push_back(Comp);
 
 			// UE: UActorComponent::Owner。组件据此回调自己的 Actor。
@@ -71,9 +69,6 @@ namespace ML
 				}
 				else
 				{
-					// UE: 非 root 的 scene component 挂到 root 下，否则
-					// AActor::SetActorTransform（只写 root）传不到它身上，
-					// 组件会永远停在原点。
 					Comp->AttachToComponent(RootComponent);
 				}
 			}
@@ -84,11 +79,14 @@ namespace ML
 		
 		void SetActorTickEnabled(bool b) { bCanTick = b; }
 		bool CanTick() const { return bCanTick; }
+	protected:
+		void SetRootComponent(CSceneComponent* InRoot);
+		
+	private:
+		void InitializeDefaults();
 
 	private:
 		bool bCanTick = true;
-
-	private:
 		CSceneComponent* RootComponent = nullptr;
 		std::vector<CComponent*> Components;
 		std::vector<std::string> Tags;

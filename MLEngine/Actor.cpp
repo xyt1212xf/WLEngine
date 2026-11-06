@@ -5,13 +5,13 @@ namespace ML
 
 	CActor::CActor()
 	{
-		AddComponent<CSceneComponent>();
+		InitializeDefaults();
 	}
 
 	CActor::CActor(const std::string& InName)
-		: CObject(InName)
+	: CObject(InName)
 	{
-		AddComponent<CSceneComponent>();
+		InitializeDefaults();	
 	}
 
 	CActor::~CActor()
@@ -21,6 +21,11 @@ namespace ML
 			delete Components[i];
 		}
 		Components.clear();
+	}
+
+	void CActor::InitializeDefaults()
+	{
+
 	}
 
 	void CActor::SetActorLocation(const Vec3F& Pos)
@@ -75,5 +80,20 @@ namespace ML
 	{
 
 	}
+
+	void CActor::SetRootComponent(CSceneComponent* InRoot)
+	{
+		if (nullptr == InRoot || InRoot == RootComponent)
+		{
+			return;
+		}
+		if (nullptr != RootComponent)
+		{
+			RootComponent->AttachToComponent(InRoot);
+				
+		}
+		RootComponent = InRoot;
+	}
+	
 
 }
