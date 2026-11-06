@@ -157,7 +157,94 @@ return {
             },
         },
 
-        -- 资产形态示例（等 FBX 导入器接进来后启用）：Path 指向 .fbx
+        --======================================================================
+        -- 灯光 Actor。第一阶段只实现 3 种：
+        --   Class = "DirectionalLight" -> CDirectionalLight（对标 ADirectionalLight）
+        --   Class = "PointLight"       -> CPointLight      （对标 APointLight）
+        --   Class = "SkyLight"         -> CSkyLight        （对标 ASkyLight）
+        -- SpotLight / RectLight 暂不实现（CSpotLight / CRectLight 还没有）。
+        --
+        -- 约定：
+        --   * Class 对标 UE 关卡里记录的 Actor 类（UClass*），CLevel::ParseActor
+        --     按它分发到具体 C++ 类；缺省则退化成 CActor。
+        --   * Light 表是"根 LightComponent 的属性"（对标 UE 序列化组件属性），
+        --     不是独立组件条目：一盏灯 Actor 恰好有一个根灯组件。
+        --   * Mobility 目前只支持 Movable（动态光照）；Static/Stationary 需要
+        --     静态光照路径，先不实现。
+        --   * CastShadows 只是预留字段，渲染层还没有 shadow map，写 true 不生效。
+        --======================================================================
+
+        -- 方向光：只有朝向有意义，Location 不参与计算。UE 里光沿 -Forward
+        -- 方向射向场景，所以 Rotation 描述的是"光的来向"。
+        {
+            Name   = "SunLight",
+            Label  = "方向光（太阳）",
+            Class  = "DirectionalLight",
+            Tick   = false,
+
+            Transform = {
+                Location = { 0, 0, 0 },
+                Rotation = { -45, 30, 0 },   -- Euler 度：X 俯角，Y 偏航
+                Scale    = { 1, 1, 1 },
+            },
+
+            Light = {
+                Mobility    = "Movable",
+                Color       = { 1.0, 0.96, 0.90 },
+                Intensity   = 3.0,
+                CastShadows = false,
+            },
+        },
+
+        -- 点光：球面衰减，AttenuationRadius 决定影响范围（对标
+        -- UPointLightComponent::AttenuationRadius），朝向无意义。
+        {
+            Name   = "PointLight_01",
+            Label  = "点光",
+            Class  = "PointLight",
+            Tick   = false,
+
+            Transform = {
+                Location = { 3, 1.5, 4 },
+                Rotation = { 0, 0, 0 },
+                Scale    = { 1, 1, 1 },
+            },
+
+            Light = {
+                Mobility          = "Movable",
+                Color             = { 1.0, 0.50, 0.20 },
+                Intensity         = 8.0,
+                AttenuationRadius = 10.0,
+                FalloffExponent   = 2.0,
+                CastShadows       = false,
+            },
+        },
+
+        -- 天空光：没有位置/范围概念（对标 ASkyLight），先用 Color × Intensity
+        -- 近似环境光；将来接 cubemap 时再加字段。
+        -- 注意：shader 里目前还有硬编码 Ambient，这盏灯接上之前别两边同时生效，
+        -- 否则环境光会翻倍。另外天空光不进 FScene 的灯数组，单独一个 proxy。
+        {
+            Name   = "SkyLight_01",
+            Label  = "天空光",
+            Class  = "SkyLight",
+            Tick   = false,
+
+            Transform = {
+                Location = { 0, 0, 0 },
+                Rotation = { 0, 0, 0 },
+                Scale    = { 1, 1, 1 },
+            },
+
+            Light = {
+                Mobility    = "Movable",
+                Color       = { 0.45, 0.55, 0.75 },
+                Intensity   = 0.3,
+                CastShadows = false,
+            },
+        },
+
+
         -- {
         --     Name = "Chair_01",
         --     Transform = { Location = { 5, 0, 2 } },
