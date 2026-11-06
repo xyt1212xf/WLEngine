@@ -195,7 +195,7 @@ namespace ML
 		FRootSignatureDesc RootSigDesc;
 		RootSigDesc.RootConstantCount = 16;   // 4x4 MVP at b0
 		RootSigDesc.WorldConstantCount = 16;   // 4x4 MVP at b0
-		RootSigDesc.LightingConstantCount = 16;   // 4x4 MVP at b0
+		RootSigDesc.LightingCount = 16;   // 灯光常量块 b2 (root CBV), >0 即启用
 
 		RootSigDesc.SRVDescriptorCount     = bUsesBaseColorTexture ? 1u : 0u;
 		RootSigDesc.SamplerDescriptorCount = bUsesBaseColorTexture ? FRootSignatureDesc::MaxDynamicSamplers : 0u;

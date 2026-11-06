@@ -98,6 +98,7 @@ namespace ML
 		{
 			mPlugs.push_back(graphicPlug);
 			graphicPlug->InitialiseDefaultMaterial();
+			graphicPlug->InitRenderer();
 			mpWorld = new CWorld();
 			return true;
 		}

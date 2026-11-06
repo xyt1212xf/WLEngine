@@ -41,14 +41,13 @@ namespace ML
 				WorldParam.Constants.RegisterSpace = 0;
 				WorldParam.Constants.Num32BitValues = Desc.WorldConstantCount;
 			}
-			if (Desc.LightingConstantCount > 0)
+			if (Desc.LightingCount > 0)
 			{
-				D3D12_ROOT_PARAMETER& LightParam  = Params[NumParams++];
-				LightParam .ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-				LightParam .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-				LightParam .Constants.ShaderRegister = 2;  // b2
-				LightParam .Constants.RegisterSpace = 0;
-				LightParam .Constants.Num32BitValues = Desc.LightingConstantCount;
+				D3D12_ROOT_PARAMETER& LightParam = Params[NumParams++];
+				LightParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+				LightParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				LightParam.Descriptor.ShaderRegister = 2;  // b2
+				LightParam.Descriptor.RegisterSpace = 0;
 			}
 			if (Desc.SRVDescriptorCount > 0)
 			{
@@ -184,7 +183,7 @@ namespace ML
 		uint64 Key = 0;
 		Key = Combine(Key, Desc.RootConstantCount);
 		Key = Combine(Key, Desc.WorldConstantCount);
-		Key = Combine(Key, Desc.LightingConstantCount);
+		Key = Combine(Key, Desc.LightingCount);
 		Key = Combine(Key, Desc.SRVDescriptorCount);
 		Key = Combine(Key, Desc.SamplerDescriptorCount);
 		// 纳入静态采样器,避免不同组合串台

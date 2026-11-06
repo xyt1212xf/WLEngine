@@ -6,7 +6,7 @@ namespace ML
 {
 	constexpr uint32 MaxSceneLights = 8;
 
-	enum class ELightGPUType : uint16
+	enum class ELightGPUType : uint32
 	{
 		Directional = 0,   // 方向光：只用 Direction，无位置/衰减
 		Point = 1,   // 点光：PositionRadius + 距离衰减

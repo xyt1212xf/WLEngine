@@ -33,14 +33,11 @@ namespace ML
 	namespace
 	{
 		void DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
-			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe)
+			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
+			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress)
 		{
 			CPipelineState* CurrentPSO = nullptr;
 			ID3D12RootSignature* CurrentRS = nullptr;
-			FLightConstants Light = {};
-			Light.LightDir = { 0.5f, 0.8f, 0.3f, 0.0f };   // 指向光源的方向
-			Light.LightColor = { 1.0f, 1.0f, 1.0f, 0.0f };   // 白色光, 强度 1
-			Light.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
 
 			for (const FMeshBatch& Batch : Batches)
 			{
@@ -88,7 +85,7 @@ namespace ML
 				FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewProjMatrix;
 				pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
 				pCmd->SetGraphicsRoot32BitConstants(1, 16, &Batch.WorldMatrix, 0);
-				pCmd->SetGraphicsRoot32BitConstants(2, 16, &Light, 0);
+				pCmd->SetGraphicsRootConstantBufferView(2, LightCBAddress);
 
 				if (Batch.Material->HasBaseColorTexture())
 				{
@@ -121,7 +118,36 @@ namespace ML
 
 	CRenderer::~CRenderer()
 	{
+		SafeRelease(mLightConstantsCB);
 	}
+
+	bool CRenderer::Initialise()
+	{
+		mLightConstantsCB = new CRHIBuffer();
+		
+		FrameLights.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
+
+		uint32 NumLights = 0;
+
+		// 方向光：与原硬编码完全一致（画面不回归）
+		{
+			FSceneLightGPU& L = FrameLights.Lights[NumLights++];
+			L.ColorIntensity = { 1.0f, 1.0f, 1.0f, (float)ELightGPUType::Directional };
+			L.Direction = { 0.5f, 0.8f, 0.3f, 0.0f };  // 指向光源的方向，shader 内归一化
+		}
+
+		// 点光：验证 HLSL 多灯循环 + InvSquared 距离衰减通路（前置3后由组件驱动）
+		//{
+		//	FSceneLightGPU& L = FrameLights.Lights[NumLights++];
+		//	L.ColorIntensity = { 1.0f, 0.6f, 0.3f, (float)ELightGPUType::Point };
+		//	L.PositionRadius = { 20.0f, 20.0f, 20.0f, 300.0f };
+		//}
+		FrameLights.NumLightsPad.x = (float)NumLights;
+
+		mLightConstantsCB->Create(EBufferType::Constant, sizeof(FLightFrameConstants), 0, &FrameLights);
+		return true;
+	}
+
 	void CRenderer::_Draw()
 	{
 		static CTimerClock time;
@@ -196,10 +222,10 @@ namespace ML
 				const float bz = B.WorldMatrix.m[3][2] - Eye.z;
 				return (ax * ax + ay * ay + az * az) > (bx * bx + by * by + bz * bz);
 			});
-
+		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
 		// Opaque first (writes depth), then translucent (sorted, no depth write).
-		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe);
-		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe);
+		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress);
+		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress);
 	}
 
 	void CRenderer::_End()

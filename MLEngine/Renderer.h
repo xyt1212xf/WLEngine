@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "MeshBatch.h"
 #include "SceneViewFamily.h"
+#include "LightShader.h"
 
 namespace ML
 {
@@ -23,6 +24,7 @@ namespace ML
 	};
 
 	class CPipelineState;
+	class CRHIBuffer;
 
 	class MLENGINE_API CRenderer
 	{
@@ -30,8 +32,9 @@ namespace ML
 	public:
 		CRenderer(CGraphicPlug* plug);
 		virtual ~CRenderer();
+		bool Initialise();
+		// Draw-mode control. UE: the draw mode lives on FSceneViewFamily/ 新增: 光照 4*float4 = 16
 
-		// Draw-mode control. UE: the draw mode lives on FSceneViewFamily
 		// (a view-family-level override), never on the material or primitive.
 		// Switching it recomputes the family's FEngineShowFlags, which the PSO
 		// build reads to pick FillMode.
@@ -46,10 +49,13 @@ namespace ML
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
+		CRHIBuffer*		mLightConstantsCB = nullptr;
 		// UE: FSceneViewFamily — owns the per-frame draw-mode show flags that
 		// every PSO built by the materials inherits. Defaults to Lit (solid).
 		FSceneViewFamily mViewFamily;
 		// PSOs are no longer owned by the renderer: each CMaterial builds its own in InitRHI; renderer is read-only.
+
+		FLightFrameConstants FrameLights = {};
 
 		// 每帧可见批次：在收集阶段就按"不透明 / 透明"分流到两个成员缓冲区
 		// （UE: BasePass 列表 vs Translucent pass 列表）。clear() 保留 capacity，

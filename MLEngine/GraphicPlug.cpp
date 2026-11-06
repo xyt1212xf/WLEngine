@@ -45,7 +45,6 @@ namespace ML
 
 		// Compile all registered global shaders once the device is ready.
 		CGlobalShaderMap::InitGlobalShaders();
-		mpRenderer = new CRenderer(this);
 		return true;
 	}
 
@@ -112,6 +111,20 @@ namespace ML
 		MatMgr->Register("Default", mpDefaultMaterial);
 		MatMgr->SetDefaultMaterial(mpDefaultMaterial);
 		return true;
+	}
+
+
+	bool CGraphicPlug::InitRenderer()
+	{
+		try
+		{
+			mpRenderer = new CRenderer(this);
+			return mpRenderer->Initialise();
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
 
 }

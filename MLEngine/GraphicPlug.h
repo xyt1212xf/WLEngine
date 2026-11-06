@@ -21,6 +21,7 @@ namespace ML
 		CMaterial* GetDefaultMaterial() const { return mpDefaultMaterial; }
 
 		bool InitialiseDefaultMaterial();
+		bool InitRenderer();
 
 	private:
 		CRHIDevice*	mpDeviceBase = nullptr;
