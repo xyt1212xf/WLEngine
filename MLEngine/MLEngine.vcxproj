@@ -54,6 +54,7 @@
     <ClCompile Include="MeshBatch.cpp" />
     <ClCompile Include="MeshComponent.cpp" />
     <ClCompile Include="MeshDescription.cpp" />
+    <ClCompile Include="MeshLODResources.cpp" />
     <ClCompile Include="MeshPolygonGroup.cpp" />
     <ClCompile Include="MeshTriangle.cpp" />
     <ClCompile Include="MeshVertex.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="MeshBatch.h" />
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="MeshDescription.h" />
+    <ClInclude Include="MeshLODResources.h" />
     <ClInclude Include="MeshPolygonGroup.h" />
     <ClInclude Include="MeshTriangle.h" />
     <ClInclude Include="MeshVertex.h" />

@@ -5,7 +5,6 @@
 #include "Device.h"
 #include "World.h"
 #include "MeshBatch.h"
-#include "ViewMatrices.h"
 #include "MathLib.h"
 #include "Material.h"
 #include "MaterialMgr.h"
@@ -30,83 +29,6 @@ namespace ML
 	// translucent). UE: the output of one FMeshPassProcessor. The PSO / root
 	// signature switch is amortised - it only re-binds when the Material (and thus
 	// its PSO) actually changes between consecutive batches.
-	namespace
-	{
-		void DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
-			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
-			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress)
-		{
-			CPipelineState* CurrentPSO = nullptr;
-			ID3D12RootSignature* CurrentRS = nullptr;
-
-			for (const FMeshBatch& Batch : Batches)
-			{
-				if (nullptr == Batch.LOD
-					|| nullptr == Batch.LOD->IndexBuffer
-					|| nullptr == Batch.VertexFactory
-					|| nullptr == Batch.Material)
-				{
-					continue;
-				}
-
-				// The PSO depends on the mesh's vertex layout + blend mode, so it is
-				// resolved per batch and built on first use.
-				CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
-				if (nullptr == PSO)
-				{
-					continue;
-				}
-
-				// A material whose shaders sample the base-color texture but whose asset
-				// is missing is skipped rather than drawn with an undefined descriptor.
-				if (Batch.Material->UsesBaseColorTexture() && !Batch.Material->HasBaseColorTexture())
-				{
-					continue;
-				}
-
-				const std::vector<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
-				if (VBViews.empty())
-				{
-					continue;
-				}
-
-				// Switch PSO / RootSignature (only when the material changes).
-				if (PSO != CurrentPSO)
-				{
-					CurrentPSO = PSO;
-					CurrentRS = PSO->GetRootSignature();
-					pCmd->SetGraphicsRootSignature(CurrentRS);
-					pCmd->SetPipelineState(PSO->GetPipelineState());
-					pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				}
-
-				// Compute MVP and bind it to root constant slot 0 (16 floats).
-				// Row-vector: clip = pos * (World * View * Proj).
-				FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewProjMatrix;
-				pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
-				pCmd->SetGraphicsRoot32BitConstants(1, 16, &Batch.WorldMatrix, 0);
-				pCmd->SetGraphicsRootConstantBufferView(2, LightCBAddress);
-
-				if (Batch.Material->HasBaseColorTexture())
-				{
-					ID3D12DescriptorHeap* Heaps[2] =
-					{
-						pRHIDevice->GetSrvHeap(),
-						pRHIDevice->GetSamplerHeap()
-					};
-					pCmd->SetDescriptorHeaps(2, Heaps);
-					pCmd->SetGraphicsRootDescriptorTable(3, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
-					pCmd->SetGraphicsRootDescriptorTable(4, pRHIDevice->GetSamplerGPUHandle(0)); // 槽0 = s4
-				}
-
-				// Geometry.
-				pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
-				const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
-				pCmd->IASetIndexBuffer(&IndexBufferView);
-				pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1, Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
-			}
-		}
-	}
 
 	CRenderer::CRenderer(CGraphicPlug* plug)
 	: mpGraphicPlug(plug)
@@ -165,13 +87,15 @@ namespace ML
 
 	bool CRenderer::_Begin()
 	{
-		mpGraphicPlug->GetDevice()->BeginDraw();	
+		mpGraphicPlug->GetDevice()->BeginDraw();
+		mCurrentPSO = nullptr;
+		mCurrentRS = nullptr;
 		return true;
 	}
 
 	void CRenderer::_Flush()
 	{
-		// Skip until the world finished loading (Parsing -> ... -> Ready).
+		//  Skip until the world finished loading (Parsing -> ... -> Ready).
 		CWorld* pWorld = GEngine->GetWorld();
 		if (nullptr == pWorld || !pWorld->IsReady())
 		{
@@ -224,8 +148,8 @@ namespace ML
 			});
 		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
 		// Opaque first (writes depth), then translucent (sorted, no depth write).
-		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress);
-		DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress);
 	}
 
 	void CRenderer::_End()
@@ -233,4 +157,78 @@ namespace ML
 		mpGraphicPlug->GetDevice()->EndDraw();
 	}
 
+	void CRenderer::_DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
+		const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
+		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress)
+	{
+		for (const FMeshBatch& Batch : Batches)
+		{
+			if (nullptr == Batch.LOD
+				|| nullptr == Batch.LOD->IndexBuffer
+				|| nullptr == Batch.VertexFactory
+				|| nullptr == Batch.Material)
+			{
+				continue;
+			}
+
+			// The PSO depends on the mesh's vertex layout + blend mode, so it is
+			// resolved per batch and built on first use.
+			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
+			if (nullptr == PSO)
+			{
+				continue;
+			}
+
+			// A material whose shaders sample the base-color texture but whose asset
+			// is missing is skipped rather than drawn with an undefined descriptor.
+			if (Batch.Material->UsesBaseColorTexture() && !Batch.Material->HasBaseColorTexture())
+			{
+				continue;
+			}
+
+			const std::vector<D3D12_VERTEX_BUFFER_VIEW>& VBViews = Batch.VertexFactory->mCachedVerticesViews;
+			if (VBViews.empty())
+			{
+				continue;
+			}
+
+			// Switch PSO / RootSignature (only when the material changes).
+			if (PSO != mCurrentPSO)
+			{
+				mCurrentPSO = PSO;
+				pCmd->SetPipelineState(PSO->GetPipelineState());
+				pCmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			}
+			ID3D12RootSignature* RS = PSO->GetRootSignature();
+			if (RS != mCurrentRS)
+			{
+				mCurrentRS = RS;
+				pCmd->SetGraphicsRootSignature(mCurrentRS);
+			}
+			// Compute MVP and bind it to root constant slot 0 (16 floats).
+			// Row-vector: clip = pos * (World * View * Proj).
+			FMatrix44 MVP = Batch.WorldMatrix * ViewMatrices.ViewProjMatrix;
+			pCmd->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
+			pCmd->SetGraphicsRoot32BitConstants(1, 16, &Batch.WorldMatrix, 0);
+			pCmd->SetGraphicsRootConstantBufferView(2, LightCBAddress);
+
+			if (Batch.Material->HasBaseColorTexture())
+			{
+				ID3D12DescriptorHeap* Heaps[2] =
+				{
+					pRHIDevice->GetSrvHeap(),
+					pRHIDevice->GetSamplerHeap()
+				};
+				pCmd->SetDescriptorHeaps(2, Heaps);
+				pCmd->SetGraphicsRootDescriptorTable(3, Batch.Material->GetBaseColorTexture()->GetRHITexture()->GetSRVGPUHandle());
+				pCmd->SetGraphicsRootDescriptorTable(4, pRHIDevice->GetSamplerGPUHandle(0)); // 槽0 = s4
+			}
+
+			// Geometry.
+			pCmd->IASetVertexBuffers(0, (UINT)VBViews.size(), VBViews.data());
+			const D3D12_INDEX_BUFFER_VIEW& IndexBufferView = Batch.LOD->IndexBuffer->GetIndexBufferView();
+			pCmd->IASetIndexBuffer(&IndexBufferView);
+			pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1, Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
+		}
+	}
 }

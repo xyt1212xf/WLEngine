@@ -312,6 +312,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>GameFrame\Object\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="MeshLODResources.cpp">
+      <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -595,6 +598,9 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>GameFrame\Object\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLODResources.h">
+      <Filter>Core\Resource\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

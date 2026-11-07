@@ -260,6 +260,7 @@ namespace ML
 
 		// Root signature comes from the cache, keyed by its binding-layout descriptor.
 		mpRootSignature = FRootSignatureCache::Get().GetOrCreate(pDevice, RootSigDesc);
+		assert(nullptr != mpRootSignature && "PSO has no root signature");
 		if (nullptr == mpRootSignature)
 		{
 			return false;

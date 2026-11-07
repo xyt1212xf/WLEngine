@@ -68,8 +68,8 @@ namespace ML
 			}
 			BoundsRadius = sqrtf(RadiusSq);
 
-			PositionBuffer = new CRHIBuffer();
-			PositionBuffer->Create(
+			VertexBuffers.Position = new CRHIBuffer();
+			VertexBuffers.Position->Create(
 				EBufferType::Vertex,
 				(UINT32)Positions.size() * sizeof(Vec3F),
 				sizeof(Vec3F),
@@ -93,8 +93,8 @@ namespace ML
 		const std::vector<Vec3F>& Normals = Attrs.GetNormals();
 		if (Normals.size() > 0)
 		{
-			NormalBuffer = new CRHIBuffer();
-			NormalBuffer->Create(
+			VertexBuffers.Normal = new CRHIBuffer();
+			VertexBuffers.Normal->Create(
 				EBufferType::Vertex,
 				(UINT32)Normals.size() * sizeof(Vec3F),
 				sizeof(Vec3F),
@@ -105,8 +105,8 @@ namespace ML
 		const std::vector<Vec2F>& UV = Attrs.GetUVs();
 		if (UV.size() > 0)
 		{
-			UVBuffer = new CRHIBuffer();
-			UVBuffer->Create(
+			VertexBuffers.UV = new CRHIBuffer();
+			VertexBuffers.UV->Create(
 				EBufferType::Vertex,
 				(UINT32)UV.size() * sizeof(Vec2F),
 				sizeof(Vec2F),
@@ -118,8 +118,8 @@ namespace ML
 		const std::vector<Vec4F>& Tangents = Attrs.GetTangents();
 		if (Tangents.size() > 0)
 		{
-			TangentBuffer = new CRHIBuffer();
-			TangentBuffer->Create(
+			VertexBuffers.Tangent = new CRHIBuffer();
+			VertexBuffers.Tangent->Create(
 				EBufferType::Vertex,
 				(UINT32)Tangents.size() * sizeof(Vec4F),
 				sizeof(Vec4F),
@@ -131,8 +131,8 @@ namespace ML
 		const std::vector<Vec4F>& Colors = Attrs.GetColors();
 		if (Colors.size() > 0)
 		{
-			ColorBuffer = new CRHIBuffer();
-			ColorBuffer->Create(
+			VertexBuffers.Color = new CRHIBuffer();
+			VertexBuffers.Color->Create(
 				EBufferType::Vertex,
 				(UINT32)Colors.size() * sizeof(Vec4F),
 				sizeof(Vec4F),
@@ -157,38 +157,38 @@ namespace ML
 					Unit.bValid		= (Buffer != nullptr);
 				};
 			std::vector<std::string> Elements;
-			if (PositionBuffer)
+			if (VertexBuffers.Position)
 			{
 				FillStream(VertexFactory->Schema.Position,
-					PositionBuffer ? PositionBuffer->GetResource() : nullptr,
+					VertexBuffers.Position ? VertexBuffers.Position->GetResource() : nullptr,
 					NextSlot++, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 				Elements.push_back("POSITION");
 			}
-			if (NormalBuffer)
+			if (VertexBuffers.Normal)
 			{
 				FillStream(VertexFactory->Schema.Normal,
-					NormalBuffer ? NormalBuffer->GetResource() : nullptr,
+					VertexBuffers.Normal ? VertexBuffers.Normal->GetResource() : nullptr,
 					NextSlot++, sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 				Elements.push_back("NORMAL");
 			}
-			if (ColorBuffer)
+			if (VertexBuffers.Color)
 			{
 				FillStream(VertexFactory->Schema.Color,
-					ColorBuffer ? ColorBuffer->GetResource() : nullptr,
+					VertexBuffers.Color ? VertexBuffers.Color->GetResource() : nullptr,
 					NextSlot++, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
 				Elements.push_back("COLOR");
 			}
-			if (UVBuffer)
+			if (VertexBuffers.UV)
 			{
 				FillStream(VertexFactory->Schema.UV0,
-					UVBuffer ? UVBuffer->GetResource() : nullptr,
+					VertexBuffers.UV ? VertexBuffers.UV->GetResource() : nullptr,
 					NextSlot++, sizeof(Vec2F), DXGI_FORMAT_R32G32_FLOAT);
 				Elements.push_back("TEXCOORD");
 			}
-			if (TangentBuffer)
+			if (VertexBuffers.Tangent)
 			{
 				FillStream(VertexFactory->Schema.Tangent,
-					TangentBuffer ? TangentBuffer->GetResource() : nullptr,
+					VertexBuffers.Tangent ? VertexBuffers.Tangent->GetResource() : nullptr,
 					NextSlot++, sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
 				Elements.push_back("TANGENT");
 			}
@@ -202,12 +202,7 @@ namespace ML
 
 	void CStaticMeshLODResources::ReleaseResources()
 	{
-		SafeDelete(PositionBuffer);
-		SafeDelete(NormalBuffer);
-		SafeDelete(UVBuffer);
-		SafeDelete(TangentBuffer);
-		SafeDelete(ColorBuffer);
-		SafeDelete(IndexBuffer);
+		VertexBuffers.Release();
 		Sections.clear();
 		NumVertices = 0;
 		NumIndices = 0;

@@ -3,6 +3,7 @@
 #include "MeshBatch.h"
 #include "SceneViewFamily.h"
 #include "LightShader.h"
+#include "ViewMatrices.h"
 
 namespace ML
 {
@@ -25,7 +26,8 @@ namespace ML
 
 	class CPipelineState;
 	class CRHIBuffer;
-
+	class CRHIDevice;
+    class CGraphicPlug;
 	class MLENGINE_API CRenderer
 	{
 		friend class CGraphicPlug;
@@ -46,10 +48,16 @@ namespace ML
 		bool _Begin();
 		void _Flush();
 		void _End();
+		void _DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
+			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
+			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress);
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
 		CRHIBuffer*		mLightConstantsCB = nullptr;
+		CPipelineState* mCurrentPSO = nullptr;
+		ID3D12RootSignature* mCurrentRS = nullptr;
+
 		// UE: FSceneViewFamily — owns the per-frame draw-mode show flags that
 		// every PSO built by the materials inherits. Defaults to Lit (solid).
 		FSceneViewFamily mViewFamily;

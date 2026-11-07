@@ -1,8 +1,7 @@
 ﻿#pragma once
 #include "Vector.h"
-#include "RHIbuffer.h"
 #include "MeshAttributes.h"
-
+#include "MeshLODResources.h"
 namespace ML
 {
 	// FStaticMeshLODResources：一个 LOD 烘焙后的渲染数据。
@@ -18,7 +17,7 @@ namespace ML
 	// 这里直接复用，避免两处定义漂移。
 	class CStaticVertexFactory;
 
-	class MLENGINE_API CStaticMeshLODResources
+	class MLENGINE_API CStaticMeshLODResources : public CMeshLODResources
 	{
 	public:
 		CStaticMeshLODResources() = default;
@@ -40,23 +39,12 @@ namespace ML
 		const Vec3F& GetBoundsOrigin() const { return BoundsOrigin; }
 		float        GetBoundsRadius() const { return BoundsRadius; }
 
-		// 顶点数据流(per-stream，与 VertexStreamFactory 对齐)
-		CRHIBuffer* PositionBuffer = nullptr;
-		CRHIBuffer* NormalBuffer   = nullptr;   // per-vertex 法线(float3)
-		CRHIBuffer* UVBuffer	   = nullptr;
-		CRHIBuffer* TangentBuffer  = nullptr;   // tangent + UV 打包流（P1）
-		CRHIBuffer* ColorBuffer    = nullptr;
-		CRHIBuffer* IndexBuffer    = nullptr;
-
+	public:
 		std::vector<FStaticMeshSection> Sections;
 
 		// 包围球(UE 的 FBoxSphereBounds 简化为 原点 + 半径)
 		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
 		float BoundsRadius = 0.0f;
-
 		CStaticVertexFactory* VertexFactory = nullptr;
-
-		UINT32 NumVertices = 0;
-		UINT32 NumIndices  = 0;
 	};
 }
