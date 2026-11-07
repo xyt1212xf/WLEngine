@@ -85,6 +85,9 @@
     <Filter Include="GameFrame\Object\Lights">
       <UniqueIdentifier>{714591fd-722c-4e8e-b4cc-3f5b38932888}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Terrain">
+      <UniqueIdentifier>{d4f9df7b-8332-4508-973b-a8b0e215439b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -314,6 +317,15 @@
     </ClCompile>
     <ClCompile Include="MeshLODResources.cpp">
       <Filter>Core\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="LandscapeLODResources.cpp">
+      <Filter>Core\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="LandscapeVertexFactory.cpp">
+      <Filter>Core\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="LandscapeComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -601,6 +613,18 @@
     </ClInclude>
     <ClInclude Include="MeshLODResources.h">
       <Filter>Core\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeLODResources.h">
+      <Filter>Core\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeHeightfield.h">
+      <Filter>Core\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeVertexFactory.h">
+      <Filter>Core\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeComponent.h">
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

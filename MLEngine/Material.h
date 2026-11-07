@@ -22,7 +22,7 @@ namespace ML
 	class CShader;
 	class CGlobalShader;
 	class CPipelineState;
-	class CStaticVertexFactory;
+	class CVertexStreamFactory;
 	class CTexture2D;
 
 	// Engine material asset (CObject subclass).
@@ -113,7 +113,7 @@ namespace ML
 			// bWireframe folds into the cache key so a wireframe PSO is never confused
 		// with its solid twin (same layout). UE bakes the fill mode into the full
 		// PSO hash, not the layout hash.
-		CPipelineState* GetPipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe = false);
+		CPipelineState* GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe = false);
 
 		// Drops every cached PSO (releases the GPU objects behind them).
 		void ReleasePipelineStates();
@@ -165,7 +165,7 @@ namespace ML
 		std::unordered_map<uint64, CPipelineState*>	mPSOCache;
 		std::mutex									mPSOMutex;
 
-		CPipelineState* CreatePipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe);
-		const std::vector<D3D12_INPUT_ELEMENT_DESC>* SelectInputLayout(const CStaticVertexFactory* InVertexFactory) const;
+		CPipelineState* CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe);
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>* SelectInputLayout(const CVertexStreamFactory* InVertexFactory) const;
 	};
 }

@@ -109,6 +109,15 @@ namespace ML
 
 		// shader 宏（UE 的 ModifyCompilationEnvironment）
 		virtual void FillShaderDefines(std::unordered_map<std::string, std::string>& defines) {}
+
+		const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayout() const { return mCachedInputLayout; }
+		bool HasInputLayout() const { return mCachedInputLayout.size() > 0; }
+
+	public:
+		FMeshVertexSchema Schema;
+		uint32 NumVertices = 0;
+		std::vector<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> mCachedInputLayout;
 	};
 
 	class MLENGINE_API CStaticVertexFactory : public CVertexStreamFactory
@@ -119,13 +128,6 @@ namespace ML
 
 		virtual std::vector<D3D12_INPUT_ELEMENT_DESC> BuildInputLayout(const std::vector<std::string>& elements) override;
 
-		const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayout() const { return mCachedInputLayout; }
-		bool HasInputLayout() const { return mCachedInputLayout.size() > 0; }
 
-	public:
-		FMeshVertexSchema Schema;
-		uint32 NumVertices = 0;
-		std::vector<D3D12_VERTEX_BUFFER_VIEW> mCachedVerticesViews;
-		std::vector<D3D12_INPUT_ELEMENT_DESC> mCachedInputLayout;
 	};
 }

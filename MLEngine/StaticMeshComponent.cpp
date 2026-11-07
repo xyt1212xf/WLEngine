@@ -2,6 +2,8 @@
 #include "StaticMeshResources.h"
 #include "Scene.h"
 #include "StaticMesh.h"
+#include "VertexStreamFactory.h"
+
 namespace ML
 {
 
@@ -29,8 +31,13 @@ namespace ML
 		// id 必须在游戏线程这边先拿到：渲染命令是 FIFO 的，保证随后投递的
 		// SetTransform / SetVisibility 一定排在 AddPrimitive 之后。
 		RenderProxyId = AllocateSceneProxyId();
-
-		// 快照发生在游戏线程；返回后这份数据的所有权归渲染线程的 FScene。
-		return new FPrimitiveSceneProxy(RenderProxyId, this);
+		CMaterial* Mat = GetOverrideMaterial(0);
+		if (nullptr == Mat)
+		{
+			Mat = StaticMesh->GetMaterialForSection(0);
+		}
+		return new FPrimitiveSceneProxy(RenderProxyId, StaticMesh,
+			StaticMesh->GetRenderData(0), StaticMesh->GetVertexFactory(0),
+			Mat, GetWorldMatrix(), 0, IsVisible());
 	}
 }

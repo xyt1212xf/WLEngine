@@ -5,9 +5,10 @@
 
 namespace ML
 {
-	class CStaticMeshComponent;
-	class CStaticMesh;
-	class CStaticMeshLODResources;
+	class CMesh;
+	class CMeshLODResources;
+	class CVertexStreamFactory;
+	class CMesh;
 	class CStaticVertexFactory;
 	class CMaterial;
 	struct FViewMatrices;
@@ -34,7 +35,10 @@ namespace ML
 		friend class FScene;
 	public:
 		// 游戏线程调用：把组件此刻的可绘制状态整份拷出来。
-		FPrimitiveSceneProxy(uint32 InId, const CStaticMeshComponent* InComponent);
+		FPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD,
+			CVertexStreamFactory* InVF, CMaterial* InMaterial,
+			const FMatrix44& InWorldMatrix, uint32 InSectionIndex = 0, bool bInVisible = true);
+
 
 	private:
 		// ---- 以下只允许渲染线程调用 ----
@@ -53,9 +57,9 @@ namespace ML
 
 		// ---- 快照（游戏线程写入，渲染线程只读）----
 		FMatrix44				WorldMatrix;
-		CStaticMesh*			Mesh = nullptr;
-		CStaticMeshLODResources* LOD = nullptr;
-		CStaticVertexFactory*	VertexFactory = nullptr;
+		CMesh*					Mesh = nullptr;
+		CMeshLODResources*		LOD = nullptr;
+		CVertexStreamFactory*	VertexFactory = nullptr;
 		CMaterial*				Material = nullptr;   // 构造时已解析（override 优先）
 		FMeshBatchElement		Element;
 		uint32					SectionIndex = 0;

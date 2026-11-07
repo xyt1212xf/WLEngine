@@ -37,6 +37,9 @@
     <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="GlobalShader.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
+    <ClCompile Include="LandscapeComponent.cpp" />
+    <ClCompile Include="LandscapeLODResources.cpp" />
+    <ClCompile Include="LandscapeVertexFactory.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -125,6 +128,10 @@
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
     <ClInclude Include="json_fwd.hpp" />
+    <ClInclude Include="LandscapeComponent.h" />
+    <ClInclude Include="LandscapeHeightfield.h" />
+    <ClInclude Include="LandscapeLODResources.h" />
+    <ClInclude Include="LandscapeVertexFactory.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelStreaming.h" />
     <ClInclude Include="Light.h" />

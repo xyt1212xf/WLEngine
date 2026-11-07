@@ -30,7 +30,7 @@ namespace ML
 	class MLENGINE_API CMeshLODResources
     {
     public:
-        CMeshLODResources();
+        CMeshLODResources() = default;
         ~CMeshLODResources();
 
 	public:

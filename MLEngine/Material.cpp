@@ -89,7 +89,7 @@ namespace ML
 		return nullptr != BaseColorTexture && BaseColorTexture->HasValidRHI();
 	}
 
-	const std::vector<D3D12_INPUT_ELEMENT_DESC>* CMaterial::SelectInputLayout(const CStaticVertexFactory* InVertexFactory) const
+	const std::vector<D3D12_INPUT_ELEMENT_DESC>* CMaterial::SelectInputLayout(const CVertexStreamFactory* InVertexFactory) const
 	{
 		// Layout resolution order (see Material.h):
 		//   priority 1: VertexFactory's layout (mesh-driven path)
@@ -106,7 +106,7 @@ namespace ML
 		return nullptr;
 	}
 
-	CPipelineState* CMaterial::GetPipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe)
+	CPipelineState* CMaterial::GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)
@@ -162,7 +162,7 @@ namespace ML
 		return PSO;
 	}
 
-	CPipelineState* CMaterial::CreatePipelineState(const CStaticVertexFactory* InVertexFactory, bool bWireframe)
+	CPipelineState* CMaterial::CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)

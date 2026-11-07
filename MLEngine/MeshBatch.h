@@ -3,9 +3,9 @@
 #include "Matrix.h"
 namespace ML
 {
-	class CStaticMesh;
-	class CStaticVertexFactory;
-	class CStaticMeshLODResources;
+	class CMesh;
+	class CVertexStreamFactory;
+	class CMeshLODResources;
 	class CMaterial;
 
 	struct FMeshBatchElement
@@ -22,9 +22,9 @@ namespace ML
 	// swap CMaterial* for CMaterialRenderProxy*; the renderer interface stays unchanged.
 	struct FMeshBatch
 	{
-		CStaticMesh* Mesh = nullptr;
-		CStaticMeshLODResources* LOD = nullptr;
-		CStaticVertexFactory* VertexFactory = nullptr;
+		CMesh* Mesh = nullptr;
+		CMeshLODResources* LOD = nullptr;
+		CVertexStreamFactory* VertexFactory = nullptr;
 		CMaterial* Material = nullptr;  // 由 FPrimitiveSceneProxy 构造时解析（override 优先）
 
 		FMatrix44	WorldMatrix;

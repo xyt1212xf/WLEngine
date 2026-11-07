@@ -203,6 +203,7 @@ namespace ML
 	void CStaticMeshLODResources::ReleaseResources()
 	{
 		VertexBuffers.Release();
+		SafeDelete(IndexBuffer);
 		Sections.clear();
 		NumVertices = 0;
 		NumIndices = 0;

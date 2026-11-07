@@ -15,53 +15,22 @@ namespace ML
 		return GNextSceneProxyId.fetch_add(1);
 	}
 
-	//-----------------------------------------------------------------
-	// FPrimitiveSceneProxy
-	//-----------------------------------------------------------------
-	FPrimitiveSceneProxy::FPrimitiveSceneProxy(uint32 InId, const CStaticMeshComponent* InComponent)
+	FPrimitiveSceneProxy::FPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD, CVertexStreamFactory* InVF, CMaterial* InMaterial, const FMatrix44& InWorldMatrix, uint32 InSectionIndex /*= 0*/, bool bInVisible /*= true*/)
 	: Id(InId)
 	{
-		if (nullptr == InComponent)
+		Mesh = InMesh;
+		LOD = InLOD;
+		VertexFactory = InVF;
+		Material = InMaterial;
+		WorldMatrix = InWorldMatrix;
+		SectionIndex = InSectionIndex;
+		bVisible = bInVisible;
+		if (LOD)
 		{
-			return;
-		}
-
-		Mesh = InComponent->GetStaticMesh();
-		if (nullptr == Mesh)
-		{
-			return;
-		}
-
-		// 网格尚未 Build（LOD / VertexFactory 为空，或还没有 Section）时
-		// 不产出可绘制数据：LOD 保持 nullptr，GetMeshBatch 会返回 false，
-		// 渲染线程自然跳过它。
-		if (CStaticMeshLODResources* InLOD = Mesh->GetRenderData(0))
-		{
-			CStaticVertexFactory* InVF  = Mesh->GetVertexFactory(0);
-			if (nullptr == InVF || InLOD->Sections.empty())
-			{
-				return;
-			}
-			LOD = InLOD;
-			VertexFactory = InVF;
-
-			SectionIndex = 0;
-			const FStaticMeshSection& Section = LOD->Sections[0];
-			Element.FirstIndex = Section.FirstIndex;
-			Element.NumIndices = Section.NumTriangles * 3;
+			Element.FirstIndex = 0;
+			Element.NumIndices = LOD->NumIndices;
 			Element.BaseVertex = 0;
 			Element.InstanceCount = 1;
-
-			// 材质在构造时一次性解析好：渲染线程不再需要知道 override 规则。
-			// UE: 组件 OverrideMaterials 优先，否则回落到网格资产自己的材质槽。
-			Material = InComponent->GetOverrideMaterial(SectionIndex);
-			if (nullptr == Material)
-			{
-				Material = Mesh->GetMaterialForSection(SectionIndex);
-			}
-
-			WorldMatrix = InComponent->GetWorldMatrix();
-			bVisible = InComponent->IsVisible();
 		}
 	}
 

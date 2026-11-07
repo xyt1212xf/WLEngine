@@ -2,11 +2,6 @@
 namespace ML
 {
 
-	CMeshLODResources::CMeshLODResources()
-	{
-
-	}
-
 	CMeshLODResources::~CMeshLODResources()
 	{
 		VertexBuffers.Release();
