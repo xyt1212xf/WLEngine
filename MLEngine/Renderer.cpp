@@ -105,13 +105,16 @@ namespace ML
 		CRHIDevice* pRHIDevice = mpGraphicPlug->GetDevice();
 		ID3D12GraphicsCommandList* pCmd = pRHIDevice->GetCommandList();
 
-		// Hardcoded camera for the first bring-up: eye at origin looking
-		// down +Z (LH), 60 deg fov. A proper CCameraComponent comes later.
+		// Hardcoded camera for the first bring-up: eye lifted & pitched down so
+		// the (horizontal, X-Z) landscape is actually visible — a camera at the
+		// origin looking dead +Z sees a flat ground plane edge-on (a thin line).
+		// (UE: a proper CCameraComponent with pitch comes later.)
 		const SWindowConfig* pCfg = GEngine->GetPlatform().getWindowConfigPtr();
 		const float Aspect = (float)pCfg->nWidth / (float)pCfg->nHeight;
 		FMatrix44 View, Proj;
-		const Vec3F Eye(0.0f, 0.0f, 0.0f);
-		const Vec3F LookAt(0.0f, 0.0f, 1.0f);
+		const Vec3F Eye(0.0f, 20.0f, -150.0f);   // 抬高、后撤
+		const Vec3F LookAt(0.0f, 0.0f, 60.0f);    // 明显俯视
+		
 		const Vec3F Up(0.0f, 1.0f, 0.0f);
 		Math::buildMatrixLookAtLH(&View, &Eye, &LookAt, &Up);
 		Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 5000.0f);

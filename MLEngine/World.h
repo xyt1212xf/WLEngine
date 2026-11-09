@@ -42,6 +42,8 @@ namespace ML
 		// 主关卡
 		CLevel* GetPersistentLevel() const { return PersistentLevel; }
 
+		CActor* SpawnActor(const std::string& ClassName, const std::string& Name);
+
 		void Update(float DeltaTime);
 
 		bool IsReady() const { return LoadState == EWorldLoadState::Ready; }

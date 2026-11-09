@@ -40,6 +40,7 @@
     <ClCompile Include="LandscapeComponent.cpp" />
     <ClCompile Include="LandscapeLODResources.cpp" />
     <ClCompile Include="LandscapeProxy.cpp" />
+    <ClCompile Include="LandscapeShader.cpp" />
     <ClCompile Include="LandscapeVertexFactory.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelStreaming.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="LandscapeHeightfield.h" />
     <ClInclude Include="LandscapeLODResources.h" />
     <ClInclude Include="LandscapeProxy.h" />
+    <ClInclude Include="LandscapeShader.h" />
     <ClInclude Include="LandscapeVertexFactory.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelStreaming.h" />

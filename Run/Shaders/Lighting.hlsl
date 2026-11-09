@@ -1,5 +1,12 @@
-row_major float4x4 g_MVP : register(b0);
-row_major float4x4 g_World : register(b1);
+cbuffer TransformCB : register(b0)
+{
+    row_major float4x4 g_MVP;
+};
+
+cbuffer WorldCB : register(b1)
+{
+    row_major float4x4 g_World;
+};
 
 // 灯类型, 与 C++ 侧 ELightGPUType (LightShader.h) 一致
 #define LIGHT_TYPE_DIRECTIONAL 0

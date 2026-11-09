@@ -330,6 +330,9 @@
     <ClCompile Include="LandscapeProxy.cpp">
       <Filter>Core\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="LandscapeShader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -631,6 +634,9 @@
     </ClInclude>
     <ClInclude Include="LandscapeProxy.h">
       <Filter>Core\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeShader.h">
+      <Filter>Core\Draw\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

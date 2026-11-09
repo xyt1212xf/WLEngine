@@ -52,6 +52,12 @@ return {
             PS      = "CLightPS",
             Texture = "Resource/Texture/DirectionLight.png",
         },
+		{
+            Name    = "LandscapeMat",
+            VS      = "CLandscapeVS",
+            PS      = "CLandscapePS",
+            Texture = "Resource/Texture/grass_top.png",
+        },
     },
 
     Actors = {
@@ -241,6 +247,38 @@ return {
                 Color       = { 0.45, 0.55, 0.75 },
                 Intensity   = 0.3,
                 CastShadows = false,
+            },
+        },
+
+        --======================================================================
+        -- 地形 Actor（对标 UE 的 ALandscape）。
+        -- 地形是独立 Actor（非 Component），网格由 CLevel::ParseActor 读取
+        -- ComponentsX/Y、SizeQuads、Material 后，调用 CLandscapeProxy::CreateLandscape
+        -- 程序化铺设成 NxM 个地形 tile。高度在 CreateLandscape 里用 sin/cos 生成
+        -- （占位，之后接 heightmap）。每块 63x63 quads 对齐 UE 默认。
+        --
+        -- 注意：地形铺在 X-Z 水平面、Y 为高度。相机在原点朝 +Z，整块后移使其
+        -- 覆盖相机前方（一半在镜头后，一半在前；前半可见）。
+        --======================================================================
+        {
+            Name   = "Terrain",
+            Label  = "地形",
+            Class  = "Landscape",          -- 分发到 CLandscape（对标 ALandscape）
+            Tick   = false,
+
+            ComponentsX = 4,               -- 4x4 个 tile
+            ComponentsY = 4,
+            SizeQuads   = 63,              -- 每块 63x63 四边形
+            Material    = "LandscapeMat",  -- 上面 Materials 表里的地形材质
+
+            Transform = {
+                -- 地形几何中心 = Location + (126,0,126)。
+                -- 眼睛在 (0,30,-40)，正下方地面点 = (0,0,-40)；
+                -- 取 Location = (-126,0,-166) 使地形中心正好落在眼睛正下方，
+                -- 相机低头前视时脚下到前方都是地形。
+                Location = { -126, 0, -80 },
+                Rotation = { 0, 0, 0 },
+                Scale    = { 1, 1, 1 },
             },
         },
 

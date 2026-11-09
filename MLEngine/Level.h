@@ -1,8 +1,5 @@
 ﻿#pragma once
 #include "Object.h"
-#include <string>
-#include <vector>
-#include <unordered_map>
 
 namespace ML
 {
@@ -40,6 +37,8 @@ namespace ML
 		// 状态
 		bool IsLoaded() const { return bLoaded; }
 		bool IsVisible() const { return bVisible; }
+
+		static CActor* SpawnActorByClass(const std::string& ClassName, const std::string& ActorName);
 
 	protected:
 		bool bLoaded = false;

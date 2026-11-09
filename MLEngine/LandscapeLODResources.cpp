@@ -40,6 +40,9 @@ namespace ML
 		std::vector<Vec2F> UV;
 		UV.reserve(NumVertices);
 
+		std::vector<Vec4F> Col;
+		Col.resize(NumVertices, Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
+
 		for (int32 y = 0; y < N; ++y)
 		{
 			for (int32 x = 0; x < N; ++x)
@@ -63,22 +66,28 @@ namespace ML
 			for (int32 x = 0; x < Quads; ++x)
 			{
 				const uint32 a = y * N + x, b = a + 1, c = a + N, d = c + 1;
-				Idx.push_back(a);
+				Idx.push_back(a);   // 翻转绕序：使顶面成为正面(CCW)，
+				Idx.push_back(b);   // 与 cube 在 FrontCounterClockwise=TRUE + CullMode=BACK 下一致
 				Idx.push_back(c);
 				Idx.push_back(b);
-				Idx.push_back(b);
-				Idx.push_back(c);
 				Idx.push_back(d);
+				Idx.push_back(c);
 			}
 		}
 		NumIndices = (uint32)Idx.size();
 
 		VertexBuffers.Position = new CRHIBuffer();
 		VertexBuffers.Position->Create(EBufferType::Vertex, (UINT32)Pos.size() * sizeof(Vec3F), sizeof(Vec3F), Pos.data());
+
 		VertexBuffers.Normal = new CRHIBuffer();
 		VertexBuffers.Normal->Create(EBufferType::Vertex, (UINT32)Nor.size() * sizeof(Vec3F), sizeof(Vec3F), Nor.data());
+
 		VertexBuffers.UV = new CRHIBuffer();
 		VertexBuffers.UV->Create(EBufferType::Vertex, (UINT32)UV.size() * sizeof(Vec2F), sizeof(Vec2F), UV.data());
+
+		VertexBuffers.Color = new CRHIBuffer();
+		VertexBuffers.Color->Create(EBufferType::Vertex, (UINT32)Col.size() * sizeof(Vec4F), sizeof(Vec4F), Col.data());
+
 		IndexBuffer = new CRHIBuffer();
 		IndexBuffer->Create(EBufferType::Index, (UINT32)Idx.size() * sizeof(uint32), sizeof(uint32), Idx.data());
 
@@ -96,7 +105,8 @@ namespace ML
 		Fill(VF->Schema.Position, VertexBuffers.Position->GetResource(), sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 		Fill(VF->Schema.Normal, VertexBuffers.Normal->GetResource(), sizeof(Vec3F), DXGI_FORMAT_R32G32B32_FLOAT);
 		Fill(VF->Schema.UV0, VertexBuffers.UV->GetResource(), sizeof(Vec2F), DXGI_FORMAT_R32G32_FLOAT);
-		VF->BuildInputLayout({ "POSITION", "NORMAL", "TEXCOORD" });
+		Fill(VF->Schema.Color, VertexBuffers.Color->GetResource(), sizeof(Vec4F), DXGI_FORMAT_R32G32B32A32_FLOAT);
+		VF->BuildInputLayout({ "POSITION", "NORMAL", "TEXCOORD", "COLOR"});
 	}
 
 	void CLandscapeLODResources::Release()

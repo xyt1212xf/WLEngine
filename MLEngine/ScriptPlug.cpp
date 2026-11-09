@@ -293,7 +293,7 @@ namespace ML
 		lua_concat(mpLuaState, 2);             // 连接两个字符串，得到新的路径字符串
 		lua_setfield(mpLuaState, -2, "path");  // 设置package.path为新的路径字符串
 
-		SetupLuaPandaDebug(mpLuaState);
+		//SetupLuaPandaDebug(mpLuaState);
 		return true;
 	}
 

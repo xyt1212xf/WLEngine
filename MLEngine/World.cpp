@@ -42,6 +42,31 @@ namespace ML
 			});
 	}
 
+	CActor* CWorld::SpawnActor(const std::string& ClassName, const std::string& Name)
+	{
+		if (nullptr == PersistentLevel)
+		{
+			return nullptr;
+		}
+		CActor* Actor = CLevel::SpawnActorByClass(ClassName, Name);   
+		if (nullptr == Actor)
+		{
+			return nullptr;
+		}
+		PersistentLevel->AddActor(Actor);                      
+
+		
+		Actor->BeginPlay();
+		for (CComponent* Comp : Actor->GetComponents())
+		{
+			if (Comp)
+			{
+				Comp->RegisterComponentWithWorld(this);
+			}
+		}
+		return Actor;
+	}
+
 	// UE counterpart: UWorld loads the map package and takes ownership of the
 	// resulting ULevel. Deserializing the actors themselves is CLevel's job
 	// (ULevel::Serialize); the world only picks up what belongs to it - here,

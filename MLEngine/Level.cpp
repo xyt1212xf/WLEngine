@@ -21,6 +21,7 @@
 #include "lua.hpp"
 #include "Vector.h"
 #include "LandscapeProxy.h"
+
 namespace ML
 {
 	// ---------------------------------------------------------------------------
@@ -364,36 +365,7 @@ namespace ML
 			return nullptr;
 		}
 
-		// UE counterpart: SpawnActor resolving the class named in the level package.
-		// Unknown / missing class falls back to a plain CActor so an old level file
-		// still loads after a class is removed.
-		CActor* SpawnActorByClass(const std::string& ClassName, const std::string& ActorName)
-		{
-			if (ClassName.empty() || "Actor" == ClassName)
-			{
-				return new CActor(ActorName);
-			}
-			if ("DirectionalLight" == ClassName)
-			{
-				return new CDirectionalLight(ActorName);
-			}
-			if ("PointLight" == ClassName)
-			{
-				return new CPointLight(ActorName);
-			}
-			if ("SkyLight" == ClassName)
-			{
-				return new CSkyLight(ActorName);
-			}
-			if ("Landscape" == ClassName)
-			{
-				return new CLandscape(ActorName);
-			}
 
-			OutputDebugStringA(("CLevel: unknown actor class \"" + ClassName
-				+ "\", falling back to CActor\n").c_str());
-			return new CActor(ActorName);
-		}
 
 		// UE counterpart: deserializing the root light component's properties
 		//（UE 把这些属性序列化在 Actor 的 ULightComponent 子对象上）。
@@ -482,7 +454,7 @@ namespace ML
 				ClassName = lua_tostring(L, -1);
 				lua_pop(L, 1);
 			}
-			CActor* Actor = SpawnActorByClass(ClassName, ActorName);
+			CActor* Actor = CLevel::SpawnActorByClass(ClassName, ActorName);
 
 			if (TryGetField(L, ActorIdx, "Label"))
 			{
@@ -552,7 +524,7 @@ namespace ML
 				lua_pop(L, 1);
 			}
 
-			// UE: AActor::SetActorTransform()。必须在组件解析之后调用，
+			// UE: AActor::SetActorTransform()。变换值先在此解析进 Loc/Rot/Scl，真正调用推迟到函数末尾（组件与程序化根都就位后），
 			// 否则无根 Actor 会静默丢掉 Transform。
 			Vec3F Loc;
 			CQuaternion Rot;
@@ -562,7 +534,7 @@ namespace ML
 				ReadTransform(L, -1, Loc, Rot, Scl);
 				lua_pop(L, 1);
 			}
-			Actor->SetActorTransform(Loc, Rot, Scl);
+			
 
 			// 灯 Actor：根组件就是灯组件，Light 表直接作用于根
 			//（UE: 灯属性序列化在 ULightComponent 子对象上）。
@@ -579,12 +551,12 @@ namespace ML
 						+ "\" has a Light table but its root is not a light component\n").c_str());
 				}
 				lua_pop(L, 1);
-				}
+			}
 
 				// UE: ALandscape actor - owns a grid of ULandscapeComponent tiles.
 				// 地形是独立 Actor（非 Component），其组件网格由 CreateLandscape 程序化铺设。
-				if (CLandscape* Landscape = dynamic_cast<CLandscape*>(Actor))
-				{
+			if (CLandscape* Landscape = dynamic_cast<CLandscape*>(Actor))
+			{
 				int NX = 1, NY = 1, SizeQuads = 63;
 				CMaterial* Mat = nullptr;
 				if (TryGetField(L, ActorIdx, "ComponentsX"))
@@ -621,11 +593,14 @@ namespace ML
 					}
 				}
 				Landscape->CreateLandscape(NX, NY, SizeQuads, Mat);
-				}
-
-				return Actor;
-				}
-				}
+			}
+			// UE: AActor::SetActorTransform()。必须等组件解析、且程序化根组件
+			// （地形由 CreateLandscape 建的根）就位后再套用，否则无根 Actor
+			// 会静默丢弃 Transform（地形就是这么丢掉 Location=-126 的）。
+			Actor->SetActorTransform(Loc, Rot, Scl);
+			return Actor;
+		}
+	}
 
 	CLevel::CLevel()
 	{
@@ -766,6 +741,37 @@ namespace ML
 		LevelMaterials.clear();
 
 		bLoaded = false;
+	}
+
+	// UE counterpart: SpawnActor resolving the class named in the level package.
+	// Unknown / missing class falls back to a plain CActor so an old level file
+	// still loads after a class is removed.
+	CActor* CLevel::SpawnActorByClass(const std::string& ClassName, const std::string& ActorName)
+	{
+		if (ClassName.empty() || "Actor" == ClassName)
+		{
+			return new CActor(ActorName);
+		}
+		if ("DirectionalLight" == ClassName)
+		{
+			return new CDirectionalLight(ActorName);
+		}
+		if ("PointLight" == ClassName)
+		{
+			return new CPointLight(ActorName);
+		}
+		if ("SkyLight" == ClassName)
+		{
+			return new CSkyLight(ActorName);
+		}
+		if ("Landscape" == ClassName)
+		{
+			return new CLandscape(ActorName);
+		}
+
+		OutputDebugStringA(("CLevel: unknown actor class \"" + ClassName
+			+ "\", falling back to CActor\n").c_str());
+		return new CActor(ActorName);
 	}
 
 	void CLevel::AddActor(CActor* Actor)
