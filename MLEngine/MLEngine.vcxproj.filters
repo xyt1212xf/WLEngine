@@ -327,6 +327,9 @@
     <ClCompile Include="LandscapeComponent.cpp">
       <Filter>GameFrame\Component</Filter>
     </ClCompile>
+    <ClCompile Include="LandscapeProxy.cpp">
+      <Filter>Core\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -625,6 +628,9 @@
     </ClInclude>
     <ClInclude Include="LandscapeComponent.h">
       <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeProxy.h">
+      <Filter>Core\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

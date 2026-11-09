@@ -13,6 +13,15 @@ namespace ML
 	public:
 		CLandscapeComponent();
 		virtual ~CLandscapeComponent();
+		void BuildRenderData();
+		FLandscapeHeightfield& GetHeightfield() { return Heightfield; }
+		void SetLandscapeMaterial(CMaterial* InMat) { LandscapeMaterial = InMat; }
+		CMaterial* GetLandscapeMaterial() const { return LandscapeMaterial; }
+		CLandscapeLODResources* GetLOD(int32 i) const { return (i == 0) ? LOD0 : nullptr; }
+		CLandscapeVertexFactory* GetVertexFactory() const { return VF; }
+
+	private:
+		FPrimitiveSceneProxy* CreateSceneProxy();
 
 	private:
 		FLandscapeHeightfield   Heightfield;

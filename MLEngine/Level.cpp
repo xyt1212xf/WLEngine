@@ -20,6 +20,7 @@
 #include "MLEngine.h"
 #include "lua.hpp"
 #include "Vector.h"
+#include "LandscapeProxy.h"
 namespace ML
 {
 	// ---------------------------------------------------------------------------
@@ -384,6 +385,10 @@ namespace ML
 			{
 				return new CSkyLight(ActorName);
 			}
+			if ("Landscape" == ClassName)
+			{
+				return new CLandscape(ActorName);
+			}
 
 			OutputDebugStringA(("CLevel: unknown actor class \"" + ClassName
 				+ "\", falling back to CActor\n").c_str());
@@ -574,11 +579,53 @@ namespace ML
 						+ "\" has a Light table but its root is not a light component\n").c_str());
 				}
 				lua_pop(L, 1);
-			}
+				}
 
-			return Actor;
-		}
-	}
+				// UE: ALandscape actor - owns a grid of ULandscapeComponent tiles.
+				// 地形是独立 Actor（非 Component），其组件网格由 CreateLandscape 程序化铺设。
+				if (CLandscape* Landscape = dynamic_cast<CLandscape*>(Actor))
+				{
+				int NX = 1, NY = 1, SizeQuads = 63;
+				CMaterial* Mat = nullptr;
+				if (TryGetField(L, ActorIdx, "ComponentsX"))
+				{
+					NX = (int)lua_tonumber(L, -1);
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, ActorIdx, "ComponentsY"))
+				{
+					NY = (int)lua_tonumber(L, -1);
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, ActorIdx, "SizeQuads"))
+				{
+					SizeQuads = (int)lua_tonumber(L, -1);
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, ActorIdx, "Material"))
+				{
+					const std::string MatName = lua_tostring(L, -1);
+					lua_pop(L, 1);
+					auto It = InLevelMaterials.find(MatName);
+					if (It != InLevelMaterials.end())
+					{
+						Mat = It->second;
+					}
+					else if (nullptr != GEngine)
+					{
+						CMaterialMgr* MatMgr = GEngine->GetMgr<CMaterialMgr>();
+						if (nullptr != MatMgr)
+						{
+							Mat = MatMgr->Find(MatName);
+						}
+					}
+				}
+				Landscape->CreateLandscape(NX, NY, SizeQuads, Mat);
+				}
+
+				return Actor;
+				}
+				}
 
 	CLevel::CLevel()
 	{

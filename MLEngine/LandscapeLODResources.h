@@ -12,7 +12,8 @@ namespace ML
         ~CLandscapeLODResources();
 		void Build(const FLandscapeHeightfield& HF, int32 LODIndex, CLandscapeVertexFactory* InVF);
 		void Release();
+
 	private:
-		
+		CLandscapeVertexFactory* VF = nullptr;
     };
 }
