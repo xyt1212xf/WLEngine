@@ -12,10 +12,32 @@ namespace ML
 
 	bool CDX12RHITexture2D::Create(const FTextureRHIInfo& Info, const void* InData, uint32 InDataRowPitch)
 	{
-		Release();
-
 		if (nullptr == InData || 0 == Info.Width || 0 == Info.Height || DXGI_FORMAT_UNKNOWN == Info.Format)
 		{
+			return false;
+		}
+		// Single 2D texture = the ArraySize==1 special case of the slice-based
+		// path: one subresource, tight row pitch, SlicePitch covers the whole image.
+		D3D12_SUBRESOURCE_DATA Slice = {};
+		Slice.pData = InData;
+		Slice.RowPitch = InDataRowPitch;
+		Slice.SlicePitch = (UINT64)InDataRowPitch * Info.Height;
+		return Create(Info, &Slice, 1);
+	}
+
+	bool CDX12RHITexture2D::Create(const FTextureRHIInfo& Info, D3D12_SUBRESOURCE_DATA* InSlices, uint32 NumSlices)
+	{
+		Release();
+
+		if (nullptr == InSlices || 0 == NumSlices || 0 == Info.Width || 0 == Info.Height || DXGI_FORMAT_UNKNOWN == Info.Format)
+		{
+			return false;
+		}
+		// UpdateSubresources' template parameter is its stack scratch size; the
+		// layer blend uses at most 4 slices, keep headroom without heap traffic.
+		if (NumSlices > 16)
+		{
+			OutputDebugStringA("CDX12RHITexture2D::Create: NumSlices exceeds the 16-subresource upload path\n");
 			return false;
 		}
 
@@ -31,20 +53,21 @@ namespace ML
 		Format = Info.Format;
 		Width = Info.Width;
 		Height = Info.Height;
+		ArraySize = Info.ArraySize;
 
 		// 1) Destination lives in DEFAULT (GPU-only) memory.
 		D3D12_RESOURCE_DESC TexDesc = {};
-		TexDesc.Dimension          = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		TexDesc.Alignment          = 0;
-		TexDesc.Width              = Width;
-		TexDesc.Height             = Height;
-		TexDesc.DepthOrArraySize   = 1;
-		TexDesc.MipLevels          = 1;   // P0: no mip chain, no streaming yet
-		TexDesc.Format             = Format;
-		TexDesc.SampleDesc.Count   = 1;
+		TexDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		TexDesc.Alignment = 0;
+		TexDesc.Width = Width;
+		TexDesc.Height = Height;
+		TexDesc.DepthOrArraySize = ArraySize;
+		TexDesc.MipLevels = 1;   // P0: no mip chain, no streaming yet
+		TexDesc.Format = Format;
+		TexDesc.SampleDesc.Count = 1;
 		TexDesc.SampleDesc.Quality = 0;
-		TexDesc.Layout             = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		TexDesc.Flags              = D3D12_RESOURCE_FLAG_NONE;
+		TexDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		TexDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
 		D3D12_HEAP_PROPERTIES DefaultHeapProps = {};
 		DefaultHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -58,29 +81,26 @@ namespace ML
 
 		// 2) Staging buffer sized by the driver's copyable footprint: the row pitch
 		//    inside an upload heap must be 256-byte aligned, so the tight pitch
-		//    coming from the decoder cannot be used directly.
-		D3D12_SUBRESOURCE_DATA SrcData = {};
-		SrcData.pData      = InData;
-		SrcData.RowPitch   = InDataRowPitch;
-		SrcData.SlicePitch = (UINT64)InDataRowPitch * Height;
-
-		const UINT64 UploadSize = GetRequiredIntermediateSize(Resource, 0, 1);
+		//    coming from the decoder cannot be used directly. For an array the
+		//    subresources are the individual slices (slice * MipLevels ordering).
+		const UINT NumSubresources = (UINT)ArraySize;
+		const UINT64 UploadSize = GetRequiredIntermediateSize(Resource, 0, NumSubresources);
 
 		D3D12_HEAP_PROPERTIES UploadHeapProps = {};
 		UploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 
 		D3D12_RESOURCE_DESC UploadDesc = {};
-		UploadDesc.Dimension          = D3D12_RESOURCE_DIMENSION_BUFFER;
-		UploadDesc.Alignment          = 0;
-		UploadDesc.Width              = UploadSize;
-		UploadDesc.Height             = 1;
-		UploadDesc.DepthOrArraySize   = 1;
-		UploadDesc.MipLevels          = 1;
-		UploadDesc.Format             = DXGI_FORMAT_UNKNOWN;
-		UploadDesc.SampleDesc.Count   = 1;
+		UploadDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		UploadDesc.Alignment = 0;
+		UploadDesc.Width = UploadSize;
+		UploadDesc.Height = 1;
+		UploadDesc.DepthOrArraySize = 1;
+		UploadDesc.MipLevels = 1;
+		UploadDesc.Format = DXGI_FORMAT_UNKNOWN;
+		UploadDesc.SampleDesc.Count = 1;
 		UploadDesc.SampleDesc.Quality = 0;
-		UploadDesc.Layout             = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		UploadDesc.Flags              = D3D12_RESOURCE_FLAG_NONE;
+		UploadDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		UploadDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
 		ID3D12Resource* pUploadBuffer = nullptr;
 		if (FAILED(pDevice->CreateCommittedResource(&UploadHeapProps, D3D12_HEAP_FLAG_NONE, &UploadDesc,
@@ -103,17 +123,15 @@ namespace ML
 			return false;
 		}
 
-		// Copies row-by-row respecting the upload heap's 256B row alignment.
-		// The explicit <1> picks d3dx12's stack-allocating overload (MaxSubresources
-		// = 1 mip-less texture), which is why the subresource count is not passed here.
-		UpdateSubresources<1>(pUploadList, Resource, pUploadBuffer, 0, 0, 1, &SrcData);
+		// Copies slice-by-slice respecting the upload heap's 256B row alignment.
+		UpdateSubresources<16>(pUploadList, Resource, pUploadBuffer, 0, 0, NumSlices, InSlices);
 
 		D3D12_RESOURCE_BARRIER Barrier = {};
 		Barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		Barrier.Transition.pResource   = Resource;
+		Barrier.Transition.pResource = Resource;
 		Barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		Barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-		Barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		Barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 		pUploadList->ResourceBarrier(1, &Barrier);
 
 		// Blocks until the GPU finished the copy, then releases pUploadList.
@@ -122,14 +140,27 @@ namespace ML
 		SafeRelease(pUploadBuffer);
 
 		// 4) Shader resource view: one descriptor in the device's shader-visible heap.
+		//    Array textures expose TEXTURE2DARRAY (HLSL: Texture2DArray.Sample(float3(uv, slice))).
 		D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-		SRVDesc.Format                     = Format;
-		SRVDesc.ViewDimension              = D3D12_SRV_DIMENSION_TEXTURE2D;
-		SRVDesc.Shader4ComponentMapping    = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		SRVDesc.Texture2D.MipLevels        = 1;
-		SRVDesc.Texture2D.MostDetailedMip  = 0;
-		SRVDesc.Texture2D.PlaneSlice       = 0;
-		SRVDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+		SRVDesc.Format = Format;
+		SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		if (ArraySize > 1)
+		{
+			SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
+			SRVDesc.Texture2DArray.MipLevels = 1;
+			SRVDesc.Texture2DArray.MostDetailedMip = 0;
+			SRVDesc.Texture2DArray.FirstArraySlice = 0;
+			SRVDesc.Texture2DArray.ArraySize = ArraySize;
+			SRVDesc.Texture2DArray.ResourceMinLODClamp = 0.0f;
+		}
+		else
+		{
+			SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			SRVDesc.Texture2D.MipLevels = 1;
+			SRVDesc.Texture2D.MostDetailedMip = 0;
+			SRVDesc.Texture2D.PlaneSlice = 0;
+			SRVDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+		}
 
 		UINT32 Slot = 0;
 		if (!pRHIDevice->AllocSRV(Resource, SRVDesc, Slot))

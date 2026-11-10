@@ -35,7 +35,7 @@ namespace ML
 		// (Width * 4) - UpdateSubresources handles the driver's row alignment.
 		// Returns whether the texture is ready for pixel-shader access.
 		virtual bool Create(const FTextureRHIInfo& Info, const void* InData, uint32 InDataRowPitch);
-
+		virtual bool Create(const FTextureRHIInfo& Info, D3D12_SUBRESOURCE_DATA* InSlices, uint32 NumSlices);
 		virtual void Release();
 
 		bool IsValid() const { return nullptr != Resource; }

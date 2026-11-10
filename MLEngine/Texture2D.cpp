@@ -104,7 +104,13 @@ namespace ML
 		TextureInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		TextureInfo.Width = Width;
 		TextureInfo.Height = Height;
-		if (!RHITexture->Create(TextureInfo, SourceData.data(), Width * 4))
+
+		D3D12_SUBRESOURCE_DATA Slice = {};
+		Slice.pData = SourceData.data();
+		Slice.RowPitch = Width * 4;
+		Slice.SlicePitch = Slice.RowPitch * Height;
+
+		if (!RHITexture->Create(TextureInfo, &Slice, 1))
 		{
 			SafeDelete(RHITexture);
 			OutputDebugStringA(("CTexture2D::InitRHI: upload failed for " + SourcePath + "\n").c_str());
