@@ -2,6 +2,7 @@
 #include "LandscapeLODResources.h"
 #include "LandscapeVertexFactory.h"
 #include "Scene.h"
+#include "Material.h"
 
 namespace ML
 {
@@ -18,7 +19,8 @@ namespace ML
 	}
 	void CLandscapeComponent::BuildRenderData()
 	{
-		LOD0->Build(Heightfield, 0, VF);
+		const uint32 NumLayers = LandscapeMaterial ? LandscapeMaterial->GetLayerCount() : 1;
+		LOD0->Build(Heightfield, 0, VF, NumLayers);
 	}
 	FPrimitiveSceneProxy* CLandscapeComponent::CreateSceneProxy()
 	{

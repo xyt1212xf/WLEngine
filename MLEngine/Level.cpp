@@ -264,8 +264,50 @@ namespace ML
 				// Blend mode drives the PSO blend state + which render list the
 				// owning primitive lands in (opaque vs translucent). Default Opaque.
 				Material->SetBlendMode(ParseBlendMode(L, EntryIdx));
+				std::vector<std::string> LayerPaths;
 
-				if (!TexturePath.empty())
+				if (TryGetField(L, EntryIdx, "Layers"))
+				{
+					const int LayersIdx = lua_absindex(L, -1);
+					const int NumLayers = (int)lua_rawlen(L, LayersIdx);
+					if (NumLayers > 4)
+					{
+						OutputDebugStringA(("CLevel: material \"" + Name
+							+ "\" declares more than 4 layers; extra entries ignored\n").c_str());
+					}
+					for (int l = 1; l <= NumLayers && l <= 4; ++l)
+					{
+						lua_rawgeti(L, LayersIdx, l);
+						LayerPaths.push_back(lua_tostring(L, -1));
+						lua_pop(L, 1);
+					}
+					lua_pop(L, 1);
+				}
+				if (!LayerPaths.empty())
+				{
+					// The composed array is a shared texture like any other: owned
+					// and cached by CTextureMgr under its composite key.
+					std::string CacheKey = "Layers:";
+					for (size_t l = 0; l < LayerPaths.size(); ++l)
+					{
+						CacheKey += (0 == l ? "" : "|") + LayerPaths[l];
+					}
+					CTextureMgr* TexMgr = GEngine ? GEngine->GetMgr<CTextureMgr>() : nullptr;
+					CTexture2D* Texture = TexMgr ? TexMgr->LoadLayerArray(CacheKey, LayerPaths) : nullptr;
+					if (nullptr == Texture)
+					{
+						OutputDebugStringA(("CLevel: failed to build layer array for material \"" + Name + "\"\n").c_str());
+					}
+					Material->EnableBaseColorTexture(true);
+					Material->SetBaseColorTexture(Texture);
+					Material->SetLayerCount((uint32)LayerPaths.size());
+				}
+				else if ("CLandscapePS" == PSName)
+				{
+					OutputDebugStringA(("CLevel: material \"" + Name
+						+ "\" uses CLandscapePS but declares no Layers table; the landscape shader samples a Texture2DArray\n").c_str());
+				}
+				else if (!TexturePath.empty())
 				{
 					// Textures are shared assets owned by CTextureMgr, not by the level.
 					CTextureMgr* TexMgr = GEngine ? GEngine->GetMgr<CTextureMgr>() : nullptr;

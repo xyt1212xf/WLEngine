@@ -93,6 +93,9 @@ namespace ML
 		void SetBaseColorTexture(CTexture2D* InTexture);
 		CTexture2D* GetBaseColorTexture() const { return BaseColorTexture; }
 
+		void SetLayerCount(uint32 InCount) { LayerCount = InCount; }
+		uint32 GetLayerCount() const { return LayerCount; }
+
 		// True when there is something to bind: a texture pointer alone is not
 		// enough, the asset must have finished its GPU upload.
 		bool HasBaseColorTexture() const;
@@ -143,6 +146,7 @@ namespace ML
 		virtual bool initialise();
 
 	private:
+		uint32        LayerCount = 0;        // 
 		std::string   mVSName;
 		std::string   mPSName;
 		CShader*      mVertexShader = nullptr;   // lifetime not owned (managed by CGlobalShaderMap)

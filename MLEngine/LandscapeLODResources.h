@@ -10,7 +10,7 @@ namespace ML
     public:
         CLandscapeLODResources() = default;
         ~CLandscapeLODResources();
-		void Build(const FLandscapeHeightfield& HF, int32 LODIndex, CLandscapeVertexFactory* InVF);
+		void Build(const FLandscapeHeightfield& HF, int32 LODIndex, CLandscapeVertexFactory* InVF, uint32 NumLayers = 1);
 		void Release();
 
 	private:

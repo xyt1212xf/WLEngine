@@ -1,7 +1,7 @@
 //================================================================================
-// Landscape.hlsl — 地形着色器：base color 贴图 + 场景光照
+// Landscape.hlsl — 地形着色器：base color 分层混合 + 场景光照
 //   对齐 Lighting.hlsl 的光照通路；根签名每个材质 PSO 都已启用
-//   b0=MVP / b1=World / b2=光照CBV / t0=贴图 / s0=采样器
+//   b0=MVP / b1=World / b2=光照CBV / t0=分层贴图(Texture2DArray) / s0=采样器
 //================================================================================
 
 //row_major float4x4 g_MVP   : register(b0);
@@ -39,8 +39,20 @@ cbuffer Lighting : register(b2)
     SceneLight g_Lights[8];
 };
 
-Texture2D    g_BaseColor        : register(t0);
-SamplerState g_BaseColorSampler : register(s0);
+// Landscape layer blend (UE: LandscapeLayerBlend / weightmap):
+//   t0 is ONE Texture2DArray packed from up to 4 albedo layers, in the order
+//   declared by the material's Layers table. Per-vertex blend weights ride in
+//   the COLOR vertex stream (r = slice 0 base, g = slice 1 rock, b = slice 2
+//   snow, a = slice 3 spare) - built by CLandscapeLODResources from height /
+//   slope, moving to painted weightmaps later. The renderer binds this array
+//   exactly like a single base-color texture, so the root signature and the
+//   draw path are unchanged.
+Texture2DArray g_LayerTextures    : register(t0);
+SamplerState   g_BaseColorSampler : register(s0);
+
+// Detail tiling: the geometry UV spans 0..1 across one tile, so the layer
+// textures are repeated this many times per tile (wrap sampler).
+#define LAYER_UV_SCALE 16.0f
 
 struct VSIn
 {
@@ -125,7 +137,19 @@ float4 LandscapePS(PSIn In) : SV_Target
         lighting += ShadeOneLight(g_Lights[i], N, In.WorldPos);
     }
 
-    float4 tex = g_BaseColor.Sample(g_BaseColorSampler, In.UV);
-    float3 color = tex.rgb * lighting * In.Color.rgb;
-    return float4(color, tex.a * In.Color.a);
+    // Layer blend: weights from the COLOR stream, re-normalized so a vertex
+    // whose weights do not sum to 1 (e.g. precision at tile borders) still
+    // produces a fully covered surface.
+    float4 w = saturate(In.Color);
+    float wsum = w.r + w.g + w.b + w.a;
+    w = (wsum > 1e-5f) ? (w / wsum) : float4(1.0f, 0.0f, 0.0f, 0.0f);
+
+    float2 uv = In.UV * LAYER_UV_SCALE;
+    float3 albedo =
+        w.r * g_LayerTextures.Sample(g_BaseColorSampler, float3(uv, 0.0f)).rgb +
+        w.g * g_LayerTextures.Sample(g_BaseColorSampler, float3(uv, 1.0f)).rgb +
+        w.b * g_LayerTextures.Sample(g_BaseColorSampler, float3(uv, 2.0f)).rgb +
+        w.a * g_LayerTextures.Sample(g_BaseColorSampler, float3(uv, 3.0f)).rgb;
+
+    return float4(albedo * lighting, 1.0f);
 }

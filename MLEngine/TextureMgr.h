@@ -44,6 +44,8 @@ namespace ML
 
 		CTexture2D* Find(const std::string& FilePath);
 
+		CTexture2D* LoadLayerArray(const std::string& CacheKey, const std::vector<std::string>& Paths);
+
 	private:
 		// Levels are parsed on worker threads, so two loads may race.
 		// mutable: Find() is logically read-only (and therefore const) yet must

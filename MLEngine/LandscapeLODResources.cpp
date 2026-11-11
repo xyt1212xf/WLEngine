@@ -22,7 +22,7 @@ namespace ML
 
 	}
 
-	void CLandscapeLODResources::Build(const FLandscapeHeightfield& HF, int32 LODIndex, CLandscapeVertexFactory* InVF)
+	void CLandscapeLODResources::Build(const FLandscapeHeightfield& HF, int32 LODIndex, CLandscapeVertexFactory* InVF, uint32 NumLayers /*= 1*/)
 	{
 		Release();
 		VF = InVF;
@@ -40,8 +40,38 @@ namespace ML
 		std::vector<Vec2F> UV;
 		UV.reserve(NumVertices);
 
+		// Landscape layer blend (UE: weightmap per component). P0 carries the
+		// blend weights in the COLOR vertex stream instead of a weightmap texture
+		// - one weight per vertex per layer, slice i = COLOR channel i:
+		//   r = slice 0 base (grass), g = slice 1 rock (steep slopes),
+		//   b = slice 2 snow (peaks), a = slice 3 dirt (valleys).
+		// Layers beyond NumLayers keep zero weight, so a 2-layer material still
+		// blends correctly. Upgrade path (UE parity): sculpt/paint writes real
+		// weightmaps; the shader interface stays unchanged.
+		const uint32 LayerCount = (NumLayers > 0 && NumLayers <= 4) ? NumLayers : 1u;
+
+		// Thresholds are tuned for the current placeholder heightfield
+		// (h = 0.5*(sin + cos), raw heights in [-1, 1], ZScale = 1). They move
+		// into authored weightmaps once painting exists - do not treat them as
+		// final tuning for arbitrary terrain.
+		auto Smooth = [](float A, float B, float X)
+			{
+				float t = (X - A) / (B - A);
+				t = (t < 0.0f) ? 0.0f : ((t > 1.0f) ? 1.0f : t);
+				return t * t * (3.0f - 2.0f * t);
+			};
+		// Slope band (n-space): the placeholder terrain's normalized n.y spans
+		// ~[0.99, 1.0], i.e. slope = 1 - n.y in ~[0, 0.01].
+		constexpr float RockSlopeStart = 0.004f;
+		constexpr float RockSlopeEnd   = 0.010f;
+		// Height bands in raw height units ([-1, 1] placeholder range).
+		constexpr float SnowHeightStart = 0.40f;
+		constexpr float SnowHeightEnd   = 0.70f;
+		constexpr float DirtHeightHigh  = -0.40f;
+		constexpr float DirtHeightLow   = -0.70f;
+
 		std::vector<Vec4F> Col;
-		Col.resize(NumVertices, Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
+		Col.reserve(NumVertices);
 
 		for (int32 y = 0; y < N; ++y)
 		{
@@ -57,6 +87,28 @@ namespace ML
 				Vec3F n(hL - hR, 2.0f, hD - hU);
 				n.normalize();
 				Nor.push_back(n);
+
+				// Per-vertex layer weights, painted sequentially onto the grass
+				// base so the total always sums to 1 (shader re-normalizes anyway).
+				const float Slope = 1.0f - n.y;                       // 0 = flat
+				const float Height = HF.GetHeight(sx, sy);            // raw height
+				float Grass = 1.0f, Rock = 0.0f, Snow = 0.0f, Dirt = 0.0f;
+				if (LayerCount >= 2)
+				{
+					Rock = Smooth(RockSlopeStart, RockSlopeEnd, Slope);
+					Grass -= Rock;
+				}
+				if (LayerCount >= 3)
+				{
+					Snow = Smooth(SnowHeightStart, SnowHeightEnd, Height) * Grass;
+					Grass -= Snow;
+				}
+				if (LayerCount >= 4)
+				{
+					Dirt = (1.0f - Smooth(DirtHeightLow, DirtHeightHigh, Height)) * Grass;
+					Grass -= Dirt;
+				}
+				Col.push_back(Vec4F(Grass, Rock, Snow, Dirt));
 			}
 		}
 

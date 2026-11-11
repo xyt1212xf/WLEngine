@@ -1,4 +1,4 @@
-﻿#include "Texture2D.h"
+#include "Texture2D.h"
 #include "RHItexture.h"
 #include "MLEngine.h"
 
@@ -22,27 +22,21 @@ namespace ML
 		ReleaseRHI();
 	}
 
-	bool CTexture2D::LoadSourceFromFile(const std::string& FilePath)
+	bool CTexture2D::DecodeFileToRGBA(const std::string& FilePath, std::vector<uint8>& OutPixels, uint32& OutWidth, uint32& OutHeight)
 	{
-		SourceData.clear();
-		Width = 0;
-		Height = 0;
+		OutPixels.clear();
+		OutWidth = 0;
+		OutHeight = 0;
 
-		// COM is initialized per thread, and levels are parsed on a worker.
-		// A thread that already lives in another apartment gets
-		// RPC_E_CHANGED_MODE back; in that case it must NOT be uninitialized here.
 		const HRESULT CoInitResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		const bool bNeedUninit = SUCCEEDED(CoInitResult);
 
 		std::wstring WidePath(FilePath.begin(), FilePath.end());
 
-		// COM objects are held as raw pointers and released by hand, like every
-		// other interface pointer in this engine (IDXGI* / ID3D12* included):
-		// no ComPtr wrapper, explicit Release on every exit path.
-		IWICImagingFactory*    Factory = nullptr;
-		IWICBitmapDecoder*     Decoder = nullptr;
+		IWICImagingFactory* Factory = nullptr;
+		IWICBitmapDecoder* Decoder = nullptr;
 		IWICBitmapFrameDecode* Frame = nullptr;
-		IWICFormatConverter*   Converter = nullptr;
+		IWICFormatConverter* Converter = nullptr;
 
 		bool bOk = false;
 		if (SUCCEEDED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&Factory)))
@@ -50,8 +44,6 @@ namespace ML
 				WICDecodeMetadataCacheOnDemand, &Decoder))
 			&& SUCCEEDED(Decoder->GetFrame(0, &Frame))
 			&& SUCCEEDED(Factory->CreateFormatConverter(&Converter))
-			// Convert everything to RGBA8 so the GPU side never has to know the
-			// source format (paletted / grayscale / 24bpp PNG are all handled here).
 			&& SUCCEEDED(Converter->Initialize(Frame, GUID_WICPixelFormat32bppRGBA,
 				WICBitmapDitherTypeNone, nullptr, 0.0f, WICBitmapPaletteTypeCustom)))
 		{
@@ -60,23 +52,20 @@ namespace ML
 			if (SUCCEEDED(Converter->GetSize(&ImageWidth, &ImageHeight)) && ImageWidth > 0 && ImageHeight > 0)
 			{
 				const UINT RowPitch = ImageWidth * 4;
-				SourceData.resize((size_t)RowPitch * ImageHeight);
-				if (SUCCEEDED(Converter->CopyPixels(nullptr, RowPitch, (UINT)SourceData.size(), SourceData.data())))
+				OutPixels.resize((size_t)RowPitch * ImageHeight);
+				if (SUCCEEDED(Converter->CopyPixels(nullptr, RowPitch, (UINT)OutPixels.size(), OutPixels.data())))
 				{
-					Width = ImageWidth;
-					Height = ImageHeight;
-					SourcePath = FilePath;
+					OutWidth = ImageWidth;
+					OutHeight = ImageHeight;
 					bOk = true;
+				}
+				else
+				{
+					OutPixels.clear();
+					OutputDebugStringA(("CTexture2D::DecodeFileToRGBA: failed to decode " + FilePath + "\n").c_str());
 				}
 			}
 		}
-
-		if (!bOk)
-		{
-			SourceData.clear();
-			OutputDebugStringA(("CTexture2D::LoadSourceFromFile: failed to decode " + FilePath + "\n").c_str());
-		}
-
 		SafeRelease(Converter);
 		SafeRelease(Frame);
 		SafeRelease(Decoder);
@@ -89,9 +78,76 @@ namespace ML
 		return bOk;
 	}
 
+	bool CTexture2D::LoadSourceFromFile(const std::string& FilePath)
+	{
+		SourceData.clear();
+		Width = 0;
+		Height = 0;
+
+		if (!DecodeFileToRGBA(FilePath, SourceData, Width, Height))
+		{
+			SourceData.clear();
+			Width = 0;
+			Height = 0;
+			return false;
+		}
+		SourcePath = FilePath;
+		return true;
+	}
+
+	void CTexture2D::SetLayerSlices(std::vector<std::vector<uint8>>&& Slices, uint32 InWidth, uint32 InHeight)
+	{
+		LayerSlices = std::move(Slices);
+		Width = InWidth;
+		Height = InHeight;
+		SourceData.clear();
+	}
+
 	bool CTexture2D::InitRHI()
 	{
 		ReleaseRHI();
+
+		// Layer-array path: N RGBA8 slices packed into one Texture2DArray.
+		if (!LayerSlices.empty())
+		{
+			if (0 == Width || 0 == Height || LayerSlices.size() > 16)
+			{
+				return false;
+			}
+
+			std::vector<D3D12_SUBRESOURCE_DATA> Subresources;
+			Subresources.reserve(LayerSlices.size());
+			for (const std::vector<uint8>& Slice : LayerSlices)
+			{
+				if (Slice.size() != (size_t)Width * Height * 4)
+				{
+					OutputDebugStringA("CTexture2D::InitRHI: layer slice size mismatch\n");
+					return false;
+				}
+				D3D12_SUBRESOURCE_DATA Data = {};
+				Data.pData = Slice.data();
+				Data.RowPitch = Width * 4;
+				Data.SlicePitch = (UINT64)Width * Height * 4;
+				Subresources.push_back(Data);
+			}
+
+			RHITexture = new CRHITexture2D();
+			FTextureRHIInfo TextureInfo;
+			TextureInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			TextureInfo.Width = Width;
+			TextureInfo.Height = Height;
+			TextureInfo.ArraySize = (uint16)LayerSlices.size();
+			if (!RHITexture->Create(TextureInfo, Subresources.data(), (uint32)Subresources.size()))
+			{
+				SafeDelete(RHITexture);
+				OutputDebugStringA("CTexture2D::InitRHI: layer array upload failed\n");
+				return false;
+			}
+
+			LayerSlices.clear();
+			LayerSlices.shrink_to_fit();
+			return true;
+		}
 
 		if (SourceData.empty() || 0 == Width || 0 == Height)
 		{
@@ -105,20 +161,18 @@ namespace ML
 		TextureInfo.Width = Width;
 		TextureInfo.Height = Height;
 
-		D3D12_SUBRESOURCE_DATA Slice = {};
-		Slice.pData = SourceData.data();
-		Slice.RowPitch = Width * 4;
-		Slice.SlicePitch = Slice.RowPitch * Height;
+		D3D12_SUBRESOURCE_DATA Data;
+		Data.pData = SourceData.data();
+		Data.RowPitch = Width * 4;
+        Data.SlicePitch = (UINT64)Width * Height * 4;
 
-		if (!RHITexture->Create(TextureInfo, &Slice, 1))
+		if (!RHITexture->Create(TextureInfo, &Data, 1))
 		{
 			SafeDelete(RHITexture);
 			OutputDebugStringA(("CTexture2D::InitRHI: upload failed for " + SourcePath + "\n").c_str());
 			return false;
 		}
 
-		// The GPU owns a private copy now: keeping the CPU source around would only
-		// be useful for rebuilding the resource after a device loss / mip re-stream.
 		SourceData.clear();
 		SourceData.shrink_to_fit();
 		return true;

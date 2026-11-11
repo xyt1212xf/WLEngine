@@ -1,21 +1,26 @@
-#include "Object.h"
+﻿#include "Object.h"
 namespace ML
 {
 
 	CObject::CObject(const std::string& InName)
-	: Name(InName)
+	: mName(InName)
 	{
 
 	}
 
 	CObject::CObject(std::string&& InName) noexcept
 	{
-		Name = std::move(InName);
+		mName = std::move(InName);
 	}
 
 	const std::string& CObject::GetName() const
 	{
-		return Name;
+		return mName;
+	}
+
+	void CObject::SetName(const std::string& InName)
+	{
+		mName = InName;
 	}
 
 }

@@ -112,8 +112,8 @@ namespace ML
 		const SWindowConfig* pCfg = GEngine->GetPlatform().getWindowConfigPtr();
 		const float Aspect = (float)pCfg->nWidth / (float)pCfg->nHeight;
 		FMatrix44 View, Proj;
-		const Vec3F Eye(0.0f, 20.0f, -150.0f);   // 抬高、后撤
-		const Vec3F LookAt(0.0f, 0.0f, 60.0f);    // 明显俯视
+		const Vec3F Eye(0.0f, 20.0f, -100.0f);   // 抬高、后撤
+		const Vec3F LookAt(0.0f, 0.0f, 0.0f);    // 明显俯视
 		
 		const Vec3F Up(0.0f, 1.0f, 0.0f);
 		Math::buildMatrixLookAtLH(&View, &Eye, &LookAt, &Up);

@@ -16,16 +16,26 @@ namespace ML
 		{
 			return false;
 		}
-		// Single 2D texture = the ArraySize==1 special case of the slice-based
-		// path: one subresource, tight row pitch, SlicePitch covers the whole image.
+		// Single 2D texture = one subresource, tight row pitch, SlicePitch covers
+		// the whole image. bArrayView = false: the SRV stays TEXTURE2D so
+		// `Texture2D.Sample` in the shaders keeps matching the descriptor.
 		D3D12_SUBRESOURCE_DATA Slice = {};
 		Slice.pData = InData;
 		Slice.RowPitch = InDataRowPitch;
 		Slice.SlicePitch = (UINT64)InDataRowPitch * Info.Height;
-		return Create(Info, &Slice, 1);
+		return CreateInternal(Info, &Slice, 1, false);
 	}
 
 	bool CDX12RHITexture2D::Create(const FTextureRHIInfo& Info, D3D12_SUBRESOURCE_DATA* InSlices, uint32 NumSlices)
+	{
+		// bArrayView = true even for NumSlices == 1: the caller declared a
+		// Texture2DArray in HLSL, and the D3D12 runtime does not validate SRV
+		// dimension against the shader's type - a TEXTURE2D view there is
+		// undefined behaviour (garbage samples, no debug error).
+		return CreateInternal(Info, InSlices, NumSlices, true);
+	}
+
+	bool CDX12RHITexture2D::CreateInternal(const FTextureRHIInfo& Info, D3D12_SUBRESOURCE_DATA* InSlices, uint32 NumSlices, bool bArrayView)
 	{
 		Release();
 
@@ -140,11 +150,13 @@ namespace ML
 		SafeRelease(pUploadBuffer);
 
 		// 4) Shader resource view: one descriptor in the device's shader-visible heap.
-		//    Array textures expose TEXTURE2DARRAY (HLSL: Texture2DArray.Sample(float3(uv, slice))).
+		//    Collection arrays expose TEXTURE2DARRAY (HLSL: Texture2DArray.Sample(float3(uv, slice)))
+		//    even when they hold a single slice; the view dimension must match the
+		//    shader's declared type, not the slice count.
 		D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 		SRVDesc.Format = Format;
 		SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		if (ArraySize > 1)
+		if (bArrayView)
 		{
 			SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
 			SRVDesc.Texture2DArray.MipLevels = 1;
@@ -189,6 +201,7 @@ namespace ML
 		Format = DXGI_FORMAT_UNKNOWN;
 		Width = 0;
 		Height = 0;
+		ArraySize = 1;
 	}
 
 	D3D12_GPU_DESCRIPTOR_HANDLE CDX12RHITexture2D::GetSRVGPUHandle() const

@@ -11,12 +11,12 @@ namespace ML
 {
 	CWorld::CWorld(const std::string& name)
 	{
-		Name = name;
+		mName = name;
 	}
 
 	CWorld::CWorld(std::string&& name) noexcept
 	{
-		Name = std::move(name);
+		mName = std::move(name);
 	}
 
 	CWorld::~CWorld()

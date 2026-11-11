@@ -48,6 +48,13 @@ namespace ML
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle() const;
 
 	protected:
+		// Shared implementation of both public Create overloads. bArrayView
+		// selects the SRV dimension explicitly instead of inferring it from
+		// ArraySize: a one-slice array must still be a TEXTURE2DARRAY view
+		// (the shader declares Texture2DArray), while a plain 2D texture must
+		// stay TEXTURE2D.
+		bool CreateInternal(const FTextureRHIInfo& Info, D3D12_SUBRESOURCE_DATA* InSlices, uint32 NumSlices, bool bArrayView);
+
 		ID3D12Resource* Resource = nullptr;
 		DXGI_FORMAT     Format = DXGI_FORMAT_UNKNOWN;
 		uint32          Width = 0;

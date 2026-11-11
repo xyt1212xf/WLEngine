@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "StreamableRenderAsset.h"
 #include <string>
 #include <vector>
@@ -31,9 +31,14 @@ namespace ML
 		CTexture2D();
 		virtual ~CTexture2D();
 
+		static bool DecodeFileToRGBA(const std::string& FilePath, std::vector<uint8>& OutPixels, uint32& OutWidth, uint32& OutHeight);
+
 		// Decodes the file into RGBA8 source pixels. Purely CPU-side, no device
 		// needed - callable from a worker thread while the level is parsing.
 		bool LoadSourceFromFile(const std::string& FilePath);
+
+		void SetLayerSlices(std::vector<std::vector<uint8>>&& Slices, uint32 InWidth, uint32 InHeight);
+		bool HasLayerSlices() const { return !LayerSlices.empty(); }
 
 		// Uploads the decoded source and creates its SRV. Requires a live device.
 		bool InitRHI();
@@ -53,7 +58,7 @@ namespace ML
 		std::vector<uint8> SourceData;   // RGBA8, row-major, 4 bytes per texel
 		uint32             Width = 0;
 		uint32             Height = 0;
-
+		std::vector<std::vector<uint8>> LayerSlices;   // each RGBA8, row-major, Width x Height
 		// Owned. Destroyed before this asset, which is what keeps the SRV slot
 		// returned to the device heap before the heap itself disappears.
 		CRHITexture2D* RHITexture = nullptr;

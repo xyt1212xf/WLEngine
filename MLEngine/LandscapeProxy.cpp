@@ -18,8 +18,8 @@ namespace ML
 
 	void CLandscapeProxy::CreateLandscape(int32 NumX, int32 NumY, int32 SizeQuads, CMaterial* Mat)
 	{
-		this->NumX = NumX;   // 记录网格维度，供 GetComponent 计算索引
-		this->NumY = NumY;
+		this->mNumX = NumX;   // 记录网格维度，供 GetComponent 计算索引
+		this->mNumY = NumY;
 		for (int32 y = 0; y < NumY; ++y)
 		{
 			for (int32 x = 0; x < NumX; ++x)
@@ -46,11 +46,11 @@ namespace ML
 
 	CLandscapeComponent* CLandscapeProxy::GetComponent(int32 X, int32 Y) const
 	{
-		if (X < 0 || Y < 0 || X >= NumX || Y >= NumY)
+		if (X < 0 || Y < 0 || X >= mNumX || Y >= mNumY)
 		{
 			return nullptr;
 		}
-		const int32 idx = Y * NumX + X;          // 之前错写成 Y * Tiles.size() + X
+		const int32 idx = Y * mNumX + X;          // 之前错写成 Y * Tiles.size() + X
 		return (idx < (int32)Tiles.size()) ? Tiles[idx] : nullptr;
 	}
 

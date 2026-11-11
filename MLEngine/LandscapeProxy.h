@@ -17,8 +17,8 @@ namespace ML
 		std::vector<CLandscapeComponent*> Tiles;
 
 	private:
-		int32 NumX = 0;   // 每行 tile 数（CreateLandscape 的 NumX）
-		int32 NumY = 0;   // 每列 tile 数（CreateLandscape 的 NumY）
+		int32 mNumX = 0;   // 每行 tile 数（CreateLandscape 的 NumX）
+		int32 mNumY = 0;   // 每列 tile 数（CreateLandscape 的 NumY）
 	};
 
 

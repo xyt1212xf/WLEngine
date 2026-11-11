@@ -56,7 +56,18 @@ return {
             Name    = "LandscapeMat",
             VS      = "CLandscapeVS",
             PS      = "CLandscapePS",
-            Texture = "Resource/Texture/grass_top.png",
+            -- 分层材质（对标 UE 的 Landscape Layer Blend）：
+            --   * Layers 表里的贴图按顺序打包成一张 Texture2DArray，一个 SRV 绑定；
+            --   * slice 顺序即语义：0 = 基底草地，1 = 岩石（陡坡），2 = 高峰（雪），
+            --     3 = 洼地（泥）；权重按高度/坡度程序化生成（顶点色携带），
+            --     之后接雕刻/绘制权重图。
+            --   * 所有层贴图必须同尺寸；CLandscapePS 必须配 Layers，不能只给 Texture。
+            Layers = {
+                "Resource/Texture/grass_top.png",
+                "Resource/Texture/stone01.png",
+                "Resource/Texture/ground01.png",
+                "Resource/Texture/dirt01.png",
+            },
         },
     },
 
