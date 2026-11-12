@@ -106,7 +106,7 @@ namespace ML
 		return nullptr;
 	}
 
-	CPipelineState* CMaterial::GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe)
+	CPipelineState* CMaterial::GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe/*=false*/, EMeshPass Pass /*= EMeshPass::BasePass*/)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)
@@ -122,7 +122,8 @@ namespace ML
 		// from colliding.
 		const uint64 Key = LayoutKey
 			^ (bWireframe ? 0x9E3779B97F4A7C15ull : 0ull)
-			^ (static_cast<uint64>(BlendMode) * 0xC2B2AE3D27D4EB4Full);
+			^ (static_cast<uint64>(BlendMode) * 0xC2B2AE3D27D4EB4Full)
+			^ (static_cast<uint64>(Pass) * 0xD6E8FEB86659FD93ull);    
 
 		{
 			std::lock_guard<std::mutex> Lock(mPSOMutex);
@@ -136,7 +137,8 @@ namespace ML
 		// Build outside the lock: compiling/baking a PSO touches the device and may
 		// take a while; blocking the renderer's first-frame lookup on a peer's
 		// creation would serialize startup for no reason.
-		CPipelineState* PSO = CreatePipelineState(InVertexFactory, bWireframe);
+		CPipelineState* PSO = CreatePipelineState(InVertexFactory, bWireframe, Pass);
+
 		if (nullptr == PSO)
 		{
 			return nullptr;
@@ -162,7 +164,7 @@ namespace ML
 		return PSO;
 	}
 
-	CPipelineState* CMaterial::CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe)
+	CPipelineState* CMaterial::CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe, EMeshPass Pass)
 	{
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* LayoutPtr = SelectInputLayout(InVertexFactory);
 		if (nullptr == LayoutPtr)
@@ -225,7 +227,8 @@ namespace ML
 
 		// Create the PSO. This is where a material creates GPU resources.
 		CPipelineState* PSO = new CPipelineState();
-		if (!PSO->Create(mVertexShader, mPixelShader, InputLayout, DefaultDepthFormat, RootSigDesc, bWireframe, BlendMode))
+		if (!PSO->Create(mVertexShader, mPixelShader, InputLayout, DefaultDepthFormat, RootSigDesc,
+						 bWireframe, BlendMode, Pass, bTwoSided))
 		{
 			OutputDebugStringA(("CMaterial::CreatePipelineState: PSO creation failed for " + mVSName + " / " + mPSName + "\n").c_str());
 			SafeDelete(PSO);

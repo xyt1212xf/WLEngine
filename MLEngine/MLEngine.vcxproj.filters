@@ -333,6 +333,9 @@
     <ClCompile Include="LandscapeShader.cpp">
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="SkyShader.cpp">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -636,6 +639,9 @@
       <Filter>Core\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="LandscapeShader.h">
+      <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyShader.h">
       <Filter>Core\Draw\Shader</Filter>
     </ClInclude>
   </ItemGroup>

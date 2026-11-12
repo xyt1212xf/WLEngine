@@ -83,6 +83,7 @@
     <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="SkyLight.cpp" />
     <ClCompile Include="SkyLightComponent.cpp" />
+    <ClCompile Include="SkyShader.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="StaticMeshAttributes.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="SkyLight.h" />
     <ClInclude Include="SkyLightComponent.h" />
+    <ClInclude Include="SkyShader.h" />
     <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="StaticMeshAttributes.h" />

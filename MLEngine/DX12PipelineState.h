@@ -78,6 +78,17 @@ namespace ML
 
 	class CShader;
 
+	struct FPipelineStateOptions
+	{
+		bool        bWireframe = false;                              // view-family draw mode
+		EBlendMode  BlendMode = EBlendMode::BLEND_Opaque;
+		bool        bDepthTest = true;                               // FALSE: ignore the depth buffer
+		bool        bDepthWrite = true;                              // FALSE: never write depth
+		bool        bCullNone = false;                               // TRUE: fullscreen passes
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE TopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	};
+
+
 	class CDX12PipelineState : public CRefcount
 	{
 	public:
@@ -85,11 +96,13 @@ namespace ML
 		virtual ~CDX12PipelineState();
 
 		bool Create(CShader* pVS, CShader* pPS,
-					const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
-					DXGI_FORMAT DepthFormat,
-					const FRootSignatureDesc& RootSigDesc,
-					bool bWireframe = false,
-					EBlendMode InBlendMode = EBlendMode::BLEND_Opaque);
+			const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
+			DXGI_FORMAT DepthFormat,
+			const FRootSignatureDesc& RootSigDesc,
+			bool bWireframe = false,
+			EBlendMode InBlendMode = EBlendMode::BLEND_Opaque,
+			EMeshPass InPass = EMeshPass::BasePass,
+			bool bTwoSided = false);
 		void Release();
 
 		ID3D12RootSignature* GetRootSignature() const { return mpRootSignature; }

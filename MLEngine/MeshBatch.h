@@ -16,6 +16,13 @@ namespace ML
 		uint32 InstanceCount = 1;
 	};
 
+	enum class EMeshPass : uint8
+	{
+		BasePass = 0,   // 不透明（含 Masked）
+		SkyPass,        // 天空 mesh（材质 IsSky）
+		Translucent,    // 半透明
+	};
+
 	// UE counterpart: FMeshBatch (Engine/Public/MeshBatch.h).
 	// P0 simplification: carries a raw CMaterial* directly, no FMaterialRenderProxy.
 	// When per-draw parameter overrides are needed (fade / dither / instance custom data),

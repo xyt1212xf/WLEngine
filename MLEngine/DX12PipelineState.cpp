@@ -243,11 +243,13 @@ namespace ML
 	}
 
 	bool CDX12PipelineState::Create(CShader* pVS, CShader* pPS,
-		const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
-		DXGI_FORMAT DepthFormat,
-		const FRootSignatureDesc& RootSigDesc,
-		bool bWireframe,
-		EBlendMode InBlendMode)
+									const std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout,
+									DXGI_FORMAT DepthFormat,
+									const FRootSignatureDesc& RootSigDesc,
+									bool bWireframe /*= false*/,
+									EBlendMode InBlendMode /*= EBlendMode::BLEND_Opaque*/,
+									EMeshPass InPass /*= EMeshPass::BasePass*/,
+									bool bTwoSided /*= false*/)
 	{
 		Release();
 
@@ -298,6 +300,8 @@ namespace ML
 		hr = pDevice->CreateGraphicsPipelineState(&PSODesc, IID_PPV_ARGS(&mpPipelineState));
 		return SUCCEEDED(hr);
 	}
+
+
 
 	void CDX12PipelineState::Release()
 	{

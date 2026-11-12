@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include "Object.h"
 #include "Common.h"
+#include "MeshBatch.h"
 
 namespace ML
 {
@@ -116,7 +117,7 @@ namespace ML
 			// bWireframe folds into the cache key so a wireframe PSO is never confused
 		// with its solid twin (same layout). UE bakes the fill mode into the full
 		// PSO hash, not the layout hash.
-		CPipelineState* GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe = false);
+		CPipelineState* GetPipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe = false, EMeshPass Pass = EMeshPass::BasePass);
 
 		// Drops every cached PSO (releases the GPU objects behind them).
 		void ReleasePipelineStates();
@@ -145,7 +146,17 @@ namespace ML
 		// type that needs it, not on UObject).
 		virtual bool initialise();
 
+		void SetUsedAsSky(bool bInUsedAsSky) { bUsedAsSky = bInUsedAsSky; }
+		bool IsSky() const { return bUsedAsSky; }
+	
+		void SetTwoSided(bool bInTwoSided) { bTwoSided = bInTwoSided; }
+		bool IsTwoSided() const { return bTwoSided; }
+
 	private:
+		bool			bUsedAsSky = false;   // UE: "IsSky"
+		bool			bTwoSided = false;   // UE: UMaterial::bTwoSided
+		bool			bUsesBaseColorTexture = false;
+
 		uint32        LayerCount = 0;        // 
 		std::string   mVSName;
 		std::string   mPSName;
@@ -155,7 +166,6 @@ namespace ML
 		// Base-color texture. Not owned: textures belong to CTextureMgr (shared
 		// assets), materials only reference them.
 		CTexture2D*   BaseColorTexture = nullptr;
-		bool          bUsesBaseColorTexture = false;
 
 		// Fallback layout used when no VertexFactory is supplied (e.g. engine init time).
 		// Does not own any GPU resources - consumed once during PSO creation to build it.
@@ -169,7 +179,7 @@ namespace ML
 		std::unordered_map<uint64, CPipelineState*>	mPSOCache;
 		std::mutex									mPSOMutex;
 
-		CPipelineState* CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe);
+		CPipelineState* CreatePipelineState(const CVertexStreamFactory* InVertexFactory, bool bWireframe, EMeshPass Pass);
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>* SelectInputLayout(const CVertexStreamFactory* InVertexFactory) const;
 	};
 }
