@@ -30,12 +30,12 @@ namespace ML
 	// 改它们的 Transform、也会增删容器元素。渲染线程若直接遍历它们，就会
 	// 出现"读撕裂的矩阵"和"迭代器失效（vector 重分配）"两类崩溃。
 	//====================================================================
-	class MLENGINE_API FPrimitiveSceneProxy
+	class MLENGINE_API CPrimitiveSceneProxy
 	{
-		friend class FScene;
+		friend class CScene;
 	public:
 		// 游戏线程调用：把组件此刻的可绘制状态整份拷出来。
-		FPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD,
+		CPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD,
 			CVertexStreamFactory* InVF, CMaterial* InMaterial,
 			const FMatrix44& InWorldMatrix, uint32 InSectionIndex = 0, bool bInVisible = true);
 
@@ -67,16 +67,16 @@ namespace ML
 	};
 
 	//====================================================================
-	// UE: FScene
+	// CScene
 	// 渲染线程拥有的场景状态。图元注册/注销/更新全部走这里。
 	//====================================================================
-	class MLENGINE_API FScene
+	class MLENGINE_API CScene
 	{
 	public:
-		~FScene();
+		~CScene();
 
 		// 幂等：同一 id 重复注册会先移除旧的，避免泄漏。
-		void AddPrimitive(FPrimitiveSceneProxy* Proxy);
+		void AddPrimitive(CPrimitiveSceneProxy* Proxy);
 		void RemovePrimitive(uint32 ProxyId);
 		// 批量注销（渲染线程）。典型用途：卸关卡时一条命令注销全部 proxy，
 		// 免去逐个投递。const& —— 不要按值拷贝 id 列表。
@@ -100,15 +100,18 @@ namespace ML
 		// 直接分流到两个输出列表（UE: 图元 relevance 决定进哪个 mesh-pass 列表）。
 		// View 目前仅占位，P1 在这里做视锥/距离剔除。
 		void CollectVisibleMeshes(const FViewMatrices& View,
-			std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent) const;
+									std::vector<FMeshBatch>& OutSky,
+									std::vector<FMeshBatch>& OutOpaque,
+									std::vector<FMeshBatch>& OutTranslucent) const;
 
-		int32 GetNumPrimitives() const { return (int32)(OpaqueProxies.size() + TranslucentProxies.size()); }
+		
+		int32 GetNumPrimitives() const;
 
 		// 删除全部图元（只在确认渲染线程不再访问时调用）。
 		void Release();
 
 	private:
-		FPrimitiveSceneProxy* Find(uint32 ProxyId) const;
+		CPrimitiveSceneProxy* Find(uint32 ProxyId) const;
 
 		// 注册时即按"材质是否透明"分流到两个桶（UE: 图元进哪个 mesh-pass 列表
 		// 在 AddPrimitive 时决定）。渲染时直接按桶取，不再每帧判断透明度。
@@ -117,13 +120,19 @@ namespace ML
 		enum class EProxyBucket : uint8
 		{
 			Opaque,
-			Translucent
+			Translucent,
+			Sky,
 		};
+		static EProxyBucket Classify(const CMaterial* Material);
+		std::vector<CPrimitiveSceneProxy*>& Bucket(EProxyBucket Tag);
+		const std::vector<CPrimitiveSceneProxy*>& Bucket(EProxyBucket Tag) const;
 
 		void RebuildIndex();
 
-		std::vector<FPrimitiveSceneProxy*>						OpaqueProxies;
-		std::vector<FPrimitiveSceneProxy*>						TranslucentProxies;
+	private:
+		std::vector<CPrimitiveSceneProxy*>						OpaqueProxies;
+		std::vector<CPrimitiveSceneProxy*>						TranslucentProxies;
+		std::vector<CPrimitiveSceneProxy*>						SkyProxies;
 		std::unordered_map<uint32, std::pair<EProxyBucket, size_t>>	IndexById;
 	};
 
@@ -137,12 +146,12 @@ namespace ML
 	class MLENGINE_API FRenderCommandQueue
 	{
 	public:
-		using FCommand = std::function<void(FScene&)>;
+		using FCommand = std::function<void(CScene&)>;
 
 		void Enqueue(FCommand InCommand);
 
 		// 渲染线程在帧首调用：取出全部待处理命令并就地执行。
-		void Drain(FScene& Scene);
+		void Drain(CScene& Scene);
 
 	private:
 		std::mutex				Mutex;

@@ -258,12 +258,26 @@ namespace ML
 					continue;
 				}
 
+				bool bSky = false;
+				bool bTwoSided = false;
+
+				if (TryGetField(L, EntryIdx, "IsSky"))
+				{
+					bSky = 0 != lua_toboolean(L, -1);
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, EntryIdx, "TwoSided"))
+				{
+					bTwoSided = 0 != lua_toboolean(L, -1);
+					lua_pop(L, 1);
+				}
+
 				CMaterial* Material = new CMaterial();
 				Material->SetName(Name);
 				Material->SetShaders(VSName, PSName);
-				// Blend mode drives the PSO blend state + which render list the
-				// owning primitive lands in (opaque vs translucent). Default Opaque.
 				Material->SetBlendMode(ParseBlendMode(L, EntryIdx));
+				Material->SetUsedAsSky(bSky);        
+				Material->SetTwoSided(bTwoSided);    
 				std::vector<std::string> LayerPaths;
 
 				if (TryGetField(L, EntryIdx, "Layers"))

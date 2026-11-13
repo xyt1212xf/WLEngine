@@ -17,7 +17,7 @@ namespace ML
 
 	}
 
-	FPrimitiveSceneProxy* CStaticMeshComponent::CreateSceneProxy()
+	CPrimitiveSceneProxy* CStaticMeshComponent::CreateSceneProxy()
 	{
 		// 网格没烘好（LOD / VertexFactory 为空）时不注册；proxy 内部也会
 		// 再判一次，这里提前挡掉只是为了不白分配一个 id。
@@ -36,7 +36,7 @@ namespace ML
 		{
 			Mat = StaticMesh->GetMaterialForSection(0);
 		}
-		return new FPrimitiveSceneProxy(RenderProxyId, StaticMesh,
+		return new CPrimitiveSceneProxy(RenderProxyId, StaticMesh,
 			StaticMesh->GetRenderData(0), StaticMesh->GetVertexFactory(0),
 			Mat, GetWorldMatrix(), 0, IsVisible());
 	}

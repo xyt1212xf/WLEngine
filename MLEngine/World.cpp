@@ -112,7 +112,9 @@ namespace ML
 	}
 
 	void CWorld::CollectVisibleMeshes(const FViewMatrices& View,
-		std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent)
+										std::vector<FMeshBatch>& OutSky, 
+										std::vector<FMeshBatch>& OutOpaque,
+										std::vector<FMeshBatch>& OutTranslucent)
 	{
 		// 渲染线程。顺序很关键：
 		//   1) 先把游戏线程投递过来的更新（Add / SetTransform / SetVisibility）
@@ -123,7 +125,7 @@ namespace ML
 		// PersistentLevel 里的 CActor / CComponent（它们归游戏线程所有，
 		// 主线程 Tick 会改它们的 Transform、也会增删容器元素）。
 		RenderCommands.Drain(Scene);
-		Scene.CollectVisibleMeshes(View, OutOpaque, OutTranslucent);
+		Scene.CollectVisibleMeshes(View, OutSky, OutOpaque, OutTranslucent);
 	}
 
 	void CWorld::TickLoad()

@@ -21,7 +21,7 @@ namespace ML
 		CLandscapeVertexFactory* GetVertexFactory() const { return VF; }
 
 	private:
-		FPrimitiveSceneProxy* CreateSceneProxy();
+		CPrimitiveSceneProxy* CreateSceneProxy();
 
 	private:
 		FLandscapeHeightfield   Heightfield;

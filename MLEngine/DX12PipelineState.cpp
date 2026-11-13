@@ -280,11 +280,11 @@ namespace ML
 		// UE: the fill mode is part of the PSO, driven by the view family's
 		// EngineShowFlags.Wireframe (a draw-mode override, not a material property).
 		PSODesc.RasterizerState.FillMode				= bWireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
-		PSODesc.RasterizerState.CullMode				= D3D12_CULL_MODE_BACK;
+		PSODesc.RasterizerState.CullMode				= bTwoSided ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
 		PSODesc.RasterizerState.FrontCounterClockwise	= TRUE;
 		PSODesc.RasterizerState.DepthClipEnable			= TRUE;
 
-		PSODesc.DepthStencilState.DepthEnable		= TRUE;
+		PSODesc.DepthStencilState.DepthEnable		= (EMeshPass::SkyPass == InPass) ? FALSE : TRUE;
 		PSODesc.DepthStencilState.DepthFunc			= D3D12_COMPARISON_FUNC_LESS;
 		// Blend factors + depth-write mask come from the material's BlendMode
 		// (UE: UMaterial::BlendMode -> FBlendState / FDepthStencilState).

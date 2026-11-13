@@ -30,7 +30,7 @@ namespace ML
 		MarkRenderTransformDirty();
 	}
 
-	void CSceneComponent::PushSceneCommand(std::function<void(FScene&)> InCommand)
+	void CSceneComponent::PushSceneCommand(std::function<void(CScene&)> InCommand)
 	{
 		// 还没注册进场景（id 为 0），或引擎/世界还不存在 —— 直接丢弃。
 		// 这覆盖了构造期和关卡加载期调用 SetLocation 的情况。
@@ -54,7 +54,7 @@ namespace ML
 		// 渲染线程收到的是一份快照，不存在"读到写了一半的矩阵"的问题。
 		const uint32   Id    = RenderProxyId;
 		const FMatrix44 World = GetWorldMatrix();
-		PushSceneCommand([Id, World](FScene& Scene)
+		PushSceneCommand([Id, World](CScene& Scene)
 			{
 				Scene.SetTransform(Id, World);
 			});

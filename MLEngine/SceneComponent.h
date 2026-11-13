@@ -6,7 +6,7 @@
 
 namespace ML
 {
-	class FScene;
+	class CScene;
 
 	class MLENGINE_API CSceneComponent : public CActorComponent
     {
@@ -39,7 +39,7 @@ namespace ML
 	protected:
 		// 游戏线程：向渲染线程投递一条场景更新命令。
 		// RenderProxyId == 0（未注册）或引擎还没起时自动丢弃。
-		void PushSceneCommand(std::function<void(FScene&)> InCommand);
+		void PushSceneCommand(std::function<void(CScene&)> InCommand);
 
 		// 游戏线程：Transform 变了，通知渲染线程更新镜像。
 		// 世界矩阵在**游戏线程这边算好**再按值投递，渲染线程拿到的

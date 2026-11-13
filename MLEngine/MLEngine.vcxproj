@@ -46,6 +46,7 @@
     <ClCompile Include="LevelStreaming.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightComponent.cpp" />
+    <ClCompile Include="LightSceneProxy.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="LevelStreaming.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightComponent.h" />
+    <ClInclude Include="LightSceneProxy.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="MallocAnsi.h" />
     <ClInclude Include="Material.h" />

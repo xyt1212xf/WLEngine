@@ -3,7 +3,7 @@
 namespace ML
 {
 	class CWorld;
-	class FPrimitiveSceneProxy;
+	class CPrimitiveSceneProxy;
 
 	class MLENGINE_API CPrimitiveComponent : public CSceneComponent
     {
@@ -26,7 +26,7 @@ namespace ML
         // 游戏线程调用：快照一份渲染线程用的可绘制数据，并把自己记到
         // RenderProxyId 上（之后改 Transform / 可见性才知道该更新谁）。
         // 基类没有可绘制网格，返回 nullptr；具体图元组件覆写它。
-        virtual FPrimitiveSceneProxy* CreateSceneProxy();
+        virtual CPrimitiveSceneProxy* CreateSceneProxy();
 
         // UE: UPrimitiveComponent::RegisterComponentWithWorld(UWorld*)。
         // 在游戏线程创建场景代理，并把 AddPrimitive 投递给渲染线程。

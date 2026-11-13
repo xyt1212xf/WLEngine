@@ -15,7 +15,7 @@ namespace ML
 		return GNextSceneProxyId.fetch_add(1);
 	}
 
-	FPrimitiveSceneProxy::FPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD, CVertexStreamFactory* InVF, CMaterial* InMaterial, const FMatrix44& InWorldMatrix, uint32 InSectionIndex /*= 0*/, bool bInVisible /*= true*/)
+	CPrimitiveSceneProxy::CPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD, CVertexStreamFactory* InVF, CMaterial* InMaterial, const FMatrix44& InWorldMatrix, uint32 InSectionIndex /*= 0*/, bool bInVisible /*= true*/)
 	: Id(InId)
 	{
 		Mesh = InMesh;
@@ -34,7 +34,7 @@ namespace ML
 		}
 	}
 
-	bool FPrimitiveSceneProxy::GetMeshBatch(FMeshBatch& OutBatch) const
+	bool CPrimitiveSceneProxy::GetMeshBatch(FMeshBatch& OutBatch) const
 	{
 		// LOD / VertexFactory 为空说明网格没烘好，直接跳过。
 		if (!bVisible || nullptr == LOD || nullptr == VertexFactory)
@@ -55,23 +55,56 @@ namespace ML
 	//-----------------------------------------------------------------
 	// FScene
 	//-----------------------------------------------------------------
-	FScene::~FScene()
+	CScene::~CScene()
 	{
 		Release();
 	}
 
-	FPrimitiveSceneProxy* FScene::Find(uint32 ProxyId) const
+	CPrimitiveSceneProxy* CScene::Find(uint32 ProxyId) const
 	{
 		auto It = IndexById.find(ProxyId);
 		if (It == IndexById.end())
 		{
 			return nullptr;
 		}
-		const auto& Vec = (It->second.first == EProxyBucket::Translucent) ? TranslucentProxies : OpaqueProxies;
+		const std::vector<CPrimitiveSceneProxy*>& Vec = Bucket(It->second.first);
 		return Vec[It->second.second];
 	}
 
-	void FScene::RebuildIndex()
+	CScene::EProxyBucket CScene::Classify(const CMaterial* Material)
+	{
+		if (Material && Material->IsSky())
+		{
+			return EProxyBucket::Sky;
+		}
+		if (Material && Material->IsTranslucent())
+		{
+			return EProxyBucket::Translucent;
+		}
+		return EProxyBucket::Opaque;
+	}
+
+	std::vector<ML::CPrimitiveSceneProxy*>& CScene::Bucket(EProxyBucket Tag)
+	{
+		switch (Tag)
+		{
+		case EProxyBucket::Sky:         return SkyProxies;
+		case EProxyBucket::Translucent: return TranslucentProxies;
+		default:                        return OpaqueProxies;
+		}
+	}
+
+	const std::vector<ML::CPrimitiveSceneProxy*>& CScene::Bucket(EProxyBucket Tag) const
+	{
+		switch (Tag)
+		{
+		case EProxyBucket::Sky:         return SkyProxies;
+		case EProxyBucket::Translucent: return TranslucentProxies;
+		default:                        return OpaqueProxies;
+		}
+	}
+
+	void CScene::RebuildIndex()
 	{
 		IndexById.clear();
 		for (size_t i = 0; i < OpaqueProxies.size(); ++i)
@@ -82,9 +115,13 @@ namespace ML
 		{
 			IndexById[TranslucentProxies[i]->GetId()] = { EProxyBucket::Translucent, i };
 		}
+		for (size_t i = 0; i < SkyProxies.size(); ++i)
+		{
+			IndexById[SkyProxies[i]->GetId()] = { EProxyBucket::Sky, i };
+		}
 	}
 
-	void FScene::AddPrimitive(FPrimitiveSceneProxy* Proxy)
+	void CScene::AddPrimitive(CPrimitiveSceneProxy* Proxy)
 	{
 		if (nullptr == Proxy)
 		{
@@ -96,15 +133,12 @@ namespace ML
 		// 分类在注册这一刻完成：材质是否透明只判断一次，之后两桶各自存放，
 		// 渲染时直接按桶取，不再每帧判断（UE: 图元注册时即决定进哪个 mesh-pass 列表）。
 		// 无材质的 proxy 归入不透明桶，由 CollectVisibleMeshes 在展开时跳过。
-		const bool bTranslucent = (nullptr != Proxy->Material) && Proxy->Material->IsTranslucent();
-		std::vector<FPrimitiveSceneProxy*>& Bucket = bTranslucent ? TranslucentProxies : OpaqueProxies;
-		const EProxyBucket BucketTag = bTranslucent ? EProxyBucket::Translucent : EProxyBucket::Opaque;
-
-		IndexById[Proxy->GetId()] = { BucketTag, Bucket.size() };
-		Bucket.push_back(Proxy);
+		const EProxyBucket BucketTag = Classify(Proxy->Material);
+		IndexById[Proxy->GetId()] = { BucketTag, Bucket(BucketTag).size() };
+		Bucket(BucketTag).push_back(Proxy);
 	}
 
-	void FScene::RemovePrimitive(uint32 ProxyId)
+	void CScene::RemovePrimitive(uint32 ProxyId)
 	{
 		auto It = IndexById.find(ProxyId);
 		if (It == IndexById.end())
@@ -112,28 +146,22 @@ namespace ML
 			return;
 		}
 
-		// 以索引里的"桶 + 下标"定位目标槽位——索引在每次增删后都会 RebuildIndex，
-		// 所以它通常精确指向该 proxy 物理上所在的桶。材质可能在运行时在"不透明
-		// <-> 透明"之间切换（AddPrimitive 幂等：先 Remove 再用新材质重注册），
-		// 但 proxy 实体一直躺在注册那一刻放进去的桶里，摘除只看它实际在哪个桶，
-		// 因此信任索引即天然覆盖了切换后的删除。
-		auto& Vec = (It->second.first == EProxyBucket::Translucent) ? TranslucentProxies : OpaqueProxies;
+		std::vector<CPrimitiveSceneProxy*>& Vec = Bucket(It->second.first);
 		const size_t Index = It->second.second;
 
-		// 防御：下标越界，或槽位已不是本 proxy（标签与实体不一致，例如经历过
-		// 透明<->不透明切换且索引未及时刷新）。退化到两桶按 id 线性找回，保证
-		// 一定能摘掉，绝不会因过期标签删错别的图元。
+		// 防御：下标越界或槽位 id 不符时，三桶按 id 线性找回（逻辑同原版）。
 		if (Index >= Vec.size() || nullptr == Vec[Index] || Vec[Index]->GetId() != ProxyId)
 		{
 			bool bFound = false;
-			for (std::vector<FPrimitiveSceneProxy*>* pBucket : { &OpaqueProxies, &TranslucentProxies })
+			for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
 			{
-				for (size_t i = 0; i < pBucket->size(); ++i)
+				std::vector<CPrimitiveSceneProxy*>& pBucket = Bucket(Tag);
+				for (size_t i = 0; i < pBucket.size(); ++i)
 				{
-					if ((*pBucket)[i] && (*pBucket)[i]->GetId() == ProxyId)
+					if (pBucket[i] && pBucket[i]->GetId() == ProxyId)
 					{
-						SafeDelete((*pBucket)[i]);
-						pBucket->erase(pBucket->begin() + i);
+						SafeDelete(pBucket[i]);
+						pBucket.erase(pBucket.begin() + i);
 						bFound = true;
 						break;
 					}
@@ -154,24 +182,12 @@ namespace ML
 		SafeDelete(Vec[Index]);
 		Vec.erase(Vec.begin() + Index);
 		IndexById.erase(It);
-		// erase 让该桶后面元素的下标整体左移一位，重建索引表（两个桶一起重建）。
 		RebuildIndex();
 	}
 
 
-	void FScene::RemovePrimitives(const std::vector<uint32>& ProxyIds)
+	void CScene::RemovePrimitives(const std::vector<uint32>& ProxyIds)
 	{
-		// 渲染线程调用（同 RemovePrimitive）。典型用途：卸一个关卡时用
-		// 一条命令批量注销它的全部 proxy，而不是每个 proxy 一条。
-		//
-		// 批量删除不能"边删边查"：erase 一次，桶里所有更大的下标就整体
-		// 失效，下一轮循环再拿查出来的下标去 Vec[Index] 就会删错元素甚至越界。
-		// 做法（标记-压缩）：
-		//   1) 第一遍只把要删的槽位 SafeDelete 成 nullptr、并就地摘掉索引项
-		//      （顺带天然去重：同一 id 第二次查不到，不会用陈旧下标二次删除）；
-		//   2) 第二遍把两个桶里的空槽位分别压缩掉，各桶内部相对顺序不变——保持
-		//      CollectVisibleMeshes 按材质聚类的遍历稳定性；
-		//   3) 下标全变了，重建索引表。
 		bool bAnyRemoved = false;
 		for (uint32 Id : ProxyIds)
 		{
@@ -180,23 +196,25 @@ namespace ML
 			{
 				continue;
 			}
-			std::vector<FPrimitiveSceneProxy*>& Vec =
-				(It->second.first == EProxyBucket::Translucent) ? TranslucentProxies : OpaqueProxies;
-			SafeDelete(Vec[It->second.second]);   // 槽位置空，兼作删除标记
+			std::vector<CPrimitiveSceneProxy*>& Vec = Bucket(It->second.first);
+			SafeDelete(Vec[It->second.second]);
 			Vec[It->second.second] = nullptr;
-			IndexById.erase(It);                 // 索引项就地摘除
+			IndexById.erase(It);
 			bAnyRemoved = true;
 		}
 
 		if (bAnyRemoved)
 		{
-			OpaqueProxies.erase(std::remove(OpaqueProxies.begin(), OpaqueProxies.end(), nullptr), OpaqueProxies.end());
-			TranslucentProxies.erase(std::remove(TranslucentProxies.begin(), TranslucentProxies.end(), nullptr), TranslucentProxies.end());
+			for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
+			{
+				std::vector<CPrimitiveSceneProxy*>& pBucket = Bucket(Tag);
+				pBucket.erase(std::remove(pBucket.begin(), pBucket.end(), nullptr), pBucket.end());
+			}
 			RebuildIndex();
 		}
 	}
 
-	void FScene::ReclassifyPrimitive(uint32 ProxyId)
+	void CScene::ReclassifyPrimitive(uint32 ProxyId)
 	{
 		auto It = IndexById.find(ProxyId);
 		if (It == IndexById.end())
@@ -204,28 +222,31 @@ namespace ML
 			return;
 		}
 
-		// 先按索引快速定位（索引在每次增删后都会 RebuildIndex，通常精确指向实体），
-		// 槽位上的 id 不匹配时（标签过期，如经历过透明<->不透明切换）退化到两桶按
-		// id 找回，保证一定能定位到该 proxy 实际所在的桶。
 		const EProxyBucket OldTag = It->second.first;
-		auto Proxies = (OldTag == EProxyBucket::Translucent) ? &TranslucentProxies : &OpaqueProxies;
+		std::vector<CPrimitiveSceneProxy*>& OldVec = Bucket(OldTag);
 
-		FPrimitiveSceneProxy* Proxy = nullptr;
-		if (It->second.second < Proxies->size() &&
-			(*Proxies)[It->second.second] &&
-			(*Proxies)[It->second.second]->GetId() == ProxyId)
+		CPrimitiveSceneProxy* Proxy = nullptr;
+		if (It->second.second < OldVec.size() && OldVec[It->second.second] &&
+			OldVec[It->second.second]->GetId() == ProxyId)
 		{
-			Proxy = (*Proxies)[It->second.second];
+			Proxy = OldVec[It->second.second];
 		}
 		else
 		{
-			for (std::vector<FPrimitiveSceneProxy*>* pBucket : { &OpaqueProxies, &TranslucentProxies })
+			for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
 			{
-				for (FPrimitiveSceneProxy* P : *pBucket)
+				for (CPrimitiveSceneProxy* P : Bucket(Tag))
 				{
-					if (P && P->GetId() == ProxyId) { Proxy = P; Proxies = pBucket; break; }
+					if (P && P->GetId() == ProxyId)
+					{
+						Proxy = P;
+						break;
+					}
 				}
-				if (Proxy) break;
+				if (Proxy)
+				{
+					break;
+				}
 			}
 		}
 		if (nullptr == Proxy)
@@ -233,42 +254,32 @@ namespace ML
 			return;
 		}
 
-		// 按 proxy 当前材质的透明度重算目标桶（材质混合模式可能在运行时切换）。
-		const bool bTranslucent = (nullptr != Proxy->Material) && Proxy->Material->IsTranslucent();
-		const EProxyBucket NewTag = bTranslucent ? EProxyBucket::Translucent : EProxyBucket::Opaque;
+		const EProxyBucket NewTag = Classify(Proxy->Material);
 		if (NewTag == OldTag)
-		{
-			return;   // 没跨桶，无需搬迁
-		}
-
-		// 从旧桶摘除（保持旧桶内部顺序，利于按材质聚类），塞进新桶末尾，重建索引。
-		auto Pos = std::find(Proxies->begin(), Proxies->end(), Proxy);
-		if (Pos == Proxies->end())
 		{
 			return;
 		}
-		Proxies->erase(Pos);
-		(NewTag == EProxyBucket::Translucent ? TranslucentProxies : OpaqueProxies).push_back(Proxy);
+
+		auto Pos = std::find(OldVec.begin(), OldVec.end(), Proxy);
+		if (Pos == OldVec.end())
+		{
+			return;
+		}
+		OldVec.erase(Pos);
+		Bucket(NewTag).push_back(Proxy);
 		RebuildIndex();
 	}
 
-	void FScene::ReclassifyPrimitives(const std::vector<uint32>& ProxyIds)
+	void CScene::ReclassifyPrimitives(const std::vector<uint32>& ProxyIds)
 	{
 		if (ProxyIds.empty())
 		{
 			return;
 		}
 
-		// 批量版：先统一把"需要跨桶"的 proxy 找出来并记录目标桶，只重建一次索引，
-		// 避免逐个 ReclassifyPrimitive 时每次都 O(n) 重建（卸关卡等批量场景明显更快）。
-		// 标记-压缩思路同 RemovePrimitives：
-		//   1) 第一遍：定位每个 proxy（索引过期则两桶按 id 找回），按当前材质算目标桶，
-		//      仅当"实际所在桶 != 目标桶"才摘索引并记入待搬列表（同一 id 第二次查不到，天然去重）；
-		//   2) 第二遍：把待搬 proxy 在旧桶里标记 nullptr，压缩两个桶，再追加到目标桶；
-		//   3) 下标全变，重建索引。两桶内部相对顺序保持不变（利于按材质聚类）。
 		struct FMove
 		{
-			FPrimitiveSceneProxy* Proxy;
+			CPrimitiveSceneProxy* Proxy;
 			EProxyBucket NewTag;
 		};
 
@@ -283,34 +294,24 @@ namespace ML
 				continue;
 			}
 
-			// 定位 proxy 实际所在桶（索引过期时退化到两桶按 id 找回）。
 			const EProxyBucket OldBucket = It->second.first;
-			auto pOldVec = (OldBucket == EProxyBucket::Translucent) ? &TranslucentProxies : &OpaqueProxies;
+			std::vector<CPrimitiveSceneProxy*>& pOldVec = Bucket(OldBucket);
 
-			FPrimitiveSceneProxy* Proxy = nullptr;
-			if (It->second.second < pOldVec->size() &&
-				(*pOldVec)[It->second.second] &&
-				(*pOldVec)[It->second.second]->GetId() == Id)
+			CPrimitiveSceneProxy* Proxy = nullptr;
+			if (It->second.second < pOldVec.size() && pOldVec[It->second.second] &&
+				pOldVec[It->second.second]->GetId() == Id)
 			{
-				Proxy = (*pOldVec)[It->second.second];
+				Proxy = pOldVec[It->second.second];
 			}
 			else
 			{
-				for (std::vector<FPrimitiveSceneProxy*>* pBucket : { &OpaqueProxies, &TranslucentProxies })
+				for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
 				{
-					for (FPrimitiveSceneProxy* P : *pBucket)
+					for (CPrimitiveSceneProxy* P : Bucket(Tag))
 					{
-						if (P && P->GetId() == Id)
-						{
-							Proxy = P;
-							pOldVec = pBucket;
-							break;
-						}
+						if (P && P->GetId() == Id) { Proxy = P; break; }
 					}
-					if (Proxy)
-					{
-						break;
-					}
+					if (Proxy) break;
 				}
 			}
 			if (nullptr == Proxy)
@@ -318,19 +319,13 @@ namespace ML
 				continue;
 			}
 
-			// 按 proxy 当前材质重算目标桶；与"实际所在桶"相同则不动（索引保持原样）。
-			// 注意：必须用实际所在桶比较，而非索引里记的旧标签——旧标签可能已因之前的
-			// 透明<->不透明切换而过期为错，否则会漏搬。
-			const bool bTranslucent = (nullptr != Proxy->Material) && Proxy->Material->IsTranslucent();
-			const EProxyBucket NewBucket = bTranslucent ? EProxyBucket::Translucent : EProxyBucket::Opaque;
-			const EProxyBucket OldBucketActual =
-				(pOldVec == &TranslucentProxies) ? EProxyBucket::Translucent : EProxyBucket::Opaque;
-			if (NewBucket == OldBucketActual)
+			const EProxyBucket NewBucket = Classify(Proxy->Material);
+			if (NewBucket == OldBucket)
 			{
 				continue;
 			}
 
-			IndexById.erase(It);   // 只在确定要搬时摘索引（去重）
+			IndexById.erase(It);
 			Moves.push_back({ Proxy, NewBucket });
 		}
 
@@ -339,54 +334,68 @@ namespace ML
 			return;
 		}
 
-		// 在 proxy 实际所在的旧桶里把它标记成 nullptr（指针比对，不依赖任何下标），
-		// 随后统一压缩、并追加到目标桶。
 		for (const FMove& M : Moves)
 		{
-			for (std::vector<FPrimitiveSceneProxy*>* pVec : { &OpaqueProxies, &TranslucentProxies })
+			for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
 			{
-				auto Pos = std::find(pVec->begin(), pVec->end(), M.Proxy);
-				if (Pos != pVec->end())
+				auto Pos = std::find(Bucket(Tag).begin(), Bucket(Tag).end(), M.Proxy);
+				if (Pos != Bucket(Tag).end())
 				{
 					*Pos = nullptr;
 					break;
 				}
 			}
 		}
-		OpaqueProxies.erase(std::remove(OpaqueProxies.begin(), OpaqueProxies.end(), nullptr), OpaqueProxies.end());
-		TranslucentProxies.erase(std::remove(TranslucentProxies.begin(), TranslucentProxies.end(), nullptr), TranslucentProxies.end());
+		for (EProxyBucket Tag : { EProxyBucket::Opaque, EProxyBucket::Translucent, EProxyBucket::Sky })
+		{
+			std::vector<CPrimitiveSceneProxy*>& pBucket = Bucket(Tag);
+			pBucket.erase(std::remove(pBucket.begin(), pBucket.end(), nullptr), pBucket.end());
+		}
 		for (const FMove& M : Moves)
 		{
-			(M.NewTag == EProxyBucket::Translucent ? TranslucentProxies : OpaqueProxies).push_back(M.Proxy);
+			Bucket(M.NewTag).push_back(M.Proxy);
 		}
 		RebuildIndex();
 	}
 
-	void FScene::SetTransform(uint32 ProxyId, const FMatrix44& InWorldMatrix)
+	void CScene::SetTransform(uint32 ProxyId, const FMatrix44& InWorldMatrix)
 	{
-		if (FPrimitiveSceneProxy* Proxy = Find(ProxyId))
+		if (CPrimitiveSceneProxy* Proxy = Find(ProxyId))
 		{
 			Proxy->SetWorldMatrix(InWorldMatrix);
 		}
 	}
 
-	void FScene::SetVisibility(uint32 ProxyId, bool bInVisible)
+	void CScene::SetVisibility(uint32 ProxyId, bool bInVisible)
 	{
-		if (FPrimitiveSceneProxy* Proxy = Find(ProxyId))
+		if (CPrimitiveSceneProxy* Proxy = Find(ProxyId))
 		{
 			Proxy->SetVisible(bInVisible);
 		}
 	}
 
-	void FScene::CollectVisibleMeshes(const FViewMatrices& View,
-		std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent) const
+	void CScene::CollectVisibleMeshes(const FViewMatrices& View,
+										std::vector<FMeshBatch>& OutSky,
+										std::vector<FMeshBatch>& OutOpaque,
+										std::vector<FMeshBatch>& OutTranslucent) const
 	{
 		// P1: 这里放视锥/距离剔除（FViewMatrices 已备好，Bounds 在 LOD 上）。
 		(void)View;
 
-		// 两个桶本身就是"不透明 / 透明"的分类结果（AddPrimitive 时已按材质分流），
-		// 这里直接按桶展开，不再判断材质是否透明。
-		for (const FPrimitiveSceneProxy* Proxy : OpaqueProxies)
+		for (const CPrimitiveSceneProxy* Proxy : SkyProxies)
+		{
+			if (nullptr == Proxy || !Proxy->IsVisible())
+			{
+				continue;
+			}
+			FMeshBatch Batch;
+			if (Proxy->GetMeshBatch(Batch) && nullptr != Batch.Material)
+			{
+				OutSky.push_back(Batch);
+			}
+		}
+
+		for (const CPrimitiveSceneProxy* Proxy : OpaqueProxies)
 		{
 			if (nullptr == Proxy || !Proxy->IsVisible())
 			{
@@ -398,7 +407,7 @@ namespace ML
 				OutOpaque.push_back(Batch);
 			}
 		}
-		for (const FPrimitiveSceneProxy* Proxy : TranslucentProxies)
+		for (const CPrimitiveSceneProxy* Proxy : TranslucentProxies)
 		{
 			if (nullptr == Proxy || !Proxy->IsVisible())
 			{
@@ -412,16 +421,26 @@ namespace ML
 		}
 	}
 
-	void FScene::Release()
+	int32 CScene::GetNumPrimitives() const
 	{
-		for (FPrimitiveSceneProxy* Proxy : OpaqueProxies)
+		return (int32)(OpaqueProxies.size() + TranslucentProxies.size() + SkyProxies.size());
+	}
+
+	void CScene::Release()
+	{
+		for (CPrimitiveSceneProxy* Proxy : OpaqueProxies)
 		{
-			delete Proxy;
+			SafeDelete(Proxy);
 		}
-		for (FPrimitiveSceneProxy* Proxy : TranslucentProxies)
+		for (CPrimitiveSceneProxy* Proxy : TranslucentProxies)
 		{
-			delete Proxy;
+			SafeDelete(Proxy);
 		}
+		for (CPrimitiveSceneProxy* Proxy : SkyProxies)
+		{
+			SafeDelete(Proxy);
+		}
+		SkyProxies.clear();
 		OpaqueProxies.clear();
 		TranslucentProxies.clear();
 		IndexById.clear();
@@ -440,7 +459,7 @@ namespace ML
 		Pending.push_back(std::move(InCommand));
 	}
 
-	void FRenderCommandQueue::Drain(FScene& Scene)
+	void FRenderCommandQueue::Drain(CScene& Scene)
 	{
 		std::vector<FCommand> Local;
 		{

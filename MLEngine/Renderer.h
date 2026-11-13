@@ -50,7 +50,7 @@ namespace ML
 		void _End();
 		void _DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
 			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
-			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress);
+			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress, EMeshPass Pass);
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
@@ -68,6 +68,7 @@ namespace ML
 		// 每帧可见批次：在收集阶段就按"不透明 / 透明"分流到两个成员缓冲区
 		// （UE: BasePass 列表 vs Translucent pass 列表）。clear() 保留 capacity，
 		// 跨帧复用同一块缓冲区，避免每帧重新扩容拷贝。渲染线程独占 CRenderer，无需加锁。
+		std::vector<FMeshBatch> mSkyBatches; 
 		std::vector<FMeshBatch> mOpaqueBatches;
 		std::vector<FMeshBatch> mTranslucentBatches;
 	};

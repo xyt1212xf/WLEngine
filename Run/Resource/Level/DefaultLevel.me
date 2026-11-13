@@ -69,9 +69,66 @@ return {
                 "Resource/Texture/dirt01.png",
             },
         },
+
+        -- 天空球材质（UE: "IsSky" 材质，对标 HDRIBackdrop / 程序化天空球）。
+        --   * IsSky    = true : 图元进入 EMeshPass::SkyPass，在 BasePass 之前、
+        --                      深度测试/写入关闭下绘制（UE: FSkyPassMeshProcessor）
+        --   * TwoSided = true : UE: UMaterial::bTwoSided —— 相机在球内观看，
+        --                      关闭背面剔除；对相机偏离球心/负缩放也鲁棒。
+        --   * unlit：天空是自发光，不吃场景灯光循环；太阳从 b2 灯光块里取
+        --     第一盏方向光，天空与场景光照同源（UE: SkyAtmosphere 的太阳）。
+        {
+            Name     = "SkyMat",
+            VS       = "CSkyVS",
+            PS       = "CSkyPS",
+            IsSky    = true,
+            TwoSided = true,
+        },
     },
 
     Actors = {
+        --======================================================================
+        -- 天空球 Actor（UE: SkyPass 的天空 mesh，对标 HDRIBackdrop / SkySphere）。
+        --   * 普通 StaticMesh 图元 + IsSky 材质 —— 渲染层零硬编码：
+        --     FScene 注册时按材质 IsSky 分桶到 SkyPass 列表，
+        --     CRenderer 在 BasePass 之前以关闭深度测试绘制它。
+        --   * 球心放在相机上（bring-up 阶段相机硬编码在 (0,20,-100)，
+        --     见 Renderer::_Flush）：此时球面法线 == 像素视线方向，
+        --     Sky.hlsl 直接用法线做渐变。相机落地后本 Actor 应每帧跟随相机
+        --     （UE: HDRIBackdrop 就是逐帧移动的）。
+        --   * Radius = 2000 < 远平面 5000，不会被 far clip 裁掉。
+        --======================================================================
+        {
+            Name   = "SkySphere",
+            Label  = "天空球",
+            Class  = "Actor",
+            Tick   = false,
+
+            Transform = {
+                Location = { 0, 20, -100 },   -- 相机位置（bring-up 硬编码）
+                Rotation = { 0, 0, 0 },
+                Scale    = { 1, 1, 1 },
+            },
+
+            Components = {
+                {
+                    Type    = "StaticMesh",
+                    Visible = true,
+
+                    Mesh = {
+                        Source = "Procedural",
+                        Shape  = "Sphere",
+                        Center = { 0, 0, 0 },
+                        Radius = 2000,
+                        Slices = 32,
+                        Stacks = 20,
+                    },
+
+                    OverrideMaterials = { "SkyMat" },
+                },
+            },
+        },
+
         {
             Name   = "Cube_01",
             Label  = "测试立方体",

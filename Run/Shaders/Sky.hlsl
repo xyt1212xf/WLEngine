@@ -1,27 +1,29 @@
 //================================================================================
-// Sky.hlsl — 程序化天空（UE: SkyAtmosphere 的最简替身）
+// Sky.hlsl — 天空球材质（UE: SkyPass 的 unlit 天空材质）。
 //
-// 一个全屏三角形铺满屏幕，不需要顶点缓冲，也不写深度：
-//   * VS 只从 SV_VertexID 生成三个 NDC 角点；
-//   * PS 用逆 ViewProj 把 NDC 反投影成世界空间视线方向，再按
-//     "天顶 / 地平线 / 地面" 三段渐变 + 太阳盘与光晕着色。
+// 对标 UE5.6：天空 = 普通 mesh（SkySphere / HDRIBackdrop 的球体）+ "IsSky" 材质，
+// 由 FSkyPassMeshProcessor 在 BasePass 之前、深度测试关闭下绘制。
+// 视线方向取球面顶点法线（球心即相机：法线 == 该像素视线方向）。
 //
-// 绑定（根签名由 CRenderer::_InitSkyPass 按 FRootSignatureDesc 生成）：
-//   b0 = InverseViewProj，顶点 + 像素都可见（bRootConstantsPixelVisible）
-//   b2 = 灯光常量块，与 LightShader.h 的 FLightFrameConstants 完全一致；
-//        太阳方向/颜色取自灯数组里的第一盏方向光，因此天空和场景光照一致。
+// 绑定与 Lighting.hlsl 一致（复用同一套根签名）：
+//   b0 = MVP（顶点 root constants），b1 = World，b2 = 灯光常量块。
+//   太阳取灯数组里第一盏方向光（UE: SkyAtmosphere 的太阳即场景方向光）。
 //================================================================================
 
-cbuffer SkyCB : register(b0)
+cbuffer TransformCB : register(b0)
 {
-    row_major float4x4 g_InvViewProj;
+    row_major float4x4 g_MVP;
+};
+
+cbuffer WorldCB : register(b1)
+{
+    row_major float4x4 g_World;
 };
 
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define LIGHT_TYPE_POINT       1
 #define LIGHT_TYPE_SPOT        2
 
-// 与 C++ 侧 FSceneLightGPU (LightShader.h) 一致
 struct SceneLight
 {
     float4 ColorIntensity;  // rgb = 颜色*强度, a = 灯类型
@@ -30,55 +32,51 @@ struct SceneLight
     float4 SpotAngles;      // x = cos(内锥半角), y = cos(外锥半角)
 };
 
-// 与 C++ 侧 FLightFrameConstants 一致
 cbuffer Lighting : register(b2)
 {
     float4     g_Ambient;
     float4     g_NumLights;
     SceneLight g_Lights[8];
-};
+}
 
-// 天空配色。换成真实大气散射（Preetham / Hillaire）时只替换这一段的着色函数。
 static const float3 ZenithColor  = float3(0.10f, 0.26f, 0.62f);
 static const float3 HorizonColor = float3(0.66f, 0.76f, 0.86f);
 static const float3 GroundColor  = float3(0.16f, 0.16f, 0.15f);
 
-struct SkyVSOut
+struct VSIn
 {
-    float4 Pos : SV_POSITION;
-    float2 Ndc : TEXCOORD0;
+    float3 Pos    : POSITION;    // slot 0
+    float3 Normal : NORMAL;      // slot 1
+    float2 UV     : TEXCOORD0;   // slot 2
+    float4 Color  : COLOR;       // slot 3
 };
 
-SkyVSOut SkyVS(uint VertexId : SV_VertexID)
+struct PSIn
 {
-    // 用一个大三角形盖住屏幕，而不是两个三角形拼 quad：
-    //   v0 = (-1,-1)  v1 = (-1, 3)  v2 = (3,-1)
-    // 超出屏幕的部分由光栅化裁掉，没有 overdraw 浪费。
-    SkyVSOut Out;
-    Out.Ndc = float2((2u == VertexId) ? 3.0f : -1.0f,
-                     (1u == VertexId) ? 3.0f : -1.0f);
-    Out.Pos = float4(Out.Ndc, 1.0f, 1.0f);
+    float4 Pos    : SV_POSITION;
+    float3 Normal : NORMAL;      // 世界空间法线 = 视线方向
+    float2 UV     : TEXCOORD0;
+};
+
+PSIn SkyVS(VSIn In)
+{
+    PSIn Out;
+    Out.Pos    = mul(float4(In.Pos, 1.0f), g_MVP);
+    Out.Normal = mul((float3x3)g_World, In.Normal);
+    Out.UV     = In.UV;
     return Out;
 }
 
-float4 SkyPS(SkyVSOut In) : SV_Target
+// unlit：天空自发光，不吃灯光循环（UE: unlit shading model）
+float4 SkyPS(PSIn In) : SV_Target
 {
-    // 反投影 NDC 的近/远两点，相减得到世界空间视线方向。
-    // 这样不需要相机位置常量，也不受投影矩阵具体形式影响。
-    float4 NearH = mul(float4(In.Ndc, 0.0f, 1.0f), g_InvViewProj);
-    float4 FarH  = mul(float4(In.Ndc, 1.0f, 1.0f), g_InvViewProj);
-    float3 Dir   = normalize(FarH.xyz / FarH.w - NearH.xyz / NearH.w);
+    const float3 Dir = normalize(In.Normal);
+    const float  Up  = Dir.y;
 
-    const float Up = Dir.y;
-
-    // 垂直渐变：地平线 -> 天顶。pow < 1 让过渡集中在地平线附近。
-    const float3 Sky = lerp(HorizonColor, ZenithColor, pow(saturate(Up), 0.55f));
-
-    // 地平线以下用地面雾色收住，相机俯视时不会看到突兀的纯色底。
+    const float3 Sky    = lerp(HorizonColor, ZenithColor, pow(saturate(Up), 0.55f));
     const float3 Ground = lerp(HorizonColor, GroundColor, saturate(-Up * 3.0f));
     float3 Color = (Up >= 0.0f) ? Sky : Ground;
 
-    // 太阳 = 第一盏方向光。CPU 侧 Direction 是"指向光源"的方向。
     float3 SunDir   = float3(0.0f, 1.0f, 0.0f);
     float3 SunColor = float3(0.0f, 0.0f, 0.0f);
     const uint NumLights = (uint)g_NumLights.x;
@@ -94,13 +92,10 @@ float4 SkyPS(SkyVSOut In) : SV_Target
     }
 
     const float CosSun = saturate(dot(Dir, SunDir));
-
-    // 太阳盘（硬边小圆）+ 两级光晕；天空是自发光，不受场景光照循环影响。
-    const float Disc = smoothstep(0.9997f, 0.99995f, CosSun);
-    const float Glow = pow(CosSun, 256.0f) * 0.6f + pow(CosSun, 16.0f) * 0.15f;
+    const float Disc   = smoothstep(0.9997f, 0.99995f, CosSun);
+    const float Glow   = pow(CosSun, 256.0f) * 0.6f + pow(CosSun, 16.0f) * 0.15f;
     Color += SunColor * (Disc * 6.0f + Glow);
 
-    // 地平线暖雾（Mie 近似）：只在地平线一带、朝太阳那一侧出现。
     const float2 HorDir = normalize(Dir.xz + 1e-4f);
     const float2 SunHor = normalize(SunDir.xz + 1e-4f);
     const float  Haze   = pow(saturate(1.0f - abs(Up)), 8.0f) * saturate(dot(HorDir, SunHor));

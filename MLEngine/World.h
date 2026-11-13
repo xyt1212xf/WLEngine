@@ -59,7 +59,7 @@ namespace ML
 		// ---- 游戏线程 → 渲染线程 ----
 		// UE: ENQUEUE_RENDER_COMMAND。组件改 Transform / 可见性时走这里，
 		// 渲染线程在帧首（CollectVisibleMeshes）统一 drain 并执行。
-		void EnqueueRenderCommand(std::function<void(FScene&)> InCommand)
+		void EnqueueRenderCommand(std::function<void(CScene&)> InCommand)
 		{
 			RenderCommands.Enqueue(std::move(InCommand));
 		}
@@ -71,7 +71,9 @@ namespace ML
 
 	private:
 		void CollectVisibleMeshes(const FViewMatrices& View,
-			std::vector<FMeshBatch>& OutOpaque, std::vector<FMeshBatch>& OutTranslucent);
+									std::vector<FMeshBatch>& OutSky, 
+									std::vector<FMeshBatch>& OutOpaque,
+									std::vector<FMeshBatch>& OutTranslucent);
 
 		// 主线程里调用
 		void TickLoad();
@@ -104,7 +106,7 @@ namespace ML
 		// ---- 渲染线程侧的场景镜像 ----
 		// UE: UWorld 对应一个 FScene。渲染线程只读这两个成员，
 		// 绝不去碰 PersistentLevel 里的 CActor / CComponent。
-		FScene				Scene;
+		CScene				Scene;
 		FRenderCommandQueue	RenderCommands;
 	};
 }

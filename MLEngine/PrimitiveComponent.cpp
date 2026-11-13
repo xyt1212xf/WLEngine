@@ -12,7 +12,7 @@ namespace ML
 		{
 			const uint32 Id = RenderProxyId;
 			RenderProxyId = 0;
-			PushSceneCommand([Id](FScene& Scene) { Scene.RemovePrimitive(Id); });
+			PushSceneCommand([Id](CScene& Scene) { Scene.RemovePrimitive(Id); });
 		}
     }
 
@@ -30,7 +30,7 @@ namespace ML
 		}
 		const uint32 Id = RenderProxyId;
 		const bool bNowVisible = bVisible;
-		PushSceneCommand([Id, bNowVisible](FScene& Scene)
+		PushSceneCommand([Id, bNowVisible](CScene& Scene)
 			{
 				Scene.SetVisibility(Id, bNowVisible);
 			});
@@ -43,13 +43,13 @@ namespace ML
 			return;
 		}
 		const uint32 Id = RenderProxyId;
-		PushSceneCommand([Id](FScene& Scene)
+		PushSceneCommand([Id](CScene& Scene)
 			{
 				Scene.ReclassifyPrimitive(Id);
 			});
 	}
 
-	FPrimitiveSceneProxy* CPrimitiveComponent::CreateSceneProxy()
+	CPrimitiveSceneProxy* CPrimitiveComponent::CreateSceneProxy()
 	{
 		// UE: UPrimitiveComponent::CreateSceneProxy() —— 基类没有可绘制数据。
 		// 具体图元组件（如 CStaticMeshComponent）覆写这里做快照。
@@ -67,9 +67,9 @@ namespace ML
 		// proxy 在游戏线程构造（快照），AddPrimitive 投递给渲染线程执行；
 		// CreateSceneProxy 已把 RenderProxyId 记好，命令 FIFO 保证
 		// Add 一定排在它之后的 SetTransform / SetVisibility 之前。
-		if (FPrimitiveSceneProxy* Proxy = CreateSceneProxy())
+		if (CPrimitiveSceneProxy* Proxy = CreateSceneProxy())
 		{
-			InWorld->EnqueueRenderCommand([Proxy](FScene& InScene)
+			InWorld->EnqueueRenderCommand([Proxy](CScene& InScene)
 				{
 					InScene.AddPrimitive(Proxy);
 				});

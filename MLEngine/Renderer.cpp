@@ -36,6 +36,7 @@ namespace ML
 		// 一次性预留，之后每帧只 clear() 不再重新分配。
 		mOpaqueBatches.reserve(InitialBatchReserve);
 		mTranslucentBatches.reserve(InitialBatchReserve);
+		mSkyBatches.reserve(InitialBatchReserve);
 	}
 
 	CRenderer::~CRenderer()
@@ -130,8 +131,9 @@ namespace ML
 		//    combined list here. 复用成员缓冲区：clear() 只归零 size，capacity 保留。
 		mOpaqueBatches.clear();
 		mTranslucentBatches.clear();
-		pWorld->CollectVisibleMeshes(ViewMatrices, mOpaqueBatches, mTranslucentBatches);
-		if (mOpaqueBatches.empty() && mTranslucentBatches.empty())
+		mSkyBatches.clear();
+		pWorld->CollectVisibleMeshes(ViewMatrices, mSkyBatches, mOpaqueBatches, mTranslucentBatches);
+		if (mOpaqueBatches.empty() && mTranslucentBatches.empty() && mSkyBatches.empty())
 		{
 			return;
 		}
@@ -151,8 +153,9 @@ namespace ML
 			});
 		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
 		// Opaque first (writes depth), then translucent (sorted, no depth write).
-		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress);
-		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mSkyBatches, bWireframe, LightCBAddress, EMeshPass::SkyPass);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress, EMeshPass::BasePass);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress, EMeshPass::Translucent);
 	}
 
 	void CRenderer::_End()
@@ -162,7 +165,7 @@ namespace ML
 
 	void CRenderer::_DrawBatches(ID3D12GraphicsCommandList* pCmd, CRHIDevice* pRHIDevice,
 		const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
-		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress)
+		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress, EMeshPass Pass)
 	{
 		for (const FMeshBatch& Batch : Batches)
 		{
@@ -176,7 +179,7 @@ namespace ML
 
 			// The PSO depends on the mesh's vertex layout + blend mode, so it is
 			// resolved per batch and built on first use.
-			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe);
+			CPipelineState* PSO = Batch.Material->GetPipelineState(Batch.VertexFactory, bWireframe, Pass);
 			if (nullptr == PSO)
 			{
 				continue;

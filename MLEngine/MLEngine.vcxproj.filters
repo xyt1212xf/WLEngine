@@ -336,6 +336,9 @@
     <ClCompile Include="SkyShader.cpp">
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="LightSceneProxy.cpp">
+      <Filter>GameFrame\Object\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -643,6 +646,9 @@
     </ClInclude>
     <ClInclude Include="SkyShader.h">
       <Filter>Core\Draw\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSceneProxy.h">
+      <Filter>GameFrame\Object\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
