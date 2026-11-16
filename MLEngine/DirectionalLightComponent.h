@@ -11,6 +11,7 @@ namespace ML
 		// 影响软阴影；当前没有 shadow map，先把字段留着。
 		void  SetLightSourceAngle(float InAngle) { LightSourceAngle = InAngle; }
 		float GetLightSourceAngle() const { return LightSourceAngle; }
+		virtual CLightSceneProxy* CreateSceneProxy() override;
 
 	protected:
 		float LightSourceAngle = 0.5357f;

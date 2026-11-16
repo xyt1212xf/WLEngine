@@ -72,4 +72,9 @@ namespace ML
 		// 这样 AActor::SetActorTransform（只写 root）才能传导到挂在 root 下的组件。
 		return (nullptr != AttachParent) ? (LocalMatrix * AttachParent->GetWorldMatrix()) : LocalMatrix;
 	}
+
+	void CSceneComponent::SetVisibility(bool bNewVisibility, bool bPropagateToChildren /*= false*/)
+	{
+		bVisible = bNewVisibility;
+	}
 }

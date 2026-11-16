@@ -3,9 +3,9 @@
 namespace ML
 {
 	CSkyLight::CSkyLight(const std::string& InName)
-	: CLight(InName)
+	: CInfo(InName)
 	{
-		SkyLightComponent = SetDefaultSubobjectClass<CSkyLightComponent>();
+		LightComponent = SetLightComponent<CSkyLightComponent>();
 	}
 
 }

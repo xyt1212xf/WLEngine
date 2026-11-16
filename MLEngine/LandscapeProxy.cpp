@@ -28,7 +28,7 @@ namespace ML
 				// CPrimitiveComponent::bVisible 默认 false（只有关卡里显式写 Visible=true 的
 				// 静态网格才会被打开）。地形组件是程序化 AddComponent 出来的，必须显式打开，
 				// 否则 CreateSceneProxy 传 IsVisible()=false，GetMeshBatch 直接返回 false → 不画。
-				C->SetVisible(true);
+				C->SetVisibility(true);
 				C->SetLandscapeMaterial(Mat);
 				FLandscapeHeightfield& HF = C->GetHeightfield();
 				HF.ComponentSizeQuads = SizeQuads;

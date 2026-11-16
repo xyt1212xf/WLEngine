@@ -64,9 +64,6 @@
     <Filter Include="GameFrame\Component">
       <UniqueIdentifier>{ef90259d-95f9-4701-9819-2cf617695c53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameFrame\Object">
-      <UniqueIdentifier>{3705e355-8ea1-452c-8dbb-91baadfcbcbe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Draw">
       <UniqueIdentifier>{2f36b0f8-ccd9-4327-947c-56bdec84df17}</UniqueIdentifier>
     </Filter>
@@ -82,11 +79,17 @@
     <Filter Include="Core\Plugs\Script">
       <UniqueIdentifier>{9f585512-51ac-4ab9-a404-8b4e6d350606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameFrame\Object\Lights">
-      <UniqueIdentifier>{714591fd-722c-4e8e-b4cc-3f5b38932888}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Terrain">
       <UniqueIdentifier>{d4f9df7b-8332-4508-973b-a8b0e215439b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Actors">
+      <UniqueIdentifier>{3705e355-8ea1-452c-8dbb-91baadfcbcbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Actors\Lights">
+      <UniqueIdentifier>{714591fd-722c-4e8e-b4cc-3f5b38932888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Actors\Sky">
+      <UniqueIdentifier>{21a17519-78cc-4046-ab27-36eaad971140}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -244,10 +247,10 @@
       <Filter>GameFrame\Component</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>GameFrame\Object</Filter>
+      <Filter>GameFrame\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
-      <Filter>GameFrame\Object</Filter>
+      <Filter>GameFrame\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Core\Draw\Shader</Filter>
@@ -295,13 +298,10 @@
       <Filter>GameFrame\Component</Filter>
     </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
-      <Filter>GameFrame\Object\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyLight.cpp">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClCompile>
     <ClCompile Include="SkyLightComponent.cpp">
       <Filter>GameFrame\Component</Filter>
@@ -313,7 +313,7 @@
       <Filter>GameFrame\Component</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClCompile>
     <ClCompile Include="MeshLODResources.cpp">
       <Filter>Core\Resource\Mesh</Filter>
@@ -337,7 +337,19 @@
       <Filter>Core\Draw\Shader</Filter>
     </ClCompile>
     <ClCompile Include="LightSceneProxy.cpp">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponentBase.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Info.cpp">
+      <Filter>GameFrame\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyLightSceneProxy.cpp">
+      <Filter>GameFrame\Actors\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyLight.cpp">
+      <Filter>GameFrame\Actors\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -552,10 +564,10 @@
       <Filter>GameFrame\Component</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>GameFrame\Object</Filter>
+      <Filter>GameFrame\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
-      <Filter>GameFrame\Object</Filter>
+      <Filter>GameFrame\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Core\Draw\Shader</Filter>
@@ -603,13 +615,10 @@
       <Filter>GameFrame\Component</Filter>
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">
-      <Filter>GameFrame\Object\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="SkyLight.h">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClInclude>
     <ClInclude Include="SkyLightComponent.h">
       <Filter>GameFrame\Component</Filter>
@@ -621,7 +630,7 @@
       <Filter>GameFrame\Component</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClInclude>
     <ClInclude Include="MeshLODResources.h">
       <Filter>Core\Resource\Mesh</Filter>
@@ -648,7 +657,19 @@
       <Filter>Core\Draw\Shader</Filter>
     </ClInclude>
     <ClInclude Include="LightSceneProxy.h">
-      <Filter>GameFrame\Object\Lights</Filter>
+      <Filter>GameFrame\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponentBase.h">
+      <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Info.h">
+      <Filter>GameFrame\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyLightSceneProxy.h">
+      <Filter>GameFrame\Actors\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyLight.h">
+      <Filter>GameFrame\Actors\Sky</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

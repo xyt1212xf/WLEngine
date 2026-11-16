@@ -1,16 +1,35 @@
 ﻿#pragma once
-#include "Light.h"
+#include "Info.h"
+#include "SkyLightComponent.h"
 
 namespace ML
 {
-	class CSkyLightComponent;
-	class CSkyLight : public CLight
+	class MLENGINE_API CSkyLight : public CInfo
 	{
 	public:
 		explicit CSkyLight(const std::string& InName);
-		CSkyLightComponent* GetSkyLightComponent() const { return SkyLightComponent; }
+		CSkyLightComponent* GetLightComponent() const { return LightComponent; }
+
+		void SetLightColor(const Vec3F& InColor) { LightComponent->SetLightColor(InColor); }
+		void SetLightBrightness(float InBrightness) { LightComponent->SetIntensity(InBrightness); }
+
+	protected:
+		template<class T>
+		T* SetLightComponent()
+		{
+			static_assert(std::is_convertible_v<T*, CSkyLightComponent*>,
+				"SetLightComponent<T>: T must derive publicly from CSkyLightComponent");
+
+			if (LightComponent)
+			{
+				RemoveComponent(LightComponent);
+			}
+			LightComponent = AddComponent<T>();
+			SetRootComponent(LightComponent);       // UE: RootComponent = LightComponent;
+			return static_cast<T*>(LightComponent);
+		}
 
 	private:
-		CSkyLightComponent* SkyLightComponent = nullptr;
+		CSkyLightComponent* LightComponent = nullptr;
 	};
 }

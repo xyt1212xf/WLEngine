@@ -37,6 +37,7 @@
     <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="GlobalShader.cpp" />
     <ClCompile Include="GraphicPlug.cpp" />
+    <ClCompile Include="Info.cpp" />
     <ClCompile Include="LandscapeComponent.cpp" />
     <ClCompile Include="LandscapeLODResources.cpp" />
     <ClCompile Include="LandscapeProxy.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="LevelStreaming.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightComponent.cpp" />
+    <ClCompile Include="LightComponentBase.cpp" />
     <ClCompile Include="LightSceneProxy.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
@@ -84,6 +86,7 @@
     <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="SkyLight.cpp" />
     <ClCompile Include="SkyLightComponent.cpp" />
+    <ClCompile Include="SkyLightSceneProxy.cpp" />
     <ClCompile Include="SkyShader.cpp" />
     <ClCompile Include="SolidColorShader.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
@@ -129,6 +132,7 @@
     <ClInclude Include="GameMode.h" />
     <ClInclude Include="GlobalShader.h" />
     <ClInclude Include="GraphicPlug.h" />
+    <ClInclude Include="Info.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="jsonHeader.h" />
     <ClInclude Include="json_fwd.hpp" />
@@ -142,6 +146,7 @@
     <ClInclude Include="LevelStreaming.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightComponent.h" />
+    <ClInclude Include="LightComponentBase.h" />
     <ClInclude Include="LightSceneProxy.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="MallocAnsi.h" />
@@ -184,6 +189,7 @@
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="SkyLight.h" />
     <ClInclude Include="SkyLightComponent.h" />
+    <ClInclude Include="SkyLightSceneProxy.h" />
     <ClInclude Include="SkyShader.h" />
     <ClInclude Include="SolidColorShader.h" />
     <ClInclude Include="StaticMesh.h" />

@@ -9,10 +9,15 @@
 namespace ML
 {
 	static std::atomic<uint32> GNextSceneProxyId{ 1 };
-
+	static std::atomic<uint32> GNextLightProxyId{ 1 };
 	uint32 AllocateSceneProxyId()
 	{
 		return GNextSceneProxyId.fetch_add(1);
+	}
+
+	uint32 AllocateLightSceneProxyId()
+	{
+		return GNextLightProxyId.fetch_add(1);
 	}
 
 	CPrimitiveSceneProxy::CPrimitiveSceneProxy(uint32 InId, CMesh* InMesh, CMeshLODResources* InLOD, CVertexStreamFactory* InVF, CMaterial* InMaterial, const FMatrix44& InWorldMatrix, uint32 InSectionIndex /*= 0*/, bool bInVisible /*= true*/)
@@ -455,8 +460,8 @@ namespace ML
 		{
 			return;
 		}
-		std::lock_guard<std::mutex> Lock(Mutex);
-		Pending.push_back(std::move(InCommand));
+		std::lock_guard<std::mutex> Lock(mMutex);
+		mPending.push_back(std::move(InCommand));
 	}
 
 	void FRenderCommandQueue::Drain(CScene& Scene)
@@ -464,8 +469,8 @@ namespace ML
 		std::vector<FCommand> Local;
 		{
 			// 只在交换缓冲区的瞬间持锁
-			std::lock_guard<std::mutex> Lock(Mutex);
-			Local.swap(Pending);
+			std::lock_guard<std::mutex> Lock(mMutex);
+			Local.swap(mPending);
 		}
 
 		// 执行在锁外：游戏线程不会因为我们跑命令而被阻塞

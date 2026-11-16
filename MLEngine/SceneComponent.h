@@ -6,6 +6,13 @@
 
 namespace ML
 {
+	enum class EComponentMobility : uint8
+	{
+		Static,
+		Stationary,
+		Movable,
+	};
+
 	class CScene;
 
 	class MLENGINE_API CSceneComponent : public CActorComponent
@@ -30,11 +37,17 @@ namespace ML
 		// UE: USceneComponent::GetComponentTransform()
 		FMatrix44 GetWorldMatrix() const;
 
+		virtual void SetVisibility(bool bNewVisibility, bool bPropagateToChildren = false);
+		bool IsVisible() const { return bVisible; }
+
 		// ---- 渲染线程镜像 ----
 		// UE: FPrimitiveSceneProxy 的 id。0 = 还没注册进 FScene
 		// （此时改动只会写组件自身，不会投递渲染命令）。
 		uint32 GetRenderProxyId() const { return RenderProxyId; }
 		void   SetRenderProxyId(uint32 InId) { RenderProxyId = InId; }
+
+		void SetMobility(EComponentMobility InMobility) { Mobility = InMobility; }
+		EComponentMobility GetMobility() const { return Mobility; }
 
 	protected:
 		// 游戏线程：向渲染线程投递一条场景更新命令。
@@ -49,10 +62,11 @@ namespace ML
 		uint32      RenderProxyId = 0;
 
 	protected:
+		bool        bVisible = true;                                
 		Vec3F       Location;
 		CQuaternion Rotation = CQuaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		Vec3F       Scale = Vec3F(1, 1, 1);
 		CSceneComponent* AttachParent = nullptr;
-
+		EComponentMobility Mobility = EComponentMobility::Movable;  
     };
 }

@@ -13,8 +13,8 @@ namespace ML
 
         // UE: USceneComponent::SetVisibility
         // 游戏线程调用。改动会投递给渲染线程更新镜像（未注册时只改自己）。
-        void SetVisible(bool bInVisible);
-        bool IsVisible() const { return bVisible; }
+		virtual void SetVisibility(bool bNewVisibility, bool bPropagateToChildren = false) override;
+
 
         // UE: 材质混合模式在运行时切换（如 不透明 <-> 透明）后调用：把场景代理在
         // Opaque / Translucent 两桶之间搬迁，使其进入正确的渲染列表。仅投递一条
@@ -33,7 +33,5 @@ namespace ML
         // CWorld 的注册流程只调这个入口，不认识具体组件类型。
         virtual void RegisterComponentWithWorld(CWorld* InWorld) override;
 
-    protected:
-    	bool bVisible = false;
     };
 }

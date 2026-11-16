@@ -68,7 +68,7 @@ namespace ML
 	{
 		GEngine->threadDetach([&]()
 			{
-				CThreadPool::setThreadName("RenderThread", GetCurrentThreadId());
+				CThreadPool::setThreadName("RendererThread", GetCurrentThreadId());
 				mpRenderer->_Draw();
 			});
 	}

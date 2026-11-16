@@ -21,7 +21,7 @@ namespace ML
 		template<class T>
 		T* SetDefaultSubobjectClass()
 		{
-			static_assert(std::is_convertible_v<T*, CLightComponent*>,
+			static_assert(std::is_convertible_v<T*, CLightComponentBase*>,
 				"SetDefaultSubobjectClass<T>: T must derive publicly from CLightComponent");
 
 			RemoveComponent(LightComponent);          // UE: 替换默认子对象

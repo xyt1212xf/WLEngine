@@ -11,6 +11,7 @@ namespace ML
 		// UE: UPointLightComponent::LightFalloffExponent，默认 2.0
 		void  SetFalloffExponent(float InExponent) { FalloffExponent = InExponent; }
 		float GetFalloffExponent() const { return FalloffExponent; }
+		virtual CLightSceneProxy* CreateSceneProxy() override;
 
 	protected:
 		float AttenuationRadius = 10.0f;

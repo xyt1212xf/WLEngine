@@ -371,7 +371,7 @@ namespace ML
 				// UE: USceneComponent::bVisible
 				if (TryGetField(L, CompIdx, "Visible"))
 				{
-					MeshComp->SetVisible(0 != lua_toboolean(L, -1));
+					MeshComp->SetVisibility(0 != lua_toboolean(L, -1));
 					lua_pop(L, 1);
 				}
 
@@ -452,15 +452,15 @@ namespace ML
 				lua_pop(L, 1);
 				if ("Static" == Mobility)
 				{
-					LightComponent->SetMobility(ELightMobility::Static);
+					LightComponent->SetMobility(EComponentMobility::Static);
 				}
 				else if ("Stationary" == Mobility)
 				{
-					LightComponent->SetMobility(ELightMobility::Stationary);
+					LightComponent->SetMobility(EComponentMobility::Stationary);
 				}
 				else
 				{
-					LightComponent->SetMobility(ELightMobility::Movable);
+					LightComponent->SetMobility(EComponentMobility::Movable);
 				}
 			}
 

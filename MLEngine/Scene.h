@@ -19,6 +19,8 @@ namespace ML
 	// 保证 Add 一定排在它的更新之前）。
 	MLENGINE_API uint32 AllocateSceneProxyId();
 
+	MLENGINE_API uint32 AllocateLightSceneProxyId();
+
 	//====================================================================
 	// UE: FPrimitiveSceneProxy
 	//
@@ -110,6 +112,7 @@ namespace ML
 		// 删除全部图元（只在确认渲染线程不再访问时调用）。
 		void Release();
 
+
 	private:
 		CPrimitiveSceneProxy* Find(uint32 ProxyId) const;
 
@@ -154,7 +157,7 @@ namespace ML
 		void Drain(CScene& Scene);
 
 	private:
-		std::mutex				Mutex;
-		std::vector<FCommand>	Pending;
+		std::mutex				mMutex;
+		std::vector<FCommand>	mPending;
 	};
 }

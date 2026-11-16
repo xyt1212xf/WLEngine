@@ -16,18 +16,14 @@ namespace ML
 		}
     }
 
-	void CPrimitiveComponent::SetVisible(bool bInVisible)
-	{
-		if (bVisible == bInVisible)
-		{
-			return;
-		}
-		bVisible = bInVisible;
 
-		if (0 == RenderProxyId)
+	void CPrimitiveComponent::SetVisibility(bool bNewVisibility, bool bPropagateToChildren /*= false*/)
+	{
+		if (bVisible == bNewVisibility)
 		{
 			return;
 		}
+		CSceneComponent::SetVisibility(bNewVisibility, bPropagateToChildren);
 		const uint32 Id = RenderProxyId;
 		const bool bNowVisible = bVisible;
 		PushSceneCommand([Id, bNowVisible](CScene& Scene)
