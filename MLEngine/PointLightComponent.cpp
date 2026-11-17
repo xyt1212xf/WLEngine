@@ -1,5 +1,7 @@
 ﻿#include "PointLightComponent.h"
 #include "Scene.h"
+#include "LightSceneProxy.h" 
+
 namespace ML
 {
 

@@ -50,22 +50,22 @@ namespace ML
 		
 		FrameLights.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
 
-		uint32 NumLights = 0;
+		//uint32 NumLights = 0;
 
-		// 方向光：与原硬编码完全一致（画面不回归）
-		{
-			FSceneLightGPU& L = FrameLights.Lights[NumLights++];
-			L.ColorIntensity = { 1.0f, 1.0f, 1.0f, (float)ELightGPUType::Directional };
-			L.Direction = { 0.5f, 0.8f, 0.3f, 0.0f };  // 指向光源的方向，shader 内归一化
-		}
-
-		// 点光：验证 HLSL 多灯循环 + InvSquared 距离衰减通路（前置3后由组件驱动）
+		//// 方向光：与原硬编码完全一致（画面不回归）
 		//{
 		//	FSceneLightGPU& L = FrameLights.Lights[NumLights++];
-		//	L.ColorIntensity = { 1.0f, 0.6f, 0.3f, (float)ELightGPUType::Point };
-		//	L.PositionRadius = { 20.0f, 20.0f, 20.0f, 300.0f };
+		//	L.ColorIntensity = { 1.0f, 1.0f, 1.0f, (float)ELightGPUType::Directional };
+		//	L.Direction = { 0.5f, 0.8f, 0.3f, 0.0f };  // 指向光源的方向，shader 内归一化
 		//}
-		FrameLights.NumLightsPad.x = (float)NumLights;
+
+		//// 点光：验证 HLSL 多灯循环 + InvSquared 距离衰减通路（前置3后由组件驱动）
+		////{
+		////	FSceneLightGPU& L = FrameLights.Lights[NumLights++];
+		////	L.ColorIntensity = { 1.0f, 0.6f, 0.3f, (float)ELightGPUType::Point };
+		////	L.PositionRadius = { 20.0f, 20.0f, 20.0f, 300.0f };
+		////}
+		//FrameLights.NumLightsPad.x = (float)NumLights;
 
 		mLightConstantsCB->Create(EBufferType::Constant, sizeof(FLightFrameConstants), 0, &FrameLights);
 		return true;
@@ -102,7 +102,17 @@ namespace ML
 		{
 			return;
 		}
-
+		std::vector<FSceneLightGPU> PackedLights;
+		pWorld->GetScene().PackGPULights(PackedLights);
+		{
+			const uint32 NumLights = (uint32)std::min<size_t>(PackedLights.size(), MaxSceneLights);
+			for (uint32 i = 0; i < NumLights; ++i)
+			{
+				FrameLights.Lights[i] = PackedLights[i];
+			}
+			FrameLights.NumLightsPad.x = (float)NumLights;
+		}
+		mLightConstantsCB->UpdateData(&FrameLights, sizeof(FLightFrameConstants));
 		CRHIDevice* pRHIDevice = mpGraphicPlug->GetDevice();
 		ID3D12GraphicsCommandList* pCmd = pRHIDevice->GetCommandList();
 

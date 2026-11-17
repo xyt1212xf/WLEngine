@@ -424,9 +424,12 @@ namespace ML
 
 
 		// UE counterpart: deserializing the root light component's properties
-		//（UE 把这些属性序列化在 Actor 的 ULightComponent 子对象上）。
+		//（UE 把 Color / Intensity / Mobility 这些公共属性序列化在
+		// ULightComponentBase 上，direct light 与 SkyLight 共用）。
+		// 参数用 CLightComponentBase*：CSkyLightComponent 与 CLightComponent
+		// 是兄弟关系，收派生类会把 SkyLight 的 Light 表整段丢掉。
 		// 对具体灯类型不适用的字段直接忽略。
-		void ParseLight(lua_State* L, int LightIdx, CLightComponent* LightComponent)
+		void ParseLight(lua_State* L, int LightIdx, CLightComponentBase* LightComponent)
 		{
 			Vec3F Color(1.0f, 1.0f, 1.0f);
 			if (TryGetField(L, LightIdx, "Color"))
@@ -590,13 +593,14 @@ namespace ML
 				ReadTransform(L, -1, Loc, Rot, Scl);
 				lua_pop(L, 1);
 			}
-			
+
 
 			// 灯 Actor：根组件就是灯组件，Light 表直接作用于根
-			//（UE: 灯属性序列化在 ULightComponent 子对象上）。
+			//（UE: 灯属性序列化在 ULightComponentBase 子对象上）。
+			// Base 匹配 CLightComponent（Directional/Point）与 CSkyLightComponent 两条链。
 			if (TryGetField(L, ActorIdx, "Light"))
 			{
-				CLightComponent* LightComp = dynamic_cast<CLightComponent*>(Actor->GetRootComponent());
+				CLightComponentBase* LightComp = dynamic_cast<CLightComponentBase*>(Actor->GetRootComponent());
 				if (nullptr != LightComp)
 				{
 					ParseLight(L, lua_absindex(L, -1), LightComp);

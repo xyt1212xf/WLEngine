@@ -48,6 +48,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightComponent.cpp" />
     <ClCompile Include="LightComponentBase.cpp" />
+    <ClCompile Include="LightSceneInfo.cpp" />
     <ClCompile Include="LightSceneProxy.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="MallocAnsi.cpp" />
@@ -147,6 +148,8 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightComponent.h" />
     <ClInclude Include="LightComponentBase.h" />
+    <ClInclude Include="LightDefinitions.h" />
+    <ClInclude Include="LightSceneInfo.h" />
     <ClInclude Include="LightSceneProxy.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="MallocAnsi.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="RHItexture.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneComponent.h" />
+    <ClInclude Include="SceneTypes.h" />
     <ClInclude Include="SceneViewFamily.h" />
     <ClInclude Include="ScriptPlug.h" />
     <ClInclude Include="Shader.h" />

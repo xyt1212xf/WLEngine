@@ -351,6 +351,9 @@
     <ClCompile Include="SkyLight.cpp">
       <Filter>GameFrame\Actors\Sky</Filter>
     </ClCompile>
+    <ClCompile Include="LightSceneInfo.cpp">
+      <Filter>GameFrame\Actors\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -670,6 +673,15 @@
     </ClInclude>
     <ClInclude Include="SkyLight.h">
       <Filter>GameFrame\Actors\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSceneInfo.h">
+      <Filter>GameFrame\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTypes.h">
+      <Filter>GameFrame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LightDefinitions.h">
+      <Filter>GameFrame\Actors\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

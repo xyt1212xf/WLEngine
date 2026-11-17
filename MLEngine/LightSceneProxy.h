@@ -15,6 +15,7 @@ namespace ML
 	// CSceneComponent::GetWorldMatrix）。语义与 UE 一致（Direction = 光的照射
 	// 方向），只是轴向沿用引擎既有约定，着色器按需取反。
 	//====================================================================
+	class CLightSceneInfo;
 	class MLENGINE_API CLightSceneProxy
 	{
 		friend class CScene;
@@ -32,9 +33,10 @@ namespace ML
 
 		explicit CLightSceneProxy(const FInitParams& InParams);
 
-        ~CLightSceneProxy() = delete;
+        ~CLightSceneProxy();
 
 	private:
+		void SetLightSceneInfo(CLightSceneInfo* InInfo) { LightSceneInfo = InInfo; }
 		void UpdateTransformDerived(const FMatrix44& InWorldMatrix);
 		void PackGPULight(FSceneLightGPU& OutLight) const;
 
@@ -61,6 +63,7 @@ namespace ML
 		Vec3F         Position;
 		float         Radius = 0.0f;
 		float         FalloffExponent = 2.0f;
+		CLightSceneInfo*  LightSceneInfo = nullptr;
 		bool          bVisible = true;
 	};
 }

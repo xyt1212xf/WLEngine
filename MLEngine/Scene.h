@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "Matrix.h"
 #include "MeshBatch.h"
+#include "LightShader.h"
 
 namespace ML
 {
@@ -12,14 +13,19 @@ namespace ML
 	class CStaticVertexFactory;
 	class CMaterial;
 	struct FViewMatrices;
+	class CLightComponent;            
+	class CSkyLightComponent;         
+	class CLightSceneProxy;           
+	class CSkyLightSceneProxy;
+	class CLightSceneInfo;
 
 	// 分配一个全局唯一的图元 id。
 	// 由游戏线程在 CreateSceneProxy 时调用：必须先拿到 id，之后针对该图元的
 	// SetTransform / SetVisibility 命令才能正确投递（命令是 FIFO 的，
 	// 保证 Add 一定排在它的更新之前）。
-	MLENGINE_API uint32 AllocateSceneProxyId();
+	uint32 AllocateSceneProxyId();
 
-	MLENGINE_API uint32 AllocateLightSceneProxyId();
+	uint32 AllocateLightSceneProxyId();
 
 	//====================================================================
 	// UE: FPrimitiveSceneProxy
@@ -55,6 +61,8 @@ namespace ML
 		bool GetMeshBatch(FMeshBatch& OutBatch) const;
 
 	private:
+
+
 		uint32 Id = 0;
 
 		// ---- 快照（游戏线程写入，渲染线程只读）----
@@ -98,6 +106,7 @@ namespace ML
 		void SetTransform(uint32 ProxyId, const FMatrix44& InWorldMatrix);
 		void SetVisibility(uint32 ProxyId, bool bInVisible);
 
+
 		// 渲染线程：把可见图元展开成绘制批次，并在收集时按"不透明 / 透明"
 		// 直接分流到两个输出列表（UE: 图元 relevance 决定进哪个 mesh-pass 列表）。
 		// View 目前仅占位，P1 在这里做视锥/距离剔除。
@@ -108,6 +117,21 @@ namespace ML
 
 		
 		int32 GetNumPrimitives() const;
+
+		void AddLight(CLightComponent* Light);
+		// UE: FSceneInterface::RemoveLight(FLightSceneProxy*) —— 此时 proxy 已存在。
+		// proxy 所有权在场景：摘链并删除。游戏/渲染线程均可调（持锁）。
+		void RemoveLight(CLightSceneProxy* Proxy);
+
+		// UE: FSceneInterface 只有 SetSkyLight / DisableSkyLight 两个天空光接口，
+		// 都收 proxy。SetSkyLight = 注册 + 激活（SkyLights.AddUnique + SkyLight
+		// 指针）；DisableSkyLight = 注销 + 失活（SkyLights.RemoveSwap + 清指针）。
+		// proxy 由组件创建并持有所有权，场景只存指针、不 delete。
+		void SetSkyLight(CSkyLightSceneProxy* Light);
+		void DisableSkyLight(CSkyLightSceneProxy* Light);
+
+		// 渲染线程：把全部可见灯打包成 GPU uniform（对标 UE light uniform buffer）。
+		void PackGPULights(std::vector<FSceneLightGPU>& OutLights) const;
 
 		// 删除全部图元（只在确认渲染线程不再访问时调用）。
 		void Release();
@@ -133,6 +157,14 @@ namespace ML
 		void RebuildIndex();
 
 	private:
+		mutable std::mutex										LightsArrayCritical;
+		std::vector<CLightSceneInfo*>							LightsArray;
+		std::vector<CLightSceneInfo*>							DirectionalLightsArray;
+		// UE: FScene::SkyLights —— SkyLight 是平级代理，不进 LightsArray
+		std::vector<CSkyLightSceneProxy*>						SkyLightsArray;
+		// UE: FScene::SkyLight —— 场景级"当前生效的那一盏"，由 SetSkyLight 切换
+		CSkyLightSceneProxy*									SkyLight = nullptr;
+
 		std::vector<CPrimitiveSceneProxy*>						OpaqueProxies;
 		std::vector<CPrimitiveSceneProxy*>						TranslucentProxies;
 		std::vector<CPrimitiveSceneProxy*>						SkyProxies;

@@ -1,5 +1,7 @@
 ﻿#include "DirectionalLightComponent.h"
 #include "Scene.h"
+#include "LightSceneProxy.h" 
+
 namespace ML
 {
 

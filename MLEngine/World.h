@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include <atomic>
 #include "Object.h"
 #include "Scene.h"
-#include <atomic>
 
 namespace ML
 {
@@ -37,7 +37,7 @@ namespace ML
 	
 		// 异步加载
 		void LoadAsync( const std::string& FilePath, FOnSceneLoaded OnLoaded = nullptr);
-
+		CScene& GetScene() { return Scene; }
 
 		// 主关卡
 		CLevel* GetPersistentLevel() const { return PersistentLevel; }

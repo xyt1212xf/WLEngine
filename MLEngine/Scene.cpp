@@ -4,7 +4,11 @@
 #include "StaticMeshResources.h"
 #include "ViewMatrices.h"
 #include "Material.h"
-#include <algorithm>
+#include "LightSceneProxy.h"
+#include "LightSceneInfo.h"
+#include "SkyLightSceneProxy.h"  
+#include "LightComponent.h"
+#include "SkyLightComponent.h"
 
 namespace ML
 {
@@ -431,6 +435,112 @@ namespace ML
 		return (int32)(OpaqueProxies.size() + TranslucentProxies.size() + SkyProxies.size());
 	}
 
+	void CScene::AddLight(CLightComponent* Light)
+	{
+		if (nullptr == Light)
+		{
+			return;
+		}
+
+		// UE: FScene::AddLight —— proxy 由组件虚函数工厂现场创建，场景从不
+		// 认识具体 proxy 类型（Point/Spot 各自返回自己的子类）。
+		CLightSceneProxy* LightProxy = Light->CreateSceneProxy();
+		if (nullptr == LightProxy)
+		{
+			return;
+		}
+
+		CLightSceneInfo* LightSceneInfo = new CLightSceneInfo();
+		LightSceneInfo->Proxy = LightProxy;
+		LightProxy->SetLightSceneInfo(LightSceneInfo);   // UE: FLightSceneProxy::SetLightSceneInfo
+		Light->SetSceneProxy(LightProxy);                // UE: 组件持有 proxy 回指（OnUnregister 用）
+
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		LightsArray.push_back(LightSceneInfo);
+		if (ELightGPUType::Directional == LightProxy->GetLightType())
+		{
+			DirectionalLightsArray.push_back(LightSceneInfo);
+		}
+	}
+
+	void CScene::RemoveLight(CLightSceneProxy* Proxy)
+	{
+		if (nullptr == Proxy)
+		{
+			return;
+		}
+
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		// UE: FScene::RemoveLight(FLightSceneProxy*)。proxy 所有权在场景：
+		// 摘链并同步删除（UE 延迟到场景更新阶段销毁，语义一致）。
+		for (size_t i = 0; i < LightsArray.size(); ++i)
+		{
+			if (LightsArray[i] && LightsArray[i]->Proxy == Proxy)
+			{
+				SafeDelete(LightsArray[i]);
+				LightsArray.erase(LightsArray.begin() + i);
+				break;
+			}
+		}
+		for (size_t i = 0; i < DirectionalLightsArray.size(); ++i)
+		{
+			if (DirectionalLightsArray[i] && DirectionalLightsArray[i]->Proxy == Proxy)
+			{
+				DirectionalLightsArray.erase(DirectionalLightsArray.begin() + i);
+				break;
+			}
+		}
+		SafeDelete(Proxy);
+	}
+
+	void CScene::SetSkyLight(CSkyLightSceneProxy* Light)
+	{
+		if (nullptr == Light)
+		{
+			return;
+		}
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		SkyLight = Light;
+		if (std::find(SkyLightsArray.begin(), SkyLightsArray.end(), Light) == SkyLightsArray.end())
+		{
+			SkyLightsArray.push_back(Light);
+		}
+	}
+
+	void CScene::DisableSkyLight(CSkyLightSceneProxy* Light)
+	{
+		if (nullptr == Light)
+		{
+			return;
+		}
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		if (SkyLight == Light)
+		{
+			SkyLight = nullptr;
+		}
+		auto It = std::find(SkyLightsArray.begin(), SkyLightsArray.end(), Light);
+		if (It != SkyLightsArray.end())
+		{
+			SkyLightsArray.erase(It);
+		}
+	}
+
+	void CScene::PackGPULights(std::vector<FSceneLightGPU>& OutLights) const
+	{
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		OutLights.clear();
+		OutLights.reserve(LightsArray.size());
+		for (const CLightSceneInfo* Info : LightsArray)
+		{
+			if (Info && Info->Proxy && Info->Proxy->IsVisible())
+			{
+				FSceneLightGPU GPU;
+				Info->Proxy->PackGPULight(GPU);
+				OutLights.push_back(GPU);
+			}
+		}
+	}
+
 	void CScene::Release()
 	{
 		for (CPrimitiveSceneProxy* Proxy : OpaqueProxies)
@@ -445,6 +555,18 @@ namespace ML
 		{
 			SafeDelete(Proxy);
 		}
+		for (CLightSceneInfo* Info : LightsArray)
+		{
+			if (Info)
+			{
+				SafeDelete(Info->Proxy);
+				SafeDelete(Info);
+			}
+		}
+		SkyLightsArray.clear();
+		SkyLight = nullptr;
+		LightsArray.clear();
+		DirectionalLightsArray.clear();
 		SkyProxies.clear();
 		OpaqueProxies.clear();
 		TranslucentProxies.clear();

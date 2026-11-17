@@ -12,6 +12,11 @@ namespace ML
 		UpdateTransformDerived(InParams.WorldMatrix);
 	}
 
+	CLightSceneProxy::~CLightSceneProxy()
+	{
+
+	}
+
 	void CLightSceneProxy::UpdateTransformDerived(const FMatrix44& InWorldMatrix)
 	{
 		WorldMatrix = InWorldMatrix;

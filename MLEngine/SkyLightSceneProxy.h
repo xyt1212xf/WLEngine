@@ -22,9 +22,10 @@ namespace ML
 
 		explicit CSkyLightSceneProxy(const FInitParams& InParams);
 
-		// 与 CLightSceneProxy 保持一致：暂时禁止析构，等接 RemoveSkyLight /
-		// Release 时决定所有权再放开（对标 CPrimitiveSceneProxy 由 CScene::Release 删除）。
-		~CSkyLightSceneProxy() = delete;
+		// 所有权在组件（UE: USkyLightComponent 创建并在 DestroyRenderState 时
+		// 延迟删除）；场景经 DisableSkyLight 只摘链、不 delete。
+		~CSkyLightSceneProxy() = default;
+
 	private:
 		uint32 GetId() const { return Id; }
 		bool   IsSkyLightValid() const { return bVisible; }
