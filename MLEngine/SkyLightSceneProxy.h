@@ -6,6 +6,7 @@ namespace ML
 {
 	class MLENGINE_API CSkyLightSceneProxy
 	{
+		friend class CRenderer;
 	public:
 		struct FInitParams
 		{

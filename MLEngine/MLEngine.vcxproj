@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorComponent.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Class.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="ActorComponent.h" />
     <ClInclude Include="AllowShrinking.h" />
+    <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
     <ClInclude Include="ClassType.h" />

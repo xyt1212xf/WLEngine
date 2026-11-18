@@ -15,6 +15,9 @@
 #include "Texture2D.h"
 #include "RHItexture.h"
 #include "LightShader.h"
+#include "SkyLightSceneProxy.h"
+#include "LightSceneProxy.h"
+#include "LightSceneInfo.h"
 
 namespace ML
 {
@@ -49,23 +52,6 @@ namespace ML
 		mLightConstantsCB = new CRHIBuffer();
 		
 		FrameLights.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
-
-		//uint32 NumLights = 0;
-
-		//// 方向光：与原硬编码完全一致（画面不回归）
-		//{
-		//	FSceneLightGPU& L = FrameLights.Lights[NumLights++];
-		//	L.ColorIntensity = { 1.0f, 1.0f, 1.0f, (float)ELightGPUType::Directional };
-		//	L.Direction = { 0.5f, 0.8f, 0.3f, 0.0f };  // 指向光源的方向，shader 内归一化
-		//}
-
-		//// 点光：验证 HLSL 多灯循环 + InvSquared 距离衰减通路（前置3后由组件驱动）
-		////{
-		////	FSceneLightGPU& L = FrameLights.Lights[NumLights++];
-		////	L.ColorIntensity = { 1.0f, 0.6f, 0.3f, (float)ELightGPUType::Point };
-		////	L.PositionRadius = { 20.0f, 20.0f, 20.0f, 300.0f };
-		////}
-		//FrameLights.NumLightsPad.x = (float)NumLights;
 
 		mLightConstantsCB->Create(EBufferType::Constant, sizeof(FLightFrameConstants), 0, &FrameLights);
 		return true;
@@ -102,16 +88,10 @@ namespace ML
 		{
 			return;
 		}
-		std::vector<FSceneLightGPU> PackedLights;
-		pWorld->GetScene().PackGPULights(PackedLights);
-		{
-			const uint32 NumLights = (uint32)std::min<size_t>(PackedLights.size(), MaxSceneLights);
-			for (uint32 i = 0; i < NumLights; ++i)
-			{
-				FrameLights.Lights[i] = PackedLights[i];
-			}
-			FrameLights.NumLightsPad.x = (float)NumLights;
-		}
+
+		GatherAndSortLights(pWorld->GetScene());
+		SetupLightShaderParameters(pWorld->GetScene());
+
 		mLightConstantsCB->UpdateData(&FrameLights, sizeof(FLightFrameConstants));
 		CRHIDevice* pRHIDevice = mpGraphicPlug->GetDevice();
 		ID3D12GraphicsCommandList* pCmd = pRHIDevice->GetCommandList();
@@ -247,4 +227,49 @@ namespace ML
 			pCmd->DrawIndexedInstanced(Batch.Element.NumIndices, 1, Batch.Element.FirstIndex, Batch.Element.BaseVertex, 0);
 		}
 	}
+
+	void CRenderer::GatherAndSortLights(CScene& Scene)
+	{
+		mSortedLights.SortedLights.clear();
+		Scene.GatherLights(mSortedLights.SortedLights);
+		std::sort(mSortedLights.SortedLights.begin(), mSortedLights.SortedLights.end(),
+			[](const CLightSceneInfo* A, const CLightSceneInfo* B)
+			{
+				const bool bADir = (A && A->Proxy && ELightGPUType::Directional == A->Proxy->GetLightType());
+				const bool bBDir = (B && B->Proxy && ELightGPUType::Directional == B->Proxy->GetLightType());
+				if (bADir != bBDir)
+				{
+					return bADir;   // 方向光排最前（UE: 方向光优先独立处理）
+				}
+				const float BrightnessA = (A && A->Proxy) ? A->Proxy->GetBrightness() : 0.0f;
+				const float BrightnessB = (B && B->Proxy) ? B->Proxy->GetBrightness() : 0.0f;
+				return BrightnessA > BrightnessB;
+			});
+	}
+
+	void CRenderer::SetupLightShaderParameters(CScene& Scene)
+	{
+		const size_t NumCandidates = std::min<size_t>(mSortedLights.SortedLights.size(), MaxSceneLights);
+		uint32 NumLights = 0;
+		for (size_t i = 0; i < NumCandidates; ++i)
+		{
+			const CLightSceneInfo* Info = mSortedLights.SortedLights[i];
+			if (Info && Info->Proxy && Info->Proxy->IsVisible())
+			{
+				Info->Proxy->PackGPULight(FrameLights.Lights[NumLights++]);
+			}
+		}
+		FrameLights.NumLightsPad.x = (float)NumLights;
+
+		// UE: SkyLighting —— 环境光来自"当前生效的天空光"（FScene::SkyLight）。
+		// 天空光还没接 SH/capture（IrradianceSH 为空），暂用其颜色兜底，
+		// 无天空光时回落到固定常量。
+		FrameLights.Ambient = { 0.15f, 0.15f, 0.2f, 0.0f };
+		if (CSkyLightSceneProxy* SkyLight = Scene.GetSkyLight())
+		{
+			const Vec4F& EffectiveColor = SkyLight->GetEffectiveLightColor();
+			FrameLights.Ambient = Vec4F(EffectiveColor.x, EffectiveColor.y, EffectiveColor.z, 0.0f);
+		}
+	}
+
 }

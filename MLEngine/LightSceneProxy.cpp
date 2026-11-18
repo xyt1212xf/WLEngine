@@ -40,4 +40,9 @@ namespace ML
 		OutLight.SpotAngles = Vec4F(0.0f, 0.0f, 0.0f, 0.0f);                      // P0 无聚光
 	}
 
+	float CLightSceneProxy::GetBrightness() const
+	{
+		return ColorIntensity.x * 0.2126f + ColorIntensity.y * 0.7152f + ColorIntensity.z * 0.0722f;
+	}
+
 }

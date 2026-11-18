@@ -18,6 +18,7 @@ namespace ML
 	class CLightSceneInfo;
 	class MLENGINE_API CLightSceneProxy
 	{
+		friend class CRenderer;
 		friend class CScene;
 	public:
 		struct FInitParams
@@ -46,6 +47,7 @@ namespace ML
 		// UE: FLightSceneProxy::GetDirection() —— 光**照射**的方向（组件 Forward）。
 		const Vec3F& GetDirection() const { return Direction; }
 		float GetRadius() const { return Radius; }
+		float GetBrightness() const;
 
 		// UE: FScene::UpdateLightTransform -> FLightSceneProxy::SetTransform
 		void SetTransform(const FMatrix44& InWorldMatrix) { UpdateTransformDerived(InWorldMatrix); }

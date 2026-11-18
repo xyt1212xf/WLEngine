@@ -354,6 +354,9 @@
     <ClCompile Include="LightSceneInfo.cpp">
       <Filter>GameFrame\Actors\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>GameFrame\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -682,6 +685,9 @@
     </ClInclude>
     <ClInclude Include="LightDefinitions.h">
       <Filter>GameFrame\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>GameFrame\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

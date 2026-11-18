@@ -131,7 +131,9 @@ namespace ML
 		void DisableSkyLight(CSkyLightSceneProxy* Light);
 
 		// 渲染线程：把全部可见灯打包成 GPU uniform（对标 UE light uniform buffer）。
-		void PackGPULights(std::vector<FSceneLightGPU>& OutLights) const;
+		void GatherLights(std::vector<CLightSceneInfo*>& OutLights) const;
+
+		CSkyLightSceneProxy* GetSkyLight() const;
 
 		// 删除全部图元（只在确认渲染线程不再访问时调用）。
 		void Release();

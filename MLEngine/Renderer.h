@@ -28,6 +28,9 @@ namespace ML
 	class CRHIBuffer;
 	class CRHIDevice;
     class CGraphicPlug;
+	class CScene;
+	class CLightSceneInfo;
+
 	class MLENGINE_API CRenderer
 	{
 		friend class CGraphicPlug;
@@ -52,6 +55,11 @@ namespace ML
 			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
 			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress, EMeshPass Pass);
 
+		void GatherAndSortLights(CScene& Scene);
+		// UE: SetupLightShaderParameters —— Pack 阶段：把 Gather 结果逐灯
+		// GetLightShaderParameters 填进固定大小的 FLightFrameConstants。
+		void SetupLightShaderParameters(CScene& Scene);
+
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;
 		CRHIBuffer*		mLightConstantsCB = nullptr;
@@ -64,7 +72,11 @@ namespace ML
 		// PSOs are no longer owned by the renderer: each CMaterial builds its own in InitRHI; renderer is read-only.
 
 		FLightFrameConstants FrameLights = {};
-
+		struct FSortedLightSetSceneInfo
+		{
+			std::vector<CLightSceneInfo*> SortedLights;   // UE: FSortedLightSetSceneInfo::SortedLights
+		};
+		FSortedLightSetSceneInfo mSortedLights;
 		// 每帧可见批次：在收集阶段就按"不透明 / 透明"分流到两个成员缓冲区
 		// （UE: BasePass 列表 vs Translucent pass 列表）。clear() 保留 capacity，
 		// 跨帧复用同一块缓冲区，避免每帧重新扩容拷贝。渲染线程独占 CRenderer，无需加锁。

@@ -525,20 +525,16 @@ namespace ML
 		}
 	}
 
-	void CScene::PackGPULights(std::vector<FSceneLightGPU>& OutLights) const
+	void CScene::GatherLights(std::vector<CLightSceneInfo*>& OutLights) const
 	{
 		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
-		OutLights.clear();
-		OutLights.reserve(LightsArray.size());
-		for (const CLightSceneInfo* Info : LightsArray)
-		{
-			if (Info && Info->Proxy && Info->Proxy->IsVisible())
-			{
-				FSceneLightGPU GPU;
-				Info->Proxy->PackGPULight(GPU);
-				OutLights.push_back(GPU);
-			}
-		}
+		OutLights.assign(LightsArray.begin(), LightsArray.end());
+	}
+
+	CSkyLightSceneProxy* CScene::GetSkyLight() const
+	{
+		std::lock_guard<std::mutex> Lock(LightsArrayCritical);
+		return SkyLight;
 	}
 
 	void CScene::Release()
