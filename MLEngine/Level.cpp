@@ -21,6 +21,7 @@
 #include "lua.hpp"
 #include "Vector.h"
 #include "LandscapeProxy.h"
+#include "CameraComponent.h"
 
 namespace ML
 {
@@ -413,8 +414,35 @@ namespace ML
 					}
 					lua_pop(L, 1);
 				}
-
 				return MeshComp;
+			}
+			if ("Camera" == Type)
+			{
+				// UE: UCameraComponent（ACameraActor 的根组件）。相机没有渲染代理，
+				// RegisterComponentWithWorld 是空实现；视图家族每帧从它取值
+				// （CWorld::CalcViewFamily）。属性名对齐 UE 的 UCameraComponent。
+				CCameraComponent* CameraComp = Owner->AddComponent<CCameraComponent>();
+				if (TryGetField(L, CompIdx, "FieldOfView"))
+				{
+					CameraComp->SetFieldOfView((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, CompIdx, "NearZ"))
+				{
+					CameraComp->SetNearClipPlane((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, CompIdx, "FarZ"))
+				{
+					CameraComp->SetFarClipPlane((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+				if (TryGetField(L, CompIdx, "AspectRatio"))
+				{
+					CameraComp->SetAspectRatio((float)lua_tonumber(L, -1));
+					lua_pop(L, 1);
+				}
+				return CameraComp;
 			}
 
 			OutputDebugStringA(("CLevel: unsupported component type: " + Type + "\n").c_str());

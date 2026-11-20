@@ -88,6 +88,37 @@ return {
 
     Actors = {
         --======================================================================
+        -- 相机 Actor（UE: ACameraActor，根组件是 UCameraComponent）。
+        --   * 视图家族每帧由 CWorld::CalcViewFamily 从这里生成：
+        --     View = LookAt(Location, Forward)，Forward = 组件世界矩阵第 2 行。
+        --   * Rotation.x 是俯仰（正 = 向下）：11.31° 让相机从 (0,20,-100)
+        --     正好看向原点 —— 与之前 Renderer 里硬编码的 bring-up 相机一致。
+        --   * 没有这份数据时视图家族为空，渲染器在 _Flush 里直接返回（只剩清屏色）。
+        --======================================================================
+        {
+            Name  = "Camera_01",
+            Label = "主相机",
+            Class = "Actor",
+            Tick  = false,
+
+            Transform = {
+                Location = { 0, 20, -100 },
+                Rotation = { 11.31, 0, 0 },   -- Euler 度
+                Scale    = { 1, 1, 1 },
+            },
+
+            Components = {
+                {
+                    Type        = "Camera",   -- CLevel::ParseComponent -> CCameraComponent
+                    FieldOfView = 60.0,       -- 水平 FOV（度），与旧硬编码相机一致
+                    NearZ       = 0.1,
+                    FarZ        = 5000.0,
+                    AspectRatio = 0.0,        -- 0 = 跟随视口宽高比
+                },
+            },
+        },
+
+        --======================================================================
         -- 天空球 Actor（UE: SkyPass 的天空 mesh，对标 HDRIBackdrop / SkySphere）。
         --   * 普通 StaticMesh 图元 + IsSky 材质 —— 渲染层零硬编码：
         --     FScene 注册时按材质 IsSky 分桶到 SkyPass 列表，

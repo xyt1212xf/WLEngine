@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Matrix.h"
 #include "Vector.h"
 
@@ -6,19 +6,20 @@ namespace ML
 {
 	struct FViewMatrices
 	{
-		FMatrix44 ViewMatrix;      // ÊÀ½ç ¡ú Ïà»ú¿Õ¼ä
-		FMatrix44 ProjMatrix;      // Ïà»ú¿Õ¼ä ¡ú ²Ã¼ô¿Õ¼ä
-		FMatrix44 ViewProjMatrix;  // ÊÀ½ç ¡ú ²Ã¼ô¿Õ¼ä£¨Ô¤³Ë£©
+		FMatrix44 ViewMatrix;      // ä¸–ç•Œ â†’ ç›¸æœºç©ºé—´
+		FMatrix44 ProjMatrix;      // ç›¸æœºç©ºé—´ â†’ è£å‰ªç©ºé—´
+		FMatrix44 ViewProjMatrix;  // ä¸–ç•Œ â†’ è£å‰ªç©ºé—´ï¼ˆé¢„ä¹˜ï¼‰
 
-		Vec3F ViewOrigin;       // Ïà»úÎ»ÖÃ£¨ÊÀ½ç¿Õ¼ä£©
+		Vec3F ViewOrigin;       // ç›¸æœºä½ç½®ï¼ˆä¸–ç•Œç©ºé—´ï¼‰
 
-		// ¹¹ÔìÊ±×Ô¶¯¼ÆËã ViewProj
-		FViewMatrices(const FMatrix44& InView, const FMatrix44& InProj)
-			: ViewMatrix(InView)
-			, ProjMatrix(InProj)
-			// Row-vector convention: clip = pos * View * Proj, so the combined
-			// matrix must be View * Proj (NOT Proj * View).
-			, ViewProjMatrix(InView * InProj)
+		// æ„é€ æ—¶è‡ªåŠ¨è®¡ç®— ViewProj
+		FViewMatrices(const FMatrix44& InView, const FMatrix44& InProj, const Vec3F& InViewOrigin)
+		: ViewMatrix(InView)
+		, ProjMatrix(InProj)
+		// Row-vector convention: clip = pos * View * Proj, so the combined
+		// matrix must be View * Proj (NOT Proj * View).
+		, ViewProjMatrix(InView * InProj)
+		, ViewOrigin(InViewOrigin)
 		{
 		}
 	};

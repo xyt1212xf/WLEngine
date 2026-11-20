@@ -74,9 +74,9 @@ namespace ML
 
 	bool CRenderer::_Begin()
 	{
-		mpGraphicPlug->GetDevice()->BeginDraw();
 		mCurrentPSO = nullptr;
 		mCurrentRS = nullptr;
+		mpGraphicPlug->GetDevice()->BeginDraw();
 		return true;
 	}
 
@@ -100,19 +100,34 @@ namespace ML
 		// the (horizontal, X-Z) landscape is actually visible — a camera at the
 		// origin looking dead +Z sees a flat ground plane edge-on (a thin line).
 		// (UE: a proper CCameraComponent with pitch comes later.)
-		const SWindowConfig* pCfg = GEngine->GetPlatform().getWindowConfigPtr();
-		const float Aspect = (float)pCfg->nWidth / (float)pCfg->nHeight;
-		FMatrix44 View, Proj;
-		const Vec3F Eye(0.0f, 20.0f, -100.0f);   // 抬高、后撤
-		const Vec3F LookAt(0.0f, 0.0f, 0.0f);    // 明显俯视
-		
-		const Vec3F Up(0.0f, 1.0f, 0.0f);
-		Math::buildMatrixLookAtLH(&View, &Eye, &LookAt, &Up);
-		Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 5000.0f);
-		FViewMatrices ViewMatrices(View, Proj);
+		//const SWindowConfig* pCfg = GEngine->GetPlatform().getWindowConfigPtr();
+		//const float Aspect = (float)pCfg->nWidth / (float)pCfg->nHeight;
+		//FMatrix44 View, Proj;
+		//const Vec3F Eye(0.0f, 20.0f, -100.0f);   // 抬高、后撤
+		//const Vec3F LookAt(0.0f, 0.0f, 0.0f);    // 明显俯视
+		//
+		//const Vec3F Up(0.0f, 1.0f, 0.0f);
+		//Math::buildMatrixLookAtLH(&View, &Eye, &LookAt, &Up);
+		//Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(60.0f), Aspect, 0.1f, 5000.0f);
+		//FViewMatrices ViewMatrices(View, Proj);
+
+		mViewFamily.ClearViews();
+		pWorld->CopyViewFamilyTo(mViewFamily);
+		const std::vector<FSceneView>& Views = mViewFamily.GetViews();
+		if (Views.empty())
+		{
+			return;
+		}
+		// 单视图 bring-up（UE: 每个视图独立跑一遍 InitViews → pass 链；
+		// 多视图后这里改成 for each view，那时 CollectVisibleMeshes /
+		// GatherAndSortLights 的 per-view 化正好接上）。
+		const FSceneView& SceneView = Views[0];
+		const FViewMatrices& ViewMatrices = SceneView.ViewMatrices;
+		const Vec3F& Eye = ViewMatrices.ViewOrigin;   // 透明排序基准点不再是硬编码原点
 
 		// Draw mode: a view-family-level override (UE: FSceneViewFamily::EngineShowFlags).
 		// Folded into the material's PSO cache key so wireframe and solid get distinct PSOs.
+
 		const bool bWireframe = mViewFamily.IsWireframe();
 
 		// 3) Collect + classify in one pass: CollectVisibleMeshes writes opaque /

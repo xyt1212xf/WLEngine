@@ -6,6 +6,9 @@
 #include "MeshBatch.h"
 #include "Level.h"
 #include "Actor.h"
+#include "CameraComponent.h"
+#include "MathLib.h"
+#include "SceneViewFamily.h"
 
 namespace ML
 {
@@ -175,6 +178,11 @@ namespace ML
 				}
 			}
 		}
+		{
+			std::lock_guard<std::mutex> Lock(ViewFamilyCritical);
+			ViewFamily.ClearViews();
+			CalcViewFamily(ViewFamily);
+		}
 	}
 
 	CLevelStreaming* CWorld::AddStreamingLevel(const std::string& LevelName, const std::string& FilePath)
@@ -207,6 +215,55 @@ namespace ML
 			}
 		}
 		return nullptr;
+	}
+
+	void CWorld::CalcViewFamily(FSceneViewFamily& InOutFamily) const
+	{
+		if (nullptr == PersistentLevel || EWorldLoadState::Ready != LoadState.load())
+		{
+			return;
+		}
+		const SWindowConfig* pCfg = GEngine->GetPlatform().getWindowConfigPtr();
+		const float Aspect = (float)pCfg->nWidth / (float)pCfg->nHeight;
+		for (CActor* Actor : PersistentLevel->GetActors())
+		{
+			if (nullptr == Actor)
+			{
+				continue;
+			}
+			for (CComponent* Comp : Actor->GetComponents())
+			{
+				CCameraComponent* Camera = dynamic_cast<CCameraComponent*>(Comp);
+				if (nullptr == Camera)
+				{
+					continue;
+				}
+
+				// UE: CalcSceneView 的值类型快照段 —— 组件 → FMinimalViewInfo，
+				// 矩阵在这里生成（渲染线程只拿矩阵，不碰组件）。
+				FMinimalViewInfo Info;
+				Camera->GetCameraView(Info);
+
+				const float CamAspect = (Info.AspectRatio > 0.0f) ? Info.AspectRatio : Aspect;
+				FMatrix44 View, Proj;
+				const Vec3F LookAt = Info.Location + Info.Rotation;   // 朝向 +Z（与灯同一约定）
+				const Vec3F Up(0.0f, 1.0f, 0.0f);
+				Math::buildMatrixLookAtLH(&View, &Info.Location, &LookAt, &Up);
+				Math::buildMatrixPerspectiveFovLH(&Proj, Math::angleToRadian(Info.FOV), CamAspect, Info.NearZ, Info.FarZ);
+
+				FSceneView NewView(View, Proj, Info.Location, Info.NearZ, Info.FarZ);
+				InOutFamily.AddView(NewView);
+
+				break;   // bring-up：每关卡取第一台相机（UE: 每玩家一台 → 一视图）
+			}
+		}
+	}
+
+
+	void CWorld::CopyViewFamilyTo(FSceneViewFamily& OutFamily) const
+	{
+		std::lock_guard<std::mutex> Lock(ViewFamilyCritical);
+		OutFamily = ViewFamily;
 	}
 
 	void CWorld::InitActorsForPlay()

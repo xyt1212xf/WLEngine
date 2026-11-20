@@ -23,8 +23,10 @@ namespace ML
 		void SetNearClipPlane(float InNearZ) { NearZ = InNearZ; }
 		float GetNearClipPlane() const { return NearZ; }
 		void SetFarClipPlane(float InFarZ) { FarZ = InFarZ; }
-		float GetFarClipPlane() const { return FarZ; }
+		void SetAspectRatio(float InAspectRatio) { AspectRatio = InAspectRatio; }
+		float GetAspectRatio() const { return AspectRatio; }
 
+		float GetFarClipPlane() const { return FarZ; }
 		void GetCameraView(FMinimalViewInfo& OutView) const;
 	protected:
 		// UE: 相机没有渲染代理，注册无场景操作。保留空实现让 CWorld 的

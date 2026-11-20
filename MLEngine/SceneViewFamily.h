@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "NumericLimits.h"
+#include "ViewMatrices.h"
 
 namespace ML
 {
@@ -59,6 +60,21 @@ namespace ML
 		}
 	};
 
+	struct FSceneView
+	{
+		FViewMatrices ViewMatrices;   // View / Proj / ViewProj / ViewOrigin
+		float NearZ = 0.0f;           // UE: NearClippingDistance（P1: 视锥剔除近端）
+		float FarZ = 0.0f;            // UE: MaxViewCullDistance（P1: 剔除远端）
+		FSceneView(const FMatrix44& InView, const FMatrix44& InProj, const Vec3F& InViewOrigin,
+			float InNearZ, float InFarZ)
+			: ViewMatrices(InView, InProj, InViewOrigin)
+			, NearZ(InNearZ)
+			, FarZ(InFarZ)
+		{
+
+		}
+	};
+
 	// UE: FSceneViewFamily (Runtime/Engine/Public/SceneManagement.h). The per-frame
 	// description of what and how to render. It owns the scene reference, the render
 	// targets, and the linked list of FSceneView. Crucially for draw mode, it owns the
@@ -95,8 +111,13 @@ namespace ML
 
 		EViewModeIndex GetViewMode() const { return ViewMode; }
 
+		void AddView(const FSceneView& InView) { Views.push_back(InView); }
+		void ClearViews() { Views.clear(); }
+		const std::vector<FSceneView>& GetViews() const { return Views; }
+
 	private:
 		EViewModeIndex   ViewMode  = EViewModeIndex::VMI_Lit;
 		FEngineShowFlags ShowFlags = FEngineShowFlags::FromViewMode(EViewModeIndex::VMI_Lit);
+		std::vector<FSceneView> Views;   // UE: FSceneViewFamily::Views
 	};
 }
