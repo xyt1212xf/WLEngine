@@ -73,12 +73,22 @@ namespace ML
 		std::vector<Vec4F> Col;
 		Col.reserve(NumVertices);
 
+		Vec3F BMin(FLT_MAX, FLT_MAX, FLT_MAX);
+		Vec3F BMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 		for (int32 y = 0; y < N; ++y)
 		{
 			for (int32 x = 0; x < N; ++x)
 			{
 				const int32 sx = x * Step, sy = y * Step;
-				Pos.push_back(Vec3F((float)sx, HF_HeightClamped(HF, sx, sy), (float)sy));
+				const Vec3F P((float)sx, HF_HeightClamped(HF, sx, sy), (float)sy);
+				Pos.push_back(P);
+				BMin.x = (P.x < BMin.x) ? P.x : BMin.x;
+				BMin.y = (P.y < BMin.y) ? P.y : BMin.y;
+				BMin.z = (P.z < BMin.z) ? P.z : BMin.z;
+				BMax.x = (P.x > BMax.x) ? P.x : BMax.x;
+				BMax.y = (P.y > BMax.y) ? P.y : BMax.y;
+				BMax.z = (P.z > BMax.z) ? P.z : BMax.z;
+
 				UV.push_back(Vec2F((float)x / (float)Quads, (float)y / (float)Quads));
 				const float hL = HF_HeightClamped(HF, sx - 1, sy);
 				const float hR = HF_HeightClamped(HF, sx + 1, sy);
@@ -111,6 +121,20 @@ namespace ML
 				Col.push_back(Vec4F(Grass, Rock, Snow, Dirt));
 			}
 		}
+		BoundsOrigin = Vec3F((BMin.x + BMax.x) * 0.5f, (BMin.y + BMax.y) * 0.5f, (BMin.z + BMax.z) * 0.5f);
+		float RadiusSq = 0.0f;
+		for (const Vec3F& P : Pos)
+		{
+			const float dx = P.x - BoundsOrigin.x;
+			const float dy = P.y - BoundsOrigin.y;
+			const float dz = P.z - BoundsOrigin.z;
+			const float DistSq = dx * dx + dy * dy + dz * dz;
+			if (DistSq > RadiusSq)
+			{
+				RadiusSq = DistSq;
+			}
+		}
+		BoundsRadius = sqrtf(RadiusSq);
 
 		std::vector<uint32> Idx;
 		for (int32 y = 0; y < Quads; ++y)
@@ -163,6 +187,8 @@ namespace ML
 
 	void CLandscapeLODResources::Release()
 	{
+		BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
+		BoundsRadius = 0.0f;
 		VertexBuffers.Release();
 		SafeDelete(IndexBuffer);
 		NumVertices = 0; NumIndices = 0;

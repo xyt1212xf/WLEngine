@@ -36,15 +36,8 @@ namespace ML
 		UINT32 GetNumVertices() const { return NumVertices; }
 		UINT32 GetNumIndices()  const { return NumIndices; }
 
-		const Vec3F& GetBoundsOrigin() const { return BoundsOrigin; }
-		float        GetBoundsRadius() const { return BoundsRadius; }
-
 	public:
 		std::vector<FStaticMeshSection> Sections;
-
-		// 包围球(UE 的 FBoxSphereBounds 简化为 原点 + 半径)
-		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
-		float BoundsRadius = 0.0f;
 		CStaticVertexFactory* VertexFactory = nullptr;
 	};
 }

@@ -41,11 +41,9 @@ namespace ML
 			Element.BaseVertex = 0;
 			Element.InstanceCount = 1;
 		}
-		if (const CStaticMeshLODResources* StaticLOD = dynamic_cast<const CStaticMeshLODResources*>(LOD))
-		{
-			LocalBounds.Origin = StaticLOD->BoundsOrigin;
-			LocalBounds.SphereRadius = StaticLOD->BoundsRadius;
-		}
+		LocalBounds.Origin = LOD ? LOD->GetBoundsOrigin() : Vec3F(0.0f, 0.0f, 0.0f);
+		LocalBounds.SphereRadius = LOD ? LOD->GetBoundsRadius() : 0.0f;
+
 		WorldBounds = FBoxSphereBounds::TransformBy(LocalBounds, WorldMatrix);
 	}
 
@@ -437,7 +435,7 @@ namespace ML
 
 		for (const CPrimitiveSceneProxy* Proxy : OpaqueProxies)
 		{
-			if (nullptr == Proxy || !Proxy->IsVisible())
+			if (nullptr == Proxy || !Proxy->IsVisible() || !bInView(Proxy))
 			{
 				continue;
 			}
@@ -449,7 +447,7 @@ namespace ML
 		}
 		for (const CPrimitiveSceneProxy* Proxy : TranslucentProxies)
 		{
-			if (nullptr == Proxy || !Proxy->IsVisible())
+			if (nullptr == Proxy || !Proxy->IsVisible() || !bInView(Proxy))
 			{
 				continue;
 			}

@@ -33,10 +33,18 @@ namespace ML
         CMeshLODResources() = default;
         virtual ~CMeshLODResources();
 
+		Vec3F GetBoundsOrigin() const { return BoundsOrigin;}
+		float GetBoundsRadius() const { return BoundsRadius; }
+
 	public:
 		FMeshVertexBuffers VertexBuffers;   // 顶点缓冲聚合
 		CRHIBuffer*        IndexBuffer = nullptr;  // 同级，不进聚合
 		UINT32 NumVertices = 0;
 		UINT32 NumIndices = 0;
+
+	protected:
+		// 包围球(UE 的 FBoxSphereBounds 简化为 原点 + 半径)
+		Vec3F BoundsOrigin = Vec3F(0.0f, 0.0f, 0.0f);
+		float BoundsRadius = 0.0f;
 	};
 }
