@@ -114,7 +114,7 @@ namespace ML
 		}
 	}
 
-	void CWorld::CollectVisibleMeshes(const FViewMatrices& View,
+	void CWorld::CollectVisibleMeshes(const FSceneView& View,
 										std::vector<FMeshBatch>& OutSky, 
 										std::vector<FMeshBatch>& OutOpaque,
 										std::vector<FMeshBatch>& OutTranslucent)
@@ -260,7 +260,7 @@ namespace ML
 	}
 
 
-	void CWorld::CopyViewFamilyTo(FSceneViewFamily& OutFamily) const
+	void CWorld::CopyViewFamilyTo(FSceneViewFamily& OutFamily) 
 	{
 		std::lock_guard<std::mutex> Lock(ViewFamilyCritical);
 		OutFamily = ViewFamily;

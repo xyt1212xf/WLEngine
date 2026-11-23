@@ -21,7 +21,7 @@ namespace ML
 	{
 	public:
 		CStaticMeshLODResources() = default;
-		~CStaticMeshLODResources();
+		virtual ~CStaticMeshLODResources();
 
 		// 从烘焙结果(CMeshAttributes 平铺数据）创建渲染资源。
 		// 当前阶段：拷贝 CPU 侧元数据(Sections/数量/包围球)，

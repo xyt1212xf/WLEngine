@@ -91,6 +91,9 @@
     <Filter Include="GameFrame\Actors\Sky">
       <UniqueIdentifier>{21a17519-78cc-4046-ab27-36eaad971140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Bounds">
+      <UniqueIdentifier>{60faec70-af39-4d7b-a894-99af9496a46b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MLEngine.cpp">
@@ -356,6 +359,12 @@
     </ClCompile>
     <ClCompile Include="CameraComponent.cpp">
       <Filter>GameFrame\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexVolume.cpp">
+      <Filter>Core\Bounds</Filter>
+    </ClCompile>
+    <ClCompile Include="Bounds.cpp">
+      <Filter>Core\Bounds</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -688,6 +697,12 @@
     </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>GameFrame\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexVolume.h">
+      <Filter>Core\Bounds</Filter>
+    </ClInclude>
+    <ClInclude Include="Bounds.h">
+      <Filter>Core\Bounds</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

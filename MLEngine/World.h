@@ -72,10 +72,10 @@ namespace ML
 		void CalcViewFamily(FSceneViewFamily& InOutFamily) const;
 
 		// 渲染线程：取游戏线程建好的视图家族快照（持锁拷贝）。
-		void CopyViewFamilyTo(FSceneViewFamily& OutFamily) const;
+		void CopyViewFamilyTo(FSceneViewFamily& OutFamily) ;
 
 	private:
-		void CollectVisibleMeshes(const FViewMatrices& View,
+		void CollectVisibleMeshes(const FSceneView& View,
 									std::vector<FMeshBatch>& OutSky, 
 									std::vector<FMeshBatch>& OutOpaque,
 									std::vector<FMeshBatch>& OutTranslucent);
@@ -116,7 +116,7 @@ namespace ML
 
 		// ---- UE: 视图家族。游戏线程 Tick 末构造、渲染线程帧首消费，
 		// 两侧用这把锁交接（UE 靠帧栅栏同步，这里是轻量等价物）----
-		mutable std::mutex		ViewFamilyCritical;
+		std::mutex				ViewFamilyCritical;
 		FSceneViewFamily		ViewFamily;
 	};
 }

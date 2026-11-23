@@ -41,6 +41,23 @@ namespace ML
 			Element.BaseVertex = 0;
 			Element.InstanceCount = 1;
 		}
+		if (const CStaticMeshLODResources* StaticLOD = dynamic_cast<const CStaticMeshLODResources*>(LOD))
+		{
+			LocalBounds.Origin = StaticLOD->BoundsOrigin;
+			LocalBounds.SphereRadius = StaticLOD->BoundsRadius;
+		}
+		WorldBounds = FBoxSphereBounds::TransformBy(LocalBounds, WorldMatrix);
+	}
+
+	const FBoxSphereBounds& CPrimitiveSceneProxy::GetWorldBounds() const
+	{
+		return WorldBounds;
+	}
+
+	void CPrimitiveSceneProxy::SetWorldMatrix(const FMatrix44& InWorldMatrix)
+	{
+		WorldMatrix = InWorldMatrix;
+		WorldBounds = FBoxSphereBounds::TransformBy(LocalBounds, InWorldMatrix);
 	}
 
 	bool CPrimitiveSceneProxy::GetMeshBatch(FMeshBatch& OutBatch) const
@@ -383,13 +400,27 @@ namespace ML
 		}
 	}
 
-	void CScene::CollectVisibleMeshes(const FViewMatrices& View,
+	void CScene::CollectVisibleMeshes(const FSceneView& View,
 										std::vector<FMeshBatch>& OutSky,
 										std::vector<FMeshBatch>& OutOpaque,
 										std::vector<FMeshBatch>& OutTranslucent) const
 	{
 		// P1: 这里放视锥/距离剔除（FViewMatrices 已备好，Bounds 在 LOD 上）。
-		(void)View;
+		const FConvexVolume Frustum = FConvexVolume::FromViewProj(View.ViewMatrices.ViewProjMatrix);
+
+		const auto bInView = [&Frustum, &View](const CPrimitiveSceneProxy* Proxy) -> bool
+			{
+				// 距离剔除（UE: FViewInfo 的 MaxViewCullDistance）
+				const Vec3F D = Proxy->GetWorldBounds().Origin - View.ViewMatrices.ViewOrigin;
+				if (D.x * D.x + D.y * D.y + D.z * D.z >
+					(View.FarZ + Proxy->GetWorldBounds().SphereRadius) * (View.FarZ + Proxy->GetWorldBounds().SphereRadius))
+				{
+					return false;
+				}
+				// 视锥剔除（UE: FConvexVolume::IntersectSphere）
+				return Frustum.IntersectSphere(Proxy->GetWorldBounds().Origin,
+					Proxy->GetWorldBounds().SphereRadius);
+			};
 
 		for (const CPrimitiveSceneProxy* Proxy : SkyProxies)
 		{

@@ -3,6 +3,9 @@
 #include "Matrix.h"
 #include "MeshBatch.h"
 #include "LightShader.h"
+#include "Bounds.h"
+#include "ConvexVolume.h"
+#include "SceneViewFamily.h"
 
 namespace ML
 {
@@ -47,13 +50,13 @@ namespace ML
 			CVertexStreamFactory* InVF, CMaterial* InMaterial,
 			const FMatrix44& InWorldMatrix, uint32 InSectionIndex = 0, bool bInVisible = true);
 
-
+		const FBoxSphereBounds& GetWorldBounds() const;
 	private:
 		// ---- 以下只允许渲染线程调用 ----
 		uint32 GetId() const { return Id; }
 		bool   IsVisible() const { return bVisible; }
 
-		void SetWorldMatrix(const FMatrix44& InWorldMatrix) { WorldMatrix = InWorldMatrix; }
+		void SetWorldMatrix(const FMatrix44& InWorldMatrix);
 		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
 
 		// UE: FPrimitiveSceneProxy::GetDynamicMeshElements
@@ -61,9 +64,11 @@ namespace ML
 		bool GetMeshBatch(FMeshBatch& OutBatch) const;
 
 	private:
-
-
 		uint32 Id = 0;
+
+		FBoxSphereBounds		LocalBounds;    // 构造时从 Mesh/LOD 拿
+		FBoxSphereBounds		WorldBounds;    // UE: FPrimitiveSceneProxy::GetWorldBounds
+
 
 		// ---- 快照（游戏线程写入，渲染线程只读）----
 		FMatrix44				WorldMatrix;
@@ -110,7 +115,7 @@ namespace ML
 		// 渲染线程：把可见图元展开成绘制批次，并在收集时按"不透明 / 透明"
 		// 直接分流到两个输出列表（UE: 图元 relevance 决定进哪个 mesh-pass 列表）。
 		// View 目前仅占位，P1 在这里做视锥/距离剔除。
-		void CollectVisibleMeshes(const FViewMatrices& View,
+		void CollectVisibleMeshes(const FSceneView& View,
 									std::vector<FMeshBatch>& OutSky,
 									std::vector<FMeshBatch>& OutOpaque,
 									std::vector<FMeshBatch>& OutTranslucent) const;

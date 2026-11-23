@@ -31,7 +31,7 @@ namespace ML
     {
     public:
         CMeshLODResources() = default;
-        ~CMeshLODResources();
+        virtual ~CMeshLODResources();
 
 	public:
 		FMeshVertexBuffers VertexBuffers;   // 顶点缓冲聚合

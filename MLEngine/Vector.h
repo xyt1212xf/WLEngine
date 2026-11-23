@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Common.h"
 
 namespace ML
@@ -437,6 +437,16 @@ namespace ML
 				EQUALS(z, vec.z) && EQUALS(w, vec.w));
 		}
 
+		TVec4<T> operator+(const TVec4<T>& v) const
+		{
+			return TVec4<T>(x + v.x, y + v.y, z + v.z, w - v.w);
+		}
+
+		TVec4<T> operator-(const TVec4<T>& v) const
+		{
+			return TVec4<T>(x - v.x, y - v.y, z - v.z, w - v.w);
+		}
+
 		bool operator!=(const TVec4<T>& vec) const
 		{
 			return !(EQUALS(x, vec.x) && EQUALS(y, vec.y) &&
@@ -455,6 +465,22 @@ namespace ML
 		TVec4<T> operator-() const
 		{
 			return TVec4<T>(-x, -y, -z, -w);
+		}
+
+		TVec4<T> operator*(T fValue) const
+		{
+			return TVec4<T>(x * fValue, y * fValue, z * fValue, w * fValue);
+		}
+
+		TVec4<T> operator/(T fValue) const
+		{
+			fValue = 1 / fValue;
+			return TVec4<T>(x * fValue, y * fValue, z * fValue, w * fValue);
+		}
+
+		TVec4<T> operator+(T fValue) const
+		{
+			return TVec4<T>(x + fValue, y + fValue, z + fValue, w + fValue);
 		}
 
 		T* data() { return &x; }
