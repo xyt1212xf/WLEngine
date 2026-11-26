@@ -18,6 +18,7 @@
 #include "SkyLightSceneProxy.h"
 #include "LightSceneProxy.h"
 #include "LightSceneInfo.h"
+#include "MeshDrawSortKey.h"
 
 namespace ML
 {
@@ -128,19 +129,24 @@ namespace ML
 			return;
 		}
 
-		// 4) Translucent must be composited far-to-near for correct alpha overlap.
-		//    The bring-up camera is fixed at the origin looking +Z, so the eye is (0,0,0).
-		std::sort(mTranslucentBatches.begin(), mTranslucentBatches.end(),
-			[&Eye](const FMeshBatch& A, const FMeshBatch& B)
+
+		std::sort(mOpaqueBatches.begin(), mOpaqueBatches.end(),
+			[](const FMeshBatch& A, const FMeshBatch& B)
 			{
-				const float ax = A.WorldMatrix.m[3][0] - Eye.x;
-				const float ay = A.WorldMatrix.m[3][1] - Eye.y;
-				const float az = A.WorldMatrix.m[3][2] - Eye.z;
-				const float bx = B.WorldMatrix.m[3][0] - Eye.x;
-				const float by = B.WorldMatrix.m[3][1] - Eye.y;
-				const float bz = B.WorldMatrix.m[3][2] - Eye.z;
-				return (ax * ax + ay * ay + az * az) > (bx * bx + by * by + bz * bz);
+				return CalculateBasePassMeshStaticSortKey(A) < CalculateBasePassMeshStaticSortKey(B);
 			});
+		std::sort(mSkyBatches.begin(), mSkyBatches.end(),
+			[](const FMeshBatch& A, const FMeshBatch& B)
+			{
+				return CalculateMeshStaticSortKey(A) < CalculateMeshStaticSortKey(B);
+			});
+		std::sort(mTranslucentBatches.begin(), mTranslucentBatches.end(),
+			[&ViewMatrices](const FMeshBatch& A, const FMeshBatch& B)
+			{
+				return CalculateTranslucentMeshStaticSortKey(A, ViewMatrices)
+					< CalculateTranslucentMeshStaticSortKey(B, ViewMatrices);
+			});
+
 		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
 		// Opaque first (writes depth), then translucent (sorted, no depth write).
 		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mSkyBatches, bWireframe, LightCBAddress, EMeshPass::SkyPass);

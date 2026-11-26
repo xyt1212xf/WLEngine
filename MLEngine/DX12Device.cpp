@@ -595,7 +595,7 @@ namespace ML
 		// No hardcoded & 0x01 - works for any FrameCount.
 		const UINT64 fenceToWait = mFenceValues[mFrameIndex];
 
-		if (fenceToWait > 0 && mFence->GetCompletedValue() < fenceToWait)
+		if (mFence->GetCompletedValue() < fenceToWait)
 		{
 			mFence->SetEventOnCompletion(fenceToWait, mFenceEvent);
 			WaitForSingleObject(mFenceEvent, INFINITE);

@@ -366,6 +366,9 @@
     <ClCompile Include="Bounds.cpp">
       <Filter>Core\Bounds</Filter>
     </ClCompile>
+    <ClCompile Include="MeshDrawSortKey.cpp">
+      <Filter>Core\Draw</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLEngine.h">
@@ -703,6 +706,9 @@
     </ClInclude>
     <ClInclude Include="Bounds.h">
       <Filter>Core\Bounds</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDrawSortKey.h">
+      <Filter>Core\Draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
