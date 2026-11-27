@@ -47,6 +47,7 @@ namespace ML
 		// UE: FLightSceneProxy::GetDirection() —— 光**照射**的方向（组件 Forward）。
 		const Vec3F& GetDirection() const { return Direction; }
 		float GetRadius() const { return Radius; }
+		bool GetBoundingSphere(Vec3F& OutCenter, float& OutRadius) const;
 		float GetBrightness() const;
 
 		// UE: FScene::UpdateLightTransform -> FLightSceneProxy::SetTransform

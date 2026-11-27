@@ -40,6 +40,17 @@ namespace ML
 		OutLight.SpotAngles = Vec4F(0.0f, 0.0f, 0.0f, 0.0f);                      // P0 无聚光
 	}
 
+	bool CLightSceneProxy::GetBoundingSphere(Vec3F& OutCenter, float& OutRadius) const
+	{
+		if (ELightGPUType::Directional == Type)
+		{
+			return false;
+		}
+		OutCenter = Position;
+		OutRadius = Radius;
+		return true;
+	}
+
 	float CLightSceneProxy::GetBrightness() const
 	{
 		return ColorIntensity.x * 0.2126f + ColorIntensity.y * 0.7152f + ColorIntensity.z * 0.0722f;

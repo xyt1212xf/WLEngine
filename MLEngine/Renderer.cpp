@@ -129,28 +129,30 @@ namespace ML
 		mOpaqueBatches.clear();
 		mTranslucentBatches.clear();
 		mSkyBatches.clear();
-		
+		mSortedLights.SortedLights.clear();
+
 		CWorld* pWorld = GEngine->GetWorld();
 		if (nullptr == pWorld || !pWorld->IsReady())
 		{
 			return;
 		}
-
-		//灯光相关的处理
-		_GatherAndSortLights(pWorld->GetScene());
-		_SetupLightShaderParameters(pWorld->GetScene());
-
 		pWorld->CopyViewFamilyTo(mViewFamily);
 		const std::vector<FSceneView>& Views = mViewFamily.GetViews();
 		if (Views.empty())
 		{
 			return;
 		}
+		const FSceneView& SceneView = Views[0];
+		const FViewMatrices& ViewMatrices = SceneView.ViewMatrices;
+
+		//灯光相关的处理
+		_GatherAndSortLights(pWorld->GetScene(), SceneView);
+		_SetupLightShaderParameters(pWorld->GetScene());
+
 		// 单视图 bring-up（UE: 每个视图独立跑一遍 InitViews → pass 链；
 		// 多视图后这里改成 for each view，那时 CollectVisibleMeshes /
 		// GatherAndSortLights 的 per-view 化正好接上）。
-		const FSceneView& SceneView = Views[0];
-		const FViewMatrices& ViewMatrices = SceneView.ViewMatrices;
+
 		//const Vec3F& Eye = ViewMatrices.ViewOrigin;   // 透明排序基准点不再是硬编码原点
 		pWorld->CollectVisibleMeshes(SceneView, mSkyBatches, mOpaqueBatches, mTranslucentBatches);
 		if (mOpaqueBatches.empty() && mTranslucentBatches.empty() && mSkyBatches.empty())
@@ -256,9 +258,8 @@ namespace ML
 		}
 	}
 
-	void CRenderer::_GatherAndSortLights(CScene& Scene)
+	void CRenderer::_GatherAndSortLights(CScene& Scene, const FSceneView& View)
 	{
-		mSortedLights.SortedLights.clear();
 		Scene.GatherLights(mSortedLights.SortedLights);
 		std::sort(mSortedLights.SortedLights.begin(), mSortedLights.SortedLights.end(),
 			[](const CLightSceneInfo* A, const CLightSceneInfo* B)

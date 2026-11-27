@@ -57,7 +57,7 @@ namespace ML
 			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
 			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress, EMeshPass Pass);
 
-		void _GatherAndSortLights(CScene& Scene);
+		void _GatherAndSortLights(CScene& Scene, const FSceneView& View);
 		// UE: SetupLightShaderParameters —— Pack 阶段：把 Gather 结果逐灯
 		// GetLightShaderParameters 填进固定大小的 FLightFrameConstants。
 		void _SetupLightShaderParameters(CScene& Scene);
