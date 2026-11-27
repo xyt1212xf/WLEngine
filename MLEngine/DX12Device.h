@@ -30,6 +30,7 @@ namespace ML
 		void ExecuteUploadAndWait(ID3D12GraphicsCommandList* UploadList);
 		bool initDevice(HWND hWnd);
 
+	public:
 		// -------------------------------------------------------------------
 		// Shader-visible descriptors.
 		//
@@ -65,6 +66,7 @@ namespace ML
 	private:
 		void _GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter, bool requestHighPerformanceAdapter = true);
 		void _WaitCommandQueue();
+		bool _InitRTV();
 		bool _InitDepthBuffer();
 		bool _InitShaderVisibleHeaps();
 
@@ -72,7 +74,7 @@ namespace ML
 
 		UINT32 mRtvDescriptorSize = 0;
 		ID3D12Device* mpDevice = nullptr;
-		ID3D12CommandQueue* mCommandQueue = nullptr;
+
 		IDXGISwapChain3* mSwapChain = nullptr;
 		ID3D12DescriptorHeap* mRtvHeap = nullptr;
 		// Depth buffer for 3D rendering (D32).
@@ -93,8 +95,9 @@ namespace ML
 		// once the GPU finished executing everything recorded with it. With a single
 		// allocator the CPU is forced to wait for the previous frame; one per frame
 		// lets the CPU record ahead while the GPU is still busy.
+		ID3D12CommandQueue* mCommandQueue = nullptr;
 		std::vector<ID3D12CommandAllocator*> mCommandAllocators;
-		ID3D12GraphicsCommandList* mCommandList = nullptr;
+		ID3D12GraphicsCommandList* mGraphicCommandList = nullptr;
 		std::vector<ID3D12Resource*> mRenderTargets;
 
 		D3D12_VIEWPORT mScreenViewport;

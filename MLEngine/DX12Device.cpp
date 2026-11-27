@@ -24,7 +24,7 @@ namespace ML
 		SafeRelease(mSrvHeap);
 		SafeRelease(mDepthStencil);
 		SafeRelease(mDsvHeap);
-		SafeRelease(mCommandList);
+		SafeRelease(mGraphicCommandList);
 		for (ID3D12CommandAllocator*& Allocator : mCommandAllocators)
 		{
 			SafeRelease(Allocator);
@@ -142,36 +142,8 @@ namespace ML
 
 				hr = swapChain->QueryInterface(IID_PPV_ARGS(&mSwapChain));
 				swapChain->Release();
+
 				mFrameIndex = mSwapChain->GetCurrentBackBufferIndex();
-
-				// Create descriptor heaps.
-				{
-					// Describe and create a render target view (RTV) descriptor heap.
-					D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-					rtvHeapDesc.NumDescriptors = FrameCount;
-					rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-					rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-					hr = mpDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&mRtvHeap));
-					if (hr != S_OK)
-					{
-						break;
-					}
-
-					mRtvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-				}
-				// Create frame resources.
-				{
-					CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
-
-					// Create a RTV for each frame.
-					mRenderTargets.resize(FrameCount);
-					for (UINT n = 0; n < FrameCount; n++)
-					{
-						mSwapChain->GetBuffer(n, IID_PPV_ARGS(&mRenderTargets[n]));
-						mpDevice->CreateRenderTargetView(mRenderTargets[n], nullptr, rtvHandle);
-						rtvHandle.Offset(1, mRtvDescriptorSize);
-					}
-				}
 				// One allocator per frame in flight (see mCommandAllocators in the header).
 				mCommandAllocators.assign(FrameCount, nullptr);
 				for (UINT32 i = 0; i < FrameCount; ++i)
@@ -183,6 +155,10 @@ namespace ML
 						// otherwise Reset() a nullptr allocator.
 						return false;
 					}
+				}
+				if (!_InitRTV())
+				{
+					break;
 				}
 
 				// Depth buffer (needed by the 3D pipeline PSO).
@@ -208,14 +184,14 @@ namespace ML
 
 			// Create the command list, bound to the current frame's allocator.
 			if (FAILED(mpDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-				mCommandAllocators[mFrameIndex], nullptr, IID_PPV_ARGS(&mCommandList))))
+				mCommandAllocators[mFrameIndex], nullptr, IID_PPV_ARGS(&mGraphicCommandList))))
 			{
 				break;
 			}
 
 			// Command lists are created in the recording state, but there is nothing
 			// to record yet. The main loop expects it to be closed, so close it now.
-			mCommandList->Close();
+			mGraphicCommandList->Close();
 			// Create synchronization objects.
 			{
 				mpDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence));
@@ -339,7 +315,7 @@ namespace ML
 
 		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 		// Reusing the command list reuses memory.
-		mCommandList->Reset(Allocator, nullptr);
+		mGraphicCommandList->Reset(Allocator, nullptr);
 
 		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			mRenderTargets[mFrameIndex],
@@ -347,7 +323,7 @@ namespace ML
 			D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 		// Indicate a state transition on the resource usage.
-		mCommandList->ResourceBarrier(1, &barrier);
+		mGraphicCommandList->ResourceBarrier(1, &barrier);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(
 			mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -356,15 +332,15 @@ namespace ML
 
 		// Bind RTV + DSV, clear both.
 		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv(mDsvHeap->GetCPUDescriptorHandleForHeapStart());
-		mCommandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
+		mGraphicCommandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 		static const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		mCommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
-		mCommandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		mGraphicCommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+		mGraphicCommandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
 		// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
-		mCommandList->RSSetViewports(1, &mScreenViewport);
-		mCommandList->RSSetScissorRects(1, &mScissorRect);
+		mGraphicCommandList->RSSetViewports(1, &mScreenViewport);
+		mGraphicCommandList->RSSetScissorRects(1, &mScissorRect);
 
 	}
 
@@ -374,16 +350,15 @@ namespace ML
 			mRenderTargets[mFrameIndex],
 			D3D12_RESOURCE_STATE_RENDER_TARGET,
 			D3D12_RESOURCE_STATE_PRESENT);
-		mCommandList->ResourceBarrier(1, &barrier);
+		mGraphicCommandList->ResourceBarrier(1, &barrier);
 
-		mCommandList->Close();
+		mGraphicCommandList->Close();
 		// Add the command list to the queue for execution.
-		ID3D12CommandList* cmdsLists[] = { mCommandList };
+		ID3D12CommandList* cmdsLists[] = { mGraphicCommandList };
 		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 		// swap the back and front buffers
 		mSwapChain->Present(0, 0);
-
 		// Stamp this frame slot with the fence value the GPU will reach when it is
 		// done. BeginDraw waits on it when this slot comes round again.
 		const UINT64 FenceForThisFrame = mFenceValue++;
@@ -399,7 +374,7 @@ namespace ML
 
 	ID3D12GraphicsCommandList* CDX12RHIDevice::GetCommandList() const
 	{
-		return mCommandList;
+		return mGraphicCommandList;
 	}
 
 	void CDX12RHIDevice::ExecuteUploadAndWait(ID3D12GraphicsCommandList* UploadList)
@@ -600,6 +575,39 @@ namespace ML
 			mFence->SetEventOnCompletion(fenceToWait, mFenceEvent);
 			WaitForSingleObject(mFenceEvent, INFINITE);
 		}
+	}
+
+	bool CDX12RHIDevice::_InitRTV()
+	{
+		// Create descriptor heaps.
+		{
+			// Describe and create a render target view (RTV) descriptor heap.
+			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+			rtvHeapDesc.NumDescriptors = FrameCount;
+			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			HRESULT hr = mpDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&mRtvHeap));
+			if (hr != S_OK)
+			{
+				return false;
+			}
+
+			mRtvDescriptorSize = mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		}
+		// Create frame resources.
+		{
+			CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+
+			// Create a RTV for each frame.
+			mRenderTargets.resize(FrameCount);
+			for (UINT n = 0; n < FrameCount; n++)
+			{
+				mSwapChain->GetBuffer(n, IID_PPV_ARGS(&mRenderTargets[n]));
+				mpDevice->CreateRenderTargetView(mRenderTargets[n], nullptr, rtvHandle);
+				rtvHandle.Offset(1, mRtvDescriptorSize);
+			}
+		}
+		return true;
 	}
 
 }
