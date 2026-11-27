@@ -30,6 +30,7 @@ namespace ML
     class CGraphicPlug;
 	class CScene;
 	class CLightSceneInfo;
+	class CWorld;
 
 	class MLENGINE_API CRenderer
 	{
@@ -47,6 +48,7 @@ namespace ML
 		EViewModeIndex GetViewMode() const { return mViewFamily.GetViewMode(); }
 
 	private:
+		void _DrawSort();
 		void _Draw();
 		bool _Begin();
 		void _Flush();
@@ -55,10 +57,10 @@ namespace ML
 			const FViewMatrices& ViewMatrices, const std::vector<FMeshBatch>& Batches, bool bWireframe,
 			D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress, EMeshPass Pass);
 
-		void GatherAndSortLights(CScene& Scene);
+		void _GatherAndSortLights(CScene& Scene);
 		// UE: SetupLightShaderParameters —— Pack 阶段：把 Gather 结果逐灯
 		// GetLightShaderParameters 填进固定大小的 FLightFrameConstants。
-		void SetupLightShaderParameters(CScene& Scene);
+		void _SetupLightShaderParameters(CScene& Scene);
 
 	private:
 		CGraphicPlug*	mpGraphicPlug = nullptr;

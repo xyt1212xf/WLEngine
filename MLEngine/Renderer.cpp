@@ -64,6 +64,7 @@ namespace ML
 		while (GEngine->IsRun())
 		{
 			time.begin();
+			_DrawSort();
 			if (_Begin())
 			{
 				_Flush();
@@ -90,14 +91,55 @@ namespace ML
 			return;
 		}
 
-		GatherAndSortLights(pWorld->GetScene());
-		SetupLightShaderParameters(pWorld->GetScene());
-
+		//_GatherAndSortLights(pWorld->GetScene());
+		//_SetupLightShaderParameters(pWorld->GetScene());
 		mLightConstantsCB->UpdateData(&FrameLights, sizeof(FLightFrameConstants));
 		CRHIDevice* pRHIDevice = mpGraphicPlug->GetDevice();
 		ID3D12GraphicsCommandList* pCmd = pRHIDevice->GetCommandList();
 
+	//	mViewFamily.ClearViews();
+	//	pWorld->CopyViewFamilyTo(mViewFamily);
+		const std::vector<FSceneView>& Views = mViewFamily.GetViews();
+		if (Views.empty())
+		{
+			return;
+		}
+		// 单视图 bring-up（UE: 每个视图独立跑一遍 InitViews → pass 链；
+		// 多视图后这里改成 for each view，那时 CollectVisibleMeshes /
+		// GatherAndSortLights 的 per-view 化正好接上）。
+		const FSceneView& SceneView = Views[0];
+		const FViewMatrices& ViewMatrices = SceneView.ViewMatrices;
+	//	const Vec3F& Eye = ViewMatrices.ViewOrigin;   // 透明排序基准点不再是硬编码原点
+
+		// Draw mode: a view-family-level override (UE: FSceneViewFamily::EngineShowFlags).
+		// Folded into the material's PSO cache key so wireframe and solid get distinct PSOs.
+
+		const bool bWireframe = mViewFamily.IsWireframe();
+
+		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
+		// Opaque first (writes depth), then translucent (sorted, no depth write).
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mSkyBatches, bWireframe, LightCBAddress, EMeshPass::SkyPass);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress, EMeshPass::BasePass);
+		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress, EMeshPass::Translucent);
+	}
+
+	void CRenderer::_DrawSort()
+	{
 		mViewFamily.ClearViews();
+		mOpaqueBatches.clear();
+		mTranslucentBatches.clear();
+		mSkyBatches.clear();
+		
+		CWorld* pWorld = GEngine->GetWorld();
+		if (nullptr == pWorld || !pWorld->IsReady())
+		{
+			return;
+		}
+
+		//灯光相关的处理
+		_GatherAndSortLights(pWorld->GetScene());
+		_SetupLightShaderParameters(pWorld->GetScene());
+
 		pWorld->CopyViewFamilyTo(mViewFamily);
 		const std::vector<FSceneView>& Views = mViewFamily.GetViews();
 		if (Views.empty())
@@ -109,26 +151,12 @@ namespace ML
 		// GatherAndSortLights 的 per-view 化正好接上）。
 		const FSceneView& SceneView = Views[0];
 		const FViewMatrices& ViewMatrices = SceneView.ViewMatrices;
-		const Vec3F& Eye = ViewMatrices.ViewOrigin;   // 透明排序基准点不再是硬编码原点
-
-		// Draw mode: a view-family-level override (UE: FSceneViewFamily::EngineShowFlags).
-		// Folded into the material's PSO cache key so wireframe and solid get distinct PSOs.
-
-		const bool bWireframe = mViewFamily.IsWireframe();
-
-		// 3) Collect + classify in one pass: CollectVisibleMeshes writes opaque /
-		//    translucent directly (UE: each primitive's relevance decides which
-		//    mesh-pass list it lands in, at gather time). No per-frame scan over a
-		//    combined list here. 复用成员缓冲区：clear() 只归零 size，capacity 保留。
-		mOpaqueBatches.clear();
-		mTranslucentBatches.clear();
-		mSkyBatches.clear();
+		//const Vec3F& Eye = ViewMatrices.ViewOrigin;   // 透明排序基准点不再是硬编码原点
 		pWorld->CollectVisibleMeshes(SceneView, mSkyBatches, mOpaqueBatches, mTranslucentBatches);
 		if (mOpaqueBatches.empty() && mTranslucentBatches.empty() && mSkyBatches.empty())
 		{
 			return;
 		}
-
 
 		std::sort(mOpaqueBatches.begin(), mOpaqueBatches.end(),
 			[](const FMeshBatch& A, const FMeshBatch& B)
@@ -146,12 +174,6 @@ namespace ML
 				return CalculateTranslucentMeshStaticSortKey(A, ViewMatrices)
 					< CalculateTranslucentMeshStaticSortKey(B, ViewMatrices);
 			});
-
-		D3D12_GPU_VIRTUAL_ADDRESS LightCBAddress = mLightConstantsCB->GetResource()->GetGPUVirtualAddress();
-		// Opaque first (writes depth), then translucent (sorted, no depth write).
-		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mSkyBatches, bWireframe, LightCBAddress, EMeshPass::SkyPass);
-		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mOpaqueBatches, bWireframe, LightCBAddress, EMeshPass::BasePass);
-		_DrawBatches(pCmd, pRHIDevice, ViewMatrices, mTranslucentBatches, bWireframe, LightCBAddress, EMeshPass::Translucent);
 	}
 
 	void CRenderer::_End()
@@ -234,7 +256,7 @@ namespace ML
 		}
 	}
 
-	void CRenderer::GatherAndSortLights(CScene& Scene)
+	void CRenderer::_GatherAndSortLights(CScene& Scene)
 	{
 		mSortedLights.SortedLights.clear();
 		Scene.GatherLights(mSortedLights.SortedLights);
@@ -253,7 +275,7 @@ namespace ML
 			});
 	}
 
-	void CRenderer::SetupLightShaderParameters(CScene& Scene)
+	void CRenderer::_SetupLightShaderParameters(CScene& Scene)
 	{
 		const size_t NumCandidates = std::min<size_t>(mSortedLights.SortedLights.size(), MaxSceneLights);
 		uint32 NumLights = 0;
